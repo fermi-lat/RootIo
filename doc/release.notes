@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r1   10-Jun-2004 HMK Re-activate BuildIndex. Now saves an index based on runid and eventid when writing
+                     When reading, if no index exists - one is created in memory for the run - otherwise, the
+                     disk-resident index is used to retrieve events when run/event ids are supplied
  v12r0   27-May-2004 HMK Move from ebf to ldf
  v11r1p0 24-May-2004 HMK Replace GetEntryByIndex with GetEntryNumberByIndex
  v11r1   25-Mar-2004 HMK Remove EbfConverter use EbfEvent instead
