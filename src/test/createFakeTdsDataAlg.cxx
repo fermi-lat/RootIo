@@ -27,7 +27,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.2 2002/08/29 15:33:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.3 2002/09/25 18:45:06 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -118,12 +118,16 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
     StatusCode sc = StatusCode::SUCCESS;
 
 	// Make sure MC branch is created on TDS
-    DataObject *mc = new Event::MCEvent;
-    sc=eventSvc()->registerObject(EventModel::MC::Event , mc);
-    if(sc.isFailure()) {
+	SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
+    if(!mcEvt) {
         log << MSG::WARNING << EventModel::MC::Event  <<" could not be registered on data store" << endreq;
         return sc;
     }
+	unsigned int run = 4;
+	int sourceId = 7;
+	unsigned int sequence = 3;
+	mcEvt->initialize(run, sourceId, sequence);
+
     // create the TDS location for the McParticle Collection
     Event::McParticleCol* mcParticleTdsCol = new Event::McParticleCol;
     sc = eventSvc()->registerObject(EventModel::MC::McParticleCol, mcParticleTdsCol);
