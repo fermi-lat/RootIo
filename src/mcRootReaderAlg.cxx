@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.37 2004/07/06 22:10:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.38 2004/08/09 17:57:31 chamont Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -172,6 +172,7 @@ StatusCode mcRootReaderAlg::initialize()
       }
 	  f.Close();
 	  m_mcTree->Add(m_fileName.c_str());
+          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
@@ -186,6 +187,7 @@ StatusCode mcRootReaderAlg::initialize()
         }
 		f.Close();
 		m_mcTree->Add(theFile.c_str());
+                log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
       }
     }
     

@@ -3,7 +3,15 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r7p0 28-Aug-2004 HMK event flags in recon too
+ v12r7   27-Aug-2004 HMK Handle new event flags
+ v12r6   18-Aug-2004 HMK Handle GEM data
+ v12r5p7 10-Aug-2004 HMK Remove use of RootPolicy - does not appear to be 
+         necessary
          10-Aug-2004 HMK Fix up reading AcdDigi VolIds - need to use binary rep.
+ v12r5p6 04-Aug-2004 HMK Register the eventsummary obj on TDS when reading
+ v12r5p5 04-Aug-2004 HMK Fixed if statement bugs inRootIoSvc when checking
+         indices against GetEntries()  was causing grief in FRED.
  v12r5p4 22-Jul-2004 HMK Pick up latest version of commonRootData
  v12r5p3 22-Jul-2004 HMK Address JIRA CMT-25, bug in CMT, add extra private statement
  v12p5p2 20-Jul-2004 HMK Reset index and evnt/run id pair to -1 at end of event
