@@ -7,6 +7,7 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
+#include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
 #include "idents/CalXtalId.h"
@@ -29,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.1 2002/05/14 15:23:00 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.2 2002/05/23 00:41:06 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -52,7 +53,10 @@ private:
     /// Reads top-level DigiEvent
     StatusCode readDigiEvent();
 
-    /// Reads CAL digi data from ROOT and put data on TDS
+    /// Reads ACD digi data from ROOT and puts data on TDS
+    StatusCode readAcdDigi();
+
+    /// Reads CAL digi data from ROOT and puts data on TDS
     StatusCode readCalDigi();
 
     /// Reads TKR digi data from ROOT and puts it on the TDS
@@ -106,7 +110,11 @@ StatusCode digiRootReaderAlg::initialize()
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
     m_digiFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_digiFile->IsOpen()) sc = StatusCode::FAILURE;
+    if (!m_digiFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+    }
     m_digiFile->cd();
     m_digiTree = (TTree*)m_digiFile->Get(m_treeName.c_str());
     m_digiEvt = 0;
@@ -126,6 +134,12 @@ StatusCode digiRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
 
     StatusCode sc = StatusCode::SUCCESS;
+    
+    if (!m_digiFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+    }
 
     static UInt_t evtId = 0;
     m_digiTree->GetEvent(evtId);
@@ -133,6 +147,12 @@ StatusCode digiRootReaderAlg::execute()
     sc = readDigiEvent();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to read top level DigiEvent" << endreq;
+        return sc;
+    }
+
+    sc = readAcdDigi();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to load AcdDigi" << endreq;
         return sc;
     }
 
@@ -189,6 +209,47 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     } else {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
+    }
+
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readAcdDigi() {
+    // Purpose and Method:  Read in ACD digi collection from ROOT file
+    //  and insert values into ACD digi collection on the TDS.
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const TClonesArray *acdDigiRootCol = m_digiEvt->getAcdDigiCol();
+    if (!acdDigiRootCol) return sc;
+    TIter acdDigiIter(acdDigiRootCol);
+
+    // create the TDS location for the AcdDigi Collection
+    Event::AcdDigiCol* acdDigiTdsCol = new Event::AcdDigiCol;
+    sc = eventSvc()->registerObject(EventModel::Digi::AcdDigiCol, acdDigiTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register AcdDigi Collection" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    AcdDigi *acdDigiRoot = 0;
+    while (acdDigiRoot = (AcdDigi*)acdDigiIter.Next()) {
+        float energyTds = acdDigiRoot->getEnergy();
+        AcdId idRoot = acdDigiRoot->getId();
+        idents::AcdId idTds(idRoot.getLayer(), idRoot.getFace(), 
+            idRoot.getRow(), idRoot.getColumn());
+        unsigned short phaTds[2] = { acdDigiRoot->getPulseHeight(AcdDigi::A),
+            acdDigiRoot->getPulseHeight(AcdDigi::B) };
+        bool vetoTds[2] = { acdDigiRoot->getVeto(AcdDigi::A),
+            acdDigiRoot->getVeto(AcdDigi::B)};
+        bool lowTds[2] = { acdDigiRoot->getLowDiscrim(AcdDigi::A),
+            acdDigiRoot->getLowDiscrim(AcdDigi::B) };
+        bool highTds[2] = { acdDigiRoot->getHighDiscrim(AcdDigi::A),
+            acdDigiRoot->getHighDiscrim(AcdDigi::B) };
+        Event::AcdDigi *acdDigiTds = new Event::AcdDigi(idTds, energyTds,
+            phaTds, vetoTds, lowTds, highTds);
+        acdDigiTdsCol->push_back(acdDigiTds);
     }
 
     return sc;

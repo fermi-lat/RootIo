@@ -29,7 +29,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.13 2002/06/04 23:04:51 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.14 2002/06/06 12:43:18 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -126,7 +126,11 @@ StatusCode reconRootWriterAlg::initialize()
     TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
     m_reconFile = new TFile(m_fileName.c_str(), "RECREATE");
-    if (!m_reconFile->IsOpen()) sc = StatusCode::FAILURE;
+    if (!m_reconFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
     m_reconFile->cd();
     m_reconFile->SetCompressionLevel(m_compressionLevel);
     m_reconTree = new TTree(m_treeName.c_str(), "GLAST Reconstruction Data");
@@ -145,8 +149,13 @@ StatusCode reconRootWriterAlg::execute()
     //   to the ROOT file.
 
     MsgStream log(msgSvc(), name());
-
     StatusCode sc = StatusCode::SUCCESS;
+
+    if (!m_reconFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
 
     sc = writeReconEvent();
     if (sc.isFailure()) {
