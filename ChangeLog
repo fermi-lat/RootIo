@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 26 21:44:50 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	reconRootReaderAlg.cxx 
+Log Message:
+handle event flags
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 14:06:38 PDT 2004
 RootIo/src
 
