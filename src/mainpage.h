@@ -4,7 +4,7 @@
   @section intro Introduction
   This package defines the Gaudi algorithms that read and write ROOT files.
   The following Gaudi algorithms are defined in this package:
-  - mcRootWriterAlg: writes a Monte Carloe ROOT file using the MC data on the TDS  It accepts the following parameters:
+  - mcRootWriterAlg: writes a Monte Carlo ROOT file using the MC data on the TDS  It accepts the following parameters:
     -# mcRootFile - name of the output ROOT file
     -# splitMode - default (1)
     -# bufferSize - default (64000)

@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.3 2002/05/01 23:34:40 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.4 2002/05/10 05:27:33 richard Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -42,7 +42,8 @@ public:
     /// Handles setup by opening ROOT file in read mode and creating a new TTree
     StatusCode initialize();
    
-    /// Orchastrates reading from ROOT file and storing the data on the TDS for each event
+    /// Orchastrates reading from ROOT file and storing the data on the TDS 
+    /// for each event
     StatusCode execute();
     
     /// Closes the ROOT file and cleans up
@@ -51,17 +52,22 @@ public:
         
 private:
 
+    /// Retrieves event and run Id from the ROOT file and stores them on the TDS
+    StatusCode readMcEvent();
+
     /// Retrieves McParticles from the ROOT file and stores them on the TDS
     StatusCode readMcParticles();
 
     /// Retrieves McPositionHits from the ROOT file and stores them on the TDS
     StatusCode readMcPositionHits();
 
-    /// Retrieves McIntegratingHits from the ROOT file and stores them on the TDS
+    /// Retrieves McIntegratingHits from the ROOT file and stores them on the
+    /// TDS
     StatusCode readMcIntegratingHits();
 
     /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
-    void convertVolumeId(VolumeIdentifier rootVolId, idents::VolumeIdentifier &tdsVolId);
+    void convertVolumeId(VolumeIdentifier rootVolId, 
+        idents::VolumeIdentifier &tdsVolId);
 
     /// Closes the ROOT file
     void close();
@@ -87,11 +93,14 @@ static const AlgFactory<mcRootReaderAlg>  Factory;
 const IAlgFactory& mcRootReaderAlgFactory = Factory;
 
 
-mcRootReaderAlg::mcRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
-Algorithm(name, pSvcLocator)
+mcRootReaderAlg::mcRootReaderAlg(const std::string& name, 
+                                 ISvcLocator* pSvcLocator) 
+                                 : Algorithm(name, pSvcLocator)
 {
     // Input pararmeters that may be set via the jobOptions file
+    // Input ROOT file name
     declareProperty("mcRootFile",m_fileName="mc.root");
+    // ROOT TTree name
     declareProperty("mcTreeName", m_treeName="Mc");
 
     m_particleMap.clear();
@@ -99,8 +108,8 @@ Algorithm(name, pSvcLocator)
 
 StatusCode mcRootReaderAlg::initialize()
 {
-    // Purpose and Method:  Called once before the run begins.  This method
-    //    opens a new ROOT file and prepares for reading.
+    // Purpose and Method:  Called once before the run begins.
+    //    This method opens a new ROOT file and prepares for reading.
 
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
@@ -117,7 +126,7 @@ StatusCode mcRootReaderAlg::initialize()
     if (!m_mcFile->IsOpen()) sc = StatusCode::FAILURE;
     m_mcFile->cd();
     m_mcTree = (TTree*)m_mcFile->Get(m_treeName.c_str());
-    m_mcEvt = 0;//new McEvent();
+    m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
     
     saveDir->cd();
@@ -137,6 +146,8 @@ StatusCode mcRootReaderAlg::execute()
 
     static UInt_t evtId = 0;
     m_mcTree->GetEvent(evtId);
+
+    sc = readMcEvent();
 
     m_particleMap.clear();
 
@@ -162,10 +173,36 @@ StatusCode mcRootReaderAlg::execute()
     return sc;
 }
 
+StatusCode mcRootReaderAlg::readMcEvent() {
+    // Purpose and Method:  Retrieves the event and run ids from the ROOT file
+    //    Stores them on the TDS in the EventHeader
+    // Input:  ROOT McEvent object
+    // TDS Output:  EventModel::EventHeader
+
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Retrieve the Event data for this event
+    SmartDataPtr<Event::EventHeader> evt(eventSvc(), EventModel::EventHeader);
+    if (!evt) return sc;
+
+    unsigned int eventIdTds = evt->event();
+    unsigned int runIdTds = evt->run();
+
+    unsigned int eventIdRoot = m_mcEvt->getEventId();
+    unsigned int runIdRoot = m_mcEvt->getRunId();
+
+    // Check to see if the event and run ids have already been set.
+    if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
+    if (runIdTds != runIdTds) evt->setRun(runIdRoot);
+
+    return sc;
+}
 
 StatusCode mcRootReaderAlg::readMcParticles() {
-    // Purpose and Method:  Retrieve the McParticle collection from the ROOT file 
-    //    and fill the TDS McParticle collection
+    // Purpose and Method:  Retrieve the McParticle collection from the ROOT
+    //    file and fill the TDS McParticle collection
     // Input:  ROOT McParticle collection
     // TDS Output:  EventModel::EVENT::McParticleCol
 
@@ -214,7 +251,8 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             finalMomRoot.Z(), finalMomRoot.T());
 
         TVector3 finalPosRoot = pRoot->getFinalPosition();
-        HepPoint3D finalPosTds(finalPosRoot.X(), finalPosRoot.Y(), finalPosRoot.Z());
+        HepPoint3D finalPosTds(finalPosRoot.X(), 
+            finalPosRoot.Y(), finalPosRoot.Z());
 
         const McParticle *momRoot = pRoot->getMother();
 
@@ -227,13 +265,15 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             } else if (m_particleMap.find(momRoot->GetUniqueID()) != m_particleMap.end()) {
                 momTds = m_particleMap[momRoot->GetUniqueID()];
             } else {
-                log << MSG::INFO << "Failed to find the McParticle in the map!!" << endreq;
+                log << MSG::INFO << "Failed to find the McParticle in the"
+                    << " map!!" << endreq;
             }
 
         }
 
         // Setup the TDS version fo the McParticle
-        pTds->init(momTds, idTds, statusBitsTds, initialMomTds, finalMomTds, finalPosTds);
+        pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
+            finalMomTds, finalPosTds);
 
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
@@ -251,8 +291,6 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
-    //SmartDataPtr<McPositionHitVector> posHits(eventSvc(), EventModel::EVENT::McPositionHitCol);    
     
     const TObjArray *posHits = m_mcEvt->getMcPositionHitCol();
     if (!posHits) return sc;
