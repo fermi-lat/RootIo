@@ -27,7 +27,7 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 
 ApplicationMgr.TopAlg +=  {
     "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg",
-    "testFileHeadersSetAlg" };
+    "testFhGetAlg" };
 mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
 digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi-fake.root";
 reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon-fake.root";

@@ -1,9 +1,12 @@
 
+#ifndef testCaloFhSetAlg_H
+#define testCaloFhSetAlg_H
+
 #include "GaudiKernel/Algorithm.h"
 
 /*!
 
- @class testCaloFileHeadersSetAlg        
+ @class testCaloFhSetAlg        
  @brief Prepare the calo specific attributes and set them in the relevant file headers
 
  This Gaudi algorithm is expected to prepare and set the file header data which is
@@ -12,18 +15,18 @@
  top algorithms.
  
  As any algorithm which is preparing file headers data, it is using the tool
- FileHeadersTool so to get access to the current writable headers. Worth to note,
+ FhTool so to get access to the current writable headers. Worth to note,
  the task is done during the finalize() step.
 
  @author David Chamont - CNRS IN2P3 LLR Ecole Polytechnique
 
 */
 
-class testCaloFileHeadersSetAlg : public Algorithm  {
+class testCaloFhSetAlg : public Algorithm  {
         
 public:
     
-    testCaloFileHeadersSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
+    testCaloFhSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
     
     /// 
     StatusCode initialize();
@@ -35,4 +38,6 @@ public:
     StatusCode finalize();
     
 } ;
+
+#endif
 
