@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r2p0   05-Apr-2005 HMK Set default tree size to 10 GB
  v15r2     05-Apr-2005 HMK Handle new 32bit event sequence number in LDF
  v15r1     04-Apr-2005 HMK Add MaxTreeSize to RootIoSvc
  v15r0     30-Mar-2005 JCT New TriRowBits
