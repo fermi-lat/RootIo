@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.11 2002/06/18 14:48:54 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.12 2002/07/09 13:16:52 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -279,7 +279,7 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
                 
         // Setup the ROOT McParticle
         mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, 
-            finalMomRoot, initPosRoot, finalPosRoot);
+            finalMomRoot, initPosRoot, finalPosRoot, (*p)->getProcess());
         // Add the ROOT McParticle to the ROOT collection of McParticle
         m_mcEvt->addMcParticle(mcPart);     
 
@@ -315,6 +315,8 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         Int_t particleId = (*hit)->getMcParticleId();
 
+        Int_t originPartId = (*hit)->getOriginMcParticleId();
+
         idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
         VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
@@ -324,6 +326,12 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         HepPoint3D exitTds = (*hit)->exitPoint();
         TVector3 exitRoot(exitTds.x(), exitTds.y(), exitTds.z());
+
+        HepPoint3D globalEntryTds = (*hit)->globalEntryPoint();
+        TVector3 globalEntryRoot(globalEntryTds.x(), globalEntryTds.y(), globalEntryTds.z());
+
+        HepPoint3D globalExitTds = (*hit)->globalExitPoint();
+        TVector3 globalExitRoot(globalExitTds.x(), globalExitTds.y(), globalExitTds.z());
         
         Double_t edepRoot = (*hit)->depositedEnergy();
         
@@ -340,6 +348,12 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
                 
         Double_t tofRoot = (*hit)->timeOfFlight();
               
+        const Event::McParticle *mcPartTds = (*hit)->mcParticle();
+        McParticle *mcPartRoot = 0;
+        if (mcPartTds != 0) {
+            mcPartRoot = m_particleMap[mcPartTds];
+        }
+
         const Event::McParticle *originTds = (*hit)->originMcParticle();
         McParticle *originRoot = 0;
         if (originTds != 0) {
@@ -348,10 +362,12 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         UInt_t flagsRoot = 0;
 
+        // Set up the ROOT McPositionHit
         McPositionHit *mcPosHit = new McPositionHit();
-        // Setup the ROOT McPositionHit
-        mcPosHit->initialize(particleId, edepRoot, volIdRoot, entryRoot, 
-            exitRoot, originRoot, epartRoot, tofRoot, flagsRoot);
+        mcPosHit->initialize(particleId, originPartId, edepRoot, volIdRoot, 
+            entryRoot, exitRoot, globalEntryRoot, globalExitRoot, 
+            mcPartRoot, originRoot, epartRoot, tofRoot, flagsRoot);
+
         // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
         m_mcEvt->addMcPositionHit(mcPosHit);
     }
