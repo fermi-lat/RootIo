@@ -39,7 +39,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.3 2004/08/14 06:12:13 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.4 2004/08/18 19:01:39 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -364,14 +364,14 @@ StatusCode digiRootReaderAlg::readGem() {
     const Gem &gemRoot = m_digiEvt->getGem();
     GemTileList tileListRoot = gemRoot.getTileList();
     LdfEvent::Gem *gemTds = new LdfEvent::Gem();
-    LdfEvent::GemDataTileList tileListTds(tileListRoot.getXzm(), tileListRoot.getXzp(), 
+    LdfEvent::GemTileList tileListTds(tileListRoot.getXzm(), tileListRoot.getXzp(), 
               tileListRoot.getYzm(), tileListRoot.getYzp(), tileListRoot.getXy(), 
               tileListRoot.getRbn(), tileListRoot.getNa());
     gemTds->initTrigger(gemRoot.getTkrVector(), gemRoot.getRoiVector(),
             gemRoot.getCalLeVector(), gemRoot.getCalHeVector(),
             gemRoot.getCnoVector(), gemRoot.getConditionSummary(),
             tileListTds);
-    LdfEvent::GemDataOnePpsTime ppsTimeTds(gemRoot.getOnePpsTime().getTimebase(),
+    LdfEvent::GemOnePpsTime ppsTimeTds(gemRoot.getOnePpsTime().getTimebase(),
                             gemRoot.getOnePpsTime().getSeconds());
     gemTds->initSummary(gemRoot.getLiveTime(), gemRoot.getPrescaled(),
                         gemRoot.getDiscarded(), gemRoot.getSent(),
