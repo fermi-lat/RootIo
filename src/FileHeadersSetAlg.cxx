@@ -199,7 +199,7 @@ FILE* FileHeadersSetAlg::popen(const char* command, const char *mode) {
 #ifdef WIN32
 	return _popen(command,mode);
 #else
-	return popen(command,mode);
+	return ::popen(command,mode);
 #endif
 }
 
@@ -207,7 +207,7 @@ int FileHeadersSetAlg::pclose(FILE* fp) {
 #ifdef WIN32
 	return _pclose(fp);
 #else
-	return pclose(fp);
+	return ::pclose(fp);
 #endif
 }
 
