@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Nov 25 00:28:07 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+fix typo error
+    *
+------------------------------------------------------------
 TAG
 Tag name: v12r11, operation: add
 Package: RootIo
