@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.8.2.1 2004/08/05 06:21:35 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.9 2004/09/15 04:19:30 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -17,7 +17,7 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 
-#include "CLHEP/Random/Random.h"
+//#include "CLHEP/Random/Random.h"
 
 #include <vector>
 #include <algorithm>
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.8.2.1 2004/08/05 06:21:35 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.9 2004/09/15 04:19:30 heather Exp $
 */
 
 // includes
@@ -159,7 +159,7 @@ StatusCode RootIoSvc::initialize ()
     
     // open the message log
     MsgStream log( msgSvc(), name() );
-    
+    m_appMgrUI = 0 ;
     status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
     
     // use the incident service to register begin, end events
@@ -293,7 +293,7 @@ StatusCode RootIoSvc::run(){
 
     // now find the top alg so we can monitor its error count
     //
-    IAlgManager* theAlgMgr;
+    IAlgManager* theAlgMgr =0 ;
     status = serviceLocator( )->getService( "ApplicationMgr",
         IID_IAlgManager,
         (IInterface*&)theAlgMgr );

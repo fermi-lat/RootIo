@@ -1,6 +1,12 @@
 
 #include "RootIo/FhCmtConfig.h"
+
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
 #include <sstream>
+#endif
+
 #include <string>
 #include <cstdio>
 
@@ -63,40 +69,48 @@ void FhCmtConfig::store( FileHeader * header ) const {
 }
 
 void FhCmtConfig::rawToMap() {
+    
+    unsigned int buffer_size  ;
+    char * buffer  ;
 
     // cmt show uses
     m_mapUses.DeleteAll() ;
-    std::istringstream isUses(m_rawUses.Data()) ;
-    TString lineUses ;
     m_useHierarchy = "" ;
+    std::istringstream isUses(m_rawUses.Data()) ;
+    buffer_size = m_rawUses.Length()+1 ;
+    buffer = new char [buffer_size] ;
+    int step = 0 ;
     TRegexp expHierarchy("^# *use") ;
-    while ((lineUses.ReadLine(isUses))&&
-           (lineUses.Index(expHierarchy)>0)) {
-        lineUses.Remove(0,2) ;
-        m_useHierarchy += lineUses ;
-    }
-    //
     TRegexp expComment("^#") ;
-    while (lineUses.ReadLine(isUses)&&(lineUses.Index(expComment)>0)) {
+    while (isUses.getline(buffer,buffer_size)) {
+        TString lineUses(buffer) ;
+        if ((step==0)&&(lineUses.Index(expHierarchy)>0))) {
+            lineUses.Remove(0,2) ;
+            m_useHierarchy += lineUses ;
+        } else if ((step<2)&&(lineUses.Index(expComment)>0))) {
+            step = 1 ;
+        } else {
+            step = 2 ;
+            std::istringstream cmtUse(buffer) ;
+            std::string name, value, tmp ;
+            cmtUse>>tmp>>name>>value ;
+            while (cmtUse>>tmp) {
+              value += " " ;
+              value += tmp ;
+            }
+            m_mapUses.add(name.c_str(),value.c_str()) ;
+        }       
     }
-    //
-    while (lineUses.ReadLine(isUses)) {
-        std::istringstream cmtUse(lineUses.Data()) ;
-        std::string name, value, tmp ;
-        cmtUse>>tmp>>name>>value ;
-        while (cmtUse>>tmp) {
-            value += " " ;
-            value += tmp ;
-        }
-        m_mapUses.add(name.c_str(),value.c_str()) ;
-    }
+    delete [] buffer ;
+    buffer = 0 ;
 
     // cmt show macros
     m_mapMacros.DeleteAll() ;
     std::istringstream isMacros(m_rawMacros.Data()) ;
-    TString lineMacros ;
-    while (lineMacros.ReadLine(isMacros)) {
-        std::string cmtMacro(lineMacros.Data()) ;
+    buffer_size = m_rawMacros.Length()+1 ;
+    buffer = new char [buffer_size] ;
+    while (isMacros.getline(buffer,buffer_size)) {
+        std::string cmtMacro(buffer) ;
         std::string::size_type pos = cmtMacro.find('=') ;
         if (pos!=std::string::npos) {
             std::string name = cmtMacro.substr(0,pos) ;
@@ -104,6 +118,8 @@ void FhCmtConfig::rawToMap() {
             m_mapMacros.add(name.c_str(),value.c_str()) ;
         }
     }
+    delete [] buffer ;
+    buffer = 0 ;
 }
 
 void FhCmtConfig::getPackageNames( TRegexp exp, TCollection & names ) const {

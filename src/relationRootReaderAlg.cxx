@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.14 2004/09/15 04:19:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.15 2004/09/24 19:14:05 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -152,7 +152,8 @@ StatusCode relationRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
 
-    if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
+     m_rootIoSvc = 0 ;
+   if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;

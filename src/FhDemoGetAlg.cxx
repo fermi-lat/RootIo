@@ -11,22 +11,27 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-#include <sstream>
 #include <string>
 #include "TOrdCollection.h"
 
-/** @class testFhGetAlg
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
+#include <sstream>
+#endif
+
+/** @class FhDemoCaloSetAlg
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/testFhAlg.cxx,v 1.2 2004/09/17 12:38:43 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoCaloSetAlg.cxx,v 1.1 2004/10/07 12:15:16 chamont Exp $
  */
 
-class testFhGetAlg : public Algorithm
+class FhDemoCaloSetAlg : public Algorithm
 {	
 public:
     
-    testFhGetAlg(const std::string& name, ISvcLocator* pSvcLocator);
+    FhDemoCaloSetAlg(const std::string& name, ISvcLocator* pSvcLocator);
     
     StatusCode initialize();
    
@@ -42,16 +47,16 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<testFhGetAlg>  Factory;
-const IAlgFactory& testFhGetAlgFactory = Factory;
+static const AlgFactory<FhDemoCaloSetAlg>  Factory;
+const IAlgFactory& FhDemoCaloSetAlgFactory = Factory;
 
 
-testFhGetAlg::testFhGetAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
+FhDemoCaloSetAlg::FhDemoCaloSetAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator)
 {
 }
 
-StatusCode testFhGetAlg::initialize()
+StatusCode FhDemoCaloSetAlg::initialize()
 {
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
@@ -67,7 +72,7 @@ StatusCode testFhGetAlg::initialize()
     
 }
 
-StatusCode testFhGetAlg::execute()
+StatusCode FhDemoCaloSetAlg::execute()
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
@@ -75,7 +80,7 @@ StatusCode testFhGetAlg::execute()
     return sc;
 }
 
-StatusCode testFhGetAlg::finalize()
+StatusCode FhDemoCaloSetAlg::finalize()
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
@@ -107,7 +112,7 @@ StatusCode testFhGetAlg::finalize()
     return sc;
 }
 
-StatusCode testFhGetAlg::finalize_common(
+StatusCode FhDemoCaloSetAlg::finalize_common(
     MsgStream & log, const std::string & prefix, const FileHeader * header ) {
     
     if (!header) return StatusCode::SUCCESS ;

@@ -19,8 +19,13 @@
 #include <GaudiKernel/SmartDataPtr.h>
 
 #include <vector>
-#include <sstream>
 #include <cstdio>
+
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
+#include <sstream>
+#endif
 
 static const AlgFactory<FhSetAlg> Factory ;
 const IAlgFactory& FhSetAlgFactory = Factory ;

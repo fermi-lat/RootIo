@@ -4,7 +4,13 @@
 #include <GaudiKernel/IJobOptionsSvc.h>
 #include <GaudiKernel/Property.h>
 #include <iostream>
+
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
 #include <sstream>
+#endif
+
 #include <string>
 
 FhJobOptions::FhJobOptions() {
@@ -20,8 +26,8 @@ void FhJobOptions::init( const FileHeader * header ) {
 
 void FhJobOptions::init( ISvcLocator * svcLocator ) {
     m_raw = "" ;
-    IService * joSvc ;
-    IJobOptionsSvc * joInt ;
+    IService * joSvc =0 ;
+    IJobOptionsSvc * joInt =0 ;
     StatusCode joSc ;
     joSc = svcLocator->getService("JobOptionsSvc",joSvc,true) ;
     if (joSc.isSuccess()) {
@@ -72,12 +78,13 @@ void FhJobOptions::rawToMap() {
     // whitespaces
     m_map.DeleteAll() ;
     std::istringstream is(m_raw.Data()) ;
-    std::string name, value, line1 ;
+    unsigned int buffer_size = m_raw.Length()+1  ;
+    char * buffer = new char [buffer_size] ;
+    std::string name, value ;
     const char * c1,* line2 ;
     char * c2 ;
-    TString line ;
-    while (line.ReadLine(is)) {
-        line1 = line.Data() ;
+    while (is.getline(buffer,buffer_size) {
+        std::string line1(buffer) ;
         c1 = line1.data() ;
         line2 = c2 = new char [(line1.size()+1)] ;
         bool closed = true ;
@@ -126,6 +133,8 @@ void FhJobOptions::rawToMap() {
             m_map.add(name.c_str(),value.c_str()) ;
         }
     }
+    delete [] buffer ;
+    buffer = 0 ;
 }
 
 void FhJobOptions::getNames( TRegexp exp, TCollection & names ) const {

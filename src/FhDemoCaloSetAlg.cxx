@@ -1,5 +1,5 @@
 
-#include "src/testCaloFhSetAlg.h"
+#include "src/FhDemoCaloSetAlg.h"
 #include "RootIo/FhTool.h"
 
 #include "Event/TopLevel/Event.h"
@@ -15,10 +15,10 @@
 
 #include <cstdio>
 
-static const AlgFactory<testCaloFhSetAlg> Factory ;
-const IAlgFactory& testCaloFhSetAlgFactory = Factory ;
+static const AlgFactory<FhDemoCaloSetAlg> Factory ;
+const IAlgFactory& FhDemoCaloSetAlgFactory = Factory ;
 
-StatusCode testCaloFhSetAlg::finalize() {
+StatusCode FhDemoCaloSetAlg::finalize() {
     
     MsgStream log(msgSvc(),name()) ;
     StatusCode sc ;
@@ -43,16 +43,16 @@ StatusCode testCaloFhSetAlg::finalize() {
 	return StatusCode::SUCCESS ;
 }
     
-testCaloFhSetAlg::testCaloFhSetAlg
+FhDemoCaloSetAlg::FhDemoCaloSetAlg
 ( const std::string& name, ISvcLocator* pSvcLocator)
 :  Algorithm(name, pSvcLocator) {
 }
 
-StatusCode testCaloFhSetAlg::initialize() {
+StatusCode FhDemoCaloSetAlg::initialize() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode testCaloFhSetAlg::execute() {
+StatusCode FhDemoCaloSetAlg::execute() {
 	return StatusCode::SUCCESS ;
 }
     
