@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator: H. Kelly
 
+ v4r7p1 20-Jun-2002 HMK Terminate nicely if we reach the end of a ROOT
+        file during reading\n
  v4r7   17-Jun-2002 HMK Update MC Writing & Reading for Particle Id 
         in McPositionHit\n
  v4r6p1 13-Jun-2002 HMK Make AcdRecon use private for test routine\n
