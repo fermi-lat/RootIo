@@ -11,7 +11,7 @@
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
 #include "Event/Recon/TkrRecon/TkrPatCandCol.h"
 #include "Event/Recon/TkrRecon/TkrFitTrackCol.h"
-#include "Event/Recon/TkrRecon/TkrVertexCol.h"
+#include "Event/Recon/TkrRecon/TkrVertex.h"
 
 #include "Event/Recon/CalRecon/CalCluster.h"
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
@@ -32,7 +32,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.8 2002/05/23 17:31:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.9 2002/05/24 20:55:49 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -423,9 +423,16 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
     // Loop over the candidate tracks in the TDS
     int                     vtxId  = 0;
+#if 0 // old code, non-standard STL style to access TkrVertex colection (mod by THB)
     while(vtxId < verticesTds->getNumVertices())
     {
         Event::TkrVertex*   vtxTds = verticesTds->getVertex(vtxId);
+#else // new code, using STL. (note that the const is not allowed by the non-STL style for TkrFitTrack
+    for( Event::TkrVertexCol::const_iterator vit = verticesTds->begin(); 
+            vit != verticesTds->end(); ++vit, ++ vtxId){
+        /*const*/ Event::TkrVertex* vtxTds = *vit;
+#endif  // of change for new TrkVertex.
+
         TkrVertex*          vtx = new TkrVertex();
         TVector3            pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
         TVector3            dir(vtxTds->getDirection().x(),vtxTds->getDirection().z(),vtxTds->getDirection().z());
@@ -452,6 +459,7 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
         // Now add the track ids 
         // This is pretty ugly because we don't store track ids in the TDS classes
+
         Event::TkrFitColPtr vtxTrkIter = vtxTds->getTrackIterBegin();
         while(vtxTrkIter != vtxTds->getTrackIterEnd())
         {
