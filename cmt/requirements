@@ -1,11 +1,11 @@
 package RootIo
 version v13r1
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.112 2004/12/02 19:57:31 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.113 2004/12/14 23:02:08 heather Exp $
 
 branches src doc
 
-use Event v9r*
+use Event v10r*
 use ROOT v2r* IExternal
 
 apply_pattern packageShr
@@ -13,7 +13,7 @@ apply_pattern package_include
 
 use mcRootData v2r* -no_auto_imports
 use digiRootData v7r* -no_auto_imports
-use reconRootData v4r* -no_auto_imports
+use reconRootData v5r* -no_auto_imports
 use commonRootData v1r* -no_auto_imports
 
 use rootTestData v*
