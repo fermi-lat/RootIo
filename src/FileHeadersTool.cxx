@@ -119,7 +119,11 @@ StatusCode FileHeadersTool::writeHeader( TFile * file,
   FileHeader * header ) {
 	
     static TFile * oldFile = 0 ;
-    if ( file != oldFile ) {
+	if (!header) {
+        MsgStream log(msgSvc(),name()) ;
+	    log<<MSG::WARNING<<"No file header found"<<endreq ;
+	}
+    else if ( file != oldFile ) {
     	
         oldFile = file ;
 
@@ -147,8 +151,7 @@ StatusCode FileHeadersTool::readHeader( TFile * file,
 	    TObject * object = file->Get("header") ;
 	    if (!object) {
             MsgStream log(msgSvc(),name()) ;
-	        log<<MSG::WARNING<<"Failed to get the file header"<<endreq ;
-	    	return StatusCode::FAILURE ;
+	        log<<MSG::WARNING<<"No file header found"<<endreq ;
 	    }
 	    else { 
             delete header ;
