@@ -2,7 +2,8 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
-
+ 
+ v9r4p0  29-Sep-2003 HMK Fix up test 
  v9r4    28-Sep-2003 HMK Add AutoSave property to RootIoSvc used by writer routines
  v9r3p4  01-Sep-2003 HMK Fix TFile checking so that error is reported when necessary
  v9r3p3  28-Aug-2003 HMK Fix run num setting in mcRootReaderAlg
