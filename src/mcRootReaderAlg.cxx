@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.4 2002/05/10 05:27:33 richard Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.5 2002/05/13 18:43:43 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -250,6 +250,10 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         HepLorentzVector finalMomTds(finalMomRoot.X(), finalMomRoot.Y(), 
             finalMomRoot.Z(), finalMomRoot.T());
 
+        TVector3 initPosRoot = pRoot->getInitialPosition();
+        HepPoint3D initPosTds(initPosRoot.X(), 
+            initPosRoot.Y(), initPosRoot.Z());
+
         TVector3 finalPosRoot = pRoot->getFinalPosition();
         HepPoint3D finalPosTds(finalPosRoot.X(), 
             finalPosRoot.Y(), finalPosRoot.Z());
@@ -268,12 +272,21 @@ StatusCode mcRootReaderAlg::readMcParticles() {
                 log << MSG::INFO << "Failed to find the McParticle in the"
                     << " map!!" << endreq;
             }
-
+        } else {
+            static bool warn = false;
+            if (!warn) {
+                log << MSG::WARNING << "Cannot read in mother McParticles using "
+                    << "ROOT 3.02.07 \n" 
+                    << "Setting all McParticle mother pointers to"
+                    << " point at themselves" << endreq;
+                warn = true;
+            }
+            momTds = pTds;
         }
 
         // Setup the TDS version fo the McParticle
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
-            finalMomTds, finalPosTds);
+            finalMomTds, initPosTds, finalPosTds);
 
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
