@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v14r4     26-Jan-2005 LSR mods for TkrCluster, add ClusterMap generation
  v14r3     26-Jan-2005 HMK Fix up use of Long64_t for ROOT4
  v14r2     25-Jan-2005 HMK prepare for ROOT4
  v14r1p0   06-Jan-2005 HMK Modify unit test ROOT files
