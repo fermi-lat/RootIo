@@ -19,22 +19,22 @@
 *  Specifies the split level when writing the TTree, default 1
 * @param mcRootWriterAlg.bufferSize
 * @param mcRootWriterAlg.compressionLevel
-* @param mcRootReaderAlg.mcRootFile
-*  Name of the input MC ROOT file
+* @param mcRootReaderAlg.mcRootFileList
+*  List of input MC ROOT file(s)
 * @param digiRootWriterAlg.digiRootFile
 *  Name of the output Digi ROOT file, default digi.root
 * @param digiRootWriter.splitMode
 * @param digiRootWriter.bufferSize
 * @param digiRootWriter.compressionLevel
-* @param digiRootReader.digiRootFile
-*  Name of the input Digi ROOT file
+* @param digiRootReader.digiRootFileList
+*  List of input Digi ROOT file(s)
 * @param reconRootWriterAlg.reconRootFile
 *  Name of the output Recon ROOT file
 * @param reconRootWriterAlg.splitMode
 * @param reconRootWriterAlg.bufferSize
 * @param reconRootWriterAlg.compressionLevel
-* @param reconRootReaderAlg.reconRootFile
-*  Name of the input Recon ROOT file, default recon.root
+* @param reconRootReaderAlg.reconRootFileList
+*  List of input Recon ROOT file(s), default recon.root
 *
 * @section Tests Tests
 * This package contains one test application, test_RootIo.

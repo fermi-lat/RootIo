@@ -13,7 +13,7 @@ ApplicationMgr.ExtSvc += { "RootIoSvc" };
 ApplicationMgr.Runable= "RootIoSvc";
 
 reconRootReaderAlg.OutputLevel = 3;
-reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
+reconRootReaderAlg.reconRootFileList = {"$(ROOTIOROOT)/recon.root"};
 
 
 //==============================================================
