@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed May 22 17:39:00 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+update to use CalRecon and TkrRecon for testing
+    *
+------------------------------------------------------------
 User: heather  Tue May 21 15:41:44 PDT 2002
 RootIo/doc
 
