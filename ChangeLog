@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 27 16:50:36 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+remove RootPolicy and update Root package versions
+    *
+------------------------------------------------------------
 User: heather  Tue Aug 27 15:07:25 PDT 2002
 RootIo/cmt
 
