@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.3 2003/08/25 18:47:38 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.4 2003/09/28 05:23:05 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -27,7 +27,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.3 2003/08/25 18:47:38 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.4 2003/09/28 05:23:05 heather Exp $
 */
 
 // includes
@@ -35,6 +35,7 @@
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
+#include "TSystem.h"
 
 //forward declarations
 template <class TYPE> class SvcFactory;
@@ -162,6 +163,12 @@ StatusCode RootIoSvc::initialize ()
 
     incsvc->addListener(this, "BeginEvent", 100);
     incsvc->addListener(this, "EndEvent", 0);
+
+    // Tell ROOT to reset signals to their default behavior
+    gSystem->ResetSignal(kSigBus); 
+    gSystem->ResetSignal(kSigSegmentationViolation); 
+    gSystem->ResetSignal(kSigIllegalInstruction); 
+    gSystem->ResetSignal(kSigFloatingException);  
 
     return StatusCode::SUCCESS;
 }
