@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.6 2002/05/14 21:01:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.7 2002/06/06 16:03:18 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -204,7 +204,7 @@ StatusCode mcRootReaderAlg::readMcEvent() {
 
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
-    if (runIdTds != runIdTds) evt->setRun(runIdRoot);
+    if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
 
     return sc;
 }
