@@ -3,9 +3,6 @@ version v4r3
 
 branches src doc
 
-apply_pattern packageShr
-
-
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
@@ -13,6 +10,8 @@ use mcRootData v2r2
 use digiRootData v3r4
 use reconRootData v3r0p2
 use GlastPolicy v4r*
+
+apply_pattern packageShr
 
 # uses for test program: make private here 
 private
