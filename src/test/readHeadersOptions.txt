@@ -1,0 +1,41 @@
+//##############################################################
+//
+// Job options file for RootIo test
+//
+
+ApplicationMgr.DLLs   = { "GlastSvc"};
+
+ApplicationMgr.ExtSvc = { 
+    "GlastEventSelector/EventSelector" , 
+    "EventCnvSvc", 
+    "GlastDetSvc" 
+    };
+
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventSelector.Input = "NONE";
+
+// Stuff for detModel
+GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
+// select one of the following for a top volume 
+GlastDetSvc.topVolume="LAT";         // the whole schebang 
+
+
+ApplicationMgr.DLLs +=    { "RootIo" };
+//ApplicationMgr.ExtSvc += { "RootIoSvc" };
+//// controls the event loop
+//ApplicationMgr.Runable= "RootIoSvc";
+
+ApplicationMgr.TopAlg +=  {
+    "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg",
+    "testFileHeadersSetAlg" };
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi-fake.root";
+reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon-fake.root";
+
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+
