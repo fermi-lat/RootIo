@@ -1,5 +1,5 @@
 package RootIo
-version v4r6
+version v4r6p1
 
 branches src doc
 
@@ -19,10 +19,13 @@ use FluxSvc v5r*
 use AcdDigi v1r*
 use TkrDigi v1r*
 use CalDigi v1r*
-use AcdRecon v0r*
 use CalRecon v5r*
 use TkrRecon v6r*
 
+private
+use AcdRecon v0r*
+
+public
 
 apply_pattern packageShr
 
