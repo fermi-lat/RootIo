@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sun Sep 28 16:54:15 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+fix up use of RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Sun Sep 28 16:50:26 PDT 2003
 RootIo/cmt
 
