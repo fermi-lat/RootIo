@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r5p7 10-Aug-2004 HMK Remove use of RootPolicy - does not appear to be 
+         necessary
  v12r5p6 04-Aug-2004 HMK Register the eventsummary obj on TDS when reading
  v12r5p5 04-Aug-2004 HMK Fixed if statement bugs inRootIoSvc when checking
          indices against GetEntries()  was causing grief in FRED.
