@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.14 2002/08/08 16:05:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.15 2002/09/13 16:21:34 burnett Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -330,6 +330,31 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         // Setup the TDS version fo the McParticle
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
             finalMomTds, initPosTds, finalPosTds, pRoot->getProcess() );
+
+		// Process the list of daughters
+		const TRefArray daughterArr = pRoot->getDaughterList();
+		McParticle *daughterPartRoot;
+		unsigned int iPart;
+		for (iPart = 0; iPart < daughterArr.GetEntries(); iPart++) {
+			daughterPartRoot = (McParticle*)daughterArr.At(iPart);
+			if (!daughterPartRoot) {
+				static bool warn = false;
+				if (!warn) {
+					log << MSG::WARNING << "Cannot read in TRef with ROOT 3.02.07"
+					" McParticle daughter list is unavailable" << endreq;
+					warn = true;
+				}
+			} else {
+				if (m_particleMap.find(daughterPartRoot->GetUniqueID()) != m_particleMap.end()) {
+					Event::McParticle* partTds = m_particleMap[daughterPartRoot->GetUniqueID()];
+					pTds->addDaughter(partTds);
+				} else {
+					log << MSG::WARNING << "failed to find McParticle daughter in the"
+						<< " map!" << endreq;
+				}
+			}
+			
+		}
 
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
