@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.33 2004/07/06 21:54:09 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34 2004/07/06 22:10:34 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -177,6 +177,7 @@ StatusCode reconRootReaderAlg::initialize()
       }
 	  f.Close();
 	  m_reconTree->Add(m_fileName.c_str());
+          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
@@ -188,9 +189,10 @@ StatusCode reconRootReaderAlg::initialize()
           log << MSG::ERROR << "ROOT file " << theFile.c_str()
               << " could not be opened for reading." << endreq;
           return StatusCode::FAILURE;
-       }
-		f.Close();
-	   m_reconTree->Add(theFile.c_str());
+        }
+        f.Close();
+        m_reconTree->Add(theFile.c_str());
+        log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
       }
     }
 

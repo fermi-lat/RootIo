@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.12 2004/07/06 21:54:09 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.13 2004/07/06 22:10:34 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -176,6 +176,7 @@ StatusCode relationRootReaderAlg::initialize()
       }
 	  f.Close();
 	  m_relTree->Add(m_fileName.c_str());
+          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
@@ -188,8 +189,9 @@ StatusCode relationRootReaderAlg::initialize()
               << " could not be opened for reading." << endreq;
           return StatusCode::FAILURE;
         }
-		f.Close();
-	    m_relTree->Add(theFile.c_str());
+        f.Close();
+        m_relTree->Add(theFile.c_str());
+        log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
      }
     }
 
