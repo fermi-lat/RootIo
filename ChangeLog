@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr  6 09:16:26 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use MB rather than bytes of MaxTreeSize JO param
+    *
+------------------------------------------------------------
 User: heather  Wed Apr  6 09:16:11 PDT 2005
 RootIo/doc
 
