@@ -29,7 +29,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header$
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -169,10 +169,13 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     if (!particles) return sc;
     TIter partIter(particles);
 
-    //SmartDataPtr<mc::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
     // create the TDS location for the McParticle Collection
     mc::McParticleCol* pTdsCol = new mc::McParticleCol;
-    eventSvc()->registerObject(EventModel::MC::McParticleCol, pTdsCol);
+    sc = eventSvc()->registerObject(EventModel::MC::McParticleCol, pTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register McParticle Collection" << endreq;
+        return sc;
+    }
 
     McParticle *pRoot;
     // Create the map of ROOT unique ids and TDS McParticle objects
@@ -205,7 +208,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         TVector3 finalPosRoot = pRoot->getFinalPosition();
         HepPoint3D finalPosTds(finalPosRoot.X(), finalPosRoot.Y(), finalPosRoot.Z());
 
-        McParticle *momRoot = pRoot->getMother();
+        const McParticle *momRoot = pRoot->getMother();
 
         mc::McParticle *momTds = 0;
 
@@ -249,7 +252,11 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
 
     // create the TDS location for the McParticle Collection
     McPositionHitVector* pTdsCol = new McPositionHitVector;
-    eventSvc()->registerObject(EventModel::MC::McPositionHitCol, pTdsCol);
+    sc = eventSvc()->registerObject(EventModel::MC::McPositionHitCol, pTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register McPositionHit Collection" << endreq;
+        return sc;
+    }
 
     const McPositionHit *posHitRoot;
     while (posHitRoot = (McPositionHit*)hitIter.Next()) {
@@ -305,8 +312,6 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
-    //SmartDataPtr<McIntegratingHitVector> intHits(eventSvc(), EventModel::MC::McIntegratingHitCol);
     
     const TObjArray *intHits = m_mcEvt->getMcIntegratingHitCol();
     if (!intHits) return sc;
@@ -314,7 +319,11 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
 
     // create the TDS location for the McParticle Collection
     McIntegratingHitVector* pTdsCol = new McIntegratingHitVector;
-    eventSvc()->registerObject(EventModel::MC::McIntegratingHitCol, pTdsCol);
+    sc = eventSvc()->registerObject(EventModel::MC::McIntegratingHitCol, pTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register McIntegratingHit" << endreq;
+        return sc;
+    }
 
     const McIntegratingHit *intHitRoot;
     while (intHitRoot = (McIntegratingHit*)hitIter.Next()) {
@@ -346,18 +355,16 @@ void mcRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId,
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
     //     in the ROOT class.  The idents::VolumeIdentifier class stores the
     //     data in one 64 bit word.  We must convert from the two 32 bit words
-    //     into the 64 bit word.
-    // Input:  ROOT volumeIdentifier
+    //     into the 64 bit word.  We perform the conversion by iterating over
+    //     all of the ids in the ROOT VolumeIdentifier and appending them to
+    //     the TDS idents::VolumeIdentifier.
+    // Input:  ROOT VolumeIdentifier
     // Ouput:  idents::VolumeIdentifier
 
-    UInt_t bits0to31 = rootVolId.getBits0to31();
-    UInt_t bits32to63 = rootVolId.getBits32to63();
-
-    idents::VolumeIdentifier::int64 val = 0;
-    val = bits32to63 << 32;
-    idents::VolumeIdentifier::int64 temp = bits0to31;
-    val |= temp;
-    tdsVolId.init(val, rootVolId.size());
+    unsigned int index;
+    for (index = 0; index < rootVolId.size(); index++) {
+        tdsVolId.append(rootVolId.operator [](index));
+    }
 
 }
 

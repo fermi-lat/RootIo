@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header$
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -363,7 +363,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         McIntegratingHit *mcIntHit = new McIntegratingHit();
 
         // Setup the ROOT McIntegratingHit
-        mcIntHit->initialize(idRoot, e, moment1Root, moment2Root);
+        mcIntHit->initialize(idRoot);// e, moment1Root, moment2Root);
 
         /*
         // Can't use typedef for energyDepositMap - need the mc namespace
@@ -392,23 +392,18 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
 void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
                      VolumeIdentifier& rootVolId) 
 {
-    
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
     //     in the ROOT class.  Hence, we must convert the 64 bit representation
     //     used in the idents::VolumeIdentifier class into two 32 bit UInt_t.
-    //     This is done by creating two 64 bit masks, which will extract those
-    //     bits of interest.  The bits are stored in two UInt_t passed to the
-    //     ROOT VolumeIdentifier::initialize method.
-
-    // Two 64 bit masks
-    static idents::VolumeIdentifier::int64 mask0to31 = 0x00000000ffffffff;
-    static idents::VolumeIdentifier::int64 mask32to63 = 0xffffffff00000000;
-
-    UInt_t bits0to31 = (idents::VolumeIdentifier::int64(tdsVolId) & mask0to31);
-    UInt_t bits32to63 = 
-        (idents::VolumeIdentifier::int64(tdsVolId) & mask32to63) >> 32;
-
-    rootVolId.initialize(bits0to31, bits32to63, tdsVolId.size());
+    //     To perform the conversion, we iterate over all the ids in the TDS
+    //     version of the idents::VolumeIdentifier and append each to the ROOT
+    //     VolumeIdentifier
+    
+    unsigned int index;
+    rootVolId.Clear();
+    for (index = 0; index < tdsVolId.size(); index++) {
+        rootVolId.append(tdsVolId.operator [](index));
+    }
 }
 
 
