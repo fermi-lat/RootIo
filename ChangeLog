@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon May 24 11:56:50 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+replace GetEntryByIndex with GetEntryNumberByIndex
+    *
+------------------------------------------------------------
 User: heather  Mon May 24 11:56:10 PDT 2004
 RootIo/cmt
 
