@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  6 05:43:19 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+fix enum usage for Linux
+    *
+------------------------------------------------------------
 User: burnett  Wed Jun  5 14:33:43 PDT 2002
 RootIo/doc
 
