@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r6p0  12-Jan-2004 HMK Use TTree::GetCurrentFile to get TFile ptr when doing cd
  v9r6    09-Jan-2004 HMK Make GlastSvc use private
  v9r5p1  16-Dec-2003 HMK Read CalXtal positions - thanks Leon
  v9r5p0  17-Oct-2003 LSR read/write TKR ToT
