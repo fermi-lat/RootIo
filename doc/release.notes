@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r2p2   06-Apr-2005 HMK Listen to Anders..make default 25 GB for trees
  v15r2p1   06-Apr-2005 HMK used my thinking cap and assume the JO param for
            MaxTreeSize is in MB rather than bytes
  v15r2p0   05-Apr-2005 HMK Set default tree size to 10 GB
