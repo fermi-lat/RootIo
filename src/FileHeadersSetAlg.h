@@ -24,7 +24,7 @@
  * @brief Prepare the common attributes and set them in available headers.
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FileHeadersSetAlg.h,v 1.1 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FileHeadersSetAlg.h,v 1.2 2004/08/10 14:47:42 chamont Exp $
  */
 
 class FileHeadersSetAlg : public Algorithm {	
@@ -41,6 +41,12 @@ public:
     
     /// prepare the common attributes and set them in available headers
     StatusCode finalize();
+
+private:
+	/// provide a local popen method to handle both linux and windows
+	FILE* popen(const char* command, const char *mode);
+	/// provide a local pclose method to handle both linux and windows
+	int pclose(FILE* fp);
     
 } ;
 
