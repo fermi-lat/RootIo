@@ -13,6 +13,11 @@
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
+#include "Event/Recon/CalRecon/CalCluster.h"   
+#include "Event/Recon/CalRecon/CalXtalRecData.h"   
+  
+#include "Event/Recon/AcdRecon.h"
+
 #include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
@@ -29,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.15 2002/06/06 16:03:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.16 2002/06/11 19:36:44 usher Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -64,6 +69,16 @@ private:
     /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
     /// ROOT object
     StatusCode writeCalRecon();
+
+    /// Retrieves the CalCluster collection from the TDS and fills the ROOT    
+    /// collection   
+    void fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds);   
+    
+    /// Retrieves the CalXtalRecData collection from the TDS and fills the ROOT   
+    /// xtal collection   
+    void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds); 
+
+    StatusCode writeAcdRecon();
 
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -174,6 +189,12 @@ StatusCode reconRootWriterAlg::execute()
         log << MSG::ERROR << "Failed to write Cal Recon Data" << endreq;
         return sc;
     }
+
+    sc = writeAcdRecon();
+        if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write Acd Recon Data" << endreq;
+        return sc;
+    }
    
     writeEvent();
     return sc;
@@ -199,7 +220,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     evtTds->fillStream(log.stream());
     log << endreq;
 
-    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon);
+    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon);
 
     return sc;
 }
@@ -483,11 +504,140 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
 
 StatusCode reconRootWriterAlg::writeCalRecon() {
-    // Purpose and Method:  Retrieve the Cal Recon data from the TDS
+    // Purpose and Method:  Retrieve the Cal Recon data from the TDS 
+    //  calls the two helper methods that do the work of filling the ROOT    
+    //  version of the CalRecon object for this event. 
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
+    // Get pointer to CalRecon part of ReconEvent   
+     CalRecon* calRec = m_reconEvt->getCalRecon();   
+     if (!calRec) return StatusCode::FAILURE;   
+     calRec->initialize();   
+        
+     // Retrieve the cal cluster collection   
+     SmartDataPtr<Event::CalClusterCol> clusterColTds(eventSvc(), EventModel::CalRecon::CalClusterCol);   
+     if (clusterColTds) fillCalCluster(calRec, clusterColTds);   
+    
+     // Retrieve the cal xtal collection   
+     SmartDataPtr<Event::CalXtalRecCol> xtalColTds(eventSvc(), EventModel::CalRecon::CalXtalRecCol);   
+     if (xtalColTds) fillCalXtalRec(calRec, xtalColTds); 
+
+
+    return sc;
+}
+
+void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds) {   
+    // Purpose and Method:  Given the CalCluster collection from the TDS, we fill the ROOT   
+    //  CalCluster collection.   
+    
+    unsigned int numClusters = clusterColTds->num();   
+    unsigned int iCluster;   
+    for (iCluster = 0; iCluster < numClusters; iCluster++) {   
+        Event::CalCluster *clusterTds = clusterColTds->getCluster(iCluster);   
+        Point posTds = clusterTds->getPosition();   
+        TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
+        
+        CalCluster *clusterRoot = new CalCluster(   
+            clusterTds->getEnergySum(), posRoot);   
+        
+        Vector dirTds = clusterTds->getDirection();   
+        TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());   
+        
+        std::vector<Vector> posLayerTds = clusterTds->getPosLayer();   
+        std::vector<Vector> rmsLayerTds = clusterTds->getRmsLayer();   
+        std::vector<TVector3> posLayerRoot;   
+        std::vector<Vector>::const_iterator tdsIt;   
+        for (tdsIt = posLayerTds.begin(); tdsIt != posLayerTds.end(); tdsIt++) {   
+            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
+            posLayerRoot.push_back(curVec);   
+        }   
+        std::vector<TVector3> rmsLayerRoot;   
+        for (tdsIt = rmsLayerTds.begin(); tdsIt != rmsLayerTds.end(); tdsIt++) {   
+            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
+            rmsLayerRoot.push_back(curVec);   
+        }   
+        
+        clusterRoot->initialize(clusterTds->getEnergyLeak(),    
+            clusterTds->getEneLayer(),   
+            posLayerRoot, rmsLayerRoot,    
+            clusterTds->getRmsLong(), clusterTds->getRmsTrans(),    
+            dirRoot, clusterTds->getTransvOffset());   
+        
+        clusterRoot->initProfile(clusterTds->getFitEnergy(),    
+            clusterTds->getProfChisq(), clusterTds->getCsiStart(),   
+            clusterTds->getCsiAlpha(), clusterTds->getCsiLambda());   
+        
+        calRec->addCalCluster(clusterRoot);   
+    }   
+    
+    return;   
+}   
+
+void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds) {   
+    // Purpose and Method:  Given the CalXtalRecData collection from the TDS,   
+    //   this method fills the ROOT CalXtalRecData collection.   
+    
+    Event::CalXtalRecCol::const_iterator xtalTds;   
+    
+    for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {   
+        CalXtalRecData *xtalRoot = new CalXtalRecData();   
+        idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();   
+        idents::CalXtalId idTds = (*xtalTds)->getPackedId();   
+        CalXtalId idRoot;   
+        idRoot.init(idTds.getTower(), idTds.getLayer(), idTds.getColumn());   
+        if (modeTds == idents::CalXtalId::BESTRANGE) {   
+            xtalRoot->initialize(CalXtalId::BESTRANGE, idRoot);   
+            Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
+                (*xtalTds)->getRangeRecData(0);   
+            CalRangeRecData recRoot(   
+                xtalRangeTds->getRange(idents::CalXtalId::POS),    
+                xtalRangeTds->getEnergy(idents::CalXtalId::POS),    
+                xtalRangeTds->getRange(idents::CalXtalId::NEG),   
+                xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );   
+            Point posTds = xtalRangeTds->getPosition();   
+            TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
+            recRoot.initialize(posRoot);   
+            xtalRoot->addRangeRecData(recRoot);   
+        } else {   
+            xtalRoot->initialize(CalXtalId::ALLRANGE, idRoot);   
+            int range;   
+            for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {   
+                Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
+                    (*xtalTds)->getRangeRecData(range);   
+                CalRangeRecData recRoot(   
+                    xtalRangeTds->getRange(idents::CalXtalId::POS),    
+                    xtalRangeTds->getEnergy(idents::CalXtalId::POS),    
+                    xtalRangeTds->getRange(idents::CalXtalId::NEG),   
+                    xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );   
+                Point posTds = xtalRangeTds->getPosition();   
+                TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
+                recRoot.initialize(posRoot);   
+                xtalRoot->addRangeRecData(recRoot);   
+            }   
+            calRec->addXtalRecData(xtalRoot);   
+        }   
+    }   
+    
+    return;   
+} 
+
+
+StatusCode reconRootWriterAlg::writeAcdRecon() {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Get pointer to AcdRecon part of ReconEvent   
+    AcdRecon* acdRec = m_reconEvt->getAcdRecon();   
+    if (!acdRec) return StatusCode::FAILURE;
+    SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
+    if (!acdRecTds) return StatusCode::SUCCESS;
+    idents::AcdId acdIdTds = acdRecTds->getMinDocaId();
+    AcdId acdIdRoot(acdIdTds.layer(), acdIdTds.face(), acdIdTds.row(), acdIdTds.column());
+    acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getTileCount(),
+        acdRecTds->getGammaDoca(), acdRecTds->getDoca(), acdRecTds->getActiveDist(), acdIdRoot, 
+        acdRecTds->getRowDocaCol());
 
     return sc;
 }
