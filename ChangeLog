@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Apr  5 14:36:57 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+handle new 32bit evtsequence number in LDF
+    *
+------------------------------------------------------------
 User: heather  Tue Apr  5 14:34:02 PDT 2005
 RootIo/cmt
 
