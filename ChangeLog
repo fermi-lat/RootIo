@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Wed May 15 15:35:26 PDT 2002
+RootIo/src
+
+Modified Files:
+	readDigiRootOptions.txt 
+Added Files:
+	readReconiRootOptions.txt writeReconRootOptions.txt 
+Log Message:
+adding new recon ROOT algs
+    *
+------------------------------------------------------------
 User: heather  Wed May 15 15:31:34 PDT 2002
 RootIo/src/Dll
 
