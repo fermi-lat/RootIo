@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 21 16:37:29 PDT 2003
+RootIo/src
+
+Modified Files:
+	mainpage.h mcRootReaderAlg.cxx readDigiRootOptions.txt 
+	readMcRootOptions.txt readReconRootOptions.txt 
+	readRootOptions.txt reconRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx RootIoSvc.cxx 
+Log Message:
+update for random event access
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 21 16:33:30 PDT 2003
 RootIo/src/test
 
