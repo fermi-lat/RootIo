@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jun 10 17:38:25 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+add in VolId for AcdDigi
+    *
+------------------------------------------------------------
 User: heather  Mon Jun 10 17:36:37 PDT 2002
 RootIo/cmt
 
