@@ -11,7 +11,7 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-//#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/DiagnosticData.h"
 #include "EbfConverter/EventSummaryData.h"
 
 
@@ -35,7 +35,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.3 2003/11/25 05:42:12 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.4 2003/11/27 06:31:17 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -62,7 +62,7 @@ private:
     StatusCode writeEventSummary();
 
     /// Writes the EM Diagnostic data from TDS and fills the ROOT version
-    //StatusCode writeDiagnostic();
+    StatusCode writeDiagnostic();
 
     /// Retrieves ACD digitization data from the TDS and fill the AcdDigi
     /// ROOT collection
@@ -209,11 +209,11 @@ StatusCode digiRootWriterAlg::execute()
         return sc;
     }
   
-    /*sc = writeDiagnostic();
+    sc = writeDiagnostic();
     if (sc.isFailure()) { 
-        log << MSG::ERROR << "Failed to write diagnostic data" << endreq;
-        return sc;
-    }*/
+        log << MSG::INFO << "Failed to write diagnostic data" << endreq;
+        //return sc;
+    }
 
     sc = writeEventSummary();
     if (sc.isFailure()) {
@@ -272,7 +272,7 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     return sc;
 }
 
-/*
+
 StatusCode digiRootWriterAlg::writeDiagnostic() {
     // Purpose and Method:  Retrieve the Diagnostic object from the TDS and write the
     // CAL and TKR trigger primitives to ROOT
@@ -290,20 +290,20 @@ StatusCode digiRootWriterAlg::writeDiagnostic() {
     int ind;
     for (ind = 0; ind < numCalDiag; ind++){
         EbfConverterTds::CalDiagnosticData calDiagTds = diagTds->getCalDiagnosticByIndex(ind);
-        CalDiagnostic *calDiagRoot = m_digiEvt->addCalDiagnostic();
-        calDiagRoot->initialize(calDiagTds.dataWord(), calDiagTds.gccc(), calDiagTds.layer());
+        CalDiagnosticData *calDiagRoot = m_digiEvt->addCalDiagnostic();
+        calDiagRoot->initialize(calDiagTds.dataWord());
     }
 
     int numTkrDiag = diagTds->getNumTkrDiagnostic();
     for (ind = 0; ind < numTkrDiag; ind++) {
         EbfConverterTds::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
-        TkrDiagnostic *tkrDiagRoot = m_digiEvt->addTkrDiagnostic();
-        tkrDiagRoot->initialize(tkrDiagTds.triggerRequest(), tkrDiagTds.gtcc());
+        TkrDiagnosticData *tkrDiagRoot = m_digiEvt->addTkrDiagnostic();
+        tkrDiagRoot->initialize(tkrDiagTds.dataWord());
     }
 
     return sc;
 }
-*/
+
 
 
 StatusCode digiRootWriterAlg::writeAcdDigi() {
