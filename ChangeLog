@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 23:01:12 PST 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+handle luis' 3-in-a-row bits for each tower
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 23:00:52 PST 2004
 RootIo/src
 
