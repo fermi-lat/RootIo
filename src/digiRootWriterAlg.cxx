@@ -12,6 +12,7 @@
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
 //#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/EventSummaryData.h"
 
 
 #include "idents/CalXtalId.h"
@@ -34,7 +35,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.2 2003/11/19 07:55:35 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.3 2003/11/25 05:42:12 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -56,6 +57,9 @@ private:
 
     /// Retrieves event Id and run Id from TDS and fills the McEvent ROOT object
     StatusCode writeDigiEvent();
+
+    /// EM summary word
+    StatusCode writeEventSummary();
 
     /// Writes the EM Diagnostic data from TDS and fills the ROOT version
     //StatusCode writeDiagnostic();
@@ -211,6 +215,13 @@ StatusCode digiRootWriterAlg::execute()
         return sc;
     }*/
 
+    sc = writeEventSummary();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write diagnostic data" << endreq;
+        return sc;
+    }
+    
+
     writeEvent();
     return sc;
 }
@@ -241,6 +252,23 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     L1T levelOne(evtTds->trigger());
     m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
 
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeEventSummary() {
+    // Purpose and Method:  Retrieve the Event Summary Word from the TDS 	    //  and write it to ROOT
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Retrieve the Event Summary data for this event
+    SmartDataPtr<EbfConverterTds::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
+
+    if (!summaryTds) {
+      log << MSG::INFO << "No Event Summary Data found on TDS" << endreq;
+      return sc;
+    }
+    m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
     return sc;
 }
 
