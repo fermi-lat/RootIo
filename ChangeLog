@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Feb  1 16:39:14 PST 2005
+RootIo/doc
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	release.notes 
+Log Message:
+handle fromMc properly
+    *
+------------------------------------------------------------
 User: heather  Tue Feb  1 16:38:45 PST 2005
 RootIo/src
 
