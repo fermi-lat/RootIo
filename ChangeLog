@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 25 01:51:31 PST 2005
+RootIo/src
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	RootIoSvc.cxx digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+use Long64 as appropriate for ROOT4
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 25 01:51:15 PST 2005
 RootIo/RootIo
 
