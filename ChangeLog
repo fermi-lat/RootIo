@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  6 14:51:31 PDT 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+load the treeplayer and associated libraries to get BuildIndex to really run on Linux
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 14:50:31 PDT 2004
 RootIo/cmt
 
