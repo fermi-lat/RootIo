@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct  4 14:39:13 PDT 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+handle contribution lengths in LDF
+    *
+------------------------------------------------------------
 User: heather  Thu Sep 30 23:23:41 PDT 2004
 RootIo/src
 
