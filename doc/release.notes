@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v4r20p2 25-Oct-2002 HMK Fix 3 warnings in reconRootReaderAlg - it turns out the view\n
+          was not being set properly.\n
  v4r20p1 24-Oct-2002 HMK Do not even attempt to read in Daughter TRefs when \n
           using Root 3.02.07\n
  v4r20p0 21-Oct-2002 HMK update version of mcRootData to use TString\n
