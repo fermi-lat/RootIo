@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r6    09-Jan-2004 HMK Make GlastSvc use private
  v9r5p1  16-Dec-2003 HMK Read CalXtal positions - thanks Leon
  v9r5p0  17-Oct-2003 LSR read/write TKR ToT
  v9r5    13-Oct-2003 HMK Handle ACD ribbons ids in digi reading/writing
