@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r5p0em8 27-Jan-2004 HMK read/write ebf PPC registers for event sequencing
  v9r5p0em7 18-Dec-2003 HMK read/write ebf time
  v9r5p0em6 18-Dec-2003 HMK read/write EM diagnostic data
  v9r5p0em5 16-Dec-2003 HMK read in CalXtal positions - thanks Leon

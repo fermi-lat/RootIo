@@ -36,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.5 2003/12/18 22:15:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.6 2003/12/19 08:02:21 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -255,7 +255,8 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
 
     SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
     if (timeTds) {
-        m_digiEvt->setEbfTime(timeTds->timeSec(), timeTds->timeNanoSec());
+        m_digiEvt->setEbfTime(timeTds->timeSec(), timeTds->timeNanoSec(),
+                              timeTds->upperPpcTimeBaseWord(), timeTds->lowerPpcTimeBaseWord());
     }
 
     return sc;
