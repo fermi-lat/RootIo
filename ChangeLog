@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Tue Jun  4 02:40:13 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Fix a forgotten change needed to comply with new TkrRecon Containers.
+    *
+------------------------------------------------------------
 User: heather  Mon Jun  3 14:32:54 PDT 2002
 RootIo/cmt
 
