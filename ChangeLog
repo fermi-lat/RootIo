@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jun 18 07:48:54 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+add McParticle Id to McPositionHit
+    *
+------------------------------------------------------------
 User: heather  Tue Jun 18 06:53:34 PDT 2002
 RootIo/doc
 
