@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator: H. Kelly
 
+ v4r11  29-Aug-2002 HMK update reconRootData to include active distance collecton\n
  v4r10  27-Aug-2002 HMK updated version of Root packages - including bug fix for TkrCovMat in reconRootData\n
  v4r9p3 26-Aug-2002 HMK update versions of Root class packages - now uses RootPolicy\n
  v4r9p1 08-Aug-2002 HMK use new access methods in Event and mcRootData for
