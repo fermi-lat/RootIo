@@ -26,9 +26,9 @@ ApplicationMgr.ExtSvc += { "RootIoSvc" };
 ApplicationMgr.Runable= "RootIoSvc";
 
 ApplicationMgr.TopAlg +=  { "testRootIoSvcAlg", "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg"};
-mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc.root";
-digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi.root";
-reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon.root";
+mcRootReaderAlg.mcRootFile = "$(ROOTTESTDATAROOT)/data/default/mc.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTTESTDATAROOT)/data/default/digi.root";
+reconRootReaderAlg.reconRootFile = "$(ROOTTESTDATAROOT)/data/default/recon.root";
 
 
 //==============================================================
