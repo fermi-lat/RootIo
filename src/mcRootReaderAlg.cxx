@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.11 2002/07/09 13:16:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.12 2002/07/12 21:37:51 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -329,7 +329,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
 
         // Setup the TDS version fo the McParticle
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
-            finalMomTds, initPosTds, finalPosTds);
+            finalMomTds, initPosTds, finalPosTds, pRoot->getProcess() );
 
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
@@ -374,6 +374,12 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
 
         TVector3 exitRoot = posHitRoot->getExitPosition();
         HepPoint3D exitTds(exitRoot.X(), exitRoot.Y(), exitRoot.Z());
+
+        TVector3 globalEntryRoot = posHitRoot->getGlobalEntryPosition();
+        HepPoint3D globalEntryTds(globalEntryRoot.X(), globalEntryRoot.Y(), globalEntryRoot.Z());
+
+        TVector3 globalExitRoot = posHitRoot->getGlobalExitPosition();
+        HepPoint3D globalExitTds(globalExitRoot.X(), globalExitRoot.Y(), globalExitRoot.Z());
         
         double edepTds= posHitRoot->getDepositedEnergy();
         
@@ -383,6 +389,13 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         double tofTds = posHitRoot->getTimeOfFlight();
         posHitTds->setTimeOfFlight(tofTds);
               
+        const McParticle* mcPartRoot = posHitRoot->getMcParticle();
+        Event::McParticle *mcPartTds = 0;
+        if (mcPartRoot != 0) {
+            mcPartTds = m_particleMap[mcPartRoot->GetUniqueID()];
+            posHitTds->setMcParticle(mcPartTds);
+        }
+
         const McParticle *originRoot = posHitRoot->getOriginMcParticle();
         Event::McParticle *originTds = 0;
         if (originRoot != 0) {
@@ -391,10 +404,12 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         }
 
         Event::McParticle::StdHepId particleIdTds = posHitRoot->getMcParticleId();
+        Event::McParticle::StdHepId originIdTds = posHitRoot->getOriginMcParticleId();
 
         // setup the TDS McPositionHit
-        posHitTds->init(edepTds, volIdTds, entryTds, exitTds);
+        posHitTds->init(edepTds, volIdTds, entryTds, exitTds, globalEntryTds, globalExitTds);
         posHitTds->setMcParticleId(particleIdTds);
+        posHitTds->setOriginMcParticleId(originIdTds);
 
         // add the McPositionHit to the TDS collection of McPositionHits
         pTdsCol->push_back(posHitTds);
