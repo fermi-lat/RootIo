@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Dec 16 22:07:04 PST 2004
+RootIo/doc
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	release.notes 
+Log Message:
+Make sure index is not reset at end of event
+    *
+------------------------------------------------------------
 User: heather  Thu Dec 16 22:06:58 PST 2004
 RootIo/cmt
 
