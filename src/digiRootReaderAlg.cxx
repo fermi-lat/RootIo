@@ -8,7 +8,9 @@
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
 #include "Event/Digi/CalDigi.h"
+#include "Event/Digi/TkrDigi.h"
 #include "idents/CalXtalId.h"
+#include "idents/TowerId.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -27,7 +29,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header$
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.1 2002/05/14 15:23:00 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -52,6 +54,9 @@ private:
 
     /// Reads CAL digi data from ROOT and put data on TDS
     StatusCode readCalDigi();
+
+    /// Reads TKR digi data from ROOT and puts it on the TDS
+    StatusCode readTkrDigi();
 
     /// Closes the ROOT file
     void close();
@@ -134,6 +139,12 @@ StatusCode digiRootReaderAlg::execute()
     sc = readCalDigi();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load CalDigi" << endreq;
+        return sc;
+    }
+
+    sc = readTkrDigi();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to load TkrDigi" << endreq;
         return sc;
     }
 
@@ -236,6 +247,51 @@ StatusCode digiRootReaderAlg::readCalDigi() {
         calDigiTdsCol->push_back(calDigiTds);
     }
  
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readTkrDigi() {
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+    const TObjArray *tkrDigiRootCol = m_digiEvt->getTkrDigiCol();
+    if (!tkrDigiRootCol) return sc;
+    TIter tkrDigiIter(tkrDigiRootCol);
+
+    // create the TDS location for the CalDigi Collection
+    Event::TkrDigiCol* tkrDigiTdsCol = new Event::TkrDigiCol;
+    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiCol, tkrDigiTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register TkrDigi Collection" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    TkrDigi *tkrDigiRoot = 0;
+    while (tkrDigiRoot = (TkrDigi*)tkrDigiIter.Next()) {
+        TowerId towerRoot = tkrDigiRoot->getTower();
+        idents::TowerId towerTds(towerRoot.ix(), towerRoot.iy());
+        GlastAxis::axis axisRoot = tkrDigiRoot->getView();
+        idents::GlastAxis::axis axisTds = 
+            (axisRoot == GlastAxis::X) ? idents::GlastAxis::X : idents::GlastAxis::Y;
+        int totTds[2] = { tkrDigiRoot->getToT(0), tkrDigiRoot->getToT(1)};
+        Event::TkrDigi *tkrDigiTds = 
+            new Event::TkrDigi(tkrDigiRoot->getBilayer(),
+            axisTds, towerTds, totTds);
+        int lastController0Strip = tkrDigiRoot->getLastController0Strip();
+        unsigned int numStrips = tkrDigiRoot->getNumHits();
+        unsigned int iHit;
+        for (iHit = 0; iHit < numStrips; iHit++) {
+            int strip = tkrDigiRoot->getHit(iHit);
+            if (strip < lastController0Strip) {
+                tkrDigiTds->addC0Hit(strip);
+            } else {
+                tkrDigiTds->addC1Hit(strip);
+            }
+        }
+
+        tkrDigiTdsCol->push_back(tkrDigiTds);
+    }
+
     return sc;
 }
 
