@@ -1,4 +1,33 @@
 ------------------------------------------------------------
+User: chamont  Thu Oct  7 05:15:17 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Added Files:
+	FhChronoStatTable.cxx FhCmtConfig.cxx FhJobOptions.cxx 
+	FhSetAlg.cxx FhSetAlg.h FhStringMap.cxx FhStringMap.h 
+	FhSystemEnv.cxx FhTool.cxx testCaloFhSetAlg.cxx 
+	testCaloFhSetAlg.h testFhGetAlg.cxx 
+Removed Files:
+	FileHeadersSetAlg.cxx FileHeadersSetAlg.h FileHeadersTool.cxx 
+	FileHeadersTool.h testCaloFileHeadersSetAlg.cxx 
+	testCaloFileHeadersSetAlg.h testFileHeadersAlg.cxx 
+Log Message:
+Although "commonRootData/*/FileHeaders.*" files have kept their name,
+all the others files of the project "file headers", currently staying
+in RootIo, have now their name prefixed with "Fh" instead of
+"FileHeaders". The files which are there for testing purpose also
+have an additionnal "test" prefix.
+
+Some new classes have been added: FhChronoStatTable, FhSystemEnv,
+FhCmtConfig and FhJobOptions. They help to prepare the corresponding
+attributes before the header is written into a file, and they also
+help to interpret them when the header is read back.
+    *
+------------------------------------------------------------
 User: chamont  Thu Oct  7 05:15:16 PDT 2004
 RootIo/RootIo
 
