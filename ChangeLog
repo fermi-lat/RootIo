@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 15 15:28:00 PST 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+store all diag and err lengths
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 15 15:27:23 PST 2005
 RootIo/cmt
 
