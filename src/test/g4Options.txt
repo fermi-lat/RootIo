@@ -2,7 +2,7 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.3 2002/05/14 15:21:31 heather Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.4 2002/05/21 22:39:46 heather Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc", 
@@ -28,7 +28,7 @@ GlastDetSvc.topVolume="LAT";         // the whole schebang
 FluxSvc.source_lib = {"$(G4GENERATORROOT)/src/test/test_sources.xml"};
 
 //----------------- local algorithms to run -------------------
-ApplicationMgr.TopAlg = { "FluxAlg", "G4Generator", "CalDigiAlg",
+ApplicationMgr.TopAlg = { "FluxAlg", "G4Generator", "TkrSimpleDigiAlg", "CalDigiAlg",
                            "CalXtalRecAlg", "CalClustersAlg"};
 
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
