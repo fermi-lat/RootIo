@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
+
+ v9r0p0  17-Jun-2003 HMK Fix writing of AcdDigi low discrim PMT B
  v9r0    06-Jun-2003 UB  Reset ObjectNumber after each event for TRef to avoid 
          memory leak
  v8r0    31-May-2003 HMK Introduce RootIoSvc which uses IRunable interface to control event loop
