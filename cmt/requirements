@@ -1,5 +1,5 @@
 package RootIo
-version v9r2p1
+version v9r3
 
 branches src doc
 
@@ -8,6 +8,7 @@ use Event v9r*
 use ROOT v2r* IExternal
 
 apply_pattern packageShr
+apply_pattern package_include
 
 use RootPolicy v2r*
 use mcRootData v2r*
