@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.11 2005/01/25 19:14:29 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.12 2005/02/23 19:24:39 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.11 2005/01/25 19:14:29 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.12 2005/02/23 19:24:39 heather Exp $
 */
 
 // includes
@@ -90,6 +90,7 @@ public:
 
     virtual int getAutoSaveInterval() { return m_autoSaveInterval; };
 
+
 protected: 
     
     /// Standard Constructor
@@ -110,6 +111,7 @@ private:
     IAppMgrUI*    m_appMgrUI;
     IntegerProperty m_evtMax;
     IntegerProperty m_autoSaveInterval;
+    UnsignedLongProperty m_treeSize;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime;
@@ -142,6 +144,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("EndTime",      m_endTime=0);
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
     declareProperty("StartingIndex", m_startIndex=0);
+    declareProperty("MaxTreeSize", m_treeSize=0);
     m_index = m_startIndex;
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
@@ -158,7 +161,6 @@ RootIoSvc::~RootIoSvc()
 }
 
 
-// initialize
 StatusCode RootIoSvc::initialize () 
 {   
     StatusCode  status =  Service::initialize ();
@@ -185,6 +187,10 @@ StatusCode RootIoSvc::initialize ()
     gSystem->ResetSignal(kSigSegmentationViolation); 
     gSystem->ResetSignal(kSigIllegalInstruction); 
     gSystem->ResetSignal(kSigFloatingException);  
+
+    if (m_treeSize > 0) {
+        TTree::SetMaxTreeSize(m_treeSize);
+    }
 
     return StatusCode::SUCCESS;
 }
