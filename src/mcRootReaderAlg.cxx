@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.42.2.1 2004/12/17 06:07:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.42.2.2 2005/01/25 09:51:31 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -225,7 +225,7 @@ StatusCode mcRootReaderAlg::execute()
       return sc;
     }
 
-	static Int_t evtId = 0;
+	static Long64_t evtId = 0;
 	Long64_t readInd;
         int numBytes;
 	if (evtId==0)m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
