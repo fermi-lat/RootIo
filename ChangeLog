@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sat Sep 27 22:22:28 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+	relationRootWriterAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+add auto save interval
+    *
+------------------------------------------------------------
 User: heather  Sat Sep 27 22:20:44 PDT 2003
 RootIo/RootIo
 
