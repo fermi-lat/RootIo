@@ -23,6 +23,16 @@
 *
 * <hr>
 * @section jobOptions jobOptions
+* @parma RootIoSvc.MaxTreeSize
+*  Defaults to 10 GB
+*  Size in MB for Trees, when a Tree hits this size, the current ROOT file
+*  is closed and a new one is opened for writing.  This parameter is set for
+*  ALL Trees - there is no way to assign it on a per tree basis
+* @parma RootIoSvc.AutoSaveInterval
+*  Defaults to 1000
+*  Controls how many events to process before actually writing data to a ROOT
+*  file - until then, data is held in a buffer that may be lost if the job
+*  crashes.
 * @param mcRootWriterAlg.mcRootFile
 *  Name of the output MC ROOT file, default mc.root
 * @param mcRootWriterAlg.splitMode 
