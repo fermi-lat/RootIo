@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 20 11:13:03 PST 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+tell ROOT to use default signal handling
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 20 11:12:52 PST 2004
 RootIo/cmt
 
