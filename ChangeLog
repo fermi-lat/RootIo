@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 25 01:50:58 PST 2005
+RootIo/cmt
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	requirements 
+Log Message:
+use Long64 as appropriate for ROOT4
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 25 01:50:46 PST 2005
 RootIo/doc
 
