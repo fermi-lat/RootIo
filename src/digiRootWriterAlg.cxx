@@ -11,9 +11,9 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-#include "EbfConverter/DiagnosticData.h"
-#include "EbfConverter/EventSummaryData.h"
-#include "EbfConverter/EbfTime.h"
+#include "EbfEvent/DiagnosticData.h"
+#include "EbfEvent/EventSummaryData.h"
+#include "EbfEvent/EbfTime.h"
 
 
 #include "idents/CalXtalId.h"
@@ -36,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.22 2004/03/15 06:33:29 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.23 2004/03/16 20:22:31 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -253,7 +253,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     L1T levelOne(evtTds->trigger());
     m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
 
-    SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    SmartDataPtr<EbfEvent::EbfTime> timeTds(eventSvc(), "/Event/Time");
     if (timeTds) {
         m_digiEvt->setEbfTime(timeTds->timeSec(), timeTds->timeNanoSec(),
                               timeTds->upperPpcTimeBaseWord(), timeTds->lowerPpcTimeBaseWord());
@@ -269,7 +269,7 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Retrieve the Event Summary data for this event
-    SmartDataPtr<EbfConverterTds::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
+    SmartDataPtr<EbfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
 
     if (!summaryTds) {
       log << MSG::DEBUG << "No Event Summary Data found on TDS" << endreq;
@@ -288,7 +288,7 @@ StatusCode digiRootWriterAlg::writeDiagnostic() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Retrieve the Event data for this event
-    SmartDataPtr<EbfConverterTds::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
+    SmartDataPtr<EbfEvent::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
 
     if (!diagTds) return sc;
 
@@ -296,14 +296,14 @@ StatusCode digiRootWriterAlg::writeDiagnostic() {
     int numCalDiag = diagTds->getNumCalDiagnostic();
     int ind;
     for (ind = 0; ind < numCalDiag; ind++){
-        EbfConverterTds::CalDiagnosticData calDiagTds = diagTds->getCalDiagnosticByIndex(ind);
+        EbfEvent::CalDiagnosticData calDiagTds = diagTds->getCalDiagnosticByIndex(ind);
         CalDiagnosticData *calDiagRoot = m_digiEvt->addCalDiagnostic();
         calDiagRoot->initialize(calDiagTds.dataWord());
     }
 
     int numTkrDiag = diagTds->getNumTkrDiagnostic();
     for (ind = 0; ind < numTkrDiag; ind++) {
-        EbfConverterTds::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
+        EbfEvent::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
         TkrDiagnosticData *tkrDiagRoot = m_digiEvt->addTkrDiagnostic();
         tkrDiagRoot->initialize(tkrDiagTds.dataWord());
     }
