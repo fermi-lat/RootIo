@@ -22,8 +22,9 @@ GlastDetSvc.topVolume="LAT";         // the whole schebang
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 
-ApplicationMgr.TopAlg +=  { "mcRootReaderAlg"};
+ApplicationMgr.TopAlg +=  { "mcRootReaderAlg", "digiRootReaderAlg"};
 mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
 
 
 // needed to have the gui available

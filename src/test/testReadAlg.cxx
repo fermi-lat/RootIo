@@ -9,6 +9,8 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/Digi/CalDigi.h"
+#include "idents/CalXtalId.h"
 
 #include <map>
 
@@ -16,7 +18,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.2 2002/05/01 23:35:00 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.3 2002/05/10 23:13:02 burnett Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -32,6 +34,10 @@ public:
     StatusCode finalize();   
         
 private:
+
+    StatusCode readMcData();
+
+    StatusCode readDigiData();
 
     
 };
@@ -58,6 +64,18 @@ StatusCode testReadAlg::initialize()
 
 StatusCode testReadAlg::execute()
 {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    sc = readMcData();
+
+    sc = readDigiData();
+
+    return sc;
+}
+
+StatusCode testReadAlg::readMcData() {
     // Purpose and Method: Retrieve Monte Carlo data from the TDS.  This data 
     //    was put on the the TDS by the mcRootReaderAlg.
     // TDS Input:  EventModel::MC::McParticleCol, 
@@ -72,7 +90,9 @@ StatusCode testReadAlg::execute()
         log << MSG::DEBUG << "Number of McParticles in the event = " << particles->size() << endreq;
         Event::McParticleCol::const_iterator p;
         for (p = particles->begin(); p != particles->end(); p++) {
-            log << MSG::DEBUG << (*p)->fillStream(log.stream()) << endreq;
+            log << MSG::DEBUG;
+            (*p)->fillStream(log.stream());
+            log << endreq;
         }
 
     }
@@ -83,7 +103,9 @@ StatusCode testReadAlg::execute()
         log << MSG::DEBUG << "Number of McPositionHits in the event = " << posHits->size() << endreq;
         Event::McPositionHitVector::const_iterator hit;
         for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {   
-            log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
+            log << MSG::DEBUG;
+            (*hit)->fillStream(log.stream());
+            log << endreq;
         }
             
     }
@@ -94,7 +116,9 @@ StatusCode testReadAlg::execute()
         log << MSG::DEBUG << "Number of McIntegratingHits in the event = " << intHits->size() << endreq;
         Event::McIntegratingHitVector::const_iterator hit;
         for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {   
-            log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
+            log << MSG::DEBUG;
+            (*hit)->fillStream(log.stream());
+            log << endreq;
             Event::McIntegratingHit::energyDepositMap mcPartMap = (*hit)->itemizedEnergy();
             Event::McIntegratingHit::energyDepositMap::const_iterator partIt;
             log << MSG::DEBUG << "McIntegratingHit energy Map" << endreq;
@@ -107,6 +131,33 @@ StatusCode testReadAlg::execute()
 
     return sc;
 }
+
+
+StatusCode testReadAlg::readDigiData() {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    SmartDataPtr<Event::CalDigiCol> calDigiColTds(eventSvc(), EventModel::Digi::CalDigiCol);
+    if (!calDigiColTds) return sc;
+    Event::CalDigiCol::const_iterator calDigiTds;
+
+    for (calDigiTds = calDigiColTds->begin(); calDigiTds != calDigiColTds->end(); calDigiTds++) {
+        idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
+        idents::CalXtalId idTds = (*calDigiTds)->getPackedId();
+        if (modeTds == idents::CalXtalId::BESTRANGE) {
+            const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(0);
+            log << MSG::DEBUG << "Using BestRange" << endreq;
+        } else {
+            log << MSG::DEBUG << "Using AllRange" << endreq;
+            int range;
+            for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {
+                const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(range);
+            }
+        }
+    }
+
+    return sc;
+}
+
 
 
 StatusCode testReadAlg::finalize()

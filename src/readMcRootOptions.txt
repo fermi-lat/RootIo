@@ -1,0 +1,20 @@
+//##############################################################
+//
+// Job options file for Reading in a ROOT file
+//
+
+
+ApplicationMgr.DLLs +=    { "RootIo" };
+
+ApplicationMgr.TopAlg +=  { "mcRootReaderAlg"};
+
+mcRootReaderAlg.OutputLevel = 3;
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
+
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+
