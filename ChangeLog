@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 20 11:14:52 PST 2004
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx RootIoSvc.cxx 
+Log Message:
+tell ROOT to use default signal handling
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 20 11:13:03 PST 2004
 RootIo/doc
 
