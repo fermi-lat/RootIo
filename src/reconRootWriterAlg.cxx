@@ -27,8 +27,8 @@
 /** @class reconRootWriterAlg
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
- * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.1 2002/05/15 22:30:54 heather Exp $
+ * @author Heather Kelly and Tracy Usher
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.2 2002/05/16 05:14:50 usher Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -230,6 +230,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               trackTds->getNumXFirstGaps(),
                               trackTds->getNumYFirstGaps() );
 
+        // HMK Why is this method called initializeQaul?  was it supposed to be Qual?
         track->initializeQaul(trackTds->getChiSquare(),
                               trackTds->getChiSquareSmooth(),
                               trackTds->getScatter(),
