@@ -5,6 +5,13 @@
 #include "$ROOTIOROOT/src/writeMcRootOptions.txt"
 #include "$ROOTIOROOT/src/writeDigiRootOptions.txt"
 #include "$ROOTIOROOT/src/writeReconRootOptions.txt"
+
+ApplicationMgr.DLLs +=    { "RootIo" };
+ApplicationMgr.ExtSvc += { "RootIoSvc" };
+
+// Save ROOT buffers every N events
+RootIoSvc.AutoSaveInterval = 1000;
+
 //==============================================================
 //
 // End of job options file
