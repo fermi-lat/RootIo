@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 18 13:37:00 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+final gem cleanup
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 18 12:14:17 PDT 2004
 RootIo/src/test
 
