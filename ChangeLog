@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jan  9 10:30:20 PST 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+make GlastSvc use private - increment version of digiRootData
+    *
+------------------------------------------------------------
 User: heather  Fri Dec 19 00:02:21 PST 2003
 RootIo/src
 
