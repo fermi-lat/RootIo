@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Tue Aug 10 07:47:42 PDT 2004
+RootIo/src
+
+Modified Files:
+	CaloFileHeadersSetAlg.h FileHeadersSetAlg.h FileHeadersTool.h 
+Log Message:
+some more class documentation
+    *
+------------------------------------------------------------
 User: chamont  Mon Aug  9 10:57:31 PDT 2004
 RootIo/src/test
 
