@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Mon Dec 13 18:47:39 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+changes for new TkrCluster (I&T branch)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v13r0, operation: add
 Package: RootIo
