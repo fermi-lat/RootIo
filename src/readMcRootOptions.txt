@@ -9,7 +9,7 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 ApplicationMgr.TopAlg +=  { "mcRootReaderAlg"};
 ApplicationMgr.ExtSvc += { "RootIoSvc" };
 mcRootReaderAlg.OutputLevel = 2;
-mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc.root";
+mcRootReaderAlg.mcRootFileList = {"$(ROOTIOROOT)/src/test/mc.root"};
 // controls the event loop
 ApplicationMgr.Runable= "RootIoSvc";
 

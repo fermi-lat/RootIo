@@ -19,6 +19,7 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -39,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.20 2003/03/19 17:24:13 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.21 2003/06/02 01:51:28 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -102,11 +103,13 @@ private:
     /// ROOT file pointer
     TFile *m_reconFile;
     /// ROOT tree pointer
-    TTree *m_reconTree;
+    TChain *m_reconTree;
     /// Top-level Monte Carlo ROOT object
     ReconEvent *m_reconEvt;
     /// name of the output ROOT file
     std::string m_fileName;
+    /// List of input files
+    StringArrayProperty m_fileList;
     /// name of the Recon TTree stored in the ROOT file
     std::string m_treeName;
     /// Number of events in the input ROOT TTree
@@ -127,7 +130,13 @@ Algorithm(name, pSvcLocator)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("reconRootFile",m_fileName="recon.root");
+    declareProperty("reconRootFile",m_fileName="");
+    StringArrayProperty initList;
+    std::vector<std::string> initVec;
+    initVec.push_back("recon.root");
+    initList.setValue(initVec);
+    declareProperty("reconRootFileList", m_fileList=initList);
+    initVec.clear();
     // Input TTree name
     declareProperty("reconTreeName", m_treeName="Recon");
     
@@ -156,6 +165,33 @@ StatusCode reconRootReaderAlg::initialize()
     
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
+    m_reconTree = new TChain(m_treeName.c_str());
+
+    std::string emptyStr("");
+    if (m_fileName.compare(emptyStr) != 0) {
+      int retVal = m_reconTree->Add(m_fileName.c_str());
+      if (retVal <= 0) {
+        log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+      }
+    } else {
+      const std::vector<std::string> fileList = m_fileList.value( );
+      std::vector<std::string>::const_iterator it;
+      std::vector<std::string>::const_iterator itend = fileList.end( );
+      for (it = fileList.begin(); it != itend; it++) {
+        std::string theFile = (*it);
+        int retVal = m_reconTree->Add(theFile.c_str());
+        if (retVal <= 0) {
+          log << MSG::ERROR << "ROOT file " << theFile.c_str()
+              << " could not be opened for reading." << endreq;
+          return StatusCode::FAILURE;
+       }
+      }
+    }
+
+
+/*
     m_reconFile = new TFile(m_fileName.c_str(), "READ");
     if (!m_reconFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
@@ -169,7 +205,7 @@ StatusCode reconRootReaderAlg::initialize()
             " from file " << m_fileName << endreq;
         return StatusCode::FAILURE;
     }
-    
+*/    
     m_reconEvt = 0;
     m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
     
@@ -193,11 +229,13 @@ StatusCode reconRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
+/*
     if (!m_reconFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
     }
+*/
     
     if (m_reconEvt) m_reconEvt->Clear();
 
@@ -207,6 +245,7 @@ StatusCode reconRootReaderAlg::execute()
         return StatusCode::FAILURE;
     }
     
+    if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
     m_reconTree->GetEvent(evtId);
     
     sc = readReconEvent();
@@ -918,10 +957,11 @@ void reconRootReaderAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    TDirectory *saveDir = gDirectory;
-    m_reconFile->cd();
-    m_reconFile->Close();
-    saveDir->cd();
+    //TDirectory *saveDir = gDirectory;
+    //m_reconFile->cd();
+    //m_reconFile->Close();
+    //saveDir->cd();
+    if (m_reconTree) delete m_reconTree;
 }
 
 StatusCode reconRootReaderAlg::finalize()

@@ -15,6 +15,7 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -26,13 +27,14 @@
 #include "IRootIoSvc.h"
 
 #include <map>
+#include <string>
 
 /** @class mcRootReaderAlg
  * @brief Reads Monte Carlo data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.20 2003/03/18 15:01:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.21 2003/06/02 01:51:28 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -76,12 +78,14 @@ private:
     
     /// ROOT file pointer
     TFile *m_mcFile;
-    /// ROOT tree pointer
-    TTree *m_mcTree;
+    /// ROOT chain
+    TChain *m_mcTree;
     /// Top-level Monte Carlo ROOT object
     McEvent *m_mcEvt;
-    /// name of the output ROOT file
+    /// name of the input ROOT file
     std::string m_fileName;
+    /// Array of file names for TChain
+    StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Number of Events in the input ROOT TTree
@@ -107,10 +111,16 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("mcRootFile",m_fileName="mc.root");
+    declareProperty("mcRootFile",m_fileName="");
+    StringArrayProperty initList;
+    std::vector<std::string> initVec;
+    initVec.push_back("mc.root");
+    initList.setValue(initVec);
+    declareProperty("mcRootFileList", m_fileList=initList);
     // ROOT TTree name
     declareProperty("mcTreeName", m_treeName="Mc");
     
+    initVec.clear();
     m_particleMap.clear();
 }
 
@@ -137,6 +147,33 @@ StatusCode mcRootReaderAlg::initialize()
     
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;	
+    m_mcTree = new TChain(m_treeName.c_str());
+
+    std::string emptyStr("");
+    if (m_fileName.compare(emptyStr) != 0) {
+      int retVal = m_mcTree->Add(m_fileName.c_str());
+      if (retVal <= 0) {
+        log << MSG::ERROR << "ROOT file " << m_fileName.c_str() 
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+      }
+    } else {
+      const std::vector<std::string> fileList = m_fileList.value( );
+      std::vector<std::string>::const_iterator it;
+      std::vector<std::string>::const_iterator itend = fileList.end( );
+      for (it = fileList.begin(); it != itend; it++) {
+        std::string theFile = (*it);
+        int retVal = m_mcTree->Add(theFile.c_str());
+        if (retVal <= 0) {
+          log << MSG::ERROR << "ROOT file " << theFile.c_str() 
+              << " could not be opened for reading." << endreq;
+          return StatusCode::FAILURE;
+        }
+      }
+    }
+
+
+  /* Old method before using TChain
     m_mcFile = new TFile(m_fileName.c_str(), "READ");
     if (!m_mcFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
@@ -150,6 +187,7 @@ StatusCode mcRootReaderAlg::initialize()
             " from file " << m_fileName << endreq;
         return StatusCode::FAILURE;
     }
+*/
     
     m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
@@ -175,21 +213,36 @@ StatusCode mcRootReaderAlg::execute()
     
     if (m_mcEvt) m_mcEvt->Clear();
 
+/*
     if (!m_mcFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
     }
+*/
     
+    if (!m_mcTree) {
+      log << MSG::WARNING << "MC Root unreadable" << endreq;
+      return sc;
+    }
+
     static Int_t evtId = 0;
+    if (evtId==0)m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
     
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;
         return StatusCode::FAILURE;
     }
     
-    m_mcTree->GetEvent(evtId);
+    int numBytes = m_mcTree->GetEntry(evtId); 
+    if (numBytes <= 0) {
+      log << MSG::ERROR << "Failed to Load Mc Event" << endreq;
+      return StatusCode::FAILURE;
+    }
     
+    if (!m_mcEvt) 
+      log << MSG::WARNING << "evt ptr is null" << endreq;
+
     sc = readMcEvent();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to read top level McEvent" << endreq;
@@ -214,7 +267,6 @@ StatusCode mcRootReaderAlg::execute()
     sc = readMcIntegratingHits();
     if (sc.isFailure()) return sc;
     
-    //m_mcEvt->Clear();
     evtId++;
     
     return sc;
@@ -329,8 +381,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             static bool warn = false;
             if (!warn) {
                 log << MSG::WARNING << "Cannot read in mother McParticles using "
-                    << "ROOT 3.02.07 \n" 
-                    << "Setting all McParticle mother pointers to"
+                    << "\nSetting all McParticle mother pointers to"
                     << " point at themselves" << endreq;
                 warn = true;
             }
@@ -342,10 +393,11 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
                     finalMomTds, initPosTds, finalPosTds, processTdsStr );
         
-        // Assume we use ROOT 3.02.03 for now, and do not attempt to read in daughters
-        // It will not work until we upgrade.
+        // Check version < ROOT 3.04.02, and do not attempt to read in daughters
         static bool warn = false;
+        int ver = m_mcTree->GetCurrentFile()->GetVersion();
         if (!warn) {
+        //if (ver < 30402) {
             log << MSG::WARNING << "Cannot read in TRef with ROOT 3.02.07"
                 " McParticle daughter list is unavailable" << endreq;
             warn = true;
@@ -559,10 +611,11 @@ void mcRootReaderAlg::close()
     //	  is filled.  Writing would create 2 copies of the same tree to be
     //	  stored in the ROOT file, if we did not specify kOverwrite.
     
-    TDirectory *saveDir = gDirectory;
-    m_mcFile->cd();
-    m_mcFile->Close();
-    saveDir->cd();
+    //TDirectory *saveDir = gDirectory;
+    //m_mcFile->cd();
+    //m_mcFile->Close();
+    //saveDir->cd();
+    if (m_mcTree) delete m_mcTree;
 }
 
 StatusCode mcRootReaderAlg::finalize()

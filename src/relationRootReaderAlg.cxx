@@ -21,6 +21,7 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -40,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.2 2003/03/18 15:01:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.3 2003/06/02 01:51:28 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -85,11 +86,13 @@ private:
     /// ROOT file pointer
     TFile *m_relFile;
     /// ROOT tree pointer
-    TTree *m_relTree;
+    TChain *m_relTree;
     /// Top-level Monte Carlo ROOT object
     RelTable *m_relTab;
     /// name of the output ROOT file
     std::string m_fileName;
+    /// List of files
+    StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Stores number of events available in the input ROOT TTree
@@ -125,7 +128,13 @@ Algorithm(name, pSvcLocator)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("rootFile",m_fileName="relations.root");
+    declareProperty("rootFile",m_fileName="");
+    StringArrayProperty initList;
+    std::vector<std::string> initVec;
+    initVec.push_back("relation.root");
+    initList.setValue(initVec);
+    declareProperty("relationRootFileList", m_fileList=initList);
+    initVec.clear();
     // Input TTree name
     declareProperty("treeName", m_treeName="Relations");
 
@@ -154,6 +163,32 @@ StatusCode relationRootReaderAlg::initialize()
     
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
+
+    m_relTree = new TChain(m_treeName.c_str());
+
+    std::string emptyStr("");
+    if (m_fileName.compare(emptyStr) != 0) {
+      int retVal = m_relTree->Add(m_fileName.c_str());
+      if (retVal <= 0) {
+        log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+      }
+    } else {
+      const std::vector<std::string> fileList = m_fileList.value( );
+      std::vector<std::string>::const_iterator it;
+      std::vector<std::string>::const_iterator itend = fileList.end( );
+      for (it = fileList.begin(); it != itend; it++) {
+        std::string theFile = (*it);
+        int retVal = m_relTree->Add(theFile.c_str());
+        if (retVal <= 0) {
+          log << MSG::ERROR << "ROOT file " << theFile.c_str()
+              << " could not be opened for reading." << endreq;
+          return StatusCode::FAILURE;
+       }
+     }
+    }
+/*
     m_relFile = new TFile(m_fileName.c_str(), "READ");
     if (!m_relFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
@@ -167,6 +202,8 @@ StatusCode relationRootReaderAlg::initialize()
             " from file " << m_fileName << endreq;
         return StatusCode::FAILURE;
     }
+*/
+
     m_relTab = 0;
     m_relTree->SetBranchAddress("RelTable", &m_relTab);
 
@@ -188,11 +225,13 @@ StatusCode relationRootReaderAlg::execute()
 
     StatusCode sc = StatusCode::SUCCESS;
     
+/*
     if (!m_relFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
     }
+*/
 
     static Int_t evtId = 0;
 
@@ -432,10 +471,11 @@ void relationRootReaderAlg::close()
 {
     // Purpose and Method:  Closes the ROOT file at the end of the run.
 
-    TDirectory *saveDir = gDirectory;
-    m_relFile->cd();
-    m_relFile->Close();
-    saveDir->cd();
+    //TDirectory *saveDir = gDirectory;
+    //m_relFile->cd();
+    //m_relFile->Close();
+    //saveDir->cd();
+    if (m_relTree) delete m_relTree;
 }
 
 StatusCode relationRootReaderAlg::finalize()
