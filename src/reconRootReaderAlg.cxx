@@ -25,7 +25,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.2 2002/06/06 16:03:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.3 2002/06/06 20:10:12 heather Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -67,6 +67,8 @@ private:
     std::string m_fileName;
     /// name of the Recon TTree stored in the ROOT file
     std::string m_treeName;
+    /// Number of events in the input ROOT TTree
+    int m_numEvents;
 
 };
 
@@ -109,9 +111,17 @@ StatusCode reconRootReaderAlg::initialize()
     }
     m_reconFile->cd();
     m_reconTree = (TTree*)m_reconFile->Get(m_treeName.c_str());
+    if (!m_reconTree) {
+        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
+            " from file " << m_fileName << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_reconEvt = 0;
     m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
     
+    m_numEvents = m_reconTree->GetEntries();
+
     saveDir->cd();
     return sc;
     
@@ -133,6 +143,11 @@ StatusCode reconRootReaderAlg::execute()
     }
 
     static UInt_t evtId = 0;
+    if (evtId >= m_numEvents) {
+        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_reconTree->GetEvent(evtId);
 
     sc = readReconEvent();
@@ -146,7 +161,6 @@ StatusCode reconRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to load Tkr Recon" << endreq;
         return sc;
     }
-
 
     sc = readCalRecon();
     if (sc.isFailure()) {

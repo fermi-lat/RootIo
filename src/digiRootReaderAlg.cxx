@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.5 2002/06/06 22:13:56 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.6 2002/06/11 00:38:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -79,6 +79,8 @@ private:
     std::string m_fileName;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
+    /// Stores number of events available in the input ROOT TTree
+    int m_numEvents;
 
 };
 
@@ -121,9 +123,30 @@ StatusCode digiRootReaderAlg::initialize()
     }
     m_digiFile->cd();
     m_digiTree = (TTree*)m_digiFile->Get(m_treeName.c_str());
+    if (!m_digiTree) {
+        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
+            " from file " << m_fileName << endreq;
+        return StatusCode::FAILURE;
+    }
     m_digiEvt = 0;
     m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
+
+    m_numEvents = m_digiTree->GetEntries();
     
+    /* Saving code to eventually set the evtMax
+    IProperty* glastPropMgr=0;
+    sc = service("EventSelector", glastPropMgr, true);
+    if( sc.isFailure() ) return sc;
+    IntegerProperty evtMax("EvtMax",0);
+    sc = glastPropMgr->getProperty( &evtMax );
+    if (sc.isFailure()) return sc;
+    if (m_numEvents < evtMax) {
+        evtMax = m_numEvents;
+        sc = glastPropMgr->setProperty( evtMax );
+    }
+    glastPropMgr->release();
+    */
+
     saveDir->cd();
     return sc;
     
@@ -146,6 +169,12 @@ StatusCode digiRootReaderAlg::execute()
     }
 
     static UInt_t evtId = 0;
+
+    if (evtId >= m_numEvents) {
+        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_digiTree->GetEvent(evtId);
 
     sc = readDigiEvent();
