@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Dec 18 14:15:24 PST 2003
+RootIo/src
+
+Modified Files:
+      Tag: v9r5p0-em-branch
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle diagnostic Data
+    *
+------------------------------------------------------------
 User: heather  Thu Dec 18 14:14:42 PST 2003
 RootIo/doc
 
