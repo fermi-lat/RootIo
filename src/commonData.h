@@ -21,8 +21,7 @@
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
 
-#include "Event/Recon/TkrRecon/TkrPatCand.h"
-#include "Event/Recon/TkrRecon/TkrFitTrackBase.h"
+#include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
 #include "TFile.h"
@@ -42,7 +41,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.2 2003/03/18 15:01:43 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.3 2004/01/09 18:56:23 heather Exp $
 */
 
 class commonData 
@@ -64,9 +63,9 @@ public:
     static std::map<const Event::CalDigi*, TRef> m_calDigiMap;
     
     /// Create a set of maps between Recon data in TDS and TRefs in ROOT
-    static std::map<const Event::TkrPatCand*, TRef> m_tkrCandMap;
-    static std::map<const Event::TkrFitTrackBase*, TRef> m_tkrTrackMap;
-    static std::map<const Event::TkrVertex*, TRef> m_tkrVertexMap;
+    static std::map<const Event::TkrCluster*, TRef> m_tkrClusterMap;
+    static std::map<const Event::TkrTrack*,   TRef> m_tkrTrackMap;
+    static std::map<const Event::TkrVertex*,  TRef> m_tkrVertexMap;
 
 
     /// Create a set of maps between ROOT MC objects and the TDS MC data
@@ -79,8 +78,8 @@ public:
     static std::map<const TObject*, const Event::CalDigi*>          m_rootCalDigiMap;
 
     /// Create a set of maps between ROOT Recon objects and TDS Recon data
-    static std::map<const TObject*, const Event::TkrPatCand*>       m_rootTkrCandMap;
-    static std::map<const TObject*, const Event::TkrFitTrackBase*>  m_rootTkrTrackMap;
+    static std::map<const TObject*, const Event::TkrCluster*>       m_rootTkrClusterMap;
+    static std::map<const TObject*, const Event::TkrTrack*>         m_rootTkrTrackMap;
     static std::map<const TObject*, const Event::TkrVertex*>        m_rootTkrVertexMap;
 
 
