@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32 2004/10/04 21:48:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32.2.1 2004/11/11 06:50:30 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -205,7 +205,7 @@ StatusCode digiRootWriterAlg::execute()
 
     StatusCode sc = StatusCode::SUCCESS;
     
-    if (!m_digiFile->IsOpen()) {
+    if (!m_digiTree->GetCurrentFile()->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for writing." << endreq;
         return StatusCode::FAILURE;
@@ -547,11 +547,11 @@ void digiRootWriterAlg::writeEvent()
     //m_digiFile->cd();
     m_digiTree->Fill();
     //m_digiEvt->Clear();
-    saveDir->cd();
     ++eventCounter;
     if (m_rootIoSvc)
         if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_digiTree->AutoSave();
 
+    saveDir->cd();
     return;
 }
 
