@@ -22,6 +22,7 @@
 #include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
+#include "commonData.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -35,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.27 2003/02/06 21:55:53 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.28 2003/02/26 20:09:01 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -108,6 +109,9 @@ private:
     int m_bufSize;
     /// Compression level for the ROOT file
     int m_compressionLevel;
+
+    /// Keep track of relation between TDS objs and ROOT counterparts
+    commonData m_common;
     
 };
 
@@ -157,6 +161,7 @@ StatusCode reconRootWriterAlg::initialize()
     m_reconTree = new TTree(m_treeName.c_str(), "GLAST Reconstruction Data");
     m_reconEvt = new ReconEvent();
     m_reconTree->Branch("ReconEvent","ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
+    m_common.m_reconEvt = m_reconEvt;
     
     saveDir->cd();
     return sc;
@@ -178,6 +183,8 @@ StatusCode reconRootWriterAlg::execute()
         return StatusCode::FAILURE;
     }
     
+    if (m_reconEvt) m_reconEvt->Clear();
+
     sc = writeReconEvent();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write ReconEvent" << endreq;
@@ -311,7 +318,11 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
         TVector3           dir(candTds->getDirection().x(),candTds->getDirection().z(),candTds->getDirection().z());
         TkrCandTrack *cand = new TkrCandTrack(candId, candTds->getLayer(), candTds->getTower(),
             candTds->getQuality(), candTds->getEnergy(), pos, dir);
-        
+
+        // Keep relation between Event and Root candidate tracks
+        TRef ref = cand;
+        m_common.m_tkrCandMap[candTds] = ref;
+
         // Now we go through the candidate hits (if they are included) and fill those objects
         int                nHits   = 0;
         while(nHits < candTds->numPatCandHits())
@@ -353,6 +364,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
         else if (Event::TkrKalFitTrack* trackFitTds = dynamic_cast<Event::TkrKalFitTrack*>(trackBase))
             trackRoot = convertTkrKalFitTrack(trackFitTds, trkId++);
 
+        // Keep relation between Event and Root candidate tracks
+        TRef ref = trackRoot;
+        m_common.m_tkrTrackMap[trackBase] = ref;
+
         // Ok, now add the track to the list!
         recon->addTrack(trackRoot);
     }
@@ -377,6 +392,10 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
         Event::TkrFitPar    parTds = vtxTds->getTrackPar();
         Event::TkrFitMatrix covTds = vtxTds->getTrackCov();
         
+        // Keep relation between Event and Root vertices
+        TRef ref = vtx;
+        m_common.m_tkrVertexMap[vtxTds] = ref;
+
         vtx->initializeVals(TkrParams(parTds.getXPosition(), parTds.getXSlope(),
             parTds.getYPosition(), parTds.getYSlope()),
             TkrCovMat(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
@@ -762,7 +781,6 @@ void reconRootWriterAlg::writeEvent()
     TDirectory *saveDir = gDirectory;
     m_reconFile->cd();
     m_reconTree->Fill();
-    m_reconEvt->Clear();
     saveDir->cd();
     return;
 }

@@ -21,12 +21,16 @@
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
 
+#include "Event/Recon/TkrRecon/TkrPatCand.h"
+#include "Event/Recon/TkrRecon/TkrFitTrackBase.h"
+#include "Event/Recon/TkrRecon/TkrVertex.h"
 
 #include "TFile.h"
 #include "TTree.h"
 #include "TRef.h"
 #include "mcRootData/McEvent.h"
 #include "digiRootData/DigiEvent.h"
+#include "reconRootData/ReconEvent.h"
 
 #include "facilities/Util.h"
 
@@ -38,7 +42,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header$
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.1 2002/12/02 21:54:19 heather Exp $
 */
 
 class commonData 
@@ -50,15 +54,41 @@ public:
     
     void clear();
     
+    /// Create a set of maps between MC data in TDS and the TRefs in the ROOT file
     static std::map<const Event::McParticle*, TRef> m_mcPartMap;
     static std::map<const Event::McIntegratingHit*, TRef> m_mcIntHitMap;
     static std::map<const Event::McPositionHit*, TRef> m_mcPosHitMap;
     
+    /// Create a set of maps between Digi data in the TDS and the TRefs in the ROOT file
     static std::map<const Event::TkrDigi*, TRef> m_tkrDigiMap;
     static std::map<const Event::CalDigi*, TRef> m_calDigiMap;
     
+    /// Create a set of maps between Recon data in TDS and TRefs in ROOT
+    static std::map<const Event::TkrPatCand*, TRef> m_tkrCandMap;
+    static std::map<const Event::TkrFitTrackBase*, TRef> m_tkrTrackMap;
+    static std::map<const Event::TkrVertex*, TRef> m_tkrVertexMap;
+
+
+    /// Create a set of maps between ROOT MC objects and the TDS MC data
+    static std::map<const TObject*, const Event::McParticle*>       m_rootMcPartMap;
+    static std::map<const TObject*, const Event::McIntegratingHit*> m_rootMcIntHitMap;
+    static std::map<const TObject*, const Event::McPositionHit*>    m_rootMcPosHitMap;
+    
+    /// Create a set of maps between ROOT Digi objects and TDS Digi data
+    static std::map<const TObject*, const Event::TkrDigi*>          m_rootTkrDigiMap;
+    static std::map<const TObject*, const Event::CalDigi*>          m_rootCalDigiMap;
+
+    /// Create a set of maps between ROOT Recon objects and TDS Recon data
+    static std::map<const TObject*, const Event::TkrPatCand*>       m_rootTkrCandMap;
+    static std::map<const TObject*, const Event::TkrFitTrackBase*>  m_rootTkrTrackMap;
+    static std::map<const TObject*, const Event::TkrVertex*>        m_rootTkrVertexMap;
+
+
+
+    /// Provide access to the ROOT event pointers
     static McEvent *m_mcEvt;
     static DigiEvent *m_digiEvt;
+    static ReconEvent *m_reconEvt;
     
     
 };
