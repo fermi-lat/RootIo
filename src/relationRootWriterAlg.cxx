@@ -11,10 +11,8 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-#include "Event/Recon/TkrRecon/TkrTrackTab.h"
-#include "Event/Recon/TkrRecon/TkrVertexTab.h"
 
-#include "Event/RelTable/Relation.h"
+#include "Event/RelTable/RelTable.h"
 
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
@@ -42,7 +40,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.10 2004/11/16 16:48:46 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.11 2004/11/24 14:16:31 chamont Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -65,10 +63,6 @@ private:
     StatusCode writeTkrDigiRelations();
     /// Fills the CalDigi/McIntegratingHits relational table
     StatusCode writeCalDigiRelations();
-    /// Fills the Tkr PatRec/Fit Track relational table
-    StatusCode writeTkrTrackRelations();
-    /// Fills the Tkr Vertex/Fit track relational table
-    StatusCode writeTkrVertexRelations();
 
     /// Typedefs for map between root objects and TRefArrays
     typedef std::map<TObject*, TRefArray> relationMap;
@@ -190,18 +184,6 @@ StatusCode relationRootWriterAlg::execute()
         return sc;
     }
 
-    sc = writeTkrTrackRelations();
-    if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to write TkrTrackRelations" << endreq;
-        return sc;
-    }
-
-    sc = writeTkrVertexRelations();
-    if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to write TkrVertexRelations" << endreq;
-        return sc;
-    }
-
     writeEvent();
     return sc;
 }
@@ -293,105 +275,6 @@ StatusCode relationRootWriterAlg::writeCalDigiRelations() {
 
     return sc;
 }
-
-
-StatusCode relationRootWriterAlg::writeTkrTrackRelations() {
-    // Purpose and Method:  Retrieve the relations concerning candidate and fit tracks from TDS
-    //    Write the relations to ROOT
-
-    MsgStream log(msgSvc(), name());
-    StatusCode sc = StatusCode::SUCCESS;
-
-    // Recover the pat track - fit track relational table
-    SmartDataPtr<Event::TkrFitTrackTabList> tkrTable(eventSvc(),EventModel::TkrRecon::TkrTrackTab);
-    //SmartDataPtr<Event::TkrFitTrackTabList> tkrTable(SmartDataPtr<Event::TkrFitTrackTabList >(eventSvc(),EventModel::TkrRecon::TkrTrackTab));
-
-    Event::TkrFitTrackTabList::const_iterator relation;
-
-    relationMap trackRelationMap;
-
-    // Loop over TDS relational table
-    for (relation = tkrTable->begin(); relation != tkrTable->end(); relation++) {
-        Event::TkrPatCand      *tkrCandTds  = (*relation)->getFirst();
-        Event::TkrFitTrackBase *tkrTrackTds = (*relation)->getSecond();
-
-        TkrCandTrack *tkrCandRoot  = 0;
-        TObject      *tkrTrackRoot = 0;
-
-        // Look up TDS to root relation for candidate tracks
-        if (m_common.m_tkrCandMap.find(tkrCandTds) != m_common.m_tkrCandMap.end()) {
-            TRef ref    = m_common.m_tkrCandMap[tkrCandTds];
-            tkrCandRoot = (TkrCandTrack*)ref.GetObject();
-        } else {
-            log << MSG::WARNING << "Could not located TkrPatCand TDS/ROOT pair" << endreq;
-        }
-
-        // Look up TDS to root relation for fit tracks 
-        if (m_common.m_tkrTrackMap.find(tkrTrackTds) != m_common.m_tkrTrackMap.end()) {
-            TRef ref = m_common.m_tkrTrackMap[tkrTrackTds];
-            tkrTrackRoot = ref.GetObject();
-        } else {
-            log << MSG::WARNING << "Could not located TkrFitTrackBase TDS/ROOT pair" << endreq;
-        }
-
-        // Store the root candidate track to root fit track relation
-        if (tkrCandRoot && tkrTrackRoot) trackRelationMap[tkrCandRoot].Add(tkrTrackRoot);
-    }
-
-    // Now go through our list and add to root output
-    fillRelTable(trackRelationMap);
-
-    return sc;
-}
-
-StatusCode relationRootWriterAlg::writeTkrVertexRelations() {
-    // Purpose and Method:  Retrieve the relations concerning fit tracks and vertices from TDS
-    //    Write the relations to ROOT
-
-    MsgStream log(msgSvc(), name());
-    StatusCode sc = StatusCode::SUCCESS;
-
-    // Recover the fit track - vertex relational table
-    SmartDataPtr<Event::TkrVertexTabList> tkrTable(eventSvc(),EventModel::TkrRecon::TkrVertexTab);
-
-    Event::TkrVertexTabList::const_iterator relation;
-
-    relationMap vertexRelationMap;
-
-    // Loop over TDS relational table
-    for (relation = tkrTable->begin(); relation != tkrTable->end(); relation++) {
-        Event::TkrVertex       *tkrVertexTds = (*relation)->getFirst();
-        Event::TkrFitTrackBase *tkrTrackTds  = (*relation)->getSecond();
-
-        TObject *tkrVertexRoot = 0;
-        TObject *tkrTrackRoot  = 0;
-
-        // Look up TDS to root relation for vertices
-        if (m_common.m_tkrVertexMap.find(tkrVertexTds) != m_common.m_tkrVertexMap.end()) {
-            TRef ref      = m_common.m_tkrVertexMap[tkrVertexTds];
-            tkrVertexRoot = ref.GetObject();
-        } else {
-            log << MSG::WARNING << "Could not located TkrVertex TDS/ROOT pair" << endreq;
-        }
-
-        // Look up TDS to root relation for fit tracks 
-        if (m_common.m_tkrTrackMap.find(tkrTrackTds) != m_common.m_tkrTrackMap.end()) {
-            TRef ref = m_common.m_tkrTrackMap[tkrTrackTds];
-            tkrTrackRoot = (TObject*)ref.GetObject();
-        } else {
-            log << MSG::WARNING << "Could not located TkrFitTrackBase TDS/ROOT pair" << endreq;
-        }
-
-        // Store the root candidate track to root fit track relation
-        if (tkrVertexRoot && tkrTrackRoot) vertexRelationMap[tkrVertexRoot].Add(tkrTrackRoot);
-    }
-
-    // Now go through our list and add to root output
-    fillRelTable(vertexRelationMap);
-
-    return sc;
-}
-
 
 void relationRootWriterAlg::fillRelTable(const relationMap& relMap)
 {

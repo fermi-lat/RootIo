@@ -8,10 +8,8 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 
-#include "Event/Recon/TkrRecon/TkrClusterCol.h"
-#include "Event/Recon/TkrRecon/TkrPatCand.h"
-#include "Event/Recon/TkrRecon/TkrFitTrack.h"
-#include "Event/Recon/TkrRecon/TkrKalFitTrack.h"
+#include "Event/Recon/TkrRecon/TkrCluster.h"
+#include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
 #include "Event/Recon/CalRecon/CalCluster.h"   
@@ -43,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.39.2.2 2004/12/14 02:47:39 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.45 2004/12/14 23:01:21 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -72,13 +70,11 @@ private:
     
     /// These are the methods specific to filling the pieces of the TkrRecon stuff
     void fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol* clusterColTds);
-    void       fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol*  candidatesTds);
-    void       fillFitTracks(      TkrRecon* recon, Event::TkrFitTrackCol* tracksTds);
-    void       fillVertices(       TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrFitTrackCol* tracksTds);
+    void       fillFitTracks(      TkrRecon* recon, Event::TkrTrackCol* tracksTds);
+    void       fillVertices(       TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
     
-    TkrHitPlane convertTkrHitPlane(Event::TkrFitPlane& planeTds);
-    TObject*    convertTkrFitTrack(Event::TkrFitTrack* trackTds, int trkId);
-    TObject*    convertTkrKalFitTrack(Event::TkrKalFitTrack* trackTds, int trkId);
+    TkrTrackHit*   convertTkrTrackHit(const Event::TkrTrackHit* trackHitTds);
+    TkrTrackParams convertTkrTrackParams(const Event::TkrTrackParams& trackParamsTds);
     
     /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
     /// ROOT object
@@ -288,14 +284,8 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
     if (clusterColTds) fillTkrClusterCol(recon, clusterColTds);
     
-    // Retrieve the information on candidate tracks
-    SmartDataPtr<Event::TkrPatCandCol> candidatesTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
-    
-    // Fill the candidate tracks
-    if (candidatesTds) fillCandidateTracks(recon, candidatesTds);
-    
     // Retrieve the information on fit tracks
-    SmartDataPtr<Event::TkrFitTrackCol>    tracksTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
+    SmartDataPtr<Event::TkrTrackCol> tracksTds(eventSvc(), EventModel::TkrRecon::TkrTrackCol);
     
     // Fill the fit tracks
     if (tracksTds) fillFitTracks(recon, tracksTds);
@@ -314,94 +304,92 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
     // Purpose and Method:  Reads collection of clusters from TDS and copies their
     //   contents to a ROOT version.
     
-    int numClusters = clusterColTds->nHits();
-    
-    int icluster;
-    for (icluster = 0; icluster < numClusters; icluster++) {
-        Event::TkrCluster *clusterTds = clusterColTds->getHit(icluster);
-        Event::TkrCluster::view viewTds = clusterTds->v();
-        TkrCluster::view viewRoot;
-        if (viewTds == Event::TkrCluster::X) viewRoot = TkrCluster::X;
-        else viewRoot = TkrCluster::Y;
+    int numClusters = clusterColTds->size();
+
+    Event::TkrClusterColConItr clusterIter;
+    for (clusterIter = clusterColTds->begin(); clusterIter != clusterColTds->end(); clusterIter++)
+    {
+        Event::TkrCluster*    clusterTds = *clusterIter;
+        idents::TkrId         clusTdsId  = clusterTds->getTkrId();
+        commonRootData::TkrId clusId(clusTdsId.getTowerX(),clusTdsId.getTowerY(),clusTdsId.getTray(),
+                                     clusTdsId.getBotTop(), clusTdsId.getView());
         Point posTds = clusterTds->position();
         TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
        
-        TkrCluster *clusterRoot = new TkrCluster(clusterTds->id(), 
-            clusterTds->plane(), viewRoot, clusterTds->firstStrip(), 
-            clusterTds->lastStrip(), posRoot, clusterTds->getMips(), 
-            clusterTds->getStatusWord(), clusterTds->tower());
+        TkrCluster *clusterRoot = new TkrCluster(clusId, 
+                                                 clusterTds->firstStrip(), 
+                                                 clusterTds->lastStrip(), 
+                                                 posRoot, 
+                                                 clusterTds->ToT(), 
+                                                 clusterTds->hitFlagged(), 
+                                                 clusterTds->id());
         
         recon->addCluster(clusterRoot);
+
+        TRef ref = clusterRoot;
+        m_common.m_tkrClusterMap[clusterTds] = ref;
     }
 }
 
-void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol* candidatesTds)
-{
-    // Purpose and Method:  This creates root candidate tracks from tds candidate tracks 
-    //                      and adds them to the list kept in TkrRecon
-    
-    // Loop over the candidate tracks in the TDS
-    unsigned int                     candId  = 0;
-    Event::TkrPatCandColPtr cands   = candidatesTds->begin();
-    while(candId < candidatesTds->size())
-    {
-        Event::TkrPatCand* candTds = *cands++;
-        Double_t           x = candTds->getPosition().x();
-        Double_t           y = candTds->getPosition().y();
-        Double_t           z = candTds->getPosition().z();
-        TVector3           pos(x,y,z);
-        TVector3           dir(candTds->getDirection().x(),candTds->getDirection().z(),candTds->getDirection().z());
-        TkrCandTrack *cand = new TkrCandTrack(candId, candTds->getLayer(), candTds->getTower(),
-            candTds->getQuality(), candTds->getEnergy(), pos, dir);
-
-        // Keep relation between Event and Root candidate tracks
-        TRef ref = cand;
-        m_common.m_tkrCandMap[candTds] = ref;
-
-        // Now we go through the candidate hits (if they are included) and fill those objects
-        int                nHits   = 0;
-        while(nHits < candTds->numPatCandHits())
-        {
-            Event::TkrPatCandHit* candHitTds = candTds->getCandHit(nHits);
-            TVector3              pos(candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
-            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::X ? TkrCandHit::X : TkrCandHit::Y;
-            TkrCandHit candHit;
-            
-            candHit.initialize(pos, candHitTds->HitIndex(), candHitTds->TowerIndex(), candHitTds->PlaneIndex(), view); 
-            
-            cand->addHit(candHit);
-            nHits++;
-        }
-        
-        // Add the candidate to the list
-        recon->addTrackCand(cand);
-        candId++;
-    }
-}
-
-void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* tracksTds)
+void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrTrackCol* tracksTds)
 {
     // Purpose and Method:  This creates root tracks from tds tracks 
     //                      and adds them to the list kept in TkrRecon
 
     // Iterate over the tracks in the TDS
-    int                 trkId  = 0;
-    Event::TkrFitColPtr trkPtr = tracksTds->begin();
-    while(trkPtr != tracksTds->end())
+    // Purpose and Method:  This converts Event::TkrKalFitTrack objects into root TkrKalFitTrack objects
+    for(Event::TkrTrackColConPtr trkPtr = tracksTds->begin(); trkPtr != tracksTds->end(); trkPtr++)
     {
-        TObject*                trackRoot   = 0;
-        Event::TkrFitTrackBase* trackBase   = *trkPtr++;       // The TDS track
+        Event::TkrTrack* trackTds  = *trkPtr;
+        TkrTrack*        trackRoot = new TkrTrack();
+
+        // Convert these to TVector3's 
+        TVector3 position(trackTds->getInitialPosition().x(),
+                          trackTds->getInitialPosition().y(),
+                          trackTds->getInitialPosition().z());
+        TVector3 direction(trackTds->getInitialDirection().x(),
+                           trackTds->getInitialDirection().y(),
+                           trackTds->getInitialDirection().z());
+
+        // Begin with filling the track member variables
+        trackRoot->setStatusBit(trackTds->getStatusBits());
+        trackRoot->setInitialEnergy(trackTds->getInitialEnergy());
+        trackRoot->setInitialPosition(position);
+        trackRoot->setInitialDirection(direction);
+        trackRoot->setChiSquareFilter(trackTds->getChiSquareFilter());
+        trackRoot->setChiSquareSmooth(trackTds->getChiSquareSmooth());
+        trackRoot->setNDegreesOfFreedom(trackTds->getNDegreesOfFreedom());
+        trackRoot->setScatter(trackTds->getScatter());
+        trackRoot->setQuality(trackTds->getQuality());
+        trackRoot->setKalEnergy(trackTds->getKalEnergy());
+        trackRoot->setKalEnergyError(trackTds->getKalEnergyError());
+        trackRoot->setKalThetaMS(trackTds->getKalThetaMS());
+        trackRoot->setNumXGaps(trackTds->getNumXGaps());
+        trackRoot->setNumYGaps(trackTds->getNumYGaps());
+        trackRoot->setNumXFirstGaps(trackTds->getNumXFirstGaps());
+        trackRoot->setNumYFirstGaps(trackTds->getNumYFirstGaps());
+        trackRoot->setNumSegmentPoints(trackTds->getNumSegmentPoints());
+        trackRoot->setChiSqSegment(trackTds->chiSquareSegment());
+        trackRoot->setNumXHits(trackTds->getNumXHits());
+        trackRoot->setNumYHits(trackTds->getNumYHits());
+        trackRoot->setTkrCalRadLen(trackTds->getTkrCalRadlen());
+
+        // Now loop over the hit planes and fill that information
+        Event::TkrTrackHitVecConItr trkHitTdsItr = trackTds->begin();
+        while(trkHitTdsItr != trackTds->end())
+        {
+            const Event::TkrTrackHit*  trackHitTds = *trkHitTdsItr++;
+            TkrTrackHit*               trackHit    = convertTkrTrackHit(trackHitTds);
         
-        // Use dynamic casting to determine what type of fit track is in the TDS
-        if (Event::TkrFitTrack* trackFitTds = dynamic_cast<Event::TkrFitTrack*>(trackBase))
-            trackRoot = convertTkrFitTrack(trackFitTds, trkId++);
-        
-        else if (Event::TkrKalFitTrack* trackFitTds = dynamic_cast<Event::TkrKalFitTrack*>(trackBase))
-            trackRoot = convertTkrKalFitTrack(trackFitTds, trkId++);
+            trackRoot->Add(trackHit);
+        }
+
+        // Ok, I think this makes TkrTrack the owner of the TkrTrackHits... I think...
+        trackRoot->SetOwner();
 
         // Keep relation between Event and Root candidate tracks
         TRef ref = trackRoot;
-        m_common.m_tkrTrackMap[trackBase] = ref;
+        m_common.m_tkrTrackMap[trackTds] = ref;
 
         // Ok, now add the track to the list!
         recon->addTrack(trackRoot);
@@ -410,7 +398,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
     return;
 }
 
-void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* verticesTds, Event::TkrFitTrackCol* tracksTds)
+void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* verticesTds, Event::TkrTrackCol* tracksTds)
 {
     // Purpose and Method:  This creates root vertex output objects from tds vertices 
     //                      and adds them to the list kept in TkrRecon
@@ -420,54 +408,42 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
     Event::TkrVertexConPtr  vtxPtr = verticesTds->begin();
     while(vtxPtr != verticesTds->end())
     {
-        Event::TkrVertex*   vtxTds = *vtxPtr++;
-        TkrVertex*          vtx    = new TkrVertex();
-        TVector3            pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
-        TVector3            dir(vtxTds->getDirection().x(),vtxTds->getDirection().y(),vtxTds->getDirection().z());
-        Event::TkrFitPar    parTds = vtxTds->getTrackPar();
-        Event::TkrFitMatrix covTds = vtxTds->getTrackCov();
-        
-        // Keep relation between Event and Root vertices
-        TRef ref = vtx;
-        m_common.m_tkrVertexMap[vtxTds] = ref;
+        Event::TkrVertex*     vtxTds = *vtxPtr++;
+        TkrVertex*            vtx    = new TkrVertex();
+        TVector3              pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
+        TVector3              dir(vtxTds->getDirection().x(),vtxTds->getDirection().y(),vtxTds->getDirection().z());
+        idents::TkrId         hitTdsId  = vtxTds->getTkrId();
+        commonRootData::TkrId hitId(hitTdsId.getTowerX(),hitTdsId.getTowerY(),hitTdsId.getTray(),
+                                    hitTdsId.getBotTop(), hitTdsId.getView());
 
-        vtx->initializeVals(TkrParams(parTds.getXPosition(), parTds.getXSlope(),
-            parTds.getYPosition(), parTds.getYSlope()),
-            TkrCovMat(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
-            covTds.getcovSxX0(), covTds.getcovSxSx(), covTds.getcovSxY0(), covTds.getcovSxSy(),
-            covTds.getcovY0X0(), covTds.getcovY0Sx(), covTds.getcovY0Y0(), covTds.getcovY0Sy(),
-            covTds.getcovSyX0(), covTds.getcovSySx(), covTds.getcovSyY0(), covTds.getcovSySy()),
-            pos,
-            dir );
-        vtx->initializeInfo(vtxId, 
-            vtxTds->getLayer(), 
-            vtxTds->getTower(), 
-            vtxTds->getQuality(), 
-            vtxTds->getEnergy());
+        vtx->setStatusBit(vtxTds->getStatusBits());
+        vtx->setEnergy(vtxTds->getEnergy());
+        vtx->setPosition(pos);
+        vtx->setDirection(dir);
+        vtx->setChiSquare(vtxTds->getChiSquare());
+        vtx->setQuality(vtxTds->getQuality());
+        vtx->setTkr1ArcLen(vtxTds->getTkr1ArcLen());
+        vtx->setTkr2ArcLen(vtxTds->getTkr2ArcLen());
+        vtx->setDOCA(vtxTds->getDOCA());
+        vtx->setAddedRadLen(vtxTds->getAddedRadLen());
+        vtx->setTkrID(hitId);
+
+        vtx->setParams(convertTkrTrackParams(vtxTds->getVertexParams()));
         
         // Now add the track ids 
         // This is pretty ugly because we don't store track ids in the TDS classes
-        SmartRefVector<Event::TkrFitTrackBase>::const_iterator vtxTrkIter = vtxTds->getTrackIterBegin();
+        SmartRefVector<Event::TkrTrack>::const_iterator vtxTrkIter = vtxTds->getTrackIterBegin();
         while(vtxTrkIter != vtxTds->getTrackIterEnd())
         {
             // Basically... take the pointer to the track from the vertex list and loop
             // over the track pointers in the track list looking for the match. Assign 
             // the id according to the loop variable value.
             // This ALWAYS succeeds (and I'm also selling valuable swampland in Florida!)
-            int                 trkId  = 0;
-            Event::TkrFitColPtr trkPtr = tracksTds->begin();
-            SmartRef<Event::TkrFitTrackBase> vtxTrk = *vtxTrkIter++;
+            SmartRef<Event::TkrTrack> trackTds  = *vtxTrkIter++;
+            TRef                      trackRef  = m_common.m_tkrTrackMap[trackTds];
+            TkrTrack*                 trackRoot = (TkrTrack*) trackRef.GetObject();
             
-            while(trkPtr != tracksTds->end())
-            {
-                SmartRef<Event::TkrFitTrackBase> fitTrk = *trkPtr++;
-                
-                if (vtxTrk == fitTrk) break;
-                
-                trkId++;
-            }
-            
-            vtx->addTrackId(trkId);
+            vtx->addTrack(trackRoot);
         }
         
         // Add the candidate to the list
@@ -476,187 +452,61 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
     }
 }
 
-TObject* reconRootWriterAlg::convertTkrFitTrack(Event::TkrFitTrack* trackTds, int trkId)
+TkrTrackHit* reconRootWriterAlg::convertTkrTrackHit(const Event::TkrTrackHit* trackHitTds)
 {
-    // Purpose and Method:  This converts Event::TkrFitTrack objects into root TkrTrack objects
-    
-    TkrTrack* track = new TkrTrack();      // Create a new Root Track
-    
-    // Initialize the track
-    track->initializeInfo(trkId,
-        trackTds->getNumXGaps(),
-        trackTds->getNumYGaps(),
-        trackTds->getNumXFirstGaps(),
-        trackTds->getNumYFirstGaps() );
-    
-    track->initializeQual(trackTds->getChiSquare(),
-        trackTds->getChiSquareSmooth(),
-        trackTds->getScatter(),
-        trackTds->getQuality(),
-        trackTds->getKalEnergy(),
-        trackTds->getKalThetaMS() );
-    
-    // Now loop over the hit planes and fill that information
-    Event::TkrFitPlaneConPtr planePtr = trackTds->begin();
-    while(planePtr != trackTds->end())
+    TkrTrackHit* trackHit = new TkrTrackHit();
+
+    // Fill cluster and hit id only if they exist
+    if (const Event::TkrCluster* clusTds   = trackHitTds->getClusterPtr())
     {
-        Event::TkrFitPlane  planeTds = *planePtr++;
-        TkrHitPlane         plane    = convertTkrHitPlane(planeTds);
-        
-        track->addHit(plane);
+        TRef        clusRef  = m_common.m_tkrClusterMap[clusTds];
+        TkrCluster* clusRoot = (TkrCluster*) clusRef.GetObject();
+
+        trackHit->setClusterPtr(clusRoot);
+
+        // Convert the TkrId
+        idents::TkrId         hitTdsId  = trackHitTds->getTkrId();
+        commonRootData::TkrId hitId(hitTdsId.getTowerX(), hitTdsId.getTowerY(),
+                                         hitTdsId.getTray(), hitTdsId.getBotTop(), 
+                                         hitTdsId.getView());
+        trackHit->setTkrID(hitId);
     }
     
-    return track;
+    // Fill in the "easy" stuff first 
+    trackHit->setStatusBit(trackHitTds->getStatusBits());
+    trackHit->setZPlane(trackHitTds->getZPlane());
+    trackHit->setEnergy(trackHitTds->getEnergy());
+    trackHit->setRadLen(trackHitTds->getRadLen());
+    trackHit->setActiveDist(trackHitTds->getActiveDist());
+    trackHit->setChiSquareFilter(trackHitTds->getChiSquareFilter());
+    trackHit->setChiSquareSmooth(trackHitTds->getChiSquareSmooth());
+
+    // Now set the track params
+    if (trackHitTds->validMeasuredHit())  trackHit->getTrackParams(TkrTrackHit::MEASURED) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED));
+    if (trackHitTds->validPredictedHit()) trackHit->getTrackParams(TkrTrackHit::PREDICTED) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED));
+    if (trackHitTds->validFilteredHit())  trackHit->getTrackParams(TkrTrackHit::FILTERED) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED));
+    if (trackHitTds->validSmoothedHit())  trackHit->getTrackParams(TkrTrackHit::SMOOTHED) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED));
+    if (trackHitTds->validMaterial())     trackHit->getTrackParams(TkrTrackHit::QMATERIAL) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL));
+    
+    return trackHit;
 }
 
-TObject* reconRootWriterAlg::convertTkrKalFitTrack(Event::TkrKalFitTrack* trackTds, int trkId)
+TkrTrackParams reconRootWriterAlg::convertTkrTrackParams(const Event::TkrTrackParams& trkParTds)
 {
-    // Purpose and Method:  This converts Event::TkrKalFitTrack objects into root TkrKalFitTrack objects
-    
-    TkrKalFitTrack* track    = new TkrKalFitTrack();
-    
-    // Need to extract status, initial position and direction first
-    TkrKalFitTrack::Status status   = TkrKalFitTrack::EMPTY;
-    TVector3               iniPos   = TVector3(trackTds->getInitialPosition().x(),
-        trackTds->getInitialPosition().y(),
-        trackTds->getInitialPosition().z());
-    TVector3               iniDir   = TVector3(trackTds->getInitialDirection().x(),
-        trackTds->getInitialDirection().y(),
-        trackTds->getInitialDirection().z());
-    
-    if      (trackTds->status() == Event::TkrKalFitTrack::FOUND) status = TkrKalFitTrack::FOUND;
-    else if (trackTds->status() == Event::TkrKalFitTrack::CRACK) status = TkrKalFitTrack::CRACK;
-    
-    // Initialize the track
-    track->initializeBase(status, 
-        trackTds->getType(),
-        trkId,
-        trackTds->getStartEnergy(),
-        iniPos,
-        iniDir);
-    
-    track->initializeQual(trackTds->getChiSquare(),
-        trackTds->getChiSquareSmooth(),
-        trackTds->getScatter(),
-        trackTds->getQuality(),
-        trackTds->getKalEnergy(),
-        trackTds->getKalEnergyError(),
-        trackTds->getKalThetaMS() );
-    
-    track->initializeGaps(trackTds->getNumXGaps(),
-        trackTds->getNumYGaps(),
-        trackTds->getNumXFirstGaps(),
-        trackTds->getNumYFirstGaps());
-    
-    track->initializeKal( trackTds->getNumSegmentPoints(),
-        trackTds->chiSquareSegment(),
-        trackTds->getNumXHits(),
-        trackTds->getNumYHits(),
-        trackTds->getTkrCalRadlen());
-    
-    // Now loop over the hit planes and fill that information
-    Event::TkrFitPlaneConPtr planePtr = trackTds->begin();
-    while(planePtr != trackTds->end())
-    {
-        Event::TkrFitPlane  planeTds = *planePtr++;
-        TkrHitPlane         plane    = convertTkrHitPlane(planeTds);
-        
-        track->addHit(plane);
-    }
-    
-    return track;
-}
+    TkrTrackParams params(trkParTds.getxPosition(), trkParTds.getxSlope(), 
+                          trkParTds.getyPosition(), trkParTds.getySlope(),
+                          trkParTds.getxPosxPos(),  trkParTds.getxPosxSlp(), 
+                          trkParTds.getxPosyPos(),  trkParTds.getxPosySlp(),
+                          trkParTds.getxSlpxSlp(),  trkParTds.getxSlpyPos(), 
+                          trkParTds.getxSlpySlp(),  trkParTds.getyPosyPos(), 
+                          trkParTds.getyPosySlp(),  trkParTds.getySlpySlp() );
 
-TkrHitPlane reconRootWriterAlg::convertTkrHitPlane(Event::TkrFitPlane& planeTds)
-{
-    TkrHitPlane plane;
-    
-    // Wouldn't it be great if there was a STANDARD definition for these!
-    TkrHitPlane::AXIS   proj     = planeTds.getProjection() == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
-    TkrHitPlane::AXIS   projPlus = planeTds.getNextProj()   == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
-    
-    plane.initializeInfo(planeTds.getIDHit(),
-        planeTds.getIDTower(),
-        planeTds.getIDPlane(),
-        proj,
-        projPlus,
-        planeTds.getZPlane(),
-        planeTds.getEnergy(),
-        planeTds.getRadLen(),
-        planeTds.getActiveDist() );
-    
-    // Here we build the hit info (one at a time) starting with measured
-    TkrParams           params;
-    TkrCovMat           covMat;
-    Event::TkrFitHit    hitTds = planeTds.getHit(Event::TkrFitHit::MEAS);
-    Event::TkrFitPar    parTds = hitTds.getPar();
-    Event::TkrFitMatrix covTds = hitTds.getCov();
-    params.initialize(parTds.getXPosition(),
-        parTds.getXSlope(),
-        parTds.getYPosition(),
-        parTds.getYSlope() );
-    covMat.initialize(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
-        covTds.getcovSxX0(), covTds.getcovSxSx(), covTds.getcovSxY0(), covTds.getcovSxSy(),
-        covTds.getcovY0X0(), covTds.getcovY0Sx(), covTds.getcovY0Y0(), covTds.getcovY0Sy(),
-        covTds.getcovSyX0(), covTds.getcovSySx(), covTds.getcovSyY0(), covTds.getcovSySy());
-    
-    TkrFitHit           measHit(TkrFitHit::MEAS, params, covMat);
-    
-    // Now the predicted hit
-    hitTds = planeTds.getHit(Event::TkrFitHit::PRED);
-    parTds = hitTds.getPar();
-    covTds = hitTds.getCov();
-    params.initialize(parTds.getXPosition(),
-        parTds.getXSlope(),
-        parTds.getYPosition(),
-        parTds.getYSlope() );
-    covMat.initialize(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
-        covTds.getcovSxX0(), covTds.getcovSxSx(), covTds.getcovSxY0(), covTds.getcovSxSy(),
-        covTds.getcovY0X0(), covTds.getcovY0Sx(), covTds.getcovY0Y0(), covTds.getcovY0Sy(),
-        covTds.getcovSyX0(), covTds.getcovSySx(), covTds.getcovSyY0(), covTds.getcovSySy());
-    
-    TkrFitHit           predHit(TkrFitHit::PRED, params, covMat);
-    
-    // Now the fit (filtered) hit
-    hitTds = planeTds.getHit(Event::TkrFitHit::FIT);
-    parTds = hitTds.getPar();
-    covTds = hitTds.getCov();
-    params.initialize(parTds.getXPosition(),
-        parTds.getXSlope(),
-        parTds.getYPosition(),
-        parTds.getYSlope() );
-    covMat.initialize(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
-        covTds.getcovSxX0(), covTds.getcovSxSx(), covTds.getcovSxY0(), covTds.getcovSxSy(),
-        covTds.getcovY0X0(), covTds.getcovY0Sx(), covTds.getcovY0Y0(), covTds.getcovY0Sy(),
-        covTds.getcovSyX0(), covTds.getcovSySx(), covTds.getcovSyY0(), covTds.getcovSySy());
-    
-    TkrFitHit           filtHit(TkrFitHit::FIT, params, covMat);
-    
-    // Now the smoothed hit
-    hitTds = planeTds.getHit(Event::TkrFitHit::SMOOTH);
-    parTds = hitTds.getPar();
-    covTds = hitTds.getCov();
-    params.initialize(parTds.getXPosition(),
-        parTds.getXSlope(),
-        parTds.getYPosition(),
-        parTds.getYSlope() );
-    covMat.initialize(covTds.getcovX0X0(), covTds.getcovX0Sx(), covTds.getcovX0Y0(), covTds.getcovX0Sy(),
-        covTds.getcovSxX0(), covTds.getcovSxSx(), covTds.getcovSxY0(), covTds.getcovSxSy(),
-        covTds.getcovY0X0(), covTds.getcovY0Sx(), covTds.getcovY0Y0(), covTds.getcovY0Sy(),
-        covTds.getcovSyX0(), covTds.getcovSySx(), covTds.getcovSyY0(), covTds.getcovSySy());
-    
-    TkrFitHit           smooHit(TkrFitHit::SMOOTH, params, covMat);
-    
-    // Here retrieve the scattering matrix
-    Event::TkrFitMatrix scatTds = planeTds.getQmaterial();
-    TkrCovMat         scatCov(scatTds.getcovX0X0(), scatTds.getcovX0Sx(), scatTds.getcovX0Y0(), scatTds.getcovX0Sy(),
-        scatTds.getcovSxX0(), scatTds.getcovSxSx(), scatTds.getcovSxY0(), scatTds.getcovSxSy(),
-        scatTds.getcovY0X0(), scatTds.getcovY0Sx(), scatTds.getcovY0Y0(), scatTds.getcovY0Sy(),
-        scatTds.getcovSyX0(), scatTds.getcovSySx(), scatTds.getcovSyY0(), scatTds.getcovSySy());
-    
-    plane.initializeHits(measHit, predHit, filtHit, smooHit, scatCov);
-    
-    return plane;
+    return params;
 }
 
 

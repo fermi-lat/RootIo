@@ -7,13 +7,12 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
+#include "Event/MonteCarlo/McPositionHit.h"
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-#include "Event/Recon/TkrRecon/TkrTrackTab.h"
-#include "Event/Recon/TkrRecon/TkrVertexTab.h"
 
-#include "Event/RelTable/Relation.h"
+#include "Event/RelTable/RelTable.h"
 
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
@@ -41,7 +40,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.15 2004/09/24 19:14:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.16 2004/11/24 14:16:31 chamont Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -108,14 +107,9 @@ private:
     typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit> CalDigiRelType;
 
     /// Internal pointer to TDS TkrDigi table
-    TkrDigiRelTab*         m_tkrDigiRelTab;
+    TkrDigiRelTab*            m_tkrDigiRelTab;
     /// Internal pointer to tDS CalDigi table
-    CalDigiRelTab*         m_calDigiRelTab;
-    /// Internal pointer to TDS TkrTrackTab relational table
-    Event::TkrFitTrackTab* m_trackRelTab;
-    /// Internal pointer to TDS TkrVertexTab relational table
-    Event::TkrVertexTab*   m_vertexRelTab;
-
+    CalDigiRelTab*            m_calDigiRelTab;
 
 };
 
@@ -262,11 +256,8 @@ StatusCode relationRootReaderAlg::execute()
 
 
     /// Register our relational tables in the TDS (and turn over ownership)
-    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab,    m_tkrDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab,    m_calDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTrackTab,  m_trackRelTab->getAllRelations()   );
-    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVertexTab, m_vertexRelTab->getAllRelations()  );
-
+    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab, m_tkrDigiRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab, m_calDigiRelTab->getAllRelations() );
 
     m_relTab->Clear();
 
@@ -288,12 +279,6 @@ StatusCode relationRootReaderAlg::createTDSTables()
 
     m_calDigiRelTab = new CalDigiRelTab();
     m_calDigiRelTab->init();
-
-    m_trackRelTab = new Event::TkrFitTrackTab();
-    m_trackRelTab->init();
-
-    m_vertexRelTab = new Event::TkrVertexTab();
-    m_vertexRelTab->init();
 
     return sc;
 }
@@ -319,7 +304,6 @@ StatusCode relationRootReaderAlg::readRelations() {
         // Dynamic cast the key back to its original object and decide how to read the relation
         if      (const TkrDigi*      digi = dynamic_cast<const TkrDigi*>(key))      readTkrDigiRelations(relation);
         else if (const CalDigi*      digi = dynamic_cast<const CalDigi*>(key))      readCalDigiRelations(relation);
-        else if (const TkrCandTrack* cand = dynamic_cast<const TkrCandTrack*>(key)) readTkrTrackRelations(relation);
         else if (const TkrVertex*    vert = dynamic_cast<const TkrVertex*>(key))    readTkrVertexRelations(relation);
         else
         {
@@ -400,7 +384,7 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
     return sc;
 }
 
-
+/*
 StatusCode relationRootReaderAlg::readTkrTrackRelations(Relation* relation) 
 {
     // Purpose and Method:  Converts a root TkrPatCand/TkrFitTrack relation to TDS version
@@ -435,7 +419,7 @@ StatusCode relationRootReaderAlg::readTkrTrackRelations(Relation* relation)
     
     return sc;
 }
-
+*/
 StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation) 
 {
     // Purpose and Method:  Converts a root TkrVertex/TkrFitTrack relation to TDS version
@@ -443,12 +427,12 @@ StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation)
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    const TkrVertex*       vertexRoot    = dynamic_cast<const TkrVertex*>(relation->getKey());
+    const TkrVertex*  vertexRoot    = dynamic_cast<const TkrVertex*>(relation->getKey());
 
-    const TRefArray&        refArray     = relation->getValueCol();
-    TObject*                tkrTrackRoot = refArray.At(0);
-    Event::TkrVertex*       vertexTds    = 0;
-    Event::TkrFitTrackBase* tkrTrackTds  = 0;
+    const TRefArray&  refArray     = relation->getValueCol();
+    TObject*          tkrTrackRoot = refArray.At(0);
+    Event::TkrVertex* vertexTds    = 0;
+    Event::TkrTrack*  tkrTrackTds  = 0;
 
     // Look up TDS to root relation for vertices
     if (m_common.m_rootTkrVertexMap.find(vertexRoot) != m_common.m_rootTkrVertexMap.end()) {
@@ -459,14 +443,10 @@ StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation)
 
     // Look up TDS to root relation for candidate tracks
     if (m_common.m_rootTkrTrackMap.find(tkrTrackRoot) != m_common.m_rootTkrTrackMap.end()) {
-        tkrTrackTds = const_cast<Event::TkrFitTrackBase*>(m_common.m_rootTkrTrackMap[tkrTrackRoot]);
+        tkrTrackTds = const_cast<Event::TkrTrack*>(m_common.m_rootTkrTrackMap[tkrTrackRoot]);
     } else {
-        log << MSG::WARNING << "Could not located TkrFitTrackBase TDS/ROOT pair" << endreq;
+        log << MSG::WARNING << "Could not located TkrTrack TDS/ROOT pair" << endreq;
     }
-
-    // Make the event relation here
-    Event::TkrVertexRel* rel = new Event::TkrVertexRel(vertexTds, tkrTrackTds);
-    m_vertexRelTab->addRelation(rel);
 
     return sc;
 }
