@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.25 2004/05/28 06:14:02 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.26 2004/06/10 17:03:34 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -186,7 +186,7 @@ StatusCode digiRootReaderAlg::initialize()
     
 	if (m_rootIoSvc) {
 		m_rootIoSvc->setRootEvtMax(m_numEvents);
-		m_digiTree->BuildIndex("m_runId", "m_eventId");
+		if (!m_digiTree->GetIndex()) m_digiTree->BuildIndex("m_runId", "m_eventId");
 	}
 
 
