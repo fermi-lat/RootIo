@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r5p1 13-Jul-2004 HMK Use new rootTestData package
  v12r5p0 13-Jul-2004 HMK Patch reading of LdfTime
  v12r5   06-Jul-2004 HMK Provide new method in RootIoSvc to allow query of existence of given run/event id pair
  v12r4p0 05-Jul-2004 HMK Fix to link to all ROOT libs required for BuildIndex on Linux
