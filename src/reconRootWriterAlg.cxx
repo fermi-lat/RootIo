@@ -32,7 +32,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.7 2002/05/21 22:39:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.8 2002/05/23 17:31:23 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -511,7 +511,11 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
     unsigned int iCluster;
     for (iCluster = 0; iCluster < numClusters; iCluster++) {
         Event::CalCluster *clusterTds = clusterColTds->getCluster(iCluster);
-        CalCluster *clusterRoot = new CalCluster();
+        Point posTds = clusterTds->getPosition();
+        TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
+
+        CalCluster *clusterRoot = new CalCluster(
+            clusterTds->getEnergySum(), posRoot);
         
         Vector dirTds = clusterTds->getDirection();
         TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());
