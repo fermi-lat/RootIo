@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct 15 19:02:06 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+store TkrCluster when reading and remove double-counting of daughters
+    *
+------------------------------------------------------------
 User: heather  Tue Oct 15 10:52:06 PDT 2002
 RootIo/cmt
 
