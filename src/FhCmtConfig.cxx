@@ -94,10 +94,12 @@ void FhCmtConfig::rawToMap() {
             std::istringstream cmtUse(buffer) ;
             std::string name, value, tmp ;
             cmtUse>>tmp>>name>>value ;
-            while (cmtUse>>tmp) {
-              value += " " ;
-              value += tmp ;
-            }
+// DavidC: I finally feel the value should not include
+// the eventual details.
+//            while (cmtUse>>tmp) {
+//              value += " " ;
+//              value += tmp ;
+//            }
             m_mapUses.add(name.c_str(),value.c_str()) ;
         }       
     }

@@ -24,7 +24,7 @@
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.1 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.2 2004/11/25 10:42:35 chamont Exp $
  */
 
 class FhDemoGetAlg : public Algorithm
@@ -121,7 +121,10 @@ StatusCode FhDemoGetAlg::finalize_common(
     
     FhSystemEnv systemEnv ;
     systemEnv.init(header) ;
-    log << MSG::INFO << prefix << " SystemEnv.RootIoShr: " << systemEnv.getValue("RootIoShr") << endreq ;
+    TString cmtPath(systemEnv.getValue("CMTPATH")) ;
+    TString rootIoShr(systemEnv.getValue("RootIoShr")) ;
+    rootIoShr.Remove(0,cmtPath.Length()) ;
+    log << MSG::INFO << prefix << " SystemEnv.RootIoShr: $CMTPATH" << rootIoShr << endreq ;
 
     FhCmtConfig cmtConfig ;
     cmtConfig.init(header) ;

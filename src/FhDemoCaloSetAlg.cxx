@@ -36,7 +36,7 @@ StatusCode FhDemoCaloSetAlg::finalize() {
     
     // cal string
     if (digiHeader) {
-        digiHeader->setString("CaloString","Demo Cal String") ;
+        digiHeader->setString("CaloString","Demo String") ;
     }
     
     // end
