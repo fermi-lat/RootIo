@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r2   17-Jun-2004 HMK Pick up new RootPolicy v4
  v12r1   10-Jun-2004 HMK Re-activate BuildIndex. Now saves an index based on runid and eventid when writing
                      When reading, if no index exists - one is created in memory for the run - otherwise, the
                      disk-resident index is used to retrieve events when run/event ids are supplied
