@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  5 00:05:51 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootReaderAlg.cxx 
+Log Message:
+actually register the EventSummary obj on TDS when reading
+    *
+------------------------------------------------------------
 User: heather  Thu Aug  5 00:05:21 PDT 2004
 RootIo/doc
 
