@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.45 2004/12/14 23:01:21 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.46 2004/12/16 00:24:29 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -428,7 +428,9 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
         vtx->setAddedRadLen(vtxTds->getAddedRadLen());
         vtx->setTkrID(hitId);
 
-        vtx->setParams(convertTkrTrackParams(vtxTds->getVertexParams()));
+        TkrTrackParams params = convertTkrTrackParams(vtxTds->getVertexParams());
+
+        vtx->setParams(params);
         
         // Now add the track ids 
         // This is pretty ugly because we don't store track ids in the TDS classes
