@@ -1,5 +1,5 @@
 package RootIo
-version v9r1
+version v9r2
 
 branches src doc
 
@@ -7,20 +7,15 @@ use GlastSvc v9r*
 use Event v9r*
 use ROOT v2r* IExternal
 
-use GlastPolicy v5r*
+apply_pattern packageShr
 
-### checkout for these packages
 use RootPolicy v2r*
 use mcRootData v2r*
 use digiRootData v4r*
 use reconRootData v4r*
 use commonRootData v0r*
 
-
-public
-
-apply_pattern packageShr
-
+private
 apply_pattern package_headers
 
 library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
@@ -30,3 +25,7 @@ apply_pattern package_test
 
 apply_pattern package_Cshlibflags
 
+public
+# copied from RootPolicy to work with CMT v1r14
+macro rootcint_begin "" vsnet "<!--"
+macro rootcint_end   "" vsnet "-->"
