@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Sun Jun  1 18:51:28 PDT 2003
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	readDigiRootOptions.txt readMcRootOptions.txt 
+	readReconRootOptions.txt readRootOptions.txt 
+Log Message:
+add new RootIoSvc to control event loop
+    *
+------------------------------------------------------------
 User: heather  Sun Jun  1 18:45:51 PDT 2003
 RootIo/src/test
 
