@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.4 2002/05/07 20:51:32 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.5 2002/05/10 05:27:33 richard Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -179,7 +179,7 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Retrieve the Event data for this event
-    SmartDataPtr<Event> evt(eventSvc(), EventModel::Event);
+    SmartDataPtr<Event::EventHeader> evt(eventSvc(), EventModel::EventHeader);
 
     if (!evt) return sc;
 
@@ -277,7 +277,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
     
     log << MSG::DEBUG << "Number of McPositionHits in the event = " << posHits->size() << endreq;
     
-    McPositionHitVector::const_iterator hit;
+    Event::McPositionHitVector::const_iterator hit;
     for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {
     
         log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
@@ -349,7 +349,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
     log << MSG::DEBUG << "Number of McIntegratingHits in the event = " 
         << intHits->size() << endreq;
     
-    McIntegratingHitVector::const_iterator hit;
+    Event::McIntegratingHitVector::const_iterator hit;
     for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {
 
         log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
