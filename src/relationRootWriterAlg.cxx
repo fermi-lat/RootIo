@@ -4,7 +4,7 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
+//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
@@ -42,7 +42,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.4 2003/09/28 05:22:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.5 2003/09/28 23:54:15 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm

@@ -6,7 +6,7 @@
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/MCEvent.h"
-#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
+//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
@@ -31,7 +31,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.26 2003/09/28 05:22:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.27 2003/09/28 23:54:15 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
