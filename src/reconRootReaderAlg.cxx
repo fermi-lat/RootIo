@@ -34,7 +34,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.11 2002/10/25 13:46:13 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.12 2002/11/18 22:36:48 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -542,11 +542,24 @@ Event::TkrFitHit reconRootReaderAlg::convertTkrFitHit(const TkrFitHit& hitRoot) 
 void reconRootReaderAlg::convertMatrix(const TkrCovMat& matRoot, HepMatrix &hepMat) {
     // Purpose and Method:  Converts from a ROOT TkrCovMat to CLHEP HepMatrix
     hepMat[0][0] = matRoot.getCovX0X0();
-    hepMat[1][1] = matRoot.getCovSxSx();
     hepMat[0][1] = matRoot.getCovX0Sx();
+    hepMat[0][2] = matRoot.getCovX0Y0();
+    hepMat[0][3] = matRoot.getCovX0Sy();
+
+    hepMat[1][0] = matRoot.getCovSxX0();
+    hepMat[1][1] = matRoot.getCovSxSx();
+    hepMat[1][2] = matRoot.getCovSxY0();
+    hepMat[1][3] = matRoot.getCovSxSy();
+
+    hepMat[2][0] = matRoot.getCovY0X0();
+    hepMat[2][1] = matRoot.getCovY0Sx();
     hepMat[2][2] = matRoot.getCovY0Y0();
+    hepMat[2][3] = matRoot.getCovY0Sy();
+
+    hepMat[3][0] = matRoot.getCovSyX0();
+    hepMat[3][1] = matRoot.getCovSySx();
+    hepMat[3][2] = matRoot.getCovSyY0();
     hepMat[3][3] = matRoot.getCovSySy();
-    hepMat[2][2] = matRoot.getCovY0Sy();
 }
 
 
