@@ -1,9 +1,8 @@
 package RootIo
-version v9r5p1
+version v9r6
 
 branches src doc
 
-use GlastSvc v9r*
 use Event v9r*
 use ROOT v2r* IExternal
 
@@ -12,11 +11,13 @@ apply_pattern package_include
 
 use RootPolicy v2r*
 use mcRootData v2r*
-use digiRootData v4r*
+use digiRootData v5r*
 use reconRootData v4r*
 use commonRootData v0r*
 
 private
+use GlastSvc v9r*
+
 apply_pattern package_headers
 
 library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
