@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 10 11:37:52 PDT 2004
+RootIo/src/test
+
+Modified Files:
+	testRootIoSvcAlg.cxx writeOptions.txt 
+Log Message:
+fix up test for re-activation of buildIndex
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 10 10:12:30 PDT 2004
 RootIo/src
 
