@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 29 08:33:04 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	createFakeTdsDataAlg.cxx testReadAlg.cxx 
+Log Message:
+update path to AcdRecon.h in Event package
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 29 08:31:26 PDT 2002
 RootIo/src
 
