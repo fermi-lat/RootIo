@@ -36,6 +36,18 @@
 * @param reconRootReaderAlg.reconRootFile
 *  Name of the input Recon ROOT file, default recon.root
 *
+* @section Tests Tests
+* This package contains one test application, test_RootIo.
+* It can be used to test both reading and writing of Monte Carlo, digi, and 
+* reconstruction ROOT files - depending upon the settings in the 
+* src/test/jobOptions.txt file. 
+* To set for writing, leave the writeOptions.txt include file uncommented and
+* comment out the readOptions.txt include file.  Do the reverse to run the
+* reading test.
+* When the test routine is set for writing, a special algorithm is used to create
+* fake test data, rather than forcing the test routine to use the full simulation
+* to create the data.
+*
 * <hr>
 * @section notes release notes
 * release.notes
