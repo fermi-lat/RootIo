@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.37.2.1 2004/12/14 02:47:38 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.40 2004/12/14 23:01:21 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -247,9 +247,9 @@ StatusCode reconRootReaderAlg::execute()
 
 	if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
 
-	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
+	if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
 		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
+	} else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
 		readInd = m_reconTree->GetEntryNumberWithIndex(run, evt);
@@ -261,6 +261,8 @@ StatusCode reconRootReaderAlg::execute()
             log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
             return StatusCode::SUCCESS;
 	}
+
+    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 	
     // ADDED FOR THE FILE HEADERS DEMO
     m_reconTree->LoadTree(readInd);

@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.2 2003/09/28 05:20:44 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -20,7 +20,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.2 2003/09/28 05:20:44 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
@@ -31,10 +31,14 @@ public:
 
     virtual int index() = 0;
     virtual bool setIndex(int i) = 0;
+    virtual void setActualIndex(int i) = 0;
 
     virtual void registerRootTree(TChain *ch) = 0;
     virtual bool setRunEventPair(std::pair<int,int> ids) = 0;
     virtual std::pair<int,int> runEventPair() = 0;
+
+    virtual bool useIndex() = 0;
+    virtual bool useRunEventPair() = 0;
 
     virtual int getAutoSaveInterval() = 0;
 

@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.42 2004/11/25 08:28:07 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.43 2004/12/02 19:56:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -228,23 +228,25 @@ StatusCode digiRootReaderAlg::execute()
     if (m_digiEvt) m_digiEvt->Clear();
 
     static Int_t evtId = 0;
-	int readInd, numBytes;
-	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+    int readInd, numBytes;
+    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 	
-	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
-		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
-		int run = runEventPair.first;
-		int evt = runEventPair.second;
-		readInd = m_digiTree->GetEntryNumberWithIndex(run, evt);
-	} else {
-		readInd = evtId;
-	}
+    if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
+        readInd = m_rootIoSvc->index();
+    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
+        int run = runEventPair.first;
+        int evt = runEventPair.second;
+        readInd = m_digiTree->GetEntryNumberWithIndex(run, evt);
+    } else {
+        readInd = evtId;
+    }
 
     if (readInd >= m_numEvents) {
         log << MSG::WARNING << "Requested index is out of bounds - no digi data loaded" << endreq;
         return StatusCode::SUCCESS;
     }
+
+    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 
     // ADDED FOR THE FILE HEADERS DEMO
     m_digiTree->LoadTree(readInd);
@@ -252,10 +254,10 @@ StatusCode digiRootReaderAlg::execute()
     
     numBytes = m_digiTree->GetEvent(readInd);
 	
-	if ((numBytes <= 0) || (!m_digiEvt)) {
-            log << MSG::WARNING << "Failed to load digi event" << endreq;
-            return StatusCode::SUCCESS;
-	}
+    if ((numBytes <= 0) || (!m_digiEvt)) {
+        log << MSG::WARNING << "Failed to load digi event" << endreq;
+        return StatusCode::SUCCESS;
+    }
 
 
     sc = readDigiEvent();
