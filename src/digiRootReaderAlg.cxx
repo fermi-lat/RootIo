@@ -13,6 +13,8 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
+#include "Trigger/TriRowBits.h"
+
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
@@ -42,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.38 2004/10/04 21:48:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.39 2004/10/07 12:15:16 chamont Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -344,6 +346,19 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
+
+    TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
+    sc = eventSvc()->registerObject("/Event/Digi/TriRowBits", rowbits);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "Could not register TriRowBits" << endreq;
+        return sc;
+    }
+    unsigned int iTower = 0;
+    for (iTower = 0; iTower < 16; iTower++) {
+        rowbits->setTriRowBits(iTower, m_digiEvt->getL1T().getTriRowBits(iTowe
+r));
+    }
+
     LdfEvent::LdfTime *ldfTimeTds = new LdfEvent::LdfTime();
     if (ldfTimeTds) {
         ldfTimeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec(), m_digiEvt->getEbfUpperPpcTimeBase(), m_digiEvt->getEbfLowerPpcTimeBase());

@@ -17,6 +17,8 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 
+#include "Trigger/TriRowBits.h"
+
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
@@ -41,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32 2004/10/04 21:48:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.33 2004/10/07 12:15:16 chamont Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -280,7 +282,17 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     if( log.isActive()) evtTds->fillStream(log.stream());
     log << endreq;
 
-    L1T levelOne(evtTds->trigger());
+    SmartDataPtr<TriRowBitsTds::TriRowBits> triRowBitsTds(eventSvc(), "/Event/
+Digi/TriRowBits");
+    UInt_t rowBits[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    if (triRowBitsTds) {
+        unsigned int iTower;
+        for(iTower = 0; iTower < 16; iTower++)
+            rowBits[iTower] = triRowBitsTds->getTriRowBits(iTower);
+    }
+
+    L1T levelOne(evtTds->trigger(), rowBits);
+
     m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
 
     SmartDataPtr<LdfEvent::LdfTime> timeTds(eventSvc(), "/Event/Time");

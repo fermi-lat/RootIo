@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
  
+         11-Nov-2004 HMK Store Luis' 3-in-a-row bits per tower
  v12r10  27-Sep-2004 HMK Handle the contribution lengths in the LDF
  v12r9   24-Sep-2004 HMK Fully populate LDF AcdDigi Parameters
                          Replace call to printenv to set for Windows
