@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v4r15  24-Sep-2002 HMK update versions of ROOT class and handle McParticle daughters\n
  v4r13  20-Sep-2002 HMK update to fill and read TkrClusterCol\n
  v4r12  10-Sep-2002 HMK update versions of Event and GlastSvc to v9r*\n
  v4r11  29-Aug-2002 HMK update reconRootData to include active distance collecton\n
