@@ -1,7 +1,7 @@
 package RootIo
-version v12r5p6
+version v12r5p7
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.103.2.1 2004/08/05 06:22:34 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.103.2.2 2004/08/05 07:04:03 heather Exp $
 
 branches src doc
 
@@ -11,7 +11,7 @@ use ROOT v2r* IExternal
 apply_pattern packageShr
 apply_pattern package_include
 
-use RootPolicy v4r* -no_auto_imports
+#use RootPolicy v4r* -no_auto_imports
 use mcRootData v2r* -no_auto_imports
 use digiRootData v7r* -no_auto_imports
 use reconRootData v4r* -no_auto_imports
