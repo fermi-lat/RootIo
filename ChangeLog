@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 21 16:31:48 PDT 2003
+RootIo/RootIo
+
+Added Files:
+	IRootIoSvc.h 
+Log Message:
+move IRootIoSvc.h into ublic area
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 21 16:31:02 PDT 2003
 RootIo/RootIo
 
