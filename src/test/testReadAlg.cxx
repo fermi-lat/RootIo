@@ -13,7 +13,7 @@
 #include "idents/CalXtalId.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
-#include "Event/Recon/TkrRecon/TkrPatCandCol.h"
+#include "Event/Recon/TkrRecon/TkrPatCand.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
@@ -26,7 +26,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.6 2002/07/03 13:35:03 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.7 2002/08/29 15:33:04 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -179,7 +179,7 @@ StatusCode testReadAlg::readReconData() {
     if (!candidatesColTds) 
         log << MSG::INFO << "No TKR candidate tracks on the TDS" << endreq;
     else 
-        log << MSG::DEBUG << candidatesColTds->getNumCands() << " TKR candidate tracks on TDS" << endreq;
+        log << MSG::DEBUG << candidatesColTds->size() << " TKR candidate tracks on TDS" << endreq;
 
     SmartDataPtr<Event::TkrFitTrackCol> trackColTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
     if (!trackColTds)
