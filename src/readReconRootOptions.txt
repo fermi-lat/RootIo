@@ -8,6 +8,10 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 
 ApplicationMgr.TopAlg +=  { "reconRootReaderAlg"};
 
+ApplicationMgr.ExtSvc += { "RootIoSvc" };
+// controls the event loop
+ApplicationMgr.Runable= "RootIoSvc";
+
 reconRootReaderAlg.OutputLevel = 3;
 reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
 

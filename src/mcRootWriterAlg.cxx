@@ -29,7 +29,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.21 2003/02/11 23:05:25 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.22 2003/03/18 15:01:43 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -500,7 +500,7 @@ void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId,
     //     version of the idents::VolumeIdentifier and append each to the ROOT
     //     VolumeIdentifier
     
-    unsigned int index;
+    int index;
     rootVolId.Clear();
     for (index = 0; index < tdsVolId.size(); index++) {
         rootVolId.append(tdsVolId.operator [](index));

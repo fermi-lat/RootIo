@@ -33,13 +33,14 @@
 #include "facilities/Util.h"
 
 #include "commonData.h"
+#include "IRootIoSvc.h"
 
 /** @class relationRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.1 2002/12/02 21:54:19 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.2 2003/03/18 15:01:43 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -95,8 +96,9 @@ private:
     int m_numEvents;
 
     commonData m_common;
+    IRootIoSvc*   m_rootIoSvc;
 
-    /// typedefs for tables
+/// typedefs for tables
     typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>    TkrDigiRelTab;
     typedef Event::Relation<Event::TkrDigi,Event::McPositionHit>    TkrDigiRelType;
     typedef Event::RelTable<Event::CalDigi,Event::McIntegratingHit> CalDigiRelTab;
@@ -141,6 +143,13 @@ StatusCode relationRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
 
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
+        m_rootIoSvc = 0;
+        //return StatusCode::FAILURE;
+    }
+
     facilities::Util::expandEnvVar(&m_fileName);
     
     // Save the current directory for the ntuple writer service
@@ -162,7 +171,8 @@ StatusCode relationRootReaderAlg::initialize()
     m_relTree->SetBranchAddress("RelTable", &m_relTab);
 
     m_numEvents = m_relTree->GetEntries();
-    
+    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+
     saveDir->cd();
     return sc;
     
@@ -184,7 +194,7 @@ StatusCode relationRootReaderAlg::execute()
         return StatusCode::FAILURE;
     }
 
-    static UInt_t evtId = 0;
+    static Int_t evtId = 0;
 
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;

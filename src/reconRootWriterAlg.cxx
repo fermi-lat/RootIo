@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.28 2003/02/26 20:09:01 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.29 2003/03/18 15:01:43 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -280,7 +280,7 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
     
     int numClusters = clusterColTds->nHits();
     
-    unsigned int icluster;
+    int icluster;
     for (icluster = 0; icluster < numClusters; icluster++) {
         Event::TkrCluster *clusterTds = clusterColTds->getHit(icluster);
         Event::TkrCluster::view viewTds = clusterTds->v();
@@ -306,7 +306,7 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
     //                      and adds them to the list kept in TkrRecon
     
     // Loop over the candidate tracks in the TDS
-    int                     candId  = 0;
+    unsigned int                     candId  = 0;
     Event::TkrPatCandColPtr cands   = candidatesTds->begin();
     while(candId < candidatesTds->size())
     {

@@ -23,6 +23,7 @@
 
 #include "facilities/Util.h"
 #include "commonData.h"
+#include "IRootIoSvc.h"
 
 #include <map>
 
@@ -31,7 +32,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.19 2002/10/24 14:06:40 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.20 2003/03/18 15:01:43 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -91,7 +92,9 @@ private:
     /// Keep track of MC particles as we retrieve them from the ROOT file
     /// The id is the unique id assigned by ROOT for every TObject.
     std::map<UInt_t, Event::McParticle*> m_particleMap;
-    
+
+    IRootIoSvc*   m_rootIoSvc;
+  
 };
 
 static const AlgFactory<mcRootReaderAlg>  Factory;
@@ -122,7 +125,14 @@ StatusCode mcRootReaderAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
-    
+     
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
+        m_rootIoSvc = 0;
+        //return StatusCode::FAILURE;
+    }   
+
     facilities::Util::expandEnvVar(&m_fileName);
     
     // Save the current directory for the ntuple writer service
@@ -146,21 +156,9 @@ StatusCode mcRootReaderAlg::initialize()
     m_common.m_mcEvt = m_mcEvt;
     
     m_numEvents = m_mcTree->GetEntries();
-    
-    /* Saving code to eventually set the evtMax
-    IProperty* glastPropMgr=0;
-    sc = service("EventSelector", glastPropMgr, true);
-    if( sc.isFailure() ) return sc;
-    IntegerProperty evtMax("EvtMax",0);
-    sc = glastPropMgr->getProperty( &evtMax );
-    if (sc.isFailure()) return sc;
-    if (m_numEvents < evtMax) {
-    evtMax = m_numEvents;
-    sc = glastPropMgr->setProperty( evtMax );
-    }
-    glastPropMgr->release();
-    */
-    
+
+    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+     
     saveDir->cd();
     return sc;
     
@@ -183,7 +181,7 @@ StatusCode mcRootReaderAlg::execute()
         return StatusCode::FAILURE;
     }
     
-    static UInt_t evtId = 0;
+    static Int_t evtId = 0;
     
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;
@@ -545,7 +543,7 @@ void mcRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId,
     // Input:  ROOT VolumeIdentifier
     // Ouput:  idents::VolumeIdentifier
     
-    unsigned int index;
+    int index;
     for (index = 0; index < rootVolId.size(); index++) {
         tdsVolId.append(rootVolId.operator [](index));
     }
