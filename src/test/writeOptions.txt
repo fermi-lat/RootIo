@@ -5,7 +5,7 @@
 #include "$ROOTIOROOT/src/test/g4Options.txt"
 ApplicationMgr.DLLs +=    { "RootIo" };
 
-ApplicationMgr.TopAlg +=  { "mcRootWriterAlg", "digiRootWriterAlg"};
+ApplicationMgr.TopAlg +=  { "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
 mcRootWriterAlg.splitMode = 1;
@@ -16,6 +16,11 @@ digiRootWriterAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
 digiRootWriterAlg.splitMode = 1;
 digiRootWriterAlg.bufferSize = 64000;
 digiRootWriterAlg.compressionLevel = 1;
+
+reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
+reconRootWriterAlg.splitMode = 1;
+reconRootWriterAlg.bufferSize = 64000;
+reconRootWriterAlg.compressionLevel = 1;
 
 //==============================================================
 //
