@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: lsrea  Mon Feb  7 12:36:23 PST 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+changes for TkrCluster
+
+    *
+------------------------------------------------------------
+User: lsrea  Mon Feb  7 12:36:23 PST 2005
 RootIo/doc
 
 Modified Files:
