@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jul 12 14:37:51 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+add error message
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  9 06:45:45 PDT 2002
 RootIo/cmt
 
