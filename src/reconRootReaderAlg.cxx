@@ -16,6 +16,8 @@
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
 
+#include "LdfEvent/EventSummaryData.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -40,7 +42,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34 2004/07/06 22:10:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34.2.1 2004/08/14 06:12:13 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -307,6 +309,20 @@ StatusCode reconRootReaderAlg::readReconEvent() {
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
     
+    // Only update the eventflags on the TDS if the /Event/EventSummary
+    // does not yet exist (digiRootReader may fill this for us)
+    SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
+    if (!summaryTds) {
+      LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
+      evtSumTds->initEventFlags(m_reconEvt->getEventFlags());
+      sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
+      if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register /Event/EventSummary " << endreq
+;
+        return sc;
+      }
+    }
+
     return sc;
 }
 
