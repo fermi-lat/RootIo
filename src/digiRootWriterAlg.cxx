@@ -32,7 +32,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.11 2003/03/06 00:11:05 chehtman Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.12 2003/03/18 15:01:43 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -280,10 +280,7 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
         if( log.isActive()) (*calDigiTds)->fillStream(log.stream());
         log << endreq;
         
-        // HMK hold off update to ClonesArray until after the new relation reading is in
-        // Will fix after the next tag.
-        //CalDigi *calDigiRoot = m_digiEvt->addCalDigi();
-        CalDigi *calDigiRoot = new CalDigi();
+        CalDigi *calDigiRoot = m_digiEvt->addCalDigi();
         m_common.m_calDigiMap[(*calDigiTds)] = calDigiRoot;
 
         idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
@@ -313,9 +310,6 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
             }
         }
 
-        // HMK holding off use of TClonesArray version until after relation reading is in
-        // Will fix after the next tag
-        m_digiEvt->addCalDigi(calDigiRoot);
     }
 
     return sc;
