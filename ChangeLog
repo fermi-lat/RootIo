@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed May  1 16:34:40 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx 
+Log Message:
+fix up for new version of McIntegratingHits with energyMap stored
+as a vector of pairs
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 29 07:17:31 PDT 2002
 RootIo/src
 
