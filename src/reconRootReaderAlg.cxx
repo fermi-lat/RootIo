@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.44 2005/01/25 20:01:19 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.45 2005/02/07 20:36:23 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -231,38 +231,40 @@ StatusCode reconRootReaderAlg::execute()
         
     if (m_reconEvt) m_reconEvt->Clear();
 
-	static Long64_t evtId = 0;
-	Long64_t readInd;
-        int numBytes;
-	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+    static Long64_t evtId = 0;
+    Long64_t readInd;
+    int numBytes;
+    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 
-	if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
+    if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
 
-	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
-		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
-		int run = runEventPair.first;
-		int evt = runEventPair.second;
-		readInd = m_reconTree->GetEntryNumberWithIndex(run, evt);
-	} else {
-		readInd = evtId;
-	}
+    if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
+        readInd = m_rootIoSvc->index();
+    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
+        int run = runEventPair.first;
+        int evt = runEventPair.second;
+        readInd = m_reconTree->GetEntryNumberWithIndex(run, evt);
+    } else {
+        readInd = evtId;
+    }
 
-	if (readInd >= m_numEvents) {
-            log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
-            return StatusCode::SUCCESS;
-	}
+    if (readInd >= m_numEvents) {
+        log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
+        return StatusCode::SUCCESS;
+    }
+
+    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 	
     // ADDED FOR THE FILE HEADERS DEMO
     m_reconTree->LoadTree(readInd);
     m_headersTool->readConstReconHeader(m_reconTree->GetFile()) ;
     
-	numBytes = m_reconTree->GetEvent(readInd);
+    numBytes = m_reconTree->GetEvent(readInd);
 
-	if ((numBytes <= 0) || (!m_reconEvt)) {
-            log << MSG::WARNING << "Failed to Load Recon Event" << endreq;
-            return StatusCode::SUCCESS;
-	}
+    if ((numBytes <= 0) || (!m_reconEvt)) {
+        log << MSG::WARNING << "Failed to Load Recon Event" << endreq;
+        return StatusCode::SUCCESS;
+    }
     
     sc = readReconEvent();
     if (sc.isFailure()) {

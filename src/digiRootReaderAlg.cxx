@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.44 2005/01/25 19:14:29 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.45 2005/02/22 21:06:28 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -232,20 +232,22 @@ StatusCode digiRootReaderAlg::execute()
     int numBytes;
     std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 	
-	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
-		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
-		int run = runEventPair.first;
-		int evt = runEventPair.second;
-		readInd = m_digiTree->GetEntryNumberWithIndex(run, evt);
-	} else {
-		readInd = evtId;
-	}
+    if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
+        readInd = m_rootIoSvc->index();
+    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
+        int run = runEventPair.first;
+        int evt = runEventPair.second;
+        readInd = m_digiTree->GetEntryNumberWithIndex(run, evt);
+    } else {
+        readInd = evtId;
+    }
 
     if (readInd >= m_numEvents) {
         log << MSG::WARNING << "Requested index is out of bounds - no digi data loaded" << endreq;
         return StatusCode::SUCCESS;
     }
+
+    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 
     // ADDED FOR THE FILE HEADERS DEMO
     m_digiTree->LoadTree(readInd);
