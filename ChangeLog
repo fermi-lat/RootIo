@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 19 13:08:30 PST 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Modifed reconRootWriterAlg and reconRootReaderAlg to do the root I/O for the
+new TkrKalFitTrack class containing the "complete" track fit information
+
+    *
+------------------------------------------------------------
 User: heather  Mon Dec  2 13:54:19 PST 2002
 RootIo/src
 
