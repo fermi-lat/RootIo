@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Mon Sep 13 04:49:36 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+could help if, for some reason, the method is called twice
+    *
+------------------------------------------------------------
 User: chamont  Fri Aug 27 06:55:40 PDT 2004
 RootIo/src/test
 
