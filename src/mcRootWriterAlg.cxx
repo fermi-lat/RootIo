@@ -27,11 +27,15 @@
 
 #include <map>
 
+// ADDED FOR THE FILE HEADERS DEMO
+#include "src/FileHeadersTool.h"
+#include <cstdlib>
+
 /** @class mcRootWriterAlg
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.29 2004/01/13 00:28:22 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.30 2004/06/10 17:03:34 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -98,6 +102,9 @@ private:
 
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
+
+    // ADDED FOR THE FILE HEADERS DEMO
+    IFileHeadersTool * m_headersTool ;
 };
 
 
@@ -120,6 +127,10 @@ Algorithm(name, pSvcLocator)
     // ROOT TTree name
     declareProperty("treeName", m_treeName="Mc");
 
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_headersTool = 0 ;
+
     m_common.m_mcPartMap.clear();
     m_common.m_mcPosHitMap.clear();
     m_common.m_mcIntHitMap.clear();
@@ -132,6 +143,16 @@ StatusCode mcRootWriterAlg::initialize()
 
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
+    }
+    headersSc = m_headersTool->newMcHeader() ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to create a new Mc FileHeader" << endreq;
+    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -564,6 +585,9 @@ void mcRootWriterAlg::close()
 
 StatusCode mcRootWriterAlg::finalize()
 {
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_headersTool->writeMcHeader(m_mcTree->GetCurrentFile()) ;
+    
     close();
     
     StatusCode sc = StatusCode::SUCCESS;

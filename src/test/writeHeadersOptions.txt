@@ -1,0 +1,44 @@
+//##############################################################
+//
+// Job options file for RootIo test
+//
+ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
+
+ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
+    "FileHeadersSetAlg", "CaloFileHeadersSetAlg", "testFileHeadersSetAlg",
+    "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
+
+ApplicationMgr.ExtSvc = { 
+    "GlastEventSelector/EventSelector" , 
+    "EventCnvSvc"
+    };
+
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventSelector.Input = "NONE";
+
+mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
+mcRootWriterAlg.splitMode = 1;
+mcRootWriterAlg.bufferSize = 64000;
+mcRootWriterAlg.compressionLevel = 1;
+
+digiRootWriterAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi-fake.root";
+digiRootWriterAlg.splitMode = 1;
+digiRootWriterAlg.bufferSize = 64000;
+digiRootWriterAlg.compressionLevel = 1;
+
+reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon-fake.root";
+reconRootWriterAlg.splitMode = 1;
+reconRootWriterAlg.bufferSize = 64000;
+reconRootWriterAlg.compressionLevel = 1;
+
+// chrono auditor
+ApplicationMgr.DLLs+= { "GaudiAud"};
+ApplicationMgr.ExtSvc += {"ChronoStatSvc"};
+AuditorSvc.Auditors = {"ChronoAuditor"};
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+

@@ -32,6 +32,9 @@
 
 #include "RootIo/IRootIoSvc.h"
 
+// ADDED FOR THE FILE HEADERS DEMO
+#include "src/FileHeadersTool.h"
+
 #include <vector>
 #include <map>
 
@@ -40,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.33 2004/07/06 21:54:09 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34 2004/07/06 22:10:34 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -119,6 +122,9 @@ private:
 
     IRootIoSvc*   m_rootIoSvc;
 
+
+    // ADDED FOR THE FILE HEADERS DEMO
+    IFileHeadersTool * m_headersTool ;
 };
 
 static const AlgFactory<reconRootReaderAlg>  Factory;
@@ -149,6 +155,12 @@ StatusCode reconRootReaderAlg::initialize()
     
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
+    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -244,6 +256,11 @@ StatusCode reconRootReaderAlg::execute()
             log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
             return StatusCode::SUCCESS;
 	}
+	
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_reconTree->LoadTree(readInd);
+    m_headersTool->readConstReconHeader(m_reconTree->GetFile()) ;
+    
 	numBytes = m_reconTree->GetEvent(readInd);
 
 	if ((numBytes <= 0) || (!m_reconEvt)) {

@@ -33,11 +33,15 @@
 #include "reconRootData/ReconEvent.h"
 #include "RootIo/IRootIoSvc.h"
 
+// ADDED FOR THE FILE HEADERS DEMO
+#include "src/FileHeadersTool.h"
+#include <cstdlib>
+
 /** @class reconRootWriterAlg
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.35 2004/01/13 00:28:22 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.36 2004/06/10 17:03:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -114,6 +118,9 @@ private:
     /// Keep track of relation between TDS objs and ROOT counterparts
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
+
+    // ADDED FOR THE FILE HEADERS DEMO
+    IFileHeadersTool * m_headersTool ;
 };
 
 
@@ -131,6 +138,9 @@ Algorithm(name, pSvcLocator)
     // ROOT default compression
     declareProperty("compressionLevel", m_compressionLevel=1);
     declareProperty("treeName", m_treeName="Recon");    
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_headersTool = 0 ;
 }
 
 StatusCode reconRootWriterAlg::initialize()
@@ -140,6 +150,16 @@ StatusCode reconRootWriterAlg::initialize()
     
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
+    }
+    headersSc = m_headersTool->newReconHeader() ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to create a new Recon FileHeader" << endreq;
+    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -818,6 +838,9 @@ void reconRootWriterAlg::close()
 
 StatusCode reconRootWriterAlg::finalize()
 {
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_headersTool->writeReconHeader(m_reconTree->GetCurrentFile()) ;
+    
     close();
     
     StatusCode sc = StatusCode::SUCCESS;

@@ -33,12 +33,15 @@
 
 #include "RootIo/IRootIoSvc.h"
 
+// ADDED FOR THE FILE HEADERS DEMO
+#include "src/FileHeadersTool.h"
+
 /** @class digiRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.29 2004/07/06 22:10:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30 2004/07/13 18:40:06 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -101,6 +104,8 @@ private:
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
 
+    // ADDED FOR THE FILE HEADERS DEMO
+    IFileHeadersTool * m_headersTool ;
 };
 
 static const AlgFactory<digiRootReaderAlg>  Factory;
@@ -131,6 +136,12 @@ StatusCode digiRootReaderAlg::initialize()
 
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
+    
+    // ADDED FOR THE FILE HEADERS DEMO
+    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    if (headersSc.isFailure()) {
+        log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
+    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -227,6 +238,10 @@ StatusCode digiRootReaderAlg::execute()
         return StatusCode::SUCCESS;
     }
 
+    // ADDED FOR THE FILE HEADERS DEMO
+    m_digiTree->LoadTree(readInd);
+    m_headersTool->readConstDigiHeader(m_digiTree->GetFile()) ;
+    
     numBytes = m_digiTree->GetEvent(readInd);
 	
 	if ((numBytes <= 0) || (!m_digiEvt)) {
