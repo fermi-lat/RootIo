@@ -1,29 +1,16 @@
 package RootIo
-version v4r6p1
+version v4r7
 
 branches src doc
 
+use GaudiSvc v7r*
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
-use mcRootData v2r2
+use mcRootData v2r3
 use digiRootData v3r5p1
 use reconRootData v3r2
 use GlastPolicy v4r*
-
-# uses for test program: make private here 
-# the private use breaks linux build
-# private
-use G4Generator v4r*
-use FluxSvc v5r*
-use AcdDigi v1r*
-use TkrDigi v1r*
-use CalDigi v1r*
-use CalRecon v5r*
-use TkrRecon v6r*
-
-private
-use AcdRecon v0r*
 
 public
 
@@ -33,7 +20,6 @@ apply_pattern package_headers
 
 library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
 
-#ignore_pattern package_stamps
 
 apply_pattern package_test
 
