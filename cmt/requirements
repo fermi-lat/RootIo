@@ -9,7 +9,7 @@ use Event v8r*
 use ROOT v3r2p*
 use mcRootData v2r3
 use digiRootData v3r5p1
-use reconRootData v3r2
+use reconRootData v3r2p1
 use GlastPolicy v4r*
 
 public
