@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
+ v8r0    31-May-2003 HMK Introduce RootIoSvc which uses IRunable interface to control event loop
  v7r0    25-Mar-2003 AC  Updates for writing TClonesArray in Cal Digi
  v6r4p0  20-Mar-2003 HMK Minor fix for Linux
  v6r4    18-Mar-2003 TU  Make relation reading functional
