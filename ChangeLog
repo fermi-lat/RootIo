@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri May 24 13:58:02 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use CalDigi package in testing
+    *
+------------------------------------------------------------
 User: heather  Fri May 24 13:57:12 PDT 2002
 RootIo/src/test
 
