@@ -32,7 +32,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.14 2003/06/02 01:51:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.15 2003/06/17 19:27:37 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -342,7 +342,7 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
         unsigned int iHit;
         for (iHit = 0; iHit < numHits; iHit++) {
             Int_t strip = (*tkrDigiTds)->getHit(iHit);
-            if (strip < lastController0Strip) {
+            if (strip <= lastController0Strip) {
                 tkrDigiRoot->addC0Hit(strip);
             } else {
                 tkrDigiRoot->addC1Hit(strip);
