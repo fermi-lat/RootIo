@@ -1,5 +1,5 @@
 package RootIo
-version v4r0
+version v4r1
 
 branches src doc
 
@@ -16,6 +16,8 @@ use G4Generator v4r*
 use FluxSvc v5r*
 use GuiSvc v3
 use GlastDigi v4r*
+use CalRecon v5r*
+use TkrRecon v6r*
 
 
 apply_pattern package_headers
