@@ -1,21 +1,20 @@
 package RootIo
-version v6r0p0
+version v6r1
 
 branches src doc
 
-use GaudiSvc v7r*
 use GlastSvc v9r*
 use Event v9r*
-use ROOT v3r2p*
+use ROOT v2r* IExternal
 
-use GlastPolicy v4r*
+use GlastPolicy v5r*
 
 ### checkout for these packages
-use RootPolicy v1r0p3
-use mcRootData v2r8p0
-use digiRootData v3r5p7
-use reconRootData v4r0p0
-use commonRootData v0
+use RootPolicy v2r*
+use mcRootData v2r*
+use digiRootData v3r*
+use reconRootData v3r*
+use commonRootData v0r*
 
 
 public
