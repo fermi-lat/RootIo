@@ -29,7 +29,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.12 2002/06/04 19:42:41 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.13 2002/06/04 23:04:51 usher Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -251,7 +251,7 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
         {
             Event::TkrPatCandHit* candHitTds = candTds->getCandHit(nHits);
             TVector3              pos(candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
-            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::view::X ? TkrCandHit::AXIS::X : TkrCandHit::AXIS::Y;
+            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::X ? TkrCandHit::X : TkrCandHit::Y;
             TkrCandHit candHit;
 
             candHit.initialize(pos, candHitTds->HitIndex(), candHitTds->TowerIndex(), candHitTds->PlaneIndex(), view); 
@@ -301,8 +301,8 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
             TkrHitPlane         plane;
 
             // Wouldn't it be great if there was a STANDARD definition for these!
-            TkrHitPlane::AXIS   proj     = planeTds.getProjection() == Event::TkrCluster::view::X ? TkrHitPlane::AXIS::X : TkrHitPlane::AXIS::Y;
-            TkrHitPlane::AXIS   projPlus = planeTds.getNextProj()   == Event::TkrCluster::view::X ? TkrHitPlane::AXIS::X : TkrHitPlane::AXIS::Y;
+            TkrHitPlane::AXIS   proj     = planeTds.getProjection() == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
+            TkrHitPlane::AXIS   projPlus = planeTds.getNextProj()   == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
 
             plane.initializeInfo(planeTds.getIDHit(),
                                  planeTds.getIDTower(),
@@ -316,7 +316,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
             // Here we build the hit info (one at a time) starting with measured
             TkrParams           params;
             TkrCovMat           covMat;
-            Event::TkrFitHit    hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::MEAS);
+            Event::TkrFitHit    hitTds = planeTds.getHit(Event::TkrFitHit::MEAS);
             Event::TkrFitPar    parTds = hitTds.getPar();
             Event::TkrFitMatrix covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -330,10 +330,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           measHit(TkrFitHit::TYPE::MEAS, params, covMat);
+            TkrFitHit           measHit(TkrFitHit::MEAS, params, covMat);
 
             // Now the predicted hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::PRED);
+            hitTds = planeTds.getHit(Event::TkrFitHit::PRED);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -347,10 +347,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           predHit(TkrFitHit::TYPE::PRED, params, covMat);
+            TkrFitHit           predHit(TkrFitHit::PRED, params, covMat);
 
             // Now the fit (filtered) hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::FIT);
+            hitTds = planeTds.getHit(Event::TkrFitHit::FIT);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -364,10 +364,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           filtHit(TkrFitHit::TYPE::FIT, params, covMat);
+            TkrFitHit           filtHit(TkrFitHit::FIT, params, covMat);
 
             // Now the smoothed hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::SMOOTH);
+            hitTds = planeTds.getHit(Event::TkrFitHit::SMOOTH);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -381,7 +381,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           smooHit(TkrFitHit::TYPE::SMOOTH, params, covMat);
+            TkrFitHit           smooHit(TkrFitHit::SMOOTH, params, covMat);
 
             // Here retrieve the scattering matrix
             Event::TkrFitMatrix scatTds = planeTds.getQmaterial();
