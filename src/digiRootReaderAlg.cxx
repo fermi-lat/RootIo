@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.2 2002/05/23 00:41:06 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.3 2002/06/06 16:03:18 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -196,7 +196,7 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
-    if (runIdTds != runIdTds) evt->setRun(runIdRoot);
+    if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
 
     Event::DigiEvent* digiEventTds = 
         SmartDataPtr<Event::DigiEvent>(eventSvc(), EventModel::Digi::Event);

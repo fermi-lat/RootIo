@@ -25,7 +25,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.1 2002/05/15 22:30:54 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.2 2002/06/06 16:03:18 heather Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -182,7 +182,7 @@ StatusCode reconRootReaderAlg::readReconEvent() {
 
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
-    if (runIdTds != runIdTds) evt->setRun(runIdRoot);
+    if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
 
     return sc;
 }
