@@ -29,7 +29,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.5.6.2 2004/08/18 20:37:46 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.6 2004/09/15 04:19:31 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -221,7 +221,9 @@ StatusCode createFakeTdsDataAlg::storeGemData() {
     LdfEvent::GemTileList tileListTds(1,2, 3, 4, 5, 6, 7);
     gemTds->initTrigger(8, 9, 10, 11, 12, 13, tileListTds);
     LdfEvent::GemOnePpsTime ppsTimeTds(14, 15);
-    gemTds->initSummary(16, 17, 18, 19, 20, ppsTimeTds, 21);
+    LdfEvent::GemDataCondArrivalTime condArr;
+    condArr.init(19);
+    gemTds->initSummary(16, 17, 18, condArr, 20, ppsTimeTds, 21, 22);
 
     sc = eventSvc()->registerObject("/Event/Gem", gemTds);
     if (sc.isFailure()) {
