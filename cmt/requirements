@@ -13,7 +13,7 @@ use GlastPolicy v5r*
 use RootPolicy v2r*
 use mcRootData v2r*
 use digiRootData v3r*
-use reconRootData v3r*
+use reconRootData v4r*
 use commonRootData v0r*
 
 
