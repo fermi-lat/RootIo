@@ -2,12 +2,12 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.7 2002/06/06 15:58:02 heather Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.8 2002/06/11 00:50:40 heather Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
-ApplicationMgr.DLLs   = { "GlastSvc", 
+ApplicationMgr.DLLs   = { "GlastSvc", "G4Generator",
                           "AcdDigi", "CalDigi", "TkrDigi", 
-                          "CalRecon", "TkrRecon"};
+                          "CalRecon", "TkrRecon", "AcdRecon"};
 
 ApplicationMgr.ExtSvc = { 
     "GlastEventSelector/EventSelector" , 
@@ -20,9 +20,8 @@ EventSelector.Input = "NONE";
 
 // Stuff for detModel
 GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
-// select one of the following for a top volume 
 GlastDetSvc.topVolume="LAT";         // the whole schebang 
-
+GlastDetSvc.visitorMode="recon";
 
 #include "$FLUXSVCROOT/src/defaultOptions.txt"
 // Append (no replace) the list of source library documents
@@ -31,18 +30,21 @@ FluxSvc.source_lib = {"$(G4GENERATORROOT)/src/test/test_sources.xml"};
 //----------------- local algorithms to run -------------------
 ApplicationMgr.TopAlg = { "FluxAlg", "G4Generator", "AcdDigiAlg",
                           "TkrSimpleDigiAlg", "CalDigiAlg",
-                           "CalXtalRecAlg", "CalClustersAlg"};
+                          "TkrClusterAlg", "TkrFindAlg", "TkrReconAlg", "TkrVertexAlg",
+                          "CalXtalRecAlg", "CalClustersAlg",
+                          "AcdReconAlg"};
 
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
 MessageSvc.OutputLevel      = 2;
 
 CalDigiAlg.OutputLevel = 2;
 
-// ask for a source that is in the library
-//G4Generator.source_name="gamma_patch_for_G4";
-//G4Generator.source_name="muon_pencil";
-//G4Generator.source_name="muon_patch";
-//G4Generator.source_name="gamma_test";
+ApplicationMgr.ExtSvc   += { "TkrGeometrySvc"};
+ApplicationMgr.ExtSvc   += { "TkrInitSvc"};
+
+//TkrReconAlg.PropagatorType=1; // for gismo propagator
+TkrReconAlg.PropagatorType=0; // for G4 propagator (current default)
+TkrInitSvc.TrackerReconType = 0;    // = 0 for Link and Tree, = 1 for Combo
 
 FluxAlg.source_name="muon_pencil_angle";
 G4Generator.UIcommands+={"/tracking/storeTrajectory 1"};
