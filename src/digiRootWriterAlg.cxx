@@ -11,6 +11,9 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
+#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/EventSummaryData.h"
+#include "EbfConverter/EbfTime.h"
 
 
 #include "idents/CalXtalId.h"
@@ -33,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.20 2004/01/09 18:56:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.21 2004/01/13 00:28:22 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -55,6 +58,12 @@ private:
 
     /// Retrieves event Id and run Id from TDS and fills the McEvent ROOT object
     StatusCode writeDigiEvent();
+
+    /// EM summary word
+    StatusCode writeEventSummary();
+
+    /// Writes the EM Diagnostic data from TDS and fills the ROOT version
+    StatusCode writeDiagnostic();
 
     /// Retrieves ACD digitization data from the TDS and fill the AcdDigi
     /// ROOT collection
@@ -200,7 +209,20 @@ StatusCode digiRootWriterAlg::execute()
         log << MSG::ERROR << "Failed to write Tkr Digi Collection" << endreq;
         return sc;
     }
-   
+  
+    sc = writeDiagnostic();
+    if (sc.isFailure()) { 
+        log << MSG::INFO << "Failed to write diagnostic data" << endreq;
+        //return sc;
+    }
+
+    sc = writeEventSummary();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write diagnostic data" << endreq;
+        return sc;
+    }
+    
+
     writeEvent();
     return sc;
 }
@@ -231,8 +253,65 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     L1T levelOne(evtTds->trigger());
     m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
 
+    SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    if (timeTds) {
+        m_digiEvt->setEbfTime(timeTds->timeSec(), timeTds->timeNanoSec(),
+                              timeTds->upperPpcTimeBaseWord(), timeTds->lowerPpcTimeBaseWord());
+    }
+
     return sc;
 }
+
+StatusCode digiRootWriterAlg::writeEventSummary() {
+    // Purpose and Method:  Retrieve the Event Summary Word from the TDS 	    //  and write it to ROOT
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Retrieve the Event Summary data for this event
+    SmartDataPtr<EbfConverterTds::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
+
+    if (!summaryTds) {
+      log << MSG::INFO << "No Event Summary Data found on TDS" << endreq;
+      return sc;
+    }
+    m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
+    return sc;
+}
+
+
+StatusCode digiRootWriterAlg::writeDiagnostic() {
+    // Purpose and Method:  Retrieve the Diagnostic object from the TDS and write the
+    // CAL and TKR trigger primitives to ROOT
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Retrieve the Event data for this event
+    SmartDataPtr<EbfConverterTds::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
+
+    if (!diagTds) return sc;
+
+    // Otherwise fill the ROOT version
+    int numCalDiag = diagTds->getNumCalDiagnostic();
+    int ind;
+    for (ind = 0; ind < numCalDiag; ind++){
+        EbfConverterTds::CalDiagnosticData calDiagTds = diagTds->getCalDiagnosticByIndex(ind);
+        CalDiagnosticData *calDiagRoot = m_digiEvt->addCalDiagnostic();
+        calDiagRoot->initialize(calDiagTds.dataWord());
+    }
+
+    int numTkrDiag = diagTds->getNumTkrDiagnostic();
+    for (ind = 0; ind < numTkrDiag; ind++) {
+        EbfConverterTds::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
+        TkrDiagnosticData *tkrDiagRoot = m_digiEvt->addTkrDiagnostic();
+        tkrDiagRoot->initialize(tkrDiagTds.dataWord());
+    }
+
+    return sc;
+}
+
+
 
 StatusCode digiRootWriterAlg::writeAcdDigi() {
     // Purpose and Method:  Retrieve the AcdDigi collection from the TDS and 

@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.4 2003/09/28 05:23:05 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.5 2004/01/20 19:14:52 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -27,7 +27,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.4 2003/09/28 05:23:05 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.5 2004/01/20 19:14:52 heather Exp $
 */
 
 // includes
@@ -130,8 +130,9 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartTime"   , m_startTime=0);
     declareProperty("EndTime",      m_endTime=0);
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
+    declareProperty("StartingIndex", m_index=-1);
     m_rootEvtMax = 0;
-	m_index = -1;
+	//m_index = -1;
 	m_runEventPair = std::pair<int,int>(-1,-1);
 }
 

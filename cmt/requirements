@@ -1,5 +1,5 @@
 package RootIo
-version v10r1p0
+version v11r0
 
 branches src doc
 
@@ -11,12 +11,13 @@ apply_pattern package_include
 
 use RootPolicy v2r*
 use mcRootData v2r*
-use digiRootData v5r*
+use digiRootData v6r*
 use reconRootData v4r*
 use commonRootData v0r*
 
 private
 use GlastSvc v9r*
+use EbfConverter v*
 
 apply_pattern package_headers
 
