@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.42 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.43 2005/01/25 19:14:29 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -231,9 +231,9 @@ StatusCode mcRootReaderAlg::execute()
 	if (evtId==0) m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
 	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 
-	if ((m_rootIoSvc) &&  (m_rootIoSvc->index() >= 0)) {
+	if ((m_rootIoSvc) &&  (m_rootIoSvc->useIndex())) {
 		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
+	} else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
 		readInd = m_mcTree->GetEntryNumberWithIndex(run, evt);
@@ -246,18 +246,20 @@ StatusCode mcRootReaderAlg::execute()
             return StatusCode::SUCCESS;
 	}
 	else {
-		log << MSG::INFO << "Requested index: " << readInd << endreq;
+            log << MSG::INFO << "Requested index: " << readInd << endreq;
 	}
+
+        if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 
     // ADDED FOR THE FILE HEADERS DEMO
     m_mcTree->LoadTree(readInd);
     m_headersTool->readConstMcHeader(m_mcTree->GetFile()) ;
     
-	numBytes = m_mcTree->GetEntry(readInd); 
-	if ((numBytes <= 0) || (!m_mcEvt)) {
-            log << MSG::WARNING << "Failed to Load Mc Event" << endreq;
-            return StatusCode::SUCCESS;
-	}
+    numBytes = m_mcTree->GetEntry(readInd); 
+    if ((numBytes <= 0) || (!m_mcEvt)) {
+        log << MSG::WARNING << "Failed to Load Mc Event" << endreq;
+        return StatusCode::SUCCESS;
+    }
 
     sc = readMcEvent();
     if (sc.isFailure()) {
