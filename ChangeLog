@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 19 10:36:00 PST 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+update for new reconRootData that fixed TkrParams and TkrCovMat
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 19 10:34:19 PST 2002
 RootIo/doc
 
