@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.6 2002/06/11 00:38:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.7 2002/06/20 21:36:31 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -278,9 +278,11 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
         idents::AcdId idTds(idRoot.getLayer(), idRoot.getFace(), 
             idRoot.getRow(), idRoot.getColumn());
 
-        const VolumeIdentifier volIdRoot = acdDigiRoot->getVolId();
-        idents::VolumeIdentifier volIdTds;
-        convertVolumeId(volIdRoot, volIdTds);
+        //const VolumeIdentifier volIdRoot = acdDigiRoot->getVolId();
+        //convertVolumeId(volIdRoot, volIdTds);
+        // Rather than using the volId stored in the ROOT file - recompute using the 
+        // routine in the idents package.
+        idents::VolumeIdentifier volIdTds = idTds.volId();
 
         unsigned short phaTds[2] = { acdDigiRoot->getPulseHeight(AcdDigi::A),
             acdDigiRoot->getPulseHeight(AcdDigi::B) };
