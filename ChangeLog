@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Mar 20 09:33:58 PST 2003
+RootIo/src
+
+Modified Files:
+	relationRootWriterAlg.cxx 
+Log Message:
+fix for Linux
+    *
+------------------------------------------------------------
 User: usher  Wed Mar 19 09:24:13 PST 2003
 RootIo/src
 
