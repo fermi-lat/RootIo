@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.27 2004/06/10 17:12:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.28 2004/07/06 21:54:09 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -223,15 +223,15 @@ StatusCode digiRootReaderAlg::execute()
 	}
 
     if (readInd >= m_numEvents) {
-        log << MSG::WARNING << "Requested index is out of bounds" << endreq;
-        return StatusCode::FAILURE;
+        log << MSG::WARNING << "Requested index is out of bounds - no digi data loaded" << endreq;
+        return StatusCode::SUCCESS;
     }
 
     numBytes = m_digiTree->GetEvent(readInd);
 	
 	if ((numBytes <= 0) || (!m_digiEvt)) {
-		log << MSG::WARNING << "Failed to load digi event" << endreq;
-		return StatusCode::SUCCESS;
+            log << MSG::WARNING << "Failed to load digi event" << endreq;
+            return StatusCode::SUCCESS;
 	}
 
 

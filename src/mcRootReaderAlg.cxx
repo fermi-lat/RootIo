@@ -35,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.35 2004/06/10 17:12:29 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.36 2004/07/06 21:54:09 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -226,14 +226,14 @@ StatusCode mcRootReaderAlg::execute()
 	}
 
 	if (readInd >= m_numEvents) {
-		log << MSG::WARNING << "Requested index is out of bounds" << endreq;
-		return StatusCode::FAILURE;
+            log << MSG::WARNING << "Requested index is out of bounds - no MC data loaded" << endreq;
+            return StatusCode::SUCCESS;
 	}
 
 	numBytes = m_mcTree->GetEntry(readInd); 
 	if ((numBytes <= 0) || (!m_mcEvt)) {
-		log << MSG::ERROR << "Failed to Load Mc Event" << endreq;
-		return StatusCode::FAILURE;
+            log << MSG::WARNING << "Failed to Load Mc Event" << endreq;
+            return StatusCode::SUCCESS;
 	}
 
     sc = readMcEvent();
