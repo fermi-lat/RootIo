@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chehtman  Wed Mar  5 16:11:05 PST 2003
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+Cal digi ROOT format modified for faster reading, TObjArray replaced by TClonesArray
+    *
+------------------------------------------------------------
 User: heather  Fri Feb 28 15:22:16 PST 2003
 RootIo/src
 
