@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.43 2004/12/02 19:56:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.44 2005/01/25 19:14:29 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -417,10 +417,13 @@ StatusCode digiRootReaderAlg::readGem() {
             tileListTds);
     LdfEvent::GemOnePpsTime ppsTimeTds(gemRoot.getOnePpsTime().getTimebase(),
                             gemRoot.getOnePpsTime().getSeconds());
+    LdfEvent::GemDataCondArrivalTime gemCondTimeTds;
+    gemCondTimeTds.init(gemRoot.getCondArrTime().condArr());
     gemTds->initSummary(gemRoot.getLiveTime(), gemRoot.getPrescaled(),
-                        gemRoot.getDiscarded(), gemRoot.getSent(),
+                        gemRoot.getDiscarded(), gemCondTimeTds,
                         gemRoot.getTriggerTime(), ppsTimeTds, 
-                        gemRoot.getDeltaEventTime());
+                        gemRoot.getDeltaEventTime(), 
+                        gemRoot.getDeltaWindowOpenTime());
 
     sc = eventSvc()->registerObject("/Event/Gem", gemTds);
     if( sc.isFailure() ) {
