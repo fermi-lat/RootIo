@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 10 16:34:50 PDT 2004
+RootIo/doc
+
+Modified Files:
+      Tag: beforeheader
+	release.notes 
+Log Message:
+remove RootPolicy use..not sure why it was there
+    *
+------------------------------------------------------------
 User: heather  Tue Aug 10 16:34:23 PDT 2004
 RootIo/cmt
 
