@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Mon Dec  2 13:54:19 PST 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+Added Files:
+	relationRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	commonData.h commonData.cxx 
+Log Message:
+updates to write relations
+    *
+------------------------------------------------------------
 User: heather  Mon Dec  2 13:50:09 PST 2002
 RootIo/src/Dll
 
