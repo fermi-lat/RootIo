@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 21 13:24:33 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+activate daughter reading
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 21 13:21:12 PDT 2003
 RootIo/doc
 
