@@ -3,11 +3,18 @@ version v0
 
 branches src doc
 
-use GlastSvc v6r*
+use GlastSvc v7r*
 use GlastEvent v7r*
 use ROOT v3r2p*
-use mcRootData v2*
-use GlastPolicy v4r3*
+use mcRootData v2r*
+use GlastPolicy v4r*
+
+# uses for test program
+use GaudiSvc v7r0p*
+use G4Generator v3r*
+use FluxSvc v5r*
+use GuiSvc v3
+
 
 apply_pattern package_headers
 
@@ -23,12 +30,6 @@ apply_pattern packageShr
 apply_pattern package_Cshlibflags
 
 private
-
-# uses for test program
-use GaudiSvc v7r0p*
-use G4Generator v3r3p*
-use FluxSvc v5r2*
-use GuiSvc v3*
 
 # need this Root library for some Root classes
 macro_append ROOT_linkopts     "-L$(ROOT_PATH)/lib -lPhysics" \
