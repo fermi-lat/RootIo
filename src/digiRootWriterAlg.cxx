@@ -32,7 +32,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.13 2003/03/25 15:46:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.14 2003/06/02 01:51:28 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -246,7 +246,7 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         Bool_t vetoRoot[2] = { (*acdDigiTds)->getVeto(Event::AcdDigi::A),
             (*acdDigiTds)->getVeto(Event::AcdDigi::B) };
         Bool_t lowRoot[2] = { (*acdDigiTds)->getLowDiscrim(Event::AcdDigi::A),
-            (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
+            (*acdDigiTds)->getLowDiscrim(Event::AcdDigi::B) };
         Bool_t highRoot[2] = { (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::A),
             (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
         idents::AcdId idTds = (*acdDigiTds)->getId();
