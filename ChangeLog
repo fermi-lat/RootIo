@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  6 13:10:12 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx 
+Log Message:
+fix setting of RunId in the TDS when reading
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  6 09:07:57 PDT 2002
 RootIo/cmt
 
