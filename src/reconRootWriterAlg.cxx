@@ -34,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.16 2002/06/11 19:36:44 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.17 2002/06/12 07:52:35 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -616,8 +616,9 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
                 recRoot.initialize(posRoot);   
                 xtalRoot->addRangeRecData(recRoot);   
             }   
-            calRec->addXtalRecData(xtalRoot);   
         }   
+        
+        calRec->addXtalRecData(xtalRoot);   
     }   
     
     return;   
