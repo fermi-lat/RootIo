@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 27 09:36:53 PST 2002
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+
+gcc v3 error fix.
+    *
+------------------------------------------------------------
 User: heather  Fri Oct 25 06:46:13 PDT 2002
 RootIo/src
 
