@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Mar 25 10:03:34 PST 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+make EbfConverter useage public
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 16 12:22:31 PST 2004
 RootIo/src
 
