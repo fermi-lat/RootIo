@@ -3,14 +3,14 @@
 * @brief This is needed for forcing the linker to load all components
 * of the library.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.6 2003/06/02 01:52:54 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.7 2004/08/09 17:57:31 chamont Exp $
 */
 
 #include "GaudiKernel/DeclareFactoryEntries.h"
 
 DECLARE_FACTORY_ENTRIES(RootIo) {
     DECLARE_ALGORITHM( FileHeadersSetAlg );
-    DECLARE_ALGORITHM( CaloFileHeadersSetAlg );
+    DECLARE_ALGORITHM( testCaloFileHeadersSetAlg );
     DECLARE_ALGORITHM( mcRootWriterAlg );
     DECLARE_ALGORITHM( mcRootReaderAlg );
     DECLARE_ALGORITHM( digiRootWriterAlg );

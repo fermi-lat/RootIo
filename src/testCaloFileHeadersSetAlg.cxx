@@ -1,5 +1,5 @@
 
-#include "src/CaloFileHeadersSetAlg.h"
+#include "src/testCaloFileHeadersSetAlg.h"
 #include "src/FileHeadersTool.h"
 
 #include "Event/TopLevel/Event.h"
@@ -15,10 +15,10 @@
 
 #include <cstdio>
 
-static const AlgFactory<CaloFileHeadersSetAlg> Factory ;
-const IAlgFactory& CaloFileHeadersSetAlgFactory = Factory ;
+static const AlgFactory<testCaloFileHeadersSetAlg> Factory ;
+const IAlgFactory& testCaloFileHeadersSetAlgFactory = Factory ;
 
-StatusCode CaloFileHeadersSetAlg::finalize() {
+StatusCode testCaloFileHeadersSetAlg::finalize() {
     
     MsgStream log(msgSvc(),name()) ;
     StatusCode sc ;
@@ -43,16 +43,16 @@ StatusCode CaloFileHeadersSetAlg::finalize() {
 	return StatusCode::SUCCESS ;
 }
     
-CaloFileHeadersSetAlg::CaloFileHeadersSetAlg
+testCaloFileHeadersSetAlg::testCaloFileHeadersSetAlg
 ( const std::string& name, ISvcLocator* pSvcLocator)
 :  Algorithm(name, pSvcLocator) {
 }
 
-StatusCode CaloFileHeadersSetAlg::initialize() {
+StatusCode testCaloFileHeadersSetAlg::initialize() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode CaloFileHeadersSetAlg::execute() {
+StatusCode testCaloFileHeadersSetAlg::execute() {
 	return StatusCode::SUCCESS ;
 }
     

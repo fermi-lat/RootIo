@@ -3,7 +3,7 @@
 
 /*!
 
- @class CaloFileHeadersSetAlg        
+ @class testCaloFileHeadersSetAlg        
  @brief Prepare the calo specific attributes and set them in the relevant file headers
 
  This Gaudi algorithm is expected to prepare and set the file header data which is
@@ -19,11 +19,11 @@
 
 */
 
-class CaloFileHeadersSetAlg : public Algorithm  {
+class testCaloFileHeadersSetAlg : public Algorithm  {
         
 public:
     
-    CaloFileHeadersSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
+    testCaloFileHeadersSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
     
     /// 
     StatusCode initialize();
