@@ -23,6 +23,7 @@
 #include "mcRootData/McEvent.h"
 
 #include "commonData.h"
+#include "RootIo/IRootIoSvc.h"
 
 #include <map>
 
@@ -30,7 +31,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.24 2003/06/03 09:44:57 berthon Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.25 2003/07/20 15:43:13 burnett Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -96,6 +97,7 @@ private:
     //std::map<const Event::McParticle*, McParticle*> m_mcPartMap;
 
     commonData m_common;
+    IRootIoSvc* m_rootIoSvc;
 };
 
 
@@ -134,7 +136,13 @@ StatusCode mcRootWriterAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
-    
+
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "No Auto Saving" << endreq;
+        m_rootIoSvc = 0;
+    } 
+
     facilities::Util::expandEnvVar(&m_fileName);
 
     // Save the current directory for the ntuple writer service
@@ -152,7 +160,7 @@ StatusCode mcRootWriterAlg::initialize()
     m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
     m_mcEvt = new McEvent();
     m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
-    
+
     m_common.m_mcEvt = m_mcEvt;
 
     saveDir->cd();
@@ -521,11 +529,14 @@ void mcRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the McEvent data for this event in the ROOT
     //    tree.  The m_mcEvt object is cleared for the next event.
 
+    static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
     m_mcFile->cd();
     m_mcTree->Fill();
     //m_mcEvt->Clear();
     saveDir->cd();
+    ++eventCounter;
+    if (eventCounter % m_rootIoSvc->getAutoSaveInterval()== 0) m_mcTree->AutoSave();
     return;
 }
 

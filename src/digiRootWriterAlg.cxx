@@ -27,12 +27,13 @@
 
 #include "commonData.h"
 
+#include "RootIo/IRootIoSvc.h"
 
 /** @class digiRootWriterAlg
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.15 2003/06/17 19:27:37 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.16 2003/06/27 02:49:20 lsrea Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -90,8 +91,11 @@ private:
     int m_bufSize;
     /// Compression level for the ROOT file
     int m_compressionLevel;
+    /// auto save every events
+    int m_autoSaveEvents;
     
     commonData m_common;
+    IRootIoSvc* m_rootIoSvc;
 
 };
 
@@ -110,6 +114,7 @@ Algorithm(name, pSvcLocator)
     // ROOT default compression
     declareProperty("compressionLevel", m_compressionLevel=1);
     declareProperty("treeName", m_treeName="Digi");
+    declareProperty("autoSave", m_autoSaveEvents=1000);
 
 }
 
@@ -124,7 +129,13 @@ StatusCode digiRootWriterAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
-    
+
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "No Auto Saving" << endreq;
+        m_rootIoSvc = 0;
+    } 
+
     facilities::Util::expandEnvVar(&m_fileName);
 
     // Save the current directory for the ntuple writer service
@@ -142,7 +153,7 @@ StatusCode digiRootWriterAlg::initialize()
     m_digiEvt = new DigiEvent();
     m_common.m_digiEvt = m_digiEvt;
     m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
-    
+
     saveDir->cd();
     return sc;
     
@@ -358,12 +369,15 @@ void digiRootWriterAlg::writeEvent()
 {
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
-
+    static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
     m_digiFile->cd();
     m_digiTree->Fill();
     //m_digiEvt->Clear();
     saveDir->cd();
+    ++eventCounter;
+    if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_digiTree->AutoSave();
+
     return;
 }
 
