@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.25 2003/08/25 18:47:38 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.26 2003/09/02 15:55:42 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -155,7 +155,7 @@ StatusCode reconRootReaderAlg::initialize()
     setProperties();
     
     if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
-        log << MSG::ERROR << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::DEBUG << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
         //return StatusCode::FAILURE;
@@ -401,7 +401,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
         
         Event::TkrCluster *clusterTds = new Event::TkrCluster(clusterRoot->getId(),
             clusterRoot->getPlane(), viewTds, clusterRoot->getFirstStrip(),
-            clusterRoot->getLastStrip(), posTds, 0.0, clusterRoot->getTower());
+            clusterRoot->getLastStrip(), posTds, clusterRoot->getToT(), clusterRoot->getTower());
         
         clusterTdsCol->addCluster(clusterTds);
     }
