@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue May  7 06:47:29 PDT 2002
+RootIo/src
+
+Added Files:
+	readRootOptions.txt writeRootOptions.txt 
+Log Message:
+adding some default jobOptions files for reading and writing
+    *
+------------------------------------------------------------
 User: heather  Wed May  1 16:37:17 PDT 2002
 RootIo/doc
 
