@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r1    01-Jul-2003 HMK Allow chains of root files to be read in
  v9r0p1  26-Jun-2003 LSR Fix i/o of TkrDigi lastController0Strip
  v9r0p0  17-Jun-2003 HMK Fix writing of AcdDigi low discrim PMT B
  v9r0    06-Jun-2003 UB  Reset ObjectNumber after each event for TRef to avoid 
