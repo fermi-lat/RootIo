@@ -12,9 +12,9 @@ use GlastPolicy v4r*
 
 ### checkout for these packages
 use RootPolicy v1r0p3
-use mcRootData v2r5p5
-use digiRootData v3r5p4
-use reconRootData v3r3p0
+use mcRootData v2r5p6
+use digiRootData v3r5p5
+use reconRootData v3r3p1
 
 
 public
