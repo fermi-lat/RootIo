@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.42 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.42.2.1 2004/12/17 06:07:43 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -93,7 +93,7 @@ private:
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Number of Events in the input ROOT TTree
-    int m_numEvents;
+    Long64_t m_numEvents;
 
     commonData m_common;
 
@@ -226,7 +226,8 @@ StatusCode mcRootReaderAlg::execute()
     }
 
 	static Int_t evtId = 0;
-	int readInd, numBytes;
+	Long64_t readInd;
+        int numBytes;
 	if (evtId==0)m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
 	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 

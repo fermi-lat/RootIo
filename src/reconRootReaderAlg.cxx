@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.40 2004/12/14 23:01:21 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.40.2.1 2004/12/17 06:07:43 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -118,7 +118,7 @@ private:
     /// name of the Recon TTree stored in the ROOT file
     std::string m_treeName;
     /// Number of events in the input ROOT TTree
-    int m_numEvents;
+    Long64_t m_numEvents;
 
     commonData m_common;
 
@@ -242,7 +242,8 @@ StatusCode reconRootReaderAlg::execute()
     if (m_reconEvt) m_reconEvt->Clear();
 
 	static Int_t evtId = 0;
-	int readInd, numBytes;
+	Long64_t readInd;
+        int numBytes;
 	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 
 	if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);

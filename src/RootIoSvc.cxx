@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10 2004/11/24 14:16:31 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10.2.1 2004/12/20 05:19:29 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10 2004/11/24 14:16:31 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10.2.1 2004/12/20 05:19:29 heather Exp $
 */
 
 // includes
@@ -72,15 +72,15 @@ public:
 	
     virtual int getEvtMax() { return m_evtMax; };
 
-    virtual void setRootEvtMax(unsigned int max);
+    virtual void setRootEvtMax(Long64_t max);
 
     virtual void setRootTimeMax(unsigned int max);
 
     virtual void registerRootTree(TChain *ch);
 
-    virtual bool setIndex(int i);
-    virtual void setActualIndex(int i) { m_index = i; };
-    virtual int index() { return m_index; };
+    virtual bool setIndex(Long64_t i);
+    virtual void setActualIndex(Long64_t i) { m_index = i; };
+    virtual Long64_t index() { return m_index; };
 
     virtual bool setRunEventPair(std::pair<int,int> ids);
     virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
@@ -116,7 +116,8 @@ private:
     DoubleProperty m_endTime;
 
     unsigned int m_rootEvtMax;
-    int m_index;
+    Long64_t m_index;
+    int m_startIndex;
     std::pair<int, int> m_runEventPair;
     std::vector<TChain *> m_chainCol;
 
@@ -139,7 +140,8 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartTime"   , m_startTime=0);
     declareProperty("EndTime",      m_endTime=0);
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
-    declareProperty("StartingIndex", m_index=0);
+    declareProperty("StartingIndex", m_startIndex=0);
+    m_index = m_startIndex;
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_chainCol.clear();
@@ -201,7 +203,7 @@ StatusCode RootIoSvc::queryInterface(const IID& riid, void** ppvInterface)  {
     }else if (IID_IRunable.versionMatch(riid) ) {
       *ppvInterface = (IRunable*)this;
 	} else if (IID_IIncidentListener.versionMatch(riid) ) {
-		*ppvInterface = (IIncidentListener*)this;
+           *ppvInterface = (IIncidentListener*)this;
 	} else  {
         return Service::queryInterface(riid, ppvInterface);
     }
@@ -211,7 +213,7 @@ StatusCode RootIoSvc::queryInterface(const IID& riid, void** ppvInterface)  {
 }
 
 
-void RootIoSvc::setRootEvtMax(unsigned int max) {
+void RootIoSvc::setRootEvtMax(Long64_t max) {
     // Purpose and Method:  Allow users of the RootIoSvc to specify the number
     //  of events found in their ROOT files
     if (m_rootEvtMax == 0) {
@@ -231,7 +233,7 @@ void RootIoSvc::registerRootTree(TChain *ch) {
     m_chainCol.push_back(ch);
 }
 
-bool RootIoSvc::setIndex(int i) {
+bool RootIoSvc::setIndex(Long64_t i) {
      if (i < 0) return false;
      std::vector<TChain*>::iterator it;
      for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
@@ -248,7 +250,7 @@ bool RootIoSvc::setIndex(int i) {
 bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
     std::vector<TChain*>::iterator it;
     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
-        int readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
+        Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
         if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) return false;
     }
     m_runEventPair = ids;

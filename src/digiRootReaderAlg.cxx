@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.43 2004/12/02 19:56:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.43.2.1 2004/12/17 06:07:43 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -104,7 +104,7 @@ private:
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Stores number of events available in the input ROOT TTree
-    int m_numEvents;
+    Long64_t m_numEvents;
   
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
@@ -228,7 +228,8 @@ StatusCode digiRootReaderAlg::execute()
     if (m_digiEvt) m_digiEvt->Clear();
 
     static Int_t evtId = 0;
-    int readInd, numBytes;
+    Long64_t readInd;
+    int numBytes;
     std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 	
     if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
