@@ -42,7 +42,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.36 2004/09/24 19:14:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.37 2004/10/01 06:23:40 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -369,7 +369,7 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     evtSumTds->initEventFlags(eventFlags);
     const unsigned int nTem = 16;
     unsigned int iTem;
-    unsigned long tem[nTem];
+    unsigned int tem[nTem];
     for (iTem = 0; iTem < nTem; iTem++) 
         tem[iTem] = evtSummary.temLength(iTem);
     evtSumTds->initContribLen(tem, evtSummary.gemLength(), evtSummary.oswLength(),
