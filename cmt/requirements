@@ -1,14 +1,14 @@
 package RootIo
-version v4r1p1
+version v4r1p4
 
 branches src doc
 
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
-use mcRootData v2r*
-use digiRootData v3r*
-use reconRootData v3r*
+use mcRootData v2r2
+use digiRootData v3r2
+use reconRootData v3r0p2
 use GlastPolicy v4r*
 
 # uses for test program
