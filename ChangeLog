@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Tue May 14 08:23:00 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx 
+Added Files:
+	writeMcRootOptions.txt writeDigiRootOptions.txt 
+	readMcRootOptions.txt readDigiRootOptions.txt 
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+updates for new digi algs
+    *
+------------------------------------------------------------
 User: heather  Tue May 14 08:21:31 PDT 2002
 RootIo/src/test
 
