@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.5 2002/07/03 13:33:51 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.6 2002/08/29 15:31:26 heather Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -59,6 +59,8 @@ private:
 
     /// Reads TKR recon data from ROOT and puts data on TDS
     StatusCode readTkrRecon();
+
+	StatusCode storeTkrClusterCol(TkrRecon *tkrRecRoot);
 
     StatusCode storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot);
 
@@ -258,6 +260,19 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
         }
     }
 
+	// check to see if TKR cluster collection already exists on TDS
+	// If not, store cluster collection on the TDS.
+	SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
+	if (clusterColTds) {
+		log << MSG::INFO << "Tkr Cluster Collection is already on the TDS" << endreq;
+	} else {
+		sc = storeTkrClusterCol(tkrRecRoot);
+		if (sc.isFailure()) {
+			log << MSG::ERROR << "failed to store TKR cluster collection on TDS" << endreq;
+			return sc;
+		}
+	}
+
     // check to see if track candidates exist on the TDS already
     // Store candidate track collection, only if it does not already exist on TDS
     SmartDataPtr<Event::TkrPatCandCol> candidatesColTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
@@ -297,6 +312,35 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
     return sc;
 }
 
+StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+	Event::TkrClusterCol *clusterTdsCol = new Event::TkrClusterCol;
+
+	const TObjArray * clusterRootCol = tkrRecRoot->getClusterCol();
+	TIter clusterIter(clusterRootCol);
+	TkrCluster *clusterRoot = 0;
+
+	while (clusterRoot = (TkrCluster*)clusterIter.Next()) {
+		TkrCluster::view viewRoot = clusterRoot->getView();
+		Event::TkrCluster::view viewTds;
+		
+		if (viewRoot == TkrCluster::X) viewTds = Event::TkrCluster::X;
+		else viewTds = Event::TkrCluster::Y;
+
+		TVector3 posRoot = clusterRoot->getPosition();
+		Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
+
+		Event::TkrCluster *clusterTds = new Event::TkrCluster(clusterRoot->getId(),
+			clusterRoot->getPlane(), viewTds, clusterRoot->getFirstStrip(),
+			clusterRoot->getLastStrip(), posTds, 0.0, clusterRoot->getTower());
+
+		clusterTdsCol->addCluster(clusterTds);
+	}
+
+	return sc;
+}
 
 StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
     // Purpose and Method: Read in candidate tracks from ROOT and store them on the
