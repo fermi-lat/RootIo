@@ -1,4 +1,23 @@
 ------------------------------------------------------------
+User: chamont  Thu Oct  7 05:15:16 PDT 2004
+RootIo/RootIo
+
+Added Files:
+	FhChronoStatTable.h FhCmtConfig.h FhJobOptions.h FhSystemEnv.h 
+	FhTool.h 
+Log Message:
+Although "commonRootData/*/FileHeaders.*" files have kept their name,
+all the others files of the project "file headers", currently staying
+in RootIo, have now their name prefixed with "Fh" instead of
+"FileHeaders". The files which are there for testing purpose also
+have an additionnal "test" prefix.
+
+Some new classes have been added: FhChronoStatTable, FhSystemEnv,
+FhCmtConfig and FhJobOptions. They help to prepare the corresponding
+attributes before the header is written into a file, and they also
+help to interpret them when the header is read back.
+    *
+------------------------------------------------------------
 User: heather  Mon Oct  4 14:48:02 PDT 2004
 RootIo/src
 
