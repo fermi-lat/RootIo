@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.13 2002/07/30 19:51:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.14 2002/08/08 16:05:05 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -194,8 +194,8 @@ StatusCode mcRootReaderAlg::execute()
 
     m_particleMap.clear();
 
-    MCEvent* mcEventObj = 
-        SmartDataPtr<MCEvent>(eventSvc(), EventModel::MC::Event);
+    Event::MCEvent* mcEventObj = 
+        SmartDataPtr<Event::MCEvent>(eventSvc(), EventModel::MC::Event);
     if (!mcEventObj) {
         log << "Failed to retrieve McEvent" << endreq;
         return sc;
