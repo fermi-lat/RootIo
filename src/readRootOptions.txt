@@ -17,9 +17,21 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 
 ApplicationMgr.ExtSvc += { "RootIoSvc" };
 
+ApplicationMgr.EvtMax  = 1000000;
+
 // controls the event loop
 // If using the GUI - comment this out
 ApplicationMgr.Runable= "RootIoSvc";
+
+// If you want to use the GUI uncomment the following lines
+//#include "$GLEAMROOT/src/guiOptions.txt"
+
+//EventDisplay.Members = {
+//   "CalDisplay",
+//  "AcdDisplay"  
+//   };
+
+
 
 //==============================================================
 //
