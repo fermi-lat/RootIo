@@ -2,11 +2,11 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.4 2002/05/21 22:39:46 heather Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.5 2002/05/23 00:42:30 heather Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc", 
-                          "GlastDigi", "CalRecon"};
+                          "GlastDigi", "CalDigi", "CalRecon"};
 
 ApplicationMgr.ExtSvc = { 
     "GlastEventSelector/EventSelector" , 
