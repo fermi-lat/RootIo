@@ -42,7 +42,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.5 2003/09/28 23:54:15 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.6 2004/01/09 18:56:23 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -415,7 +415,8 @@ void relationRootWriterAlg::writeEvent()
 
     static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
-    m_relFile->cd();
+    m_relTree->GetCurrentFile()->cd();
+    //m_relFile->cd();
     m_relTree->Fill();
     m_relTable->Clear();
     saveDir->cd();
@@ -430,15 +431,18 @@ void relationRootWriterAlg::writeEvent()
 void relationRootWriterAlg::close() 
 {
     // Purpose and Method:  Writes the ROOT file at the end of the run.
-    //    The TObject::kOverWrite parameter is used in the Write method
+    //    The TObject::kWriteDelete parameter is used in the Write method
+    //    Used rather than TObject::kOverwrite - supposed to be safer but slower
     //    since ROOT will periodically write to the ROOT file when the bufSize
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
     TDirectory *saveDir = gDirectory;
-    m_relFile->cd();
-    m_relFile->Write(0, TObject::kOverwrite);
-    m_relFile->Close();
+    TFile *f = m_relTree->GetCurrentFile();
+    f->cd();
+    //m_relFile->cd();
+    f->Write(0, TObject::kWriteDelete);
+    f->Close();
     saveDir->cd();
     return;
 }

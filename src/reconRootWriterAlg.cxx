@@ -37,7 +37,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.33 2003/10/16 14:19:41 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.34 2004/01/09 18:56:23 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -785,7 +785,8 @@ void reconRootWriterAlg::writeEvent()
     
     static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
-    m_reconFile->cd();
+    m_reconTree->GetCurrentFile()->cd();
+    //m_reconFile->cd();
     m_reconTree->Fill();
     saveDir->cd();
     ++eventCounter;
@@ -798,15 +799,18 @@ void reconRootWriterAlg::writeEvent()
 void reconRootWriterAlg::close() 
 {
     // Purpose and Method:  Writes the ROOT file at the end of the run.
-    //    The TObject::kOverWrite parameter is used in the Write method
+    //    The TObject::kWriteDelete parameter is used in the Write method
+   //    Used rather than TObject::kOverwrite - supposed to be safer but slower
     //    since ROOT will periodically write to the ROOT file when the bufSize
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
     TDirectory *saveDir = gDirectory;
-    m_reconFile->cd();
-    m_reconFile->Write(0, TObject::kOverwrite);
-    m_reconFile->Close();
+    TFile *f = m_reconTree->GetCurrentFile();
+    f->cd();
+    //m_reconFile->cd();
+    f->Write(0, TObject::kWriteDelete);
+    f->Close();
     saveDir->cd();
     return;
 }
