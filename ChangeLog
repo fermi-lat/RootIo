@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri May 24 13:55:49 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+add CalCluster ctor to set energy sum and position, updating root 
+recon writing to use it
+    *
+------------------------------------------------------------
 User: heather  Thu May 23 10:33:48 PDT 2002
 RootIo/src
 
