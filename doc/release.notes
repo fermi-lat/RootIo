@@ -3,8 +3,11 @@
  Coordinator:H.Kelly
  @verbatim
  
-         16-Nov-2004 HMK Fix up TFile usage for handling multiple output files
-         11-Nov-2004 HMK Store Luis' 3-in-a-row bits per tower
+ v12r10gr3  30-Nov-2004 HMK store livetime at toplevel handles both MC and LDF
+ v12r10em2  24-Nov-2004 HMK Store tower and layer/gtcc for CAL/TKR diagnostic
+ v12r10em1/v12r10gr1 16-Nov-2004 HMK Fix up use of TFile for case where ROOT 
+           needs to create multiple data files due to size of output
+ v12r10em0/v12r10gr0 11-Nov-2004 HMK Handle Luis' 3-in-a-row trigger bits for all towers
  v12r10  27-Sep-2004 HMK Handle the contribution lengths in the LDF
  v12r9   24-Sep-2004 HMK Fully populate LDF AcdDigi Parameters
                          Replace call to printenv to set for Windows

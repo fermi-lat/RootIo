@@ -43,7 +43,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.42 2004/11/24 14:16:31 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.43 2004/11/25 13:37:11 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -823,6 +823,7 @@ void reconRootWriterAlg::writeEvent()
         if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_reconTree->AutoSave();
     saveDir->cd();
 
+    saveDir->cd();
     return;
 }
 
