@@ -6,7 +6,7 @@
 #include "$ROOTIOROOT/src/test/writeOptions.txt"
 //#include "$ROOTIOROOT/src/test/readOptions.txt"
 
-ApplicationMgr.TopAlg +=  { "testReadAlg"};
+//ApplicationMgr.TopAlg +=  { "testReadAlg"};
 
 
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
