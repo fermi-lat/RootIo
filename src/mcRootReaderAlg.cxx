@@ -5,6 +5,7 @@
 #include "GaudiKernel/Algorithm.h"
 
 #include "GlastEvent/TopLevel/Event.h"
+#include "GlastEvent/TopLevel/MCEvent.h"
 #include "GlastEvent/TopLevel/EventModel.h"
 #include "GlastEvent/MonteCarlo/McParticle.h"
 #include "GlastEvent/MonteCarlo/McIntegratingHit.h"
@@ -29,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.2 2002/04/29 14:17:31 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -138,6 +139,13 @@ StatusCode mcRootReaderAlg::execute()
     m_mcTree->GetEvent(evtId);
 
     m_particleMap.clear();
+
+    MCEvent* mcEventObj = 
+        SmartDataPtr<MCEvent>(eventSvc(), EventModel::MC::Event);
+    if (!mcEventObj) {
+        log << "Failed to retrieve McEvent" << endreq;
+        return sc;
+    }
 
     sc = readMcParticles();
     if (sc.isFailure()) return sc;
@@ -325,7 +333,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
         return sc;
     }
 
-    const McIntegratingHit *intHitRoot;
+    McIntegratingHit *intHitRoot;
     while (intHitRoot = (McIntegratingHit*)hitIter.Next()) {
 
         mc::McIntegratingHit *intHitTds = new mc::McIntegratingHit();
@@ -334,13 +342,22 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
         idents::VolumeIdentifier idTds;
         convertVolumeId(idRoot, idTds);
 
-        double eTds = intHitRoot->getTotalEnergy();
-        
-        TVector3 moment1Root = intHitRoot->getMoment1();
-        HepPoint3D moment1Tds(moment1Root.X(), moment1Root.Y(), moment1Root.Z());
+        intHitTds->setVolumeID(idTds);
 
-        TVector3 moment2Root = intHitRoot->getMoment2();
-        HepPoint3D moment2Tds(moment2Root.X(), moment2Root.Y(), moment2Root.Z());
+        const McIntegratingHit::energyDepositMap mcPartMapRoot = intHitRoot->getItemizedEnergy();
+        McIntegratingHit::energyDepositMap::const_iterator rootMapIt;
+        log << MSG::DEBUG << "EnergyMap size: " << mcPartMapRoot.size() << endreq;
+        // Can't seem to read this back in due to TRef problem in Root 3.02.03
+        /*
+        for (rootMapIt = mcPartMapRoot.begin(); rootMapIt != mcPartMapRoot.end(); rootMapIt++){
+            McParticle* mcPartRoot = rootMapIt->first;
+            mc::McParticle *mcPartTds = m_particleMap[mcPartRoot->GetUniqueID()];
+            double e = rootMapIt->second;
+            TVector3 posRoot = mcPartRoot->getFinalPosition();
+            HepPoint3D posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
+            intHitTds->addEnergyItem(e, mcPartTds, posTds);
+        }
+        */
 
         // Add the TDS McIntegratingHit to the TDS McIntegratingHit collection
         pTdsCol->push_back(intHitTds);

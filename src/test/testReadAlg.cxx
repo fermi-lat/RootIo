@@ -16,7 +16,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header$
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -95,6 +95,13 @@ StatusCode testReadAlg::execute()
         McIntegratingHitVector::const_iterator hit;
         for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {   
             log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
+            mc::McIntegratingHit::energyDepositMap mcPartMap = (*hit)->itemizedEnergy();
+            mc::McIntegratingHit::energyDepositMap::const_iterator partIt;
+            log << MSG::DEBUG << "McIntegratingHit energy Map" << endreq;
+            for (partIt = mcPartMap.begin(); partIt != mcPartMap.end(); partIt++) {
+                log << MSG::DEBUG << "(McPartId, energy) = (" << partIt->first->particleProperty()
+                    << ", " << partIt->second << ")" << endreq;
+            }
         }
     }
 
