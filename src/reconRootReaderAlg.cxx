@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.8 2002/10/02 14:06:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.9 2002/10/09 23:42:02 usher Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -338,6 +338,13 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
 
 		clusterTdsCol->addCluster(clusterTds);
 	}
+
+	sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrClusterCol, clusterTdsCol);
+    if (sc.isFailure()) {
+        log << MSG::DEBUG << "Failed to register TkrClusterCol" << endreq;
+        return StatusCode::FAILURE;
+    }
+
 
 	return sc;
 }
