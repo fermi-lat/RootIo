@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.45 2005/02/07 20:36:23 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.46 2005/02/23 19:24:20 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -733,6 +733,12 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
             unsigned int range;
             for (range = idents::CalXtalId::LEX8; range < idents::CalXtalId::HEX1; range++) {    
                 const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(range);
+                if (!xtalRangeRoot) {
+                    log << MSG::DEBUG;
+                    if( log.isActive()) log.stream() << "Readout for Range " << range << " does not exist";
+                    log << endreq;
+                    continue;
+                 }
                 TVector3 posRoot = xtalRangeRoot->getPosition();
                 Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
                 Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 

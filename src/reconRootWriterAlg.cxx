@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.49 2005/01/25 20:01:19 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.50 2005/02/07 20:36:23 lsrea Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -591,8 +591,9 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
     // Purpose and Method:  Given the CalXtalRecData collection from the TDS,   
     //   this method fills the ROOT CalXtalRecData collection.   
     
+    MsgStream log(msgSvc(), name());
     Event::CalXtalRecCol::const_iterator xtalTds;   
-    
+
     for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {   
         CalXtalRecData *xtalRoot = new CalXtalRecData();   
         idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();   
@@ -618,6 +619,12 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
             for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {   
                 Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
                     (*xtalTds)->getRangeRecData(range);   
+                if (!xtalRangeTds) {
+                  log << MSG::DEBUG;
+                  if( log.isActive()) log.stream() << "xtal for range " << range << " does not exist.";
+                  log << endreq;
+                  continue;
+                }
                 CalRangeRecData recRoot(   
                     xtalRangeTds->getRange(idents::CalXtalId::POS),    
                     xtalRangeTds->getEnergy(idents::CalXtalId::POS),    
@@ -713,7 +720,9 @@ StatusCode reconRootWriterAlg::finalize()
     StatusCode sc = StatusCode::SUCCESS;
     setFinalized();
 
-    log << MSG::DEBUG << "Finalized" << endreq;
+    log << MSG::DEBUG;
+    if( log.isActive()) log.stream() << "Finalized";
+    log << endreq;
 
     return sc;
 }

@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v14r9     29-Mar-2005 HMK Check for the non-null pointer when reading/writing
+           CalRecon's calXtal readouts
+ v14r8p0
  v14r8     15-Mar-2005 HMK Store all diagnostic and error lengths
  v14r7p1   08-Mar-2005 HMK Minor bug in digiRootReader for EventSummary 
            retrieval from TDS - if reconRootReader is run first
