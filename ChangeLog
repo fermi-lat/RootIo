@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Feb 28 15:22:16 PST 2003
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+compute volId when reading AcdDigs
+    *
+------------------------------------------------------------
 User: heather  Fri Feb 28 15:21:05 PST 2003
 RootIo/cmt
 
