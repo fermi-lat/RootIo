@@ -1,4 +1,22 @@
 ------------------------------------------------------------
+User: chamont  Wed Nov 24 06:16:31 PST 2004
+RootIo/src
+
+Modified Files:
+	FhChronoStatTable.cxx FhCmtConfig.cxx FhJobOptions.cxx 
+	FhSetAlg.cxx FhSystemEnv.cxx RootIoSvc.cxx 
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx mainpage.h 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Added Files:
+	FhDemoCaloSetAlg.cxx FhDemoCaloSetAlg.h FhDemoGetAlg.cxx 
+Removed Files:
+	testCaloFhSetAlg.cxx testCaloFhSetAlg.h testFhGetAlg.cxx 
+Log Message:
+Replace occurences of TString::ReadLine() ; I could not test because my last cvs update made my RootIo incompatible with my GlastReleasev4r5... I will try just now with GlastReleasev4r6 and under windows
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 16 08:49:03 PST 2004
 RootIo/doc
 
