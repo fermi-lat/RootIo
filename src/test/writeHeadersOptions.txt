@@ -10,7 +10,7 @@ MessageSvc.OutputLevel = 2 ;
 ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
 
 ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
-    "FhSetAlg", "FhDemoGetAlg", "FhDemoCaloSetAlg",
+    "FhSetAlg", "FhDemoCaloSetAlg", "FhDemoGetAlg",
     "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
 
 ApplicationMgr.ExtSvc += { 
