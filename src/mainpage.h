@@ -24,7 +24,7 @@
 * <hr>
 * @section jobOptions jobOptions
 * @parma RootIoSvc.MaxTreeSize
-*  Defaults to 10 GB
+*  Defaults to 25 GB
 *  Size in MB for Trees, when a Tree hits this size, the current ROOT file
 *  is closed and a new one is opened for writing.  This parameter is set for
 *  ALL Trees - there is no way to assign it on a per tree basis
