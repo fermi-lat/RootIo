@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  6 15:13:56 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+read/write timestamp and trigger bits
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  6 15:13:10 PDT 2002
 RootIo/doc
 
