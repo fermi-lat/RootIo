@@ -20,6 +20,7 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
+#include "TEventList.h"
 
 #include "digiRootData/DigiEvent.h"
 
@@ -34,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.13 2003/07/01 17:42:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.14 2003/08/23 20:28:04 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -164,22 +165,6 @@ StatusCode digiRootReaderAlg::initialize()
     }
 
 
-/* Old method before TChains
-    m_digiFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_digiFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_digiFile->cd();
-    m_digiTree = (TTree*)m_digiFile->Get(m_treeName.c_str());
-    if (!m_digiTree) {
-        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
-            " from file " << m_fileName << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
-
     m_digiEvt = 0;
     m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
     m_common.m_digiEvt = m_digiEvt;
@@ -205,23 +190,41 @@ StatusCode digiRootReaderAlg::execute()
     
     if (m_digiEvt) m_digiEvt->Clear();
 
-/*
-    if (!m_digiFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
-
     static Int_t evtId = 0;
-    if (evtId == 0) m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
+	int readInd, numBytes;
+	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+	
+	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
+		readInd = m_rootIoSvc->index();
+	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
+		int run = runEventPair.first;
+		int evt = runEventPair.second;
+		char cutStr[100];
+		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
+		m_digiTree->Draw(">>mylist", cutStr);
+		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
+		if (elist->GetN() <= 0) {
+			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
+				<< evt << endreq;
+			return sc;
+		}
+		readInd = elist->GetEntry(0);
+	} else {
+		readInd = evtId;
+	}
 
-    if (evtId >= m_numEvents) {
-        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
+    if (readInd >= m_numEvents) {
+        log << MSG::WARNING << "Requested index is out of bounds" << endreq;
         return StatusCode::FAILURE;
     }
 
-    m_digiTree->GetEvent(evtId);
+    numBytes = m_digiTree->GetEvent(readInd);
+	
+	if ((numBytes <= 0) || (!m_digiEvt)) {
+		log << MSG::WARNING << "Failed to load digi event" << endreq;
+		return StatusCode::SUCCESS;
+	}
+
 
     sc = readDigiEvent();
     if (sc.isFailure()) {
@@ -247,8 +250,7 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
-//    m_digiEvt->Clear();
-    evtId++;
+	evtId = readInd+1;
     
     return sc;
 }
