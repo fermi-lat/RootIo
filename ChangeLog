@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jan 12 16:26:04 PST 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+use TTree::GetCurrentFile to retrieve TFile ptr for cd
+    *
+------------------------------------------------------------
 User: heather  Mon Jan 12 11:28:54 PST 2004
 RootIo/src/test
 
