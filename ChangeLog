@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Wed May 15 22:14:50 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Modify reconRootWriterAlg to fill TkrTrack from TkrFitTrack
+
+    *
+------------------------------------------------------------
 User: heather  Wed May 15 15:35:26 PDT 2002
 RootIo/src
 
