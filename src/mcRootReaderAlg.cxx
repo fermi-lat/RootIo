@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.12 2002/07/12 21:37:51 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.13 2002/07/30 19:51:39 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -464,6 +464,18 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
             intHitTds->addEnergyItem(e, mcPartTds, posTds);
         }
         */
+
+        double totalEnergyRoot = intHitRoot->getTotalEnergy();
+        const TVector3 moment1Root = intHitRoot->getMoment1();
+        HepPoint3D moment1Tds(moment1Root.X(), moment1Root.Y(), moment1Root.Z());
+        const TVector3 moment2Root = intHitRoot->getMoment2();
+        HepPoint3D moment2Tds(moment2Root.X(), moment2Root.Y(), moment2Root.Z());
+
+        double energyArr[3] = { intHitRoot->getMcParticleEnergy(McIntegratingHit::PRIMARY),
+            intHitRoot->getMcParticleEnergy(McIntegratingHit::ELECTRON),
+            intHitRoot->getMcParticleEnergy(McIntegratingHit::POSITRON) };
+
+        intHitTds->setEnergyItems(totalEnergyRoot, energyArr, moment1Tds, moment2Tds);
 
         // Add the TDS McIntegratingHit to the TDS McIntegratingHit collection
         pTdsCol->push_back(intHitTds);
