@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed May 15 15:30:54 PDT 2002
+RootIo/src
+
+Added Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+adding new recon ROOT algs
+    *
+------------------------------------------------------------
 User: heather  Wed May 15 15:26:39 PDT 2002
 RootIo/cmt
 
