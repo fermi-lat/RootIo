@@ -10,6 +10,7 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/Utilities/TimeStamp.h"
 
 
 #include "TROOT.h"
@@ -34,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.22 2003/07/01 17:42:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.23 2003/07/20 15:43:13 burnett Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -293,6 +294,7 @@ StatusCode mcRootReaderAlg::readMcEvent() {
     unsigned int runIdRoot = m_mcEvt->getRunId();
     int sourceIdRoot = m_mcEvt->getSourceId();
     unsigned int sequenceRoot = m_mcEvt->getSequence();
+	TimeStamp timeTds(m_mcEvt->getTimeStamp());
     
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
@@ -300,7 +302,7 @@ StatusCode mcRootReaderAlg::readMcEvent() {
     
     SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
     if (!mcEvt) return sc;
-    mcEvt->initialize(runIdTds, sourceIdRoot, sequenceRoot,0); // do we care if this has the right time
+    mcEvt->initialize(runIdTds, sourceIdRoot, sequenceRoot, timeTds);
     
     return sc;
 }
