@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Fri Aug 27 06:55:40 PDT 2004
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+rename CaloFileHeadersSetAlg into testCaloFileHeadersSetAlg
+    *
+------------------------------------------------------------
+User: chamont  Fri Aug 27 06:55:40 PDT 2004
 RootIo/src
 
 Added Files:
