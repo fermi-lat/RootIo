@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Thu Nov 25 05:37:11 PST 2004
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+additionnal debugging display, and revert erroneous replacements
+    *
+------------------------------------------------------------
+User: chamont  Thu Nov 25 05:37:11 PST 2004
 RootIo/src
 
 Modified Files:
