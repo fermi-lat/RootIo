@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sat Aug 23 13:28:04 PDT 2003
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+fix include path
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 21 16:38:38 PDT 2003
 RootIo/src
 
