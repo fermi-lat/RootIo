@@ -2,10 +2,12 @@
  Package RootIo
  Coordinator: H. Kelly
 
+        21-May-2002 HMK Complete CalRecon writing\n
+        19-May-2002 TU  Updates for TkrRecon writing\n
  v3r1   14-May-2002 HMK Update for initialPosition in McParticle\n
  v3r0   14-May-2002 HMK Add in new algs for digi handling\n
  v2r0p1 13-May-2002 HMK Write event and run ids when reading from ROOT\n
- v2r0   10-May-2002 THB Conversion to Event
+ v2r0   10-May-2002 THB Conversion to Event\n
  v1r0   01-May-2002 HMK Fix for v2r1 version of mcRootData \n
         Seems able to write and read mcRootData to/from ROOT \n
         But note that TRefs do not function when reading in a program \n
