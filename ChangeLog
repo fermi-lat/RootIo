@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 22:49:47 PST 2004
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	release.notes 
+Log Message:
+handle Luis' 3-in-a-row trigger bits for all towers
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 22:49:04 PST 2004
 RootIo/cmt
 
