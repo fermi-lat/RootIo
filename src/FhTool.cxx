@@ -117,14 +117,17 @@ StatusCode FhTool::readConstReconHeader( TFile * file ) {
 
 StatusCode FhTool::writeHeader( TFile * file,
   FileHeader * header ) {
+      
+    MsgStream log(msgSvc(),name()) ;
 	
     static TFile * oldFile = 0 ;
 	if (!header) {
-        MsgStream log(msgSvc(),name()) ;
 	    log<<MSG::WARNING<<"No file header found"<<endreq ;
 	}
     else if ( file != oldFile ) {
     	
+        log << MSG::DEBUG << "BEGIN writeHeader" << endreq ;
+
         oldFile = file ;
 
 	    //header->Print() ;
@@ -134,6 +137,7 @@ StatusCode FhTool::writeHeader( TFile * file,
 	    header->Write("header") ;
 	    saveDir->cd() ;
 	    
+        log << MSG::DEBUG << "END writeHeader" << endreq ;
     }
     
     return StatusCode::SUCCESS ;

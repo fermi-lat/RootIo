@@ -1,7 +1,11 @@
 //##############################################################
 //
-// Job options file for RootIo test
+// readHeadersOptions.txt
+// to be used as argument to test_RootIo.exe
 //
+//==============================================================
+
+MessageSvc.OutputLevel = 2 ;
 
 ApplicationMgr.DLLs   = { "GlastSvc"};
 
@@ -13,6 +17,7 @@ ApplicationMgr.ExtSvc = {
 
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
 EventSelector.Input = "NONE";
+ApplicationMgr.EvtMax = 10 ;
 
 // Stuff for detModel
 GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
@@ -27,7 +32,7 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 
 ApplicationMgr.TopAlg +=  {
     "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg",
-    "FhDemoCaloSetAlg" };
+    "FhDemoGetAlg" };
 mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
 digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi-fake.root";
 reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon-fake.root";

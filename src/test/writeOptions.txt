@@ -4,7 +4,7 @@
 //
 ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
 
-ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
+ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg", "FhSetAlg", 
               "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
 
 ApplicationMgr.ExtSvc = { 
