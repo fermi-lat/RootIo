@@ -35,7 +35,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.14 2002/12/19 21:08:30 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.15 2002/12/20 19:38:36 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -380,8 +380,8 @@ StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
             candTrackRoot->getEnergy(), candTrackRoot->getQuality(),
             rayTds); 
         
-        std::vector<TkrCandHit>::const_iterator hitIt;
-        for (hitIt = candTrackRoot->getHitIterBegin(); hitIt != candTrackRoot->getHitIterEnd(); hitIt++) {
+        for (int idx = 0; idx < candTrackRoot->getNumHits(); idx++) {
+            const TkrCandHit* hitIt = candTrackRoot->getHitPlane(idx);
             TVector3 posRoot = hitIt->getPosition();
             Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
             Event::TkrCluster::view viewTds;
@@ -505,8 +505,8 @@ Event::TkrFitTrackBase* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trac
         trackRoot->getRmsResid(), trackRoot->getQuality(), 
         trackRoot->getKalEnergy(), trackRoot->getKalThetaMS());
     
-    TkrHitPlaneIter hitItRoot;
-    for (hitItRoot = trackRoot->getHitIterBegin(); hitItRoot != trackRoot->getHitIterEnd(); hitItRoot++) {
+    for (int idx = 0; idx < trackRoot->getNumHits(); idx++) {
+        const TkrHitPlane* hitItRoot = trackRoot->getHitPlane(idx);
         Event::TkrFitPlane planeTds;
         Event::TkrCluster::view projTds, projPlusTds;
         convertHitPlaneView(hitItRoot->getProjection(), projTds);

@@ -35,7 +35,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.25 2002/12/19 21:08:30 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.26 2002/12/20 19:38:36 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -252,7 +252,7 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     if (candidatesTds) fillCandidateTracks(recon, candidatesTds);
     
     // Retrieve the information on fit tracks
-    SmartDataPtr<Event::TkrFitTrackCol> tracksTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
+    SmartDataPtr<Event::TkrFitTrackCol>    tracksTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
     
     // Fill the fit tracks
     if (tracksTds) fillFitTracks(recon, tracksTds);
@@ -337,7 +337,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
 {
     // Purpose and Method:  This creates root tracks from tds tracks 
     //                      and adds them to the list kept in TkrRecon
-    
+
     // Iterate over the tracks in the TDS
     int                 trkId  = 0;
     Event::TkrFitColPtr trkPtr = tracksTds->begin();
@@ -352,7 +352,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
         
         else if (Event::TkrKalFitTrack* trackFitTds = dynamic_cast<Event::TkrKalFitTrack*>(trackBase))
             trackRoot = convertTkrKalFitTrack(trackFitTds, trkId++);
-        
+
         // Ok, now add the track to the list!
         recon->addTrack(trackRoot);
     }
