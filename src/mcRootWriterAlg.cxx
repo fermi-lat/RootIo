@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.2 2002/04/29 14:17:31 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -44,8 +44,6 @@ public:
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
 
-            
-        
 private:
 
     /// Retrieves event Id and run Id from TDS and fills the McEvent ROOT object
@@ -88,6 +86,7 @@ private:
     int m_bufSize;
 
     /// Keep track of MC particles as we retrieve them from TDS
+    /// Used only to aid in writing the ROOT file.
     std::map<const mc::McParticle*, McParticle*> m_particleMap;
     
 };
@@ -241,8 +240,10 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
                 // Otherwise we retrieve the McParticle from the map
                 momRoot = m_particleMap[momTds];
             } else {
-                log << MSG::INFO << "Did not find mother McParticle in the map!!" << endreq;
+                log << MSG::WARNING << "Did not find mother McParticle in the map!!" << endreq;
             }
+        } else {
+            log << MSG::WARNING << "TDS McParticle Mother is null" << endreq;
         }
                 
         // Setup the ROOT McParticle
@@ -363,25 +364,19 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         McIntegratingHit *mcIntHit = new McIntegratingHit();
 
         // Setup the ROOT McIntegratingHit
-        mcIntHit->initialize(idRoot);// e, moment1Root, moment2Root);
+        mcIntHit->initialize(idRoot);
 
-        /*
-        // Can't use typedef for energyDepositMap - need the mc namespace
-        const std::map<mc::McParticle*, double> &tdsMap = ((*hit)->itemizedEnergy());
-            std::map<mc::McParticle*, double>::const_iterator tdsIt;
-            for (tdsIt = tdsMap.begin(); tdsIt != tdsMap.end(); ++tdsIt) {
-                const mc::McParticle *mcTds = tdsIt->first;
-                if (mcTds == 0) {
-                    log << MSG::INFO << "McParticle in energy map is NULL!" << endreq;
-                    break;
-                }
-                if (m_particleMap.find(mcTds) != m_particleMap.end()) {
-                    McParticle *mcRoot = m_particleMap[mcTds];
-                    Double_t energy = tdsIt->second;
-                    mcIntHit->addEnergyItem(energy, mcRoot);
-                }
-            }
-*/
+        mc::McIntegratingHit::energyDepositMap tdsMap = (*hit)->itemizedEnergy();
+        mc::McIntegratingHit::energyDepositMap::const_iterator mapIt;
+        for (mapIt = tdsMap.begin(); mapIt != tdsMap.end(); mapIt++) {
+            mc::McParticle *mcPartTds = mapIt->first;
+            McParticle *mcPartRoot = m_particleMap[mcPartTds];
+            Double_t e = mapIt->second;
+            HepPoint3D posTds = mcPartTds->finalPosition();
+            TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
+            mcIntHit->addEnergyItem(e, mcPartRoot, posRoot);
+        }
+
         // Add the ROOT McIntegratingHit to the ROOT collection of McIntegratingHits
         m_mcEvt->addMcIntegratingHit(mcIntHit);
     }
