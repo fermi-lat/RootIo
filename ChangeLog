@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Mar 14 22:43:44 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+fix warnings
+    *
+------------------------------------------------------------
 User: heather  Sun Mar 14 22:33:29 PST 2004
 RootIo/src
 
