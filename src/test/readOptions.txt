@@ -3,7 +3,7 @@
 // Job options file for RootIo test
 //
 
-ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc"};
+ApplicationMgr.DLLs   = { "GlastSvc"};
 
 ApplicationMgr.ExtSvc = { 
     "GlastEventSelector/EventSelector" , 
@@ -22,9 +22,10 @@ GlastDetSvc.topVolume="LAT";         // the whole schebang
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 
-ApplicationMgr.TopAlg +=  { "mcRootReaderAlg", "digiRootReaderAlg"};
-mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
-digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
+ApplicationMgr.TopAlg +=  { "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg"};
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/muon_patch_mc.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/muon_patch_digi.root";
+reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/muon_patch_recon.root";
 
 
 //==============================================================
