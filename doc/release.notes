@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r0   27-May-2004 HMK Move from ebf to ldf
+ v11r1p0 24-May-2004 HMK Replace GetEntryByIndex with GetEntryNumberByIndex
  v11r1   25-Mar-2004 HMK Remove EbfConverter use EbfEvent instead
  v11r0p1 25-Mar-2004 HMK Make EbfConverter useage public
  v11r0p0 19-Mar-2004 HMK set some statements as debug

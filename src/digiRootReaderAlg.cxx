@@ -13,9 +13,9 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
-#include "EbfEvent/DiagnosticData.h"
-#include "EbfEvent/EventSummaryData.h"
-#include "EbfEvent/EbfTime.h"
+#include "LdfEvent/DiagnosticData.h"
+#include "LdfEvent/EventSummaryData.h"
+#include "LdfEvent/LdfTime.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.23 2004/03/25 20:18:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.24 2004/05/24 18:56:49 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -316,7 +316,7 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
-    SmartDataPtr<EbfEvent::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    SmartDataPtr<LdfEvent::LdfTime> timeTds(eventSvc(), "/Event/Time");
     if (timeTds) {
         timeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec(), m_digiEvt->getEbfUpperPpcTimeBase(), m_digiEvt->getEbfLowerPpcTimeBase());
     }
@@ -329,7 +329,7 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     StatusCode sc = StatusCode::SUCCESS;
     unsigned summaryWord = m_digiEvt->getEventSummaryData().summary();
 
-    EbfEvent::EventSummaryData *evtSumTds = new EbfEvent::EventSummaryData();
+    LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
     evtSumTds->initialize(summaryWord);
 
     return sc;
@@ -344,18 +344,18 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
 
     const TClonesArray *calCol = m_digiEvt->getCalDiagnosticCol();
     const TClonesArray *tkrCol = m_digiEvt->getTkrDiagnosticCol();
-    EbfEvent::DiagnosticData *diagTds = new EbfEvent::DiagnosticData();
+    LdfEvent::DiagnosticData *diagTds = new LdfEvent::DiagnosticData();
     TIter calIt(calCol);
     CalDiagnosticData *cDiagRoot;
     while ((cDiagRoot = (CalDiagnosticData*)calIt.Next())!=0) {
-        EbfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
+        LdfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
         diagTds->addCalDiagnostic(cDiagTds);
     }
 
     TIter tkrIt(tkrCol);
     TkrDiagnosticData *tDiagRoot;
     while((tDiagRoot = (TkrDiagnosticData*)tkrIt.Next())!=0) {
-        EbfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
+        LdfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
         diagTds->addTkrDiagnostic(tDiagTds);
     }
 
