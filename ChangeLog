@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Sun Jun  1 18:45:51 PDT 2003
+RootIo/src/test
+
+Modified Files:
+	readOptions.txt 
+Added Files:
+	mc.root digi.root recon.root 
+Log Message:
+update test for new RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 25 07:46:24 PST 2003
 RootIo/src
 
