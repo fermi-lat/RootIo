@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.35 2004/11/16 16:48:46 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.36 2004/11/24 14:16:31 chamont Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -283,8 +283,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     if( log.isActive()) evtTds->fillStream(log.stream());
     log << endreq;
 
-    SmartDataPtr<TriRowBitsTds::TriRowBits> triRowBitsTds(eventSvc(), "/Event/
-Digi/TriRowBits");
+    SmartDataPtr<TriRowBitsTds::TriRowBits> triRowBitsTds(eventSvc(), "/Event/Digi/TriRowBits");
     UInt_t rowBits[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     if (triRowBitsTds) {
         unsigned int iTower;
