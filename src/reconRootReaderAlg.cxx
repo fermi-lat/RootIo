@@ -35,7 +35,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.15 2002/12/20 19:38:36 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.16 2003/02/06 21:55:53 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -346,7 +346,10 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
     
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrClusterCol, clusterTdsCol);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register TkrClusterCol" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TkrClusterCol";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     
@@ -401,7 +404,10 @@ StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
     
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrPatCandCol, candTdsCol);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register Tkr CandTrackCol" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register Tkr CandTrackCol";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     
@@ -450,7 +456,10 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrFitTrackCol, trackTdsCol);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register Tkr FitTrackCol" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register Tkr FitTrackCol";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     
@@ -487,7 +496,10 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVertexCol, vertexColTds);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register Tkr VertexCol" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register Tkr VertexCol";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     
@@ -746,7 +758,10 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     //register output data collection as a TDS object
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalXtalRecCol, calXtalRecColTds);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register CalXtalRecCol" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register CalXtalRecCol";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     
@@ -819,7 +834,10 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     
     const AcdRecon *acdRecRoot = m_reconEvt->getAcdRecon();
     if (!acdRecRoot) {
-        log << MSG::DEBUG << "No AcdRecon found in ROOT file" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "No AcdRecon found in ROOT file";
+        log << endreq;
         return StatusCode::SUCCESS;
     }
     
@@ -847,7 +865,10 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
-        log << MSG::DEBUG << "Failed to register AcdRecon" << endreq;
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register AcdRecon";
+        log << endreq;
         return StatusCode::FAILURE;
     }
     

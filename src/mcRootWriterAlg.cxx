@@ -29,7 +29,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.19 2002/10/21 19:53:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.20 2002/12/02 21:54:19 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -219,7 +219,7 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     UInt_t sequence = mcEvt->getSequence();
     
     log << MSG::DEBUG;
-    evt->fillStream(log.stream());
+    if( log.isActive()) evt->fillStream(log.stream());
     log << endreq;
     
     m_mcEvt->initialize(evtId, runId, sourceId, sequence);
@@ -339,14 +339,16 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         EventModel::MC::McPositionHitCol);
     if (!posHits) return sc;
     
-    log << MSG::DEBUG << "Number of McPositionHits in the event = " 
-        << posHits->size() << endreq;
+    log << MSG::DEBUG;
+    if( log.isActive()) 
+        log.stream() << "Number of McPositionHits in the event = " << posHits->size();
+    log << endreq;
     
     Event::McPositionHitVector::const_iterator hit;
     for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {
     
         log << MSG::DEBUG;
-        (*hit)->fillStream(log.stream());
+        if( log.isActive()) (*hit)->fillStream(log.stream());
         log << endreq;
 
         Int_t particleId = (*hit)->getMcParticleId();
@@ -433,15 +435,16 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         EventModel::MC::McIntegratingHitCol);
     if (!intHits) return sc;
     
-    
-    log << MSG::DEBUG << "Number of McIntegratingHits in the event = " 
-        << intHits->size() << endreq;
+    log << MSG::DEBUG;
+    if(log.isActive()) 
+        log.stream() << "Number of McIntegratingHits in the event = " << intHits->size();
+    log << endreq;
     
     Event::McIntegratingHitVector::const_iterator hit;
     for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {
 
         log << MSG::DEBUG;
-        (*hit)->fillStream(log.stream());
+        if( log.isActive()) (*hit)->fillStream(log.stream());
         log << endreq;
 
         const idents::VolumeIdentifier idTds = (*hit)->volumeID();
