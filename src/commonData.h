@@ -41,7 +41,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.3 2004/01/09 18:56:23 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.4 2004/12/16 00:24:29 usher Exp $
 */
 
 class commonData 
