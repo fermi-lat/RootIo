@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 13:12:58 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx 
+Log Message:
+write/read sourceId & sequence for McEvent
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 13:11:45 PDT 2002
 RootIo/doc
 
