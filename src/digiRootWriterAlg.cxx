@@ -41,7 +41,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.29 2004/09/24 17:40:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.30 2004/09/24 19:14:05 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -308,6 +308,15 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     }
     m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
     m_digiEvt->getEventSummaryData().initEventFlags(summaryTds->eventFlags());
+    const unsigned int nTem = 16;
+    unsigned long tem[nTem];
+    unsigned int iTem;
+    for (iTem = 0; iTem < nTem; iTem++) 
+        summaryTds->temLength(iTem);
+    m_digiEvt->getEventSummaryData().initContribLen(tem, 
+        summaryTds->gemLength(), summaryTds->oswLength(), 
+        summaryTds->errLength(), summaryTds->diagLength(), 
+        summaryTds->aemLength());
     return sc;
 }
 
