@@ -21,11 +21,14 @@ GlastDetSvc.topVolume="LAT";         // the whole schebang
 
 
 ApplicationMgr.DLLs +=    { "RootIo" };
+ApplicationMgr.ExtSvc += { "RootIoSvc" };
+// controls the event loop
+ApplicationMgr.Runable= "RootIoSvc";
 
 ApplicationMgr.TopAlg +=  { "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg"};
-mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/muon_patch-mc.root";
-digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/muon_patch-digi.root";
-reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/muon_patch-recon.root";
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi.root";
+reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon.root";
 
 
 //==============================================================
