@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 28 08:15:09 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+fix run num setting
+    *
+------------------------------------------------------------
 User: heather  Mon Aug 25 11:53:21 PDT 2003
 RootIo/cmt
 
