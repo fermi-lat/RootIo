@@ -27,7 +27,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.16 2002/09/25 20:12:58 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.17 2002/10/10 02:27:43 burnett Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -285,19 +285,21 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         // Setup the ROOT McParticle
         mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, 
             finalMomRoot, initPosRoot, finalPosRoot, (*p)->getProcess());
-
-		// Process the Daughter Particles
-		const SmartRefVector<Event::McParticle> daughterCol = (*p)->daughterList();
-		SmartRefVector<Event::McParticle>::const_iterator daughterIt;
-		for (daughterIt = daughterCol.begin(); daughterIt != daughterCol.end(); daughterIt++) {
-			if (m_particleMap.find((*daughterIt)) != m_particleMap.end()) {
-				McParticle *daughter = m_particleMap[(*daughterIt)];
-				mcPart->addDaughter(daughter);
-			} else {
-				log << MSG::WARNING << "Did not find daughter McParticle in the"
-					<< " map!" << endreq;
-			}
-		}
+        
+        /* HMK This is probably no longer necessary - as this is handled in McParticle::initialize
+        // Process the Daughter Particles
+        const SmartRefVector<Event::McParticle> daughterCol = (*p)->daughterList();
+        SmartRefVector<Event::McParticle>::const_iterator daughterIt;
+        for (daughterIt = daughterCol.begin(); daughterIt != daughterCol.end(); daughterIt++) {
+            if (m_particleMap.find((*daughterIt)) != m_particleMap.end()) {
+                McParticle *daughter = m_particleMap[(*daughterIt)];
+                mcPart->addDaughter(daughter);
+            } else {
+                log << MSG::WARNING << "Did not find daughter McParticle in the"
+                    << " map!" << endreq;
+            }
+        }
+        */
 
         // Add the ROOT McParticle to the ROOT collection of McParticle
         m_mcEvt->addMcParticle(mcPart);     
