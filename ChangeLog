@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 11:45:06 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	createFakeTdsDataAlg.cxx 
+Log Message:
+update test for McParticle daughters
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 11:44:11 PDT 2002
 RootIo/src
 
