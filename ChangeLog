@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Aug 23 15:04:57 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+prevent from registering empty hit collections 
+    *
+------------------------------------------------------------
 User: heather  Sat Aug 23 13:28:04 PDT 2003
 RootIo/src
 
