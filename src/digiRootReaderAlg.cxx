@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.45 2005/02/22 21:06:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.46 2005/02/23 19:24:20 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -355,7 +355,7 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     }
 
     TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
-    sc = eventSvc()->registerObject("/Event/Digi/TriRowBits", rowbits);
+    sc = eventSvc()->registerObject("/Event/TriRowBits", rowbits);
     if( sc.isFailure() ) {
         log << MSG::ERROR << "Could not register TriRowBits" << endreq;
         return sc;
