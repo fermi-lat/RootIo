@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 23 09:38:24 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch for popen/pclose in Linux
+    *
+------------------------------------------------------------
 User: heather  Thu Sep 23 09:38:11 PDT 2004
 RootIo/doc
 
