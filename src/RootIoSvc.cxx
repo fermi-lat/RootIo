@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.1 2003/06/02 01:53:19 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.2 2003/08/21 23:37:28 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -27,7 +27,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.1 2003/06/02 01:53:19 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.2 2003/08/21 23:37:28 heather Exp $
 */
 
 // includes
@@ -222,8 +222,6 @@ void RootIoSvc::handle(const Incident &inc)
 
 void RootIoSvc::beginEvent() // should be called at the beginning of an event
 { 
-	setIndex(-1);
-	setRunEventPair(std::pair<int,int>(-1,-1));
 }
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause

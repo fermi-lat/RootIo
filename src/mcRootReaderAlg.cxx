@@ -20,7 +20,6 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
-#include "TEventList.h"
 
 #include "mcRootData/McEvent.h"
 
@@ -36,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.27 2003/08/23 22:04:57 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.28 2003/08/24 01:00:21 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -180,7 +179,10 @@ StatusCode mcRootReaderAlg::initialize()
     
     m_numEvents = m_mcTree->GetEntries();
 
-    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+	if (m_rootIoSvc) {
+		m_rootIoSvc->setRootEvtMax(m_numEvents);
+		//m_mcTree->BuildIndex("m_runId", "m_eventId");
+	}
      
     saveDir->cd();
     return sc;
@@ -213,16 +215,7 @@ StatusCode mcRootReaderAlg::execute()
 	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
-		char cutStr[100];
-		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
-		m_mcTree->Draw(">>mylist", cutStr);
-		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
-		if (elist->GetN() <= 0) {
-			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
-				<< evt << endreq;
-			return sc;
-		}
-		readInd = elist->GetEntry(0);
+		readInd = m_mcTree->GetEntryWithIndex(run, evt);
 	} else {
 		readInd = evtId;
 	}

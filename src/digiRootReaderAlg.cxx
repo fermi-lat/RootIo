@@ -20,7 +20,6 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
-#include "TEventList.h"
 
 #include "digiRootData/DigiEvent.h"
 
@@ -35,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.14 2003/08/23 20:28:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.15 2003/08/24 01:00:21 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -132,7 +131,7 @@ StatusCode digiRootReaderAlg::initialize()
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
         //return StatusCode::FAILURE;
-    }
+    } 
 
     facilities::Util::expandEnvVar(&m_fileName);
     
@@ -171,7 +170,11 @@ StatusCode digiRootReaderAlg::initialize()
 
     m_numEvents = m_digiTree->GetEntries();
     
-    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+	if (m_rootIoSvc) {
+		m_rootIoSvc->setRootEvtMax(m_numEvents);
+		//m_digiTree->BuildIndex("m_runId", "m_eventId");
+	}
+
 
     saveDir->cd();
     return sc;
@@ -199,16 +202,7 @@ StatusCode digiRootReaderAlg::execute()
 	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
-		char cutStr[100];
-		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
-		m_digiTree->Draw(">>mylist", cutStr);
-		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
-		if (elist->GetN() <= 0) {
-			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
-				<< evt << endreq;
-			return sc;
-		}
-		readInd = elist->GetEntry(0);
+		readInd = m_digiTree->GetEntryWithIndex(run, evt);
 	} else {
 		readInd = evtId;
 	}
