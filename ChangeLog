@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Feb 22 13:06:28 PST 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+prepare for new GEM
+    *
+------------------------------------------------------------
 User: heather  Tue Feb 22 13:05:39 PST 2005
 RootIo/doc
 
