@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 25 11:44:30 PST 2005
+RootIo/src
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+fix up use of Long64
+    *
+------------------------------------------------------------
 TAG
 Tag name: v14r3, operation: add
 Package: RootIo
