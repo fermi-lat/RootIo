@@ -2,10 +2,18 @@
 //
 // Job options file for RootIo test
 //
-#include "$ROOTIOROOT/src/test/g4Options.txt"
-ApplicationMgr.DLLs +=    { "RootIo" };
+ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
 
-ApplicationMgr.TopAlg +=  { "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
+ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
+              "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
+
+ApplicationMgr.ExtSvc = { 
+    "GlastEventSelector/EventSelector" , 
+    "EventCnvSvc"
+    };
+
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventSelector.Input = "NONE";
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
 mcRootWriterAlg.splitMode = 1;
