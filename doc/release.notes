@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v14r6     22-Feb-2005 HMK prepare for new GEM in LDF
  v14r5     07-Feb-2005 LSR TkrCluster again!
  v14r4p0   01-Feb-2005 HMK properly handle fromMc in DigiEvent
  v14r4     26-Jan-2005 LSR mods for TkrCluster, add ClusterMap generation
