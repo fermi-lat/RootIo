@@ -36,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26 2004/06/10 17:03:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26.4.1 2004/08/18 19:01:39 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -298,7 +298,7 @@ StatusCode digiRootWriterAlg::writeGem() {
       log << MSG::DEBUG << "No GEM found on TDS" << endreq;
       return sc;
     }
-    const LdfEvent::GemDataTileList tileListTds = gemTds->tileList();
+    const LdfEvent::GemTileList tileListTds = gemTds->tileList();
     Gem gemRoot;
     GemTileList tileListRoot(tileListTds.xzm(), tileListTds.xzp(), 
                 tileListTds.yzm(), tileListTds.yzp(), tileListTds.xy(),
