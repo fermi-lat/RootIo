@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 26 14:06:38 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootWriterAlg.cxx 
+Log Message:
+fix renamed method
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 14:04:40 PDT 2004
 RootIo/src
 
