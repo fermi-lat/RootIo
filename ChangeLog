@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug  4 23:21:35 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	RootIoSvc.cxx 
+Log Message:
+fix if statement bug checking GetEntries
+    *
+------------------------------------------------------------
 User: heather  Thu Jul 22 21:50:24 PDT 2004
 RootIo/cmt
 
