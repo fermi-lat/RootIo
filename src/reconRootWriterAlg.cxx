@@ -13,9 +13,6 @@
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
-#include "Event/Recon/CalRecon/CalCluster.h"
-#include "Event/Recon/CalRecon/CalXtalRecData.h"
-
 #include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
@@ -32,7 +29,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.10 2002/06/02 02:38:50 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.6 2002/05/21 02:33:31 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -67,14 +64,6 @@ private:
     /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
     /// ROOT object
     StatusCode writeCalRecon();
-
-    /// Retrieves the CalCluster collection from the TDS and fills the ROOT 
-    /// collection
-    void fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds);
-
-    /// Retrieves the CalXtalRecData collection from the TDS and fills the ROOT
-    /// xtal collection
-    void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds);
 
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -262,7 +251,7 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
         {
             Event::TkrPatCandHit* candHitTds = candTds->getCandHit(nHits);
             TVector3              pos(candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
-            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::X ? TkrCandHit::X : TkrCandHit::Y;
+            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::view::X ? TkrCandHit::AXIS::X : TkrCandHit::AXIS::Y;
             TkrCandHit candHit;
 
             candHit.initialize(pos, candHitTds->HitIndex(), candHitTds->TowerIndex(), candHitTds->PlaneIndex(), view); 
@@ -284,7 +273,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
 
     // Iterate over the tracks in the TDS
     int                 trkId  = 0;
-    std::vector<Event::TkrFitTrack*>::iterator trkPtr = tracksTds->begin();
+    Event::TkrFitColPtr trkPtr = tracksTds->begin();
     while(trkPtr != tracksTds->end())
     {
         Event::TkrFitTrack* trackTds  = *trkPtr++;       // The TDS track
@@ -312,8 +301,8 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
             TkrHitPlane         plane;
 
             // Wouldn't it be great if there was a STANDARD definition for these!
-            TkrHitPlane::AXIS   proj     = planeTds.getProjection() == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
-            TkrHitPlane::AXIS   projPlus = planeTds.getNextProj()   == Event::TkrCluster::X ? TkrHitPlane::X : TkrHitPlane::Y;
+            TkrHitPlane::AXIS   proj     = planeTds.getProjection() == Event::TkrCluster::view::X ? TkrHitPlane::AXIS::X : TkrHitPlane::AXIS::Y;
+            TkrHitPlane::AXIS   projPlus = planeTds.getNextProj()   == Event::TkrCluster::view::X ? TkrHitPlane::AXIS::X : TkrHitPlane::AXIS::Y;
 
             plane.initializeInfo(planeTds.getIDHit(),
                                  planeTds.getIDTower(),
@@ -327,7 +316,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
             // Here we build the hit info (one at a time) starting with measured
             TkrParams           params;
             TkrCovMat           covMat;
-            Event::TkrFitHit    hitTds = planeTds.getHit(Event::TkrFitHit::MEAS);
+            Event::TkrFitHit    hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::MEAS);
             Event::TkrFitPar    parTds = hitTds.getPar();
             Event::TkrFitMatrix covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -341,10 +330,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           measHit(TkrFitHit::MEAS, params, covMat);
+            TkrFitHit           measHit(TkrFitHit::TYPE::MEAS, params, covMat);
 
             // Now the predicted hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::PRED);
+            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::PRED);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -358,10 +347,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           predHit(TkrFitHit::PRED, params, covMat);
+            TkrFitHit           predHit(TkrFitHit::TYPE::PRED, params, covMat);
 
             // Now the fit (filtered) hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::FIT);
+            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::FIT);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -375,10 +364,10 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           filtHit(TkrFitHit::FIT, params, covMat);
+            TkrFitHit           filtHit(TkrFitHit::TYPE::FIT, params, covMat);
 
             // Now the smoothed hit
-            hitTds = planeTds.getHit(Event::TkrFitHit::SMOOTH);
+            hitTds = planeTds.getHit(Event::TkrFitHit::TYPE::SMOOTH);
             parTds = hitTds.getPar();
             covTds = hitTds.getCov();
             params.initialize(parTds.getXPosition(),
@@ -392,7 +381,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                               covTds.getcovSySy(),
                               covTds.getcovY0Sy() );
 
-            TkrFitHit           smooHit(TkrFitHit::SMOOTH, params, covMat);
+            TkrFitHit           smooHit(TkrFitHit::TYPE::SMOOTH, params, covMat);
 
             // Here retrieve the scattering matrix
             Event::TkrFitMatrix scatTds = planeTds.getQmaterial();
@@ -423,17 +412,11 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
     // Loop over the candidate tracks in the TDS
     int                     vtxId  = 0;
-#if 0 // old code, non-standard STL style to access TkrVertex colection (mod by THB)
-    while(vtxId < verticesTds->getNumVertices())
+    Event::TkrVertexConPtr  vtxPtr = verticesTds->begin();
+    while(vtxPtr < verticesTds->end())
     {
-        Event::TkrVertex*   vtxTds = verticesTds->getVertex(vtxId);
-#else // new code, using STL. (note that the const is not allowed by the non-STL style for TkrFitTrack
-    for( Event::TkrVertexCol::const_iterator vit = verticesTds->begin(); 
-            vit != verticesTds->end(); ++vit, ++ vtxId){
-        /*const*/ Event::TkrVertex* vtxTds = *vit;
-#endif  // of change for new TrkVertex.
-
-        TkrVertex*          vtx = new TkrVertex();
+        Event::TkrVertex*   vtxTds = *vtxPtr++;
+        TkrVertex*          vtx    = new TkrVertex();
         TVector3            pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
         TVector3            dir(vtxTds->getDirection().x(),vtxTds->getDirection().z(),vtxTds->getDirection().z());
         Event::TkrFitPar    parTds = vtxTds->getTrackPar();
@@ -459,7 +442,6 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
         // Now add the track ids 
         // This is pretty ugly because we don't store track ids in the TDS classes
-
         SmartRefVector<Event::TkrFitTrack>::const_iterator vtxTrkIter = vtxTds->getTrackIterBegin();
         while(vtxTrkIter != vtxTds->getTrackIterEnd())
         {
@@ -468,12 +450,15 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
             // the id according to the loop variable value.
             // This ALWAYS succeeds (and I'm also selling valuable swampland in Florida!)
             int                 trkId  = 0;
-            std::vector<Event::TkrFitTrack*>::iterator trkPtr = tracksTds->begin();
-            Event::TkrFitTrack* fitTrk = *vtxTrkIter++;
+            Event::TkrFitColPtr trkPtr = tracksTds->begin();
+            SmartRef<Event::TkrFitTrack> vtxTrk = *vtxTrkIter++;
 
             while(trkPtr != tracksTds->end())
             {
-                if (fitTrk == *trkPtr++) break;
+                SmartRef<Event::TkrFitTrack> fitTrk = *trkPtr++;
+
+                if (vtxTrk == fitTrk) break;
+                
                 trkId++;
             }
 
@@ -488,128 +473,19 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 
 
 StatusCode reconRootWriterAlg::writeCalRecon() {
-    // Purpose and Method:  Retrieve the Cal Recon data from the TDS and 
-    //  calls the two helper methods that do the work of filling the ROOT 
-    //  version of the CalRecon object for this event.
+    // Purpose and Method:  Retrieve the Cal Recon data from the TDS
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    // Get pointer to CalRecon part of ReconEvent
-    CalRecon* calRec = m_reconEvt->getCalRecon();
-    if (!calRec) return StatusCode::FAILURE;
-    calRec->initialize();
-    
-    // Retrieve the cal cluster collection
-    SmartDataPtr<Event::CalClusterCol> clusterColTds(eventSvc(), EventModel::CalRecon::CalClusterCol);
-    if (clusterColTds) fillCalCluster(calRec, clusterColTds);
-
-    // Retrieve the cal xtal collection
-    SmartDataPtr<Event::CalXtalRecCol> xtalColTds(eventSvc(), EventModel::CalRecon::CalXtalRecCol);
-    if (xtalColTds) fillCalXtalRec(calRec, xtalColTds);
 
     return sc;
-}
-
-void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds) {
-    // Purpose and Method:  Given the CalCluster collection from the TDS, we fill the ROOT
-    //  CalCluster collection.
-
-    unsigned int numClusters = clusterColTds->num();
-    unsigned int iCluster;
-    for (iCluster = 0; iCluster < numClusters; iCluster++) {
-        Event::CalCluster *clusterTds = clusterColTds->getCluster(iCluster);
-        Point posTds = clusterTds->getPosition();
-        TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
-
-        CalCluster *clusterRoot = new CalCluster(
-            clusterTds->getEnergySum(), posRoot);
-        
-        Vector dirTds = clusterTds->getDirection();
-        TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());
-
-        std::vector<Vector> posLayerTds = clusterTds->getPosLayer();
-        std::vector<Vector> rmsLayerTds = clusterTds->getRmsLayer();
-        std::vector<TVector3> posLayerRoot;
-        std::vector<Vector>::const_iterator tdsIt;
-        for (tdsIt = posLayerTds.begin(); tdsIt != posLayerTds.end(); tdsIt++) {
-            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());
-            posLayerRoot.push_back(curVec);
-        }
-        std::vector<TVector3> rmsLayerRoot;
-        for (tdsIt = rmsLayerTds.begin(); tdsIt != rmsLayerTds.end(); tdsIt++) {
-            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());
-            rmsLayerRoot.push_back(curVec);
-        }
-        
-        clusterRoot->initialize(clusterTds->getEnergyLeak(), 
-            clusterTds->getEneLayer(),
-            posLayerRoot, rmsLayerRoot, 
-            clusterTds->getRmsLong(), clusterTds->getRmsTrans(), 
-            dirRoot, clusterTds->getTransvOffset());
-                
-        clusterRoot->initProfile(clusterTds->getFitEnergy(), 
-            clusterTds->getProfChisq(), clusterTds->getCsiStart(),
-            clusterTds->getCsiAlpha(), clusterTds->getCsiLambda());
-        
-        calRec->addCalCluster(clusterRoot);
-    }
-    
-    return;
-}
-
-void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds) {
-    // Purpose and Method:  Given the CalXtalRecData collection from the TDS,
-    //   this method fills the ROOT CalXtalRecData collection.
-
-    Event::CalXtalRecCol::const_iterator xtalTds;
-
-    for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {
-            CalXtalRecData *xtalRoot = new CalXtalRecData();
-            idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();
-            idents::CalXtalId idTds = (*xtalTds)->getPackedId();
-            CalXtalId idRoot;
-            idRoot.init(idTds.getTower(), idTds.getLayer(), idTds.getColumn());
-            if (modeTds == idents::CalXtalId::BESTRANGE) {
-                xtalRoot->initialize(CalXtalId::BESTRANGE, idRoot);
-                Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
-                    (*xtalTds)->getRangeRecData(0);
-                CalRangeRecData recRoot(
-                    xtalRangeTds->getRange(idents::CalXtalId::POS), 
-                    xtalRangeTds->getEnergy(idents::CalXtalId::POS), 
-                    xtalRangeTds->getRange(idents::CalXtalId::NEG),
-                    xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );
-                Point posTds = xtalRangeTds->getPosition();
-                TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
-                recRoot.initialize(posRoot);
-                xtalRoot->addRangeRecData(recRoot);
-            } else {
-                xtalRoot->initialize(CalXtalId::ALLRANGE, idRoot);
-                int range;
-                for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {
-                    Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
-                        (*xtalTds)->getRangeRecData(range);
-                    CalRangeRecData recRoot(
-                        xtalRangeTds->getRange(idents::CalXtalId::POS), 
-                        xtalRangeTds->getEnergy(idents::CalXtalId::POS), 
-                        xtalRangeTds->getRange(idents::CalXtalId::NEG),
-                        xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );
-                    Point posTds = xtalRangeTds->getPosition();
-                    TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
-                    recRoot.initialize(posRoot);
-                    xtalRoot->addRangeRecData(recRoot);
-                }
-                calRec->addXtalRecData(xtalRoot);
-            }
-    }
-
-    return;
 }
 
 void reconRootWriterAlg::writeEvent() 
 {
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
-    //    tree.  The m_reconEvt object is cleared for the next event.
+    //    tree.  The m_digiEvt object is cleared for the next event.
 
     TDirectory *saveDir = gDirectory;
     m_reconFile->cd();
