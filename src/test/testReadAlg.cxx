@@ -18,7 +18,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.3 2002/05/10 23:13:02 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.4 2002/05/14 15:21:30 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -141,13 +141,14 @@ StatusCode testReadAlg::readDigiData() {
     Event::CalDigiCol::const_iterator calDigiTds;
 
     for (calDigiTds = calDigiColTds->begin(); calDigiTds != calDigiColTds->end(); calDigiTds++) {
+        log << MSG::DEBUG;
+        (*calDigiTds)->fillStream(log.stream());
+        log << endreq;
         idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
         idents::CalXtalId idTds = (*calDigiTds)->getPackedId();
         if (modeTds == idents::CalXtalId::BESTRANGE) {
             const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(0);
-            log << MSG::DEBUG << "Using BestRange" << endreq;
         } else {
-            log << MSG::DEBUG << "Using AllRange" << endreq;
             int range;
             for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {
                 const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(range);
