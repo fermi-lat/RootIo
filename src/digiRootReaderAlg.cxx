@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.1 2004/08/05 07:05:50 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.2 2004/08/10 22:11:41 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -160,6 +160,7 @@ StatusCode digiRootReaderAlg::initialize()
       }
 	  f.Close();
 	  m_digiTree->Add(m_fileName.c_str());
+          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
@@ -174,6 +175,7 @@ StatusCode digiRootReaderAlg::initialize()
         }
 	  f.Close();
 	  m_digiTree->Add(theFile.c_str());
+          log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
 	  }
     }
 
