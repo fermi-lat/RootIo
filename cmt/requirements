@@ -1,5 +1,5 @@
 package RootIo
-version v4r4p1
+version v4r5
 
 branches src doc
 
@@ -8,11 +8,8 @@ use Event v8r*
 use ROOT v3r2p*
 use mcRootData v2r2
 use digiRootData v3r5p1
-use reconRootData v3r0p2
+use reconRootData v3r1
 use GlastPolicy v4r*
-
-apply_pattern packageShr
-
 
 # uses for test program: make private here 
 # the private use breaks linux build
@@ -25,6 +22,8 @@ use CalDigi v1r*
 use CalRecon v5r*
 use TkrRecon v6r*
 
+
+apply_pattern packageShr
 
 apply_pattern package_headers
 
