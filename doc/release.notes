@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
  
+ v12r1em2  24-Nov-2004 HMK Store tower and layer/gtcc for CAL/TKR diagnostic
  v12r10em1 16-Nov-2004 HMK Fix up use of TFile for case where ROOT needs to
                        create multiple data files due to size of output
  v12r10em0 11-Nov-2004 HMK Handle Luis' 3-in-a-row trigger bits for all towers

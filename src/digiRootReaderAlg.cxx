@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.38 2004/10/04 21:48:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.38.2.1 2004/11/11 06:50:30 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -439,14 +439,14 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
     TIter calIt(calCol);
     CalDiagnosticData *cDiagRoot;
     while ((cDiagRoot = (CalDiagnosticData*)calIt.Next())!=0) {
-        LdfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
+        LdfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord(),cDiagRoot->tower(),cDiagRoot->layer());
         diagTds->addCalDiagnostic(cDiagTds);
     }
 
     TIter tkrIt(tkrCol);
     TkrDiagnosticData *tDiagRoot;
     while((tDiagRoot = (TkrDiagnosticData*)tkrIt.Next())!=0) {
-        LdfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
+        LdfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord(),tDiagRoot->tower(),tDiagRoot->gtcc());
         diagTds->addTkrDiagnostic(tDiagTds);
     }
 

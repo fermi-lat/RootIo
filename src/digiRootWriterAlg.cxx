@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32.2.1 2004/11/11 06:50:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32.2.2 2004/11/16 16:17:41 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -380,14 +380,14 @@ StatusCode digiRootWriterAlg::writeDiagnostic() {
     for (ind = 0; ind < numCalDiag; ind++){
         LdfEvent::CalDiagnosticData calDiagTds = diagTds->getCalDiagnosticByIndex(ind);
         CalDiagnosticData *calDiagRoot = m_digiEvt->addCalDiagnostic();
-        calDiagRoot->initialize(calDiagTds.dataWord());
+        calDiagRoot->initialize(calDiagTds.dataWord(),calDiagTds.tower(),calDiagTds.layer());
     }
 
     int numTkrDiag = diagTds->getNumTkrDiagnostic();
     for (ind = 0; ind < numTkrDiag; ind++) {
         LdfEvent::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
         TkrDiagnosticData *tkrDiagRoot = m_digiEvt->addTkrDiagnostic();
-        tkrDiagRoot->initialize(tkrDiagTds.dataWord());
+        tkrDiagRoot->initialize(tkrDiagTds.dataWord(),tkrDiagTds.tower(),tkrDiagTds.gtcc());
     }
 
     return sc;
