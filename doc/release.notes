@@ -2,7 +2,8 @@
  Package RootIo
  Coordinator: H. Kelly
 
-        21-May-2002 HMK Complete CalRecon writing\n
+ v4r1   22-May-2002 HMK Add in TkrDigi writing and reading \n
+ v4r0   21-May-2002 HMK Complete CalRecon writing\n
         19-May-2002 TU  Updates for TkrRecon writing\n
  v3r1   14-May-2002 HMK Update for initialPosition in McParticle\n
  v3r0   14-May-2002 HMK Add in new algs for digi handling\n
