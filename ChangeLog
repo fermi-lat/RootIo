@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Nov 25 07:06:40 PST 2004
+RootIo/src
+
+Modified Files:
+	FhCmtConfig.cxx FhDemoCaloSetAlg.cxx FhDemoGetAlg.cxx 
+Log Message:
+headers working again, and the specific headers tests are now integrated into the script validate_headers
+    *
+------------------------------------------------------------
 User: chamont  Thu Nov 25 05:37:11 PST 2004
 RootIo/src/test
 
