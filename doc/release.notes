@@ -2,5 +2,9 @@
  Package RootIo
  Coordinator: H. Kelly
 
- v0     22-Apr-2002  HMK initial import \n
+ v1r0   01-May-2002 HMK Fix for v2r1 version of mcRootData \n
+        Seems able to write and read mcRootData to/from ROOT \n
+        But note that TRefs do not function when reading in a program \n
+        It only works when reading the file in ROOT itself.
+ v0     22-Apr-2002 HMK initial import \n
 */
