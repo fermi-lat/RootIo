@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.5 2002/05/13 18:43:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.6 2002/05/14 21:01:16 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -123,7 +123,11 @@ StatusCode mcRootReaderAlg::initialize()
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
     m_mcFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_mcFile->IsOpen()) sc = StatusCode::FAILURE;
+    if (!m_mcFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+    }
     m_mcFile->cd();
     m_mcTree = (TTree*)m_mcFile->Get(m_treeName.c_str());
     m_mcEvt = 0;
@@ -141,8 +145,13 @@ StatusCode mcRootReaderAlg::execute()
     //   data on the TDS.
 
     MsgStream log(msgSvc(), name());
-
     StatusCode sc = StatusCode::SUCCESS;
+
+    if (!m_mcFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for reading." << endreq;
+        return StatusCode::FAILURE;
+    }
 
     static UInt_t evtId = 0;
     m_mcTree->GetEvent(evtId);

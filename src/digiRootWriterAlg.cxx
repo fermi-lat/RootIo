@@ -8,6 +8,7 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
+#include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
 
@@ -28,7 +29,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.2 2002/05/14 21:01:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.3 2002/05/23 00:41:06 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -50,6 +51,10 @@ private:
 
     /// Retrieves event Id and run Id from TDS and fills the McEvent ROOT object
     StatusCode writeDigiEvent();
+
+    /// Retrieves ACD digitization data from the TDS and fill the AcdDigi
+    /// ROOT collection
+    StatusCode writeAcdDigi();
 
     /// Retrieves the CAL digitization data from the TDS and fills the CalDigi
     /// ROOT collection
@@ -120,7 +125,11 @@ StatusCode digiRootWriterAlg::initialize()
     TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
     m_digiFile = new TFile(m_fileName.c_str(), "RECREATE");
-    if (!m_digiFile->IsOpen()) sc = StatusCode::FAILURE;
+    if (!m_digiFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
     m_digiFile->cd();
     m_digiFile->SetCompressionLevel(m_compressionLevel);
     m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
@@ -141,10 +150,22 @@ StatusCode digiRootWriterAlg::execute()
     MsgStream log(msgSvc(), name());
 
     StatusCode sc = StatusCode::SUCCESS;
+    
+    if (!m_digiFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
 
     sc = writeDigiEvent();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write DigiEvent" << endreq;
+        return sc;
+    }
+
+    sc = writeAcdDigi();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write Acd Digi Collection" << endreq;
         return sc;
     }
 
@@ -187,6 +208,39 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     log << endreq;
 
     m_digiEvt->initialize(evtId, runId, fromMc);
+
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeAcdDigi() {
+    // Purpose and Method:  Retrieve the AcdDigi collection from the TDS and 
+    //    set the AcdDigi ROOT collection
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<Event::AcdDigiCol> acdDigiColTds(eventSvc(), EventModel::Digi::AcdDigiCol);
+    if (!acdDigiColTds) return sc;
+    Event::AcdDigiCol::const_iterator acdDigiTds;
+    
+    for (acdDigiTds = acdDigiColTds->begin(); acdDigiTds != acdDigiColTds->end(); acdDigiTds++) {
+        log << MSG::DEBUG << acdDigiTds << endreq;
+        Float_t energyRoot = (*acdDigiTds)->getEnergy();
+        UShort_t phaRoot[2] = { (*acdDigiTds)->getPulseHeight(Event::AcdDigi::A),
+            (*acdDigiTds)->getPulseHeight(Event::AcdDigi::B) };
+        Bool_t vetoRoot[2] = { (*acdDigiTds)->getVeto(Event::AcdDigi::A),
+            (*acdDigiTds)->getVeto(Event::AcdDigi::B) };
+        Bool_t lowRoot[2] = { (*acdDigiTds)->getLowDiscrim(Event::AcdDigi::A),
+            (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
+        Bool_t highRoot[2] = { (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::A),
+            (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
+        idents::AcdId idTds = (*acdDigiTds)->getId();
+        AcdId idRoot(idTds.layer(), idTds.face(), 
+            idTds.row(), idTds.column());
+        
+        m_digiEvt->addAcdDigi(idRoot, energyRoot, phaRoot, 
+            vetoRoot, lowRoot, highRoot);
+    }
 
     return sc;
 }

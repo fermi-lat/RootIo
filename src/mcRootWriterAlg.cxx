@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.8 2002/05/14 15:23:00 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.9 2002/05/14 21:01:16 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -134,7 +134,12 @@ StatusCode mcRootWriterAlg::initialize()
     TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
     m_mcFile = new TFile(m_fileName.c_str(), "RECREATE");
-    if (!m_mcFile->IsOpen()) sc = StatusCode::FAILURE;
+    if (!m_mcFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_mcFile->cd();
     m_mcFile->SetCompressionLevel(m_compressionLevel);
     m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
@@ -155,6 +160,12 @@ StatusCode mcRootWriterAlg::execute()
     MsgStream log(msgSvc(), name());
 
     StatusCode sc = StatusCode::SUCCESS;
+    
+    if (!m_mcFile->IsOpen()) {
+        log << MSG::ERROR << "ROOT file " << m_fileName 
+            << " could not be opened for writing." << endreq;
+        return StatusCode::FAILURE;
+    }
 
     m_particleMap.clear();
 
