@@ -50,7 +50,11 @@ StatusCode FileHeadersSetAlg::finalize() {
     
     // unix environment variables
     TString unixEnv ;
+#ifdef WIN32
+    pipe = popen("set 2>&1","r") ;
+#else
     pipe = popen("printenv 2>&1","r") ;
+#endif
     while ( fgets(buffer,256,pipe) != NULL )
      { unixEnv += buffer ; }
     pclose(pipe) ;
