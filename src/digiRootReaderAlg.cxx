@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.16 2003/08/25 18:47:38 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.17 2003/09/02 15:55:42 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -321,8 +321,9 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
         float energyTds = acdDigiRoot->getEnergy();
         
         AcdId idRoot = acdDigiRoot->getId();
-        idents::AcdId idTds(idRoot.getLayer(), idRoot.getFace(), 
-            idRoot.getRow(), idRoot.getColumn());
+        //idents::AcdId idTds(idRoot.getLayer(), idRoot.getFace(), 
+        //    idRoot.getRow(), idRoot.getColumn());
+        idents::AcdId idTds(idRoot.getId());
 
         //const VolumeIdentifier volIdRoot = acdDigiRoot->getVolId();
         //convertVolumeId(volIdRoot, volIdTds);
