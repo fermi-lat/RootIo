@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.7 2002/06/06 16:03:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.8 2002/06/06 20:10:12 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -363,8 +363,12 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
             posHitTds->setOriginMcParticle(originTds);
         }
 
+        Event::McParticle::StdHepId particleIdTds = posHitRoot->getMcParticleId();
+
         // setup the TDS McPositionHit
         posHitTds->init(edepTds, volIdTds, entryTds, exitTds);
+        posHitTds->setMcParticleId(particleIdTds);
+
         // add the McPositionHit to the TDS collection of McPositionHits
         pTdsCol->push_back(posHitTds);
     }
