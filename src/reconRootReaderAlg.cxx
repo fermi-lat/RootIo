@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.32 2004/06/10 17:12:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.33 2004/07/06 21:54:09 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -241,14 +241,14 @@ StatusCode reconRootReaderAlg::execute()
 	}
 
 	if (readInd >= m_numEvents) {
-		log << MSG::WARNING << "Requested index is out of bounds" << endreq;
-		return StatusCode::FAILURE;
+            log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
+            return StatusCode::SUCCESS;
 	}
 	numBytes = m_reconTree->GetEvent(readInd);
 
 	if ((numBytes <= 0) || (!m_reconEvt)) {
-		log << MSG::ERROR << "Failed to Load Recon Event" << endreq;
-		return StatusCode::FAILURE;
+            log << MSG::WARNING << "Failed to Load Recon Event" << endreq;
+            return StatusCode::SUCCESS;
 	}
     
     sc = readReconEvent();

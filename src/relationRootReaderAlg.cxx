@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.11 2004/06/10 17:12:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.12 2004/07/06 21:54:09 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -233,15 +233,15 @@ StatusCode relationRootReaderAlg::execute()
 	}
 
     if (readInd >= m_numEvents) {
-        log << MSG::WARNING << "Requested index is out of bounds" << endreq;
-        return StatusCode::FAILURE;
+        log << MSG::WARNING << "Requested index is out of bounds - no relation data retrieved" << endreq;
+        return StatusCode::SUCCESS;
     }
 
     numBytes = m_relTree->GetEvent(readInd);
 	
 	if ((numBytes <= 0) || (!m_relTab)) {
-		log << MSG::WARNING << "Failed to Relational Table" << endreq;
-		return StatusCode::SUCCESS;
+            log << MSG::WARNING << "Failed to Relational Table" << endreq;
+            return StatusCode::SUCCESS;
 	}
 
 
