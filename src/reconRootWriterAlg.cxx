@@ -34,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.18 2002/07/08 21:20:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.19 2002/08/29 15:31:26 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -62,6 +62,7 @@ private:
     StatusCode writeTkrRecon();
 
     /// These are the methods specific to filling the pieces of the TkrRecon stuff
+	void fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol* clusterColTds);
     void       fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol*  candidatesTds);
     void       fillFitTracks(      TkrRecon* recon, Event::TkrFitTrackCol* tracksTds);
     void       fillVertices(       TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrFitTrackCol* tracksTds);
@@ -236,6 +237,9 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     if (!recon) return StatusCode::FAILURE;
     recon->initialize();
 
+	SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
+	if (clusterColTds) fillTkrClusterCol(recon, clusterColTds);
+
     // Retrieve the information on candidate tracks
     SmartDataPtr<Event::TkrPatCandCol> candidatesTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
 
@@ -255,6 +259,33 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     if (verticesTds && tracksTds) fillVertices(recon, verticesTds, tracksTds);
 
     return sc;
+}
+
+void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol* clusterColTds) {
+
+	// Purpose and Method:  Reads collection of clusters from TDS and copies their
+	//   contents to a ROOT version.
+
+	int numClusters = clusterColTds->nHits();
+
+	unsigned int icluster;
+	for (icluster = 0; icluster < numClusters; icluster++) {
+		Event::TkrCluster *clusterTds = clusterColTds->getHit(icluster);
+		Event::TkrCluster::view viewTds = clusterTds->v();
+		TkrCluster::view viewRoot;
+		if (viewTds == Event::TkrCluster::X) viewRoot = TkrCluster::X;
+		else viewRoot = TkrCluster::Y;
+		Point posTds = clusterTds->position();
+		TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
+
+		// HMK no access to Event::TkrCluster::ToT - setting to zero
+		TkrCluster *clusterRoot = new TkrCluster(clusterTds->id(), 
+			clusterTds->plane(), viewRoot, clusterTds->firstStrip(), 
+			clusterTds->lastStrip(), posRoot, 0.0, 
+			clusterTds->hitFlagged(), clusterTds->tower());
+
+		recon->addCluster(clusterRoot);
+	}
 }
 
 void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol* candidatesTds)
