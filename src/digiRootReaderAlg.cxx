@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.38.2.1 2004/11/11 06:50:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.38.2.2 2004/11/24 21:48:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -332,6 +332,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     TimeStamp timeObj(m_digiEvt->getTimeStamp());
     evt->setTime(timeObj);
+
+    evt->setLivetime(m_digiEvt->getLiveTime());
+
     evt->setTrigger(m_digiEvt->getL1T().getTriggerWord());
 
     Event::DigiEvent* digiEventTds = 

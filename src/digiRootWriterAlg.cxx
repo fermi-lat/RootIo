@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32.2.2 2004/11/16 16:17:41 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.32.2.3 2004/11/24 21:48:24 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -275,6 +275,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     UInt_t evtId = evtTds->event();
     UInt_t runId = evtTds->run();
     TimeStamp timeObj = evtTds->time();
+    Double_t liveTime = evtTds->livetime();
 
     Bool_t fromMc = true;
 
@@ -293,7 +294,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
 
     L1T levelOne(evtTds->trigger(), rowBits);
 
-    m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
+    m_digiEvt->initialize(evtId, runId, timeObj.time(), liveTime, levelOne, fromMc);
 
     SmartDataPtr<LdfEvent::LdfTime> timeTds(eventSvc(), "/Event/Time");
     if (timeTds) {
