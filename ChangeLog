@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Jun 20 23:22:16 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+restore the public for root cint macros
+    *
+------------------------------------------------------------
 User: burnett  Sun Jun 20 11:08:25 PDT 2004
 RootIo/doc
 
