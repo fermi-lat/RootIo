@@ -1,20 +1,26 @@
 //##############################################################
 //
-// Job options file for RootIo test
+// writeHeadersOptions.txt
+// to be used as argument to test_RootIo.exe
 //
+//==============================================================
+
+MessageSvc.OutputLevel = 2 ;
+
 ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
 
 ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
-    "FhSetAlg", "FhDemoCaloSetAlg", "FhDemoCaloSetAlg",
+    "FhSetAlg", "FhDemoGetAlg", "FhDemoCaloSetAlg",
     "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
 
-ApplicationMgr.ExtSvc = { 
+ApplicationMgr.ExtSvc += { 
     "GlastEventSelector/EventSelector" , 
     "EventCnvSvc"
     };
 
-EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventPersistencySvc.CnvServices = {"EventCnvSvc"} ;
 EventSelector.Input = "NONE";
+ApplicationMgr.EvtMax = 10 ;
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
 mcRootWriterAlg.splitMode = 1;
@@ -38,7 +44,7 @@ AuditorSvc.Auditors = {"ChronoAuditor"};
 
 //==============================================================
 //
-// End of job options file
+// End of writeHeadersOptions.txt
 //
 //##############################################################
 

@@ -43,7 +43,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.41 2004/11/16 16:48:46 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.42 2004/11/24 14:16:31 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -848,6 +848,8 @@ void reconRootWriterAlg::close()
 
 StatusCode reconRootWriterAlg::finalize()
 {
+    MsgStream log(msgSvc(), name());
+    
     // ADDED FOR THE FILE HEADERS DEMO
     m_headersTool->writeReconHeader(m_reconTree->GetCurrentFile()) ;
     
@@ -855,6 +857,9 @@ StatusCode reconRootWriterAlg::finalize()
     
     StatusCode sc = StatusCode::SUCCESS;
     setFinalized();
+
+    log << MSG::DEBUG << "Finalized" << endreq;
+
     return sc;
 }
 
