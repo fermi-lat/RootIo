@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct 21 12:53:05 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx 
+Log Message:
+update to use latest mcRootData which stores strings as TString
+    *
+------------------------------------------------------------
 User: heather  Mon Oct 21 12:51:02 PDT 2002
 RootIo/doc
 
