@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 16 08:16:41 PST 2004
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	release.notes 
+Log Message:
+Address JIRA ROOT-3, for handling multiple output files
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 23:02:19 PST 2004
 RootIo/doc
 
