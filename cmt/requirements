@@ -1,5 +1,5 @@
 package RootIo
-version v4r5
+version v4r6
 
 branches src doc
 
@@ -8,7 +8,7 @@ use Event v8r*
 use ROOT v3r2p*
 use mcRootData v2r2
 use digiRootData v3r5p1
-use reconRootData v3r1
+use reconRootData v3r2
 use GlastPolicy v4r*
 
 # uses for test program: make private here 
@@ -19,6 +19,7 @@ use FluxSvc v5r*
 use AcdDigi v1r*
 use TkrDigi v1r*
 use CalDigi v1r*
+use AcdRecon v0r*
 use CalRecon v5r*
 use TkrRecon v6r*
 
