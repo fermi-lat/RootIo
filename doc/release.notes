@@ -2,7 +2,10 @@
  Package RootIo
  Coordinator:H.Kelly
 
- v4r18  09-Oct-2002 LSR add Randoms, Fix debug output, mods for new TkrPatCand
+ v4r20  15-Oct-2002 HMK Register TkrClusterCol when reading\n
+        Fix double-counting of McParticles\n
+ v4r19\n
+ v4r18  09-Oct-2002 LSR add Randoms, Fix debug output, mods for new TkrPatCand\n
  v4r17  02-Sep-2002 HMK update to write out energy collection for AcdRecon\n
  v4r16  25-Sep-2002 HMK add in sourceId and sequence reading and writing in McEvent\n
  v4r15  24-Sep-2002 HMK update versions of ROOT class and handle McParticle daughters\n
