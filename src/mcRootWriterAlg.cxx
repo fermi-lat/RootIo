@@ -21,13 +21,15 @@
 
 #include "mcRootData/McEvent.h"
 
+#include "commonData.h"
+
 #include <map>
 
 /** @class mcRootWriterAlg
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.18 2002/10/16 02:02:06 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.19 2002/10/21 19:53:05 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -90,8 +92,9 @@ private:
 
     /// Keep track of MC particles as we retrieve them from TDS
     /// Used only to aid in writing the ROOT file.
-    std::map<const Event::McParticle*, McParticle*> m_particleMap;
-    
+    //std::map<const Event::McParticle*, McParticle*> m_mcPartMap;
+
+    commonData m_common;
 };
 
 
@@ -114,7 +117,9 @@ Algorithm(name, pSvcLocator)
     // ROOT TTree name
     declareProperty("treeName", m_treeName="Mc");
 
-    m_particleMap.clear();
+    m_common.m_mcPartMap.clear();
+    m_common.m_mcPosHitMap.clear();
+    m_common.m_mcIntHitMap.clear();
 }
 
 StatusCode mcRootWriterAlg::initialize()
@@ -147,6 +152,10 @@ StatusCode mcRootWriterAlg::initialize()
     m_mcEvt = new McEvent();
     m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
     
+    //m_common.m_mcFile = m_mcFile;
+    //m_common.m_mcTree = m_mcTree;
+    m_common.m_mcEvt = m_mcEvt;
+
     saveDir->cd();
     return sc;
     
@@ -168,7 +177,9 @@ StatusCode mcRootWriterAlg::execute()
         return StatusCode::FAILURE;
     }
 
-    m_particleMap.clear();
+    m_common.m_mcPartMap.clear();
+    m_common.m_mcPosHitMap.clear();
+    m_common.m_mcIntHitMap.clear();
 
     sc = writeMcEvent();
     if (sc.isFailure()) return sc;
@@ -190,28 +201,29 @@ StatusCode mcRootWriterAlg::execute()
 StatusCode mcRootWriterAlg::writeMcEvent() {
     // Purpose and Method:  Retrieve the Event object from the TDS and set the
     //    event and run numbers in the McEvent ROOT object
-
+    
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
+    
     // Retrieve the Event data for this event
     SmartDataPtr<Event::EventHeader> evt(eventSvc(), EventModel::EventHeader);
-
+    
     if (!evt) return sc;
-
+    m_mcEvt->Clear();
+    
     UInt_t evtId = evt->event();
     UInt_t runId = evt->run();
-	
-	SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
-	Int_t sourceId = mcEvt->getSourceId();
-	UInt_t sequence = mcEvt->getSequence();
-
+    
+    SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
+    Int_t sourceId = mcEvt->getSourceId();
+    UInt_t sequence = mcEvt->getSequence();
+    
     log << MSG::DEBUG;
     evt->fillStream(log.stream());
     log << endreq;
-
+    
     m_mcEvt->initialize(evtId, runId, sourceId, sequence);
-
+    
     return sc;
 }
 
@@ -238,14 +250,16 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         if( log.isActive())(*p)->fillStream(log.stream());
         log << endreq;
         McParticle *mcPart = new McParticle();
-        m_particleMap[(*p)] = mcPart;
+        TRef ref = mcPart;
+        m_common.m_mcPartMap[(*p)] = ref;
     }
 
     // Now that the full map of McParticles is created 
     // we initialize and save the ROOT McParticles 
     for (p = particles->begin(); p != particles->end(); p++) {
         
-        McParticle *mcPart = m_particleMap[(*p)];
+        TRef ref = m_common.m_mcPartMap[(*p)];
+        McParticle *mcPart = (McParticle*)ref.GetObject();
         // particleProperty() returns a StdHepId which is defined as an int
         Int_t idRoot = (*p)->particleProperty();
         
@@ -271,9 +285,10 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
             // The case where this is the primary particle
             if (momTds == (*p)) {
                 momRoot = mcPart;
-            } else if (m_particleMap.find(momTds) != m_particleMap.end()) {
+            } else if (m_common.m_mcPartMap.find(momTds) != m_common.m_mcPartMap.end()) {
                 // Otherwise we retrieve the McParticle from the map
-                momRoot = m_particleMap[momTds];
+                TRef ref = m_common.m_mcPartMap[momTds];
+                momRoot = (McParticle*)ref.GetObject();//m_common.m_mcPartMap[momTds];
             } else {
                 log << MSG::WARNING << "Did not find mother McParticle in the"
                     << "map!!" << endreq;
@@ -291,8 +306,8 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         const SmartRefVector<Event::McParticle> daughterCol = (*p)->daughterList();
         SmartRefVector<Event::McParticle>::const_iterator daughterIt;
         for (daughterIt = daughterCol.begin(); daughterIt != daughterCol.end(); daughterIt++) {
-            if (m_particleMap.find((*daughterIt)) != m_particleMap.end()) {
-                McParticle *daughter = m_particleMap[(*daughterIt)];
+            if (m_mcPartMap.find((*daughterIt)) != m_mcPartMap.end()) {
+                McParticle *daughter = m_mcPartMap[(*daughterIt)];
                 mcPart->addDaughter(daughter);
             } else {
                 log << MSG::WARNING << "Did not find daughter McParticle in the"
@@ -372,19 +387,27 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         const Event::McParticle *mcPartTds = (*hit)->mcParticle();
         McParticle *mcPartRoot = 0;
         if (mcPartTds != 0) {
-            mcPartRoot = m_particleMap[mcPartTds];
+            TRef ref;
+            ref = m_common.m_mcPartMap[mcPartTds];
+            mcPartRoot = (McParticle*)ref.GetObject();
         }
 
         const Event::McParticle *originTds = (*hit)->originMcParticle();
         McParticle *originRoot = 0;
         if (originTds != 0) {
-            originRoot = m_particleMap[originTds];
+            TRef ref;
+            ref = m_common.m_mcPartMap[originTds];
+            originRoot = (McParticle*)ref.GetObject();
         }
 
         UInt_t flagsRoot = 0;
 
         // Set up the ROOT McPositionHit
         McPositionHit *mcPosHit = new McPositionHit();
+
+        TRef ref = mcPosHit;
+        m_common.m_mcPosHitMap[(*hit)] = ref;
+
         mcPosHit->initialize(particleId, originPartId, edepRoot, volIdRoot, 
             entryRoot, exitRoot, globalEntryRoot, globalExitRoot, 
             mcPartRoot, originRoot, epartRoot, tofRoot, flagsRoot);
@@ -435,6 +458,9 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
 
         McIntegratingHit *mcIntHit = new McIntegratingHit();
 
+        TRef ref = mcIntHit;
+        m_common.m_mcIntHitMap[(*hit)] = ref;
+
         // Setup the ROOT McIntegratingHit
         mcIntHit->initialize(idRoot);
         
@@ -447,7 +473,8 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
             Event::McIntegratingHit::energyDepositMap::const_iterator mapIt;
             for (mapIt = tdsMap.begin(); mapIt != tdsMap.end(); mapIt++) {
                 Event::McParticle *mcPartTds = mapIt->first;
-                McParticle *mcPartRoot = m_particleMap[mcPartTds];
+                TRef ref = m_common.m_mcPartMap[mcPartTds];
+                McParticle *mcPartRoot = (McParticle*)ref.GetObject();
                 Double_t e = mapIt->second;
                 HepPoint3D posTds = mcPartTds->finalPosition();
                 TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
@@ -488,7 +515,7 @@ void mcRootWriterAlg::writeEvent()
     TDirectory *saveDir = gDirectory;
     m_mcFile->cd();
     m_mcTree->Fill();
-    m_mcEvt->Clear();
+    //m_mcEvt->Clear();
     saveDir->cd();
     return;
 }
