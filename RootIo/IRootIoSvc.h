@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.2 2003/09/28 05:20:44 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -12,7 +12,7 @@
 #include <TChain.h>
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
-static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0); 
+static const InterfaceID IID_IRootIoSvc("RootIoSvc", 2 , 0); 
 
 /** 
 * \class IRootIoSvc
@@ -20,17 +20,17 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.2 2003/09/28 05:20:44 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
     
-    virtual int getEvtMax() = 0;
-    virtual void setRootEvtMax(unsigned int max) = 0;
+    virtual Long64_t getEvtMax() = 0;
+    virtual void setRootEvtMax(Long64_t max) = 0;
     virtual void setRootTimeMax(unsigned int max) = 0;
 
-    virtual int index() = 0;
-    virtual bool setIndex(int i) = 0;
+    virtual Long64_t index() = 0;
+    virtual bool setIndex(Long64_t i) = 0;
 
     virtual void registerRootTree(TChain *ch) = 0;
     virtual bool setRunEventPair(std::pair<int,int> ids) = 0;
