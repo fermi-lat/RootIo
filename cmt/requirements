@@ -1,7 +1,7 @@
 package RootIo
 version v12r3
 
-# $Header$
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.95 2004/06/20 18:08:24 burnett Exp $
 
 branches src doc
 
@@ -32,6 +32,7 @@ library RootIo  $(root_packages_import) -s=../RootIo $(source) -s=../src $(sourc
 apply_pattern package_test
 apply_pattern package_Cshlibflags
 
+public
 #specify these to disable rootcint portion of vcproj_library_header set by RootPolicy
 
 macro rootcint_begin "" vsnet "<!--"
