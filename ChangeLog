@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 23 09:13:23 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersSetAlg.cxx 
+Log Message:
+minor modification for the popen and pclose calls
+    *
+------------------------------------------------------------
 User: heather  Tue Sep 21 22:53:53 PDT 2004
 RootIo/doc
 
