@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Dec 16 22:07:44 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+Make sure index is not reset at end of event
+    *
+------------------------------------------------------------
 User: heather  Thu Dec 16 22:07:20 PST 2004
 RootIo/RootIo
 
