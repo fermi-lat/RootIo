@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Fri Sep 17 05:38:43 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersSetAlg.cxx testFileHeadersAlg.cxx 
+Log Message:
+needs for -pack=? in cmt commands ; add unix env in the headers
+    *
+------------------------------------------------------------
 User: heather  Tue Sep 14 21:19:31 PDT 2004
 RootIo/src/test
 
