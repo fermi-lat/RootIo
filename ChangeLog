@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Oct 24 07:06:40 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+don't even try reading in daughter McParticles while we use 
+ROOT 3.02.07
+    *
+------------------------------------------------------------
 User: heather  Thu Oct 24 07:01:25 PDT 2002
 RootIo/doc
 
