@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Sep 21 22:09:39 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersSetAlg.h FileHeadersSetAlg.cxx 
+Log Message:
+wrap popen and pclose methods
+    *
+------------------------------------------------------------
 User: chamont  Fri Sep 17 05:38:43 PDT 2004
 RootIo/src/test
 
