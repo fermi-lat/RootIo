@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed May 22 17:41:06 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+add in TKR digi writing and reading
+    *
+------------------------------------------------------------
 User: heather  Wed May 22 17:39:23 PDT 2002
 RootIo/doc
 
