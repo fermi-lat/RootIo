@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 11 23:22:17 PST 2003
+RootIo/src
+
+Modified Files:
+      Tag: v9r5p0-em-branch
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+update for dianostic data
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 11 23:21:20 PST 2003
 RootIo/cmt
 
