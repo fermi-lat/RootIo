@@ -29,7 +29,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.4 2002/06/06 16:03:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.5 2002/06/06 22:13:56 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -66,7 +66,8 @@ private:
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
-
+    /// Converts from TDS VolId to ROOT VolId
+    void convertVolumeId(idents::VolumeIdentifier tdsVolId, VolumeIdentifier& rootVolId) ;
     /// Performs the final write to the ROOT file and closes
     void close();
    
@@ -237,10 +238,13 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         Bool_t highRoot[2] = { (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::A),
             (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
         idents::AcdId idTds = (*acdDigiTds)->getId();
-        AcdId idRoot(idTds.layer(), idTds.face(), 
-            idTds.row(), idTds.column());
-        
-        m_digiEvt->addAcdDigi(idRoot, energyRoot, phaRoot, 
+        AcdId idRoot(idTds.layer(), idTds.face(), idTds.row(), idTds.column());
+
+        const idents::VolumeIdentifier volIdTds = (*acdDigiTds)->getVolId();
+        VolumeIdentifier volIdRoot;
+        convertVolumeId(volIdTds, volIdRoot);
+
+        m_digiEvt->addAcdDigi(idRoot, volIdRoot, energyRoot, phaRoot, 
             vetoRoot, lowRoot, highRoot);
     }
 
@@ -370,3 +374,19 @@ StatusCode digiRootWriterAlg::finalize()
     return sc;
 }
 
+void digiRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
+                     VolumeIdentifier& rootVolId) 
+{
+    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
+    //     in the ROOT class.  Hence, we must convert the 64 bit representation
+    //     used in the idents::VolumeIdentifier class into two 32 bit UInt_t.
+    //     To perform the conversion, we iterate over all the ids in the TDS
+    //     version of the idents::VolumeIdentifier and append each to the ROOT
+    //     VolumeIdentifier
+    
+    unsigned int index;
+    rootVolId.Clear();
+    for (index = 0; index < tdsVolId.size(); index++) {
+        rootVolId.append(tdsVolId.operator [](index));
+    }
+}
