@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v4r17  02-Sep-2002 HMK update to write out energy collection for AcdRecon\n
  v4r16  25-Sep-2002 HMK add in sourceId and sequence reading and writing in McEvent\n
  v4r15  24-Sep-2002 HMK update versions of ROOT class and handle McParticle daughters\n
  v4r13  20-Sep-2002 HMK update to fill and read TkrClusterCol\n
