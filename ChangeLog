@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue May 14 14:02:27 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	testReadAlg.cxx 
+Log Message:
+update to use CalDigi::fillStream
+    *
+------------------------------------------------------------
 User: heather  Tue May 14 14:01:16 PDT 2002
 RootIo/src
 
