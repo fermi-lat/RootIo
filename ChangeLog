@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  6 09:03:18 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+add in acdDigi I/O and fix up handling of ROOT file open failure
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  6 08:58:02 PDT 2002
 RootIo/src/test
 
