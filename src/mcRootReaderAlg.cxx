@@ -35,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.33 2004/03/04 05:31:15 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.34 2004/06/10 17:03:34 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -185,7 +185,7 @@ StatusCode mcRootReaderAlg::initialize()
 
 	if (m_rootIoSvc) {
 		m_rootIoSvc->setRootEvtMax(m_numEvents);
-		m_mcTree->BuildIndex("m_runId", "m_eventId");
+		if (!m_mcTree->GetIndex()) m_mcTree->BuildIndex("m_runId", "m_eventId");
 	}
      
     saveDir->cd();
