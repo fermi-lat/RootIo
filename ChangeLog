@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Jul  3 06:33:52 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+handle ROOT recon reading - needs to be further tested
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 20 14:36:31 PDT 2002
 RootIo/src
 
