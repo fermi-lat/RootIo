@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 23 10:54:27 PDT 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+add testFileHeadersSetAlg
+    *
+------------------------------------------------------------
 User: heather  Thu Sep 23 10:53:34 PDT 2004
 RootIo/src/Dll
 
