@@ -27,14 +27,14 @@
 
 #include "commonData.h"
 
-#include "IRootIoSvc.h"
+#include "RootIo/IRootIoSvc.h"
 
 /** @class digiRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.12 2003/06/27 02:49:20 lsrea Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.13 2003/07/01 17:42:14 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -89,7 +89,7 @@ private:
     int m_numEvents;
   
     commonData m_common;
-    IRootIoSvc*   m_rootIoSvc;
+    IRootIoSvc* m_rootIoSvc;
 
 };
 
