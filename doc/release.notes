@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator: H. Kelly
 
+ v4r3   06-Jun-2002 HMK Handle time stamp and trigger bits in digi
+        reading and writing\n
  v4r2   06-Jun-2002 HMK Add in AcdDigi handling and more gracefully
         handle ROOT file opening failures\n
  v4r1p6 06-Jun-2002 HMK fix use of enum in reconRootWriterAlg\n
