@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: berthon  Tue Jun  3 02:44:57 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx 
+Log Message:
+reset objectnumbers at the end of the event
+
+    *
+------------------------------------------------------------
 User: heather  Sun Jun  1 18:54:47 PDT 2003
 RootIo/cmt
 
