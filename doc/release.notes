@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
  
+ v13r1em0  17-Dec-2004 HMK new branch - do not reset RootIoSvc::index for use
+           by clients such as the event display
  v13r1     14-Dec-2004 HMK Merge Leon's ToT fixes into HEAD
  v13r0     02-Dec-2004 DC Fixes to file headers for windows, ready to go
  v12r10gr3  30-Nov-2004 HMK store livetime at toplevel handles both MC and LDF
