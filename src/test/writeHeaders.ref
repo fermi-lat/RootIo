@@ -22,14 +22,14 @@ FhDemoGetAlg         INFO Mc JobOptions.reconRootWriterAlg.bufferSize: 64000
 FhDemoGetAlg         INFO Mc JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Mc JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Mc JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Mc ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Mc ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Mc ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Mc ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Mc ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Mc ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Mc ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Mc ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Mc ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Mc ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Mc ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Mc ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Mc ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Mc ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Mc ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Mc ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Digi SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
 FhDemoGetAlg         INFO Digi CmtUses.Event: v9r13p1
 FhDemoGetAlg         INFO Digi CmtMacros.package: RootIo
@@ -54,14 +54,14 @@ FhDemoGetAlg         INFO Digi JobOptions.reconRootWriterAlg.bufferSize: 64000
 FhDemoGetAlg         INFO Digi JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Digi JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Digi JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Digi ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Digi ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Digi ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Digi ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Digi ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Digi ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Digi ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Digi ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Digi ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Digi ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Digi ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Digi ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Digi ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Digi ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Digi ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Digi ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Recon SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
 FhDemoGetAlg         INFO Recon CmtUses.Event: v9r13p1
 FhDemoGetAlg         INFO Recon CmtMacros.package: RootIo
@@ -86,13 +86,13 @@ FhDemoGetAlg         INFO Recon JobOptions.reconRootWriterAlg.bufferSize: 64000
 FhDemoGetAlg         INFO Recon JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Recon JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Recon JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Recon ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Recon ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Recon ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Recon ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Recon ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Recon ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Recon ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Recon ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Recon ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Recon ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Recon ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Recon ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Recon ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Recon ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Recon ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Recon ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Digi CaloString: Demo String
 FhDemoGetAlg:ex...   INFO Time User   : Tot=    0 [us] Ave/Min/Max=    0(+-    0)/    0/    0 [us] #= 10

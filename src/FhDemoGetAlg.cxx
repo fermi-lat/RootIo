@@ -24,7 +24,7 @@
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.2 2004/11/25 10:42:35 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.3 2004/11/25 15:06:39 chamont Exp $
  */
 
 class FhDemoGetAlg : public Algorithm
@@ -158,8 +158,9 @@ StatusCode FhDemoGetAlg::finalize_common(
     TObjString * tagName ;
     while (( tagName = (TObjString *)(iter->Next()) )) {
         log<<MSG::INFO<<prefix<<" "
-          <<"ChronoStatTable."<<tagName->String()<<": "
-          <<chronoStatTable.getStringTime(*tagName)
+          <<"ChronoStatTable."<<tagName->String()
+// DavidC: I do not display the time so to make the output stable for diff
+//          <<": "<<chronoStatTable.getStringTime(*tagName)
           <<endreq ;
     }
     delete iter ;
