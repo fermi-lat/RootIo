@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  6 15:11:17 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+modify setRunEvent method in RootIoSvc to return bool
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 15:10:35 PDT 2004
 RootIo/src
 
