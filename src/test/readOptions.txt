@@ -1,0 +1,38 @@
+//##############################################################
+//
+// Job options file for RootIo test
+//
+
+ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc"};
+
+ApplicationMgr.ExtSvc = { 
+    "GlastEventSelector/EventSelector" , 
+    "EventCnvSvc", 
+    "GlastDetSvc" 
+    };
+
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventSelector.Input = "NONE";
+
+// Stuff for detModel
+GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
+// select one of the following for a top volume 
+GlastDetSvc.topVolume="LAT";         // the whole schebang 
+
+
+ApplicationMgr.DLLs +=    { "RootIo" };
+
+ApplicationMgr.TopAlg +=  { "mcRootReaderAlg"};
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
+
+
+// needed to have the gui available
+ApplicationMgr.ExtSvc +={"GuiSvc"};
+GuiSvc.size = -2000; 
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+

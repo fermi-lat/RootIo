@@ -1,0 +1,57 @@
+//##############################################################
+//
+// Job options file for G4Generator test
+// 
+// $Header: /nfs/slac/g/glast/ground/cvs/G4Generator/src/test/jobOptions.txt,v 1.26 2002/04/08 14:59:07 riccardo Exp $
+
+//  -------------- basic Glast/Gaudi run enviornment -----------
+ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc"};
+
+ApplicationMgr.ExtSvc = { 
+    "GlastEventSelector/EventSelector" , 
+    "EventCnvSvc", 
+    "GlastDetSvc" 
+    };
+
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+EventSelector.Input = "NONE";
+
+// Stuff for detModel
+GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
+// select one of the following for a top volume 
+GlastDetSvc.topVolume="LAT";         // the whole schebang 
+
+
+#include "$FLUXSVCROOT/src/defaultOptions.txt"
+// Append (no replace) the list of source library documents
+FluxSvc.source_lib = {"$(G4GENERATORROOT)/src/test/test_sources.xml"};
+
+//----------------- local algorithms to run -------------------
+ApplicationMgr.TopAlg = { 
+    "G4Generator"};
+
+// Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
+MessageSvc.OutputLevel      = 2;
+
+
+// ask for a source that is in the library
+//G4Generator.source_name="gamma_patch_for_G4";
+//G4Generator.source_name="muon_pencil";
+G4Generator.source_name="muon_patch";
+//G4Generator.source_name="gamma_test";
+
+
+G4Generator.UIcommands+={"/tracking/storeTrajectory 1"};
+
+ApplicationMgr.EvtMax =100;
+
+// needed to have the gui available
+ApplicationMgr.ExtSvc +={"GuiSvc"};
+GuiSvc.size = -2000; 
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+

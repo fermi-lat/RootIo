@@ -1,0 +1,56 @@
+package RootIo
+version v0
+
+branches src doc
+
+use GlastSvc v6r*
+use GlastEvent v7r*
+use ROOT v3r2p*
+use mcRootData v2*
+use GlastPolicy v4r3*
+
+apply_pattern package_headers
+
+library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
+
+ignore_pattern package_stamps
+ignore_pattern include_none
+apply_pattern package_include
+
+apply_pattern package_Clinkopts
+apply_pattern packageShr
+
+apply_pattern package_Cshlibflags
+
+private
+
+# uses for test program
+use GaudiSvc v7r0p*
+use G4Generator v3r3p*
+use FluxSvc v5r2*
+use GuiSvc v3*
+
+# need this Root library for some Root classes
+macro_append ROOT_linkopts     "-L$(ROOT_PATH)/lib -lPhysics" \
+            VisualC            " $(ROOT_PATH)/lib/libPhysics.lib "
+
+# build this for testing
+macro jobOptions "" VisualC "test/jobOptions.txt"
+
+public
+set JOBOPTIONS ${ROOTIOROOT}/src/test/jobOptions.txt
+
+private
+application test_RootIo ${GlastMain} test/*.cxx $(jobOptions)
+
+macro test_RootIolinkopts  "  $(GuiSvc_lib) $(guiapp_linkopts) $(gui_linkopts) -u GuiSvc_loadRef  -ldl "\
+      WIN32 " ${guiapp_linkopts} $(GuiSvc_lib)  /include:_GuiSvc_loadRef "
+
+
+
+
+
+
+
+
+
