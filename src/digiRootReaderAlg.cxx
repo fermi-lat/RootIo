@@ -33,7 +33,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.10 2003/03/25 15:46:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.11 2003/06/02 01:51:28 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -394,7 +394,7 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
         unsigned int iHit;
         for (iHit = 0; iHit < numStrips; iHit++) {
             int strip = tkrDigiRoot->getHit(iHit);
-            if (strip < lastController0Strip) {
+            if (strip <= lastController0Strip) {
                 tkrDigiTds->addC0Hit(strip);
             } else {
                 tkrDigiTds->addC1Hit(strip);
