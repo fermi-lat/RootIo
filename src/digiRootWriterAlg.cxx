@@ -36,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26.4.3 2004/08/26 20:46:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26.4.4 2004/08/26 21:06:38 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -280,6 +280,7 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
 
     if (!summaryTds) {
+      // Not a big deal - for simulated data it won't exist right now
       log << MSG::DEBUG << "No Event Summary Data found on TDS" << endreq;
       return sc;
     }
