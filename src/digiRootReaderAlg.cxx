@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.47 2005/03/01 20:00:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.48 2005/03/08 23:43:40 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -403,12 +403,12 @@ tSummary");
 
     evtSumTds->initialize(summaryWord);
     evtSumTds->initEventFlags(eventFlags);
-    const unsigned int nTem = 16;
-    unsigned int iTem;
-    unsigned int tem[nTem];
-    for (iTem = 0; iTem < nTem; iTem++) 
-        tem[iTem] = evtSummary.temLength(iTem);
-    evtSumTds->initContribLen(tem, evtSummary.gemLength(), 
+    //const unsigned int nTem = 16;
+    //unsigned int iTem;
+    //unsigned int tem[nTem];
+    //for (iTem = 0; iTem < nTem; iTem++) 
+    //    tem[iTem] = evtSummary.temLength(iTem);
+    evtSumTds->initContribLen(evtSummary.temLength(), evtSummary.gemLength(), 
                               evtSummary.oswLength(), evtSummary.errLength(), 
                               evtSummary.diagLength(), evtSummary.aemLength());
     return sc;
