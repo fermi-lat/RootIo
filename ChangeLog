@@ -1,0 +1,29 @@
+------------------------------------------------------------
+User: heather  Mon Apr 22 10:10:24 PDT 2002
+RootIo
+
+Log Message:
+initial import of RootIo
+
+Status:
+
+Vendor Tag:	GLAST
+Release Tags:	v0
+		
+N RootIo/.cvsignore
+N RootIo/cmt/.cvsignore
+N RootIo/cmt/requirements
+N RootIo/doc/release.notes
+N RootIo/src/mcRootReaderAlg.cxx
+N RootIo/src/mcRootWriterAlg.cxx
+N RootIo/src/Dll/RootIo_dll.cxx
+N RootIo/src/Dll/RootIo_load.cxx
+N RootIo/src/test/g4Options.txt
+N RootIo/src/test/jobOptions.txt
+N RootIo/src/test/readOptions.txt
+N RootIo/src/test/testReadAlg.cxx
+N RootIo/src/test/writeOptions.txt
+
+No conflicts created by this import
+
+    *
