@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Jun  1 18:53:19 PDT 2003
+RootIo/src
+
+Added Files:
+	RootIoSvc.cxx IRootIoSvc.h 
+Log Message:
+add RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Sun Jun  1 18:52:54 PDT 2003
 RootIo/src/Dll
 
