@@ -11,6 +11,7 @@
 #include "Event/Recon/TkrRecon/TkrCluster.h"
 #include "Event/Recon/TkrRecon/TkrPatCand.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
+#include "Event/Recon/TkrRecon/TkrKalFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
@@ -34,7 +35,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.12 2002/11/18 22:36:48 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease/RootIo/src/reconRootReaderAlg.cxx,v 1.13 2002/11/19 18:35:59 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -74,6 +75,10 @@ private:
     void convertCandHitView(TkrCandHit::AXIS viewRoot, Event::TkrCluster::view &viewTds);
     /// convert a ROOT TkrHitPlane::AXIS to a TDS Event::TkrCluster::view
     void convertHitPlaneView(TkrHitPlane::AXIS viewRoot, Event::TkrCluster::view &viewTds);
+    /// Stores TkrTrack objects into Event::TkrFitTrack
+    Event::TkrFitTrackBase* convertTkrTrack(const TkrTrack* trackRoot);
+    /// Stores TkrKalTrack objects into Event::TkrKalFitTrack
+    Event::TkrFitTrackBase* convertTkrKalFitTrack(const TkrKalFitTrack* trackRoot);
     
     /// Reads CAL recon data from ROOT and puts data on TDS
     StatusCode readCalRecon();
@@ -411,53 +416,35 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     StatusCode sc = StatusCode::SUCCESS;
     
     // Keep track of TkrFitTracks and the ROOT id so we can fill TkrVertex
-    std::map<int, Event::TkrFitTrack*> trackMap;
+    std::map<int, Event::TkrFitTrackBase*> trackMap;
     trackMap.clear();
     
     // Create TDS version of track collection
-    Event::TkrFitTrackCol *trackTdsCol = new Event::TkrFitTrackCol;
+    Event::TkrFitTrackCol  *trackTdsCol = new Event::TkrFitTrackCol;
+    Event::TkrFitTrackBase *trackTds    = 0;
     
     // Retrieve ROOT version of track collection
     const TObjArray *trackRootCol = tkrRecRoot->getTrackCol();
     TIter trackIter(trackRootCol);
-    TkrTrack *trackRoot = 0;
+    TObject *trackObj = 0;
     
-    while (trackRoot = (TkrTrack*)trackIter.Next()) {
-        Event::TkrFitTrack *trackTds = new Event::TkrFitTrack();
-        
-        trackTds->initializeInfo(trackRoot->getXgaps(), trackRoot->getYgaps(),
-            trackRoot->getXistGaps(), trackRoot->getYistGaps());
-        trackTds->initializeQual(trackRoot->getChiSq(), trackRoot->getChiSqSmooth(),
-            trackRoot->getRmsResid(), trackRoot->getQuality(), 
-            trackRoot->getKalEnergy(), trackRoot->getKalThetaMS());
-        
-        // Store track id to properly associate tracks and vertices later
-        trackMap[trackRoot->getId()] = trackTds;
-        
-        TkrHitPlaneIter hitItRoot;
-        for (hitItRoot = trackRoot->getHitIterBegin(); hitItRoot != trackRoot->getHitIterEnd(); hitItRoot++) {
-            Event::TkrFitPlane planeTds;
-            Event::TkrCluster::view projTds, projPlusTds;
-            convertHitPlaneView(hitItRoot->getProjection(), projTds);
-            convertHitPlaneView(hitItRoot->getProjPlus(), projPlusTds);
-            
-            planeTds.initializeInfo(hitItRoot->getIdHit(), hitItRoot->getIdTower(), hitItRoot->getIdPlane(),
-                projTds, projPlusTds, 
-                hitItRoot->getZplane(), hitItRoot->getEnePlane(), hitItRoot->getRadLen(),
-                hitItRoot->getActiveDist());
-            
-            Event::TkrFitHit measTds = convertTkrFitHit(hitItRoot->getHitMeas());
-            Event::TkrFitHit predTds = convertTkrFitHit(hitItRoot->getHitPred());
-            Event::TkrFitHit fitTds = convertTkrFitHit(hitItRoot->getHitFit());
-            Event::TkrFitHit smoothTds = convertTkrFitHit(hitItRoot->getHitSmooth());
-            TkrCovMat matRoot = hitItRoot->getQmaterial();
-            HepMatrix hepMat(4, 4, 0);
-            convertMatrix(matRoot, hepMat);
-            Event::TkrFitMatrix matTds(hepMat);
-            planeTds.initializeHits(measTds, predTds, fitTds, smoothTds, matTds);
-            trackTds->addPlane(planeTds);
+    while (trackObj = trackIter.Next()) {
+        int trkIdx = -1;
+
+        if      (TkrTrack*       trackRoot = dynamic_cast<TkrTrack*>(trackObj))
+        {
+            trkIdx   = trackRoot->getId();
+            trackTds = convertTkrTrack(trackRoot);
         }
-        
+        else if (TkrKalFitTrack* trackRoot = dynamic_cast<TkrKalFitTrack*>(trackObj)) 
+        {
+            trkIdx   = trackRoot->getId();
+            trackTds = convertTkrKalFitTrack(trackRoot);
+        }
+
+        // Store track id to properly associate tracks and vertices later
+        trackMap[trkIdx] = trackTds;
+
         trackTdsCol->push_back(trackTds);
     }
     
@@ -505,6 +492,110 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     }
     
     return sc;
+}
+
+/// Stores TkrTrack objects into Event::TkrFitTrack
+Event::TkrFitTrackBase* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trackRoot)
+{
+    Event::TkrFitTrack *trackTds = new Event::TkrFitTrack();
+        
+    trackTds->initializeInfo(trackRoot->getXgaps(), trackRoot->getYgaps(),
+                             trackRoot->getXistGaps(), trackRoot->getYistGaps());
+    trackTds->initializeQual(trackRoot->getChiSq(), trackRoot->getChiSqSmooth(),
+                             trackRoot->getRmsResid(), trackRoot->getQuality(), 
+                             trackRoot->getKalEnergy(), trackRoot->getKalThetaMS());
+        
+    TkrHitPlaneIter hitItRoot;
+    for (hitItRoot = trackRoot->getHitIterBegin(); hitItRoot != trackRoot->getHitIterEnd(); hitItRoot++) {
+            Event::TkrFitPlane planeTds;
+            Event::TkrCluster::view projTds, projPlusTds;
+            convertHitPlaneView(hitItRoot->getProjection(), projTds);
+            convertHitPlaneView(hitItRoot->getProjPlus(), projPlusTds);
+            
+            planeTds.initializeInfo(hitItRoot->getIdHit(), hitItRoot->getIdTower(), hitItRoot->getIdPlane(),
+                projTds, projPlusTds, 
+                hitItRoot->getZplane(), hitItRoot->getEnePlane(), hitItRoot->getRadLen(),
+                hitItRoot->getActiveDist());
+            
+            Event::TkrFitHit measTds = convertTkrFitHit(hitItRoot->getHitMeas());
+            Event::TkrFitHit predTds = convertTkrFitHit(hitItRoot->getHitPred());
+            Event::TkrFitHit fitTds = convertTkrFitHit(hitItRoot->getHitFit());
+            Event::TkrFitHit smoothTds = convertTkrFitHit(hitItRoot->getHitSmooth());
+            TkrCovMat matRoot = hitItRoot->getQmaterial();
+            HepMatrix hepMat(4, 4, 0);
+            convertMatrix(matRoot, hepMat);
+            Event::TkrFitMatrix matTds(hepMat);
+            planeTds.initializeHits(measTds, predTds, fitTds, smoothTds, matTds);
+            trackTds->addPlane(planeTds);
+    }
+
+    return trackTds;
+}
+/// Stores TkrKalTrack objects into Event::TkrKalFitTrack
+Event::TkrFitTrackBase* reconRootReaderAlg::convertTkrKalFitTrack(const TkrKalFitTrack* trackRoot)
+{
+    Event::TkrKalFitTrack *trackTds = new Event::TkrKalFitTrack();
+
+    Point  x0  = Point( trackRoot->getInitialPosition().x(),
+                        trackRoot->getInitialPosition().y(),
+                        trackRoot->getInitialPosition().z());
+    Vector dir = Vector(trackRoot->getInitialDirection().x(),
+                        trackRoot->getInitialDirection().y(),
+                        trackRoot->getInitialDirection().z());
+
+    Event::TkrKalFitTrack::Status status = Event::TkrKalFitTrack::EMPTY;
+
+    if      (trackRoot->status() == TkrKalFitTrack::FOUND) status = Event::TkrKalFitTrack::FOUND;
+    else if (trackRoot->status() == TkrKalFitTrack::CRACK) status = Event::TkrKalFitTrack::CRACK;
+
+    // Initialize the track
+    trackTds->initializeBase(status, trackRoot->getType(), trackRoot->getStartEnergy(), x0, dir);
+
+    trackTds->initializeQual(trackRoot->getChiSquare(),
+                             trackRoot->getChiSquareSmooth(),
+                             trackRoot->getScatter(),
+                             trackRoot->getQuality(),
+                             trackRoot->getKalEnergy(),
+                             trackRoot->getKalEnergyError(),
+                             trackRoot->getKalThetaMS() );
+
+    trackTds->initializeGaps(trackRoot->getNumXGaps(),
+                             trackRoot->getNumYGaps(),
+                             trackRoot->getNumXFirstGaps(),
+                             trackRoot->getNumYFirstGaps());
+
+    trackTds->initializeKal( trackRoot->getNumSegmentPoints(),
+                             trackRoot->getChiSquareSegment(),
+                             trackRoot->getNumXHits(),
+                             trackRoot->getNumYHits(),
+                             trackRoot->getTkrCalRadlen());
+        
+    for (int idx = 0; idx < trackRoot->getNumHits(); idx++) {
+        const TkrHitPlane* hitItRoot = trackRoot->getHitPlane(idx);
+
+        Event::TkrFitPlane planeTds;
+        Event::TkrCluster::view projTds, projPlusTds;
+        convertHitPlaneView(hitItRoot->getProjection(), projTds);
+        convertHitPlaneView(hitItRoot->getProjPlus(), projPlusTds);
+            
+        planeTds.initializeInfo(hitItRoot->getIdHit(), hitItRoot->getIdTower(), hitItRoot->getIdPlane(),
+                                projTds, projPlusTds, 
+                                hitItRoot->getZplane(), hitItRoot->getEnePlane(), hitItRoot->getRadLen(),
+                                hitItRoot->getActiveDist());
+            
+        Event::TkrFitHit measTds = convertTkrFitHit(hitItRoot->getHitMeas());
+        Event::TkrFitHit predTds = convertTkrFitHit(hitItRoot->getHitPred());
+        Event::TkrFitHit fitTds = convertTkrFitHit(hitItRoot->getHitFit());
+        Event::TkrFitHit smoothTds = convertTkrFitHit(hitItRoot->getHitSmooth());
+        TkrCovMat matRoot = hitItRoot->getQmaterial();
+        HepMatrix hepMat(4, 4, 0);
+        convertMatrix(matRoot, hepMat);
+        Event::TkrFitMatrix matTds(hepMat);
+        planeTds.initializeHits(measTds, predTds, fitTds, smoothTds, matTds);
+        trackTds->push_back(planeTds);
+    }
+
+    return trackTds;
 }
 
 
