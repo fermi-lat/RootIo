@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v4r20p0 21-Oct-2002 HMK update version of mcRootData to use TString\n
  v4r20  15-Oct-2002 HMK Register TkrClusterCol when reading\n
         Fix double-counting of McParticles\n
  v4r19\n
