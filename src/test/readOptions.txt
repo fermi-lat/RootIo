@@ -27,10 +27,6 @@ mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
 digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
 
 
-// needed to have the gui available
-ApplicationMgr.ExtSvc +={"GuiSvc"};
-GuiSvc.size = -2000; 
-
 //==============================================================
 //
 // End of job options file
