@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 26 14:04:40 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootReaderAlg.cxx 
+Log Message:
+fix silly naming error
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 13:47:14 PDT 2004
 RootIo/doc
 
