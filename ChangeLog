@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: cohen  Wed Mar 30 07:36:50 PST 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix the major version of digiRootData and preparing for tag
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r0, operation: add
 Package: RootIo
