@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.6 2003/08/24 01:00:21 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.7 2003/08/25 18:47:38 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -168,24 +168,28 @@ StatusCode relationRootReaderAlg::initialize()
 
     std::string emptyStr("");
     if (m_fileName.compare(emptyStr) != 0) {
-      int retVal = m_relTree->Add(m_fileName.c_str());
-      if (retVal <= 0) {
+	  TFile f(m_fileName.c_str());
+      if (!f.IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
       }
+	  f.Close();
+	  m_relTree->Add(m_fileName.c_str());
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
       std::vector<std::string>::const_iterator itend = fileList.end( );
       for (it = fileList.begin(); it != itend; it++) {
         std::string theFile = (*it);
-        int retVal = m_relTree->Add(theFile.c_str());
-        if (retVal <= 0) {
+	    TFile f(theFile.c_str());
+        if (!f.IsOpen()) {
           log << MSG::ERROR << "ROOT file " << theFile.c_str()
               << " could not be opened for reading." << endreq;
           return StatusCode::FAILURE;
-       }
+        }
+		f.Close();
+	    m_relTree->Add(theFile.c_str());
      }
     }
 
