@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r3p3  28-Aug-2003 HMK Fix run num setting in mcRootReaderAlg
  v9r3p2  25-Aug-2003 HMK Attempt to use BuildIndex for reading
  v9r3p1  23-Aug-2003 HMK Fix so that RootIoSvc is not required
  v9r3p0  23-Aug-2003 HMK Fix include path in digiRootReaderAlg
