@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 10 11:41:10 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix up test for re-activation of buildIndex
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 10 11:40:07 PDT 2004
 RootIo/doc
 
