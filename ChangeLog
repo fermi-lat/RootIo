@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 20 14:36:31 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx 
+Log Message:
+terminate nicely if we reach the end of a ROOT file while reading
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 20 14:34:06 PDT 2002
 RootIo/cmt
 
