@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 29 08:31:26 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+update path to AcdRecon.h in Event and add active distance
+collection
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 29 08:29:44 PDT 2002
 RootIo/cmt
 
