@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 10 15:11:41 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootReaderAlg.cxx 
+Log Message:
+fix reading AcdDigi VolIds
+    *
+------------------------------------------------------------
 User: heather  Tue Aug 10 15:10:07 PDT 2004
 RootIo/doc
 
