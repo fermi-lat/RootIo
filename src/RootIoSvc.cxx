@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.2 2003/08/21 23:37:28 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.3 2003/08/25 18:47:38 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -27,7 +27,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.2 2003/08/21 23:37:28 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.3 2003/08/25 18:47:38 heather Exp $
 */
 
 // includes
@@ -80,6 +80,8 @@ public:
 	virtual void setRunEventPair(std::pair<int,int> ids);
 	virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
 
+    virtual int getAutoSaveInterval() { return m_autoSaveInterval; };
+
 protected: 
     
     /// Standard Constructor
@@ -99,6 +101,7 @@ private:
     /// Reference to application manager UI
     IAppMgrUI*    m_appMgrUI;
     IntegerProperty m_evtMax;
+    IntegerProperty m_autoSaveInterval;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime;
@@ -125,6 +128,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("EvtMax"     , m_evtMax=0);
     declareProperty("StartTime"   , m_startTime=0);
     declareProperty("EndTime",      m_endTime=0);
+    declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
     m_rootEvtMax = 0;
 	m_index = -1;
 	m_runEventPair = std::pair<int,int>(-1,-1);
