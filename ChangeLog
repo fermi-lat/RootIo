@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun Jul 20 08:43:13 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+adjust to MCEvent change
+    *
+------------------------------------------------------------
+User: burnett  Sun Jul 20 08:43:13 PDT 2003
 RootIo/doc
 
 Modified Files:
