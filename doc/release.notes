@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v6r3p0  28-Feb-2003 HMK Modify reading of AcdDigis to ignore volId in ROOT file\n
+         and compute the volId using the idents::AcdId::volId routine.\n
  v6r3    26-Feb-2003 HMK Update to read/write CalCluster energyCorrected\n
  v6r2    11-Feb-2003 HMK Insert IsActive for each MSG::DEBUG message\n
          08-Feb-2003 TU  Update to recon reading & writing TKR \n
