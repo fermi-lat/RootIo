@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jun  7 07:36:14 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+moving packageShr declaration after GaudiPolicy use
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  6 15:13:56 PDT 2002
 RootIo/src
 
