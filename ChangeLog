@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct 13 16:02:39 PDT 2003
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle ribbon ids
+    *
+------------------------------------------------------------
 User: heather  Mon Oct 13 16:01:47 PDT 2003
 RootIo/doc
 
