@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Oct  2 07:06:18 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+update to read/write energy and id collections for AcdRecon
+    *
+------------------------------------------------------------
 User: heather  Wed Oct  2 07:04:46 PDT 2002
 RootIo/doc
 
