@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 10 10:03:35 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+reactivate BuildIndex
+    *
+------------------------------------------------------------
 User: heather  Thu May 27 23:15:41 PDT 2004
 RootIo/doc
 
