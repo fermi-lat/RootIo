@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.39 2004/12/14 23:01:21 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.39.2.1 2005/02/02 00:38:45 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -358,8 +358,9 @@ StatusCode digiRootWriterAlg::writeGem() {
              gemTds->calLEvector(), gemTds->calHEvector(), gemTds->cnoVector(),
              gemTds->conditionSummary(), tileListRoot);
     gemRoot.initSummary(gemTds->liveTime(), gemTds->prescaled(), 
-             gemTds->discarded(), gemTds->sent(), gemTds->triggerTime(),
-             ppsTimeRoot, gemTds->deltaEventTime());
+                   gemTds->discarded(), gemTds->condArrTime().condArr(),
+                   gemTds->triggerTime(), ppsTimeRoot, gemTds->deltaEventTime(),
+                   gemTds->deltaWindowOpenTime());
     m_digiEvt->initGem(gemRoot);
     return sc;
 
