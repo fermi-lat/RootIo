@@ -34,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.21 2002/10/02 14:06:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.22 2002/10/09 23:42:02 usher Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -218,7 +218,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     UInt_t runId = evtTds->run();
 
     log << MSG::DEBUG;
-    evtTds->fillStream(log.stream());
+    if( log.isActive())evtTds->fillStream(log.stream());
     log << endreq;
 
     m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon);
