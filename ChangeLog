@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Jan 12 16:28:22 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+use TTree::GetCurrentFile to get TFile ptr for cd
+    *
+------------------------------------------------------------
 User: heather  Mon Jan 12 16:26:35 PST 2004
 RootIo/cmt
 
