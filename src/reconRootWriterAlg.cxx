@@ -43,7 +43,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.43 2004/11/25 13:37:11 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.39.2.2 2004/12/14 02:47:39 lsrea Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -328,8 +328,8 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
        
         TkrCluster *clusterRoot = new TkrCluster(clusterTds->id(), 
             clusterTds->plane(), viewRoot, clusterTds->firstStrip(), 
-            clusterTds->lastStrip(), posRoot, clusterTds->ToT(), 
-            clusterTds->hitFlagged(), clusterTds->tower());
+            clusterTds->lastStrip(), posRoot, clusterTds->getMips(), 
+            clusterTds->getStatusWord(), clusterTds->tower());
         
         recon->addCluster(clusterRoot);
     }
