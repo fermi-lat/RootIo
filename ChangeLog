@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 20 13:24:53 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+add new methods to handle TkrClusterCol
+    *
+------------------------------------------------------------
 User: heather  Fri Sep 20 13:24:23 PDT 2002
 RootIo/cmt
 
