@@ -31,7 +31,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.28 2004/01/09 18:56:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.29 2004/01/13 00:28:22 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -555,6 +555,7 @@ void mcRootWriterAlg::close()
     TFile *f = m_mcTree->GetCurrentFile();
     f->cd();
     //m_mcFile->cd();
+    m_mcTree->BuildIndex("m_runId", "m_eventId");
     f->Write(0, TObject::kWriteDelete);
     f->Close();
     saveDir->cd();
