@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.43 2005/01/25 19:14:29 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.44 2005/01/25 20:01:19 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -429,6 +429,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             clusterRoot->getFirstStrip(),
             clusterRoot->getLastStrip(),
             posTds,
+            clusterRoot->getRawToT(),
             clusterRoot->getMips(),
             clusterRoot->getStatusWord(),
             clusterRoot->getNBad()
