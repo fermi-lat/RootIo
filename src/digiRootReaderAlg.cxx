@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.41 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.42 2004/11/25 08:28:07 chamont Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -333,6 +333,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     TimeStamp timeObj(m_digiEvt->getTimeStamp());
     evt->setTime(timeObj);
+
+    evt->setLivetime(m_digiEvt->getLiveTime());
+
     evt->setTrigger(m_digiEvt->getL1T().getTriggerWord());
 
     Event::DigiEvent* digiEventTds = 
@@ -356,8 +359,7 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     }
     unsigned int iTower = 0;
     for (iTower = 0; iTower < 16; iTower++) {
-        rowbits->setTriRowBits(iTower,
-            m_digiEvt->getL1T().getTriRowBits(iTower));
+        rowbits->setTriRowBits(iTower, m_digiEvt->getL1T().getTriRowBits(iTower));
     }
 
     LdfEvent::LdfTime *ldfTimeTds = new LdfEvent::LdfTime();
@@ -440,14 +442,14 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
     TIter calIt(calCol);
     CalDiagnosticData *cDiagRoot;
     while ((cDiagRoot = (CalDiagnosticData*)calIt.Next())!=0) {
-        LdfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
+        LdfEvent::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord(),cDiagRoot->tower(),cDiagRoot->layer());
         diagTds->addCalDiagnostic(cDiagTds);
     }
 
     TIter tkrIt(tkrCol);
     TkrDiagnosticData *tDiagRoot;
     while((tDiagRoot = (TkrDiagnosticData*)tkrIt.Next())!=0) {
-        LdfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
+        LdfEvent::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord(),tDiagRoot->tower(),tDiagRoot->gtcc());
         diagTds->addTkrDiagnostic(tDiagTds);
     }
 
