@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 16 08:17:42 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+Address JIRA ROOT-3, for handling multiple output files
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 16 08:16:56 PST 2004
 RootIo/cmt
 
