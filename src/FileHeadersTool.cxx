@@ -61,30 +61,33 @@ const FileHeader * FileHeadersTool::constReconHeader() {
 StatusCode FileHeadersTool::newMcHeader() {
     if (m_mcHeader) {
         MsgStream log(msgSvc(),name()) ;
-	    log<<MSG::ERROR<<"Mc FileHeader already existing"<<endreq ;
-        return StatusCode::FAILURE ;
+	    log<<MSG::WARNING<<"Mc FileHeader already existing"<<endreq ;
     }
-    m_mcHeader = new FileHeader ;
+    else {
+        m_mcHeader = new FileHeader ;
+    }
 	return StatusCode::SUCCESS ;
 }
 
 StatusCode FileHeadersTool::newDigiHeader() {
     if (m_digiHeader) {
         MsgStream log(msgSvc(),name()) ;
-	    log<<MSG::ERROR<<"Digi FileHeader already existing"<<endreq ;
-        return StatusCode::FAILURE ;
+	    log<<MSG::WARNING<<"Digi FileHeader already existing"<<endreq ;
     }
-    m_digiHeader = new FileHeader ;
+    else {
+        m_digiHeader = new FileHeader ;
+    }
 	return StatusCode::SUCCESS ;
 }
 
 StatusCode FileHeadersTool::newReconHeader() {
     if (m_reconHeader) {
         MsgStream log(msgSvc(),name()) ;
-	    log<<MSG::ERROR<<"Recon FileHeader already existing"<<endreq ;
-        return StatusCode::FAILURE ;
+	    log<<MSG::WARNING<<"Recon FileHeader already existing"<<endreq ;
     }
-    m_reconHeader = new FileHeader ;
+    else {
+        m_reconHeader = new FileHeader ;
+    }
 	return StatusCode::SUCCESS ;
 }
 

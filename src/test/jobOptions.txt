@@ -4,9 +4,9 @@
 //
 
 //#include "$ROOTIOROOT/src/test/writeOptions.txt"
-#include "$ROOTIOROOT/src/test/readOptions.txt"
+//#include "$ROOTIOROOT/src/test/readOptions.txt"
 //#include "$ROOTIOROOT/src/test/writeHeadersOptions.txt"
-//#include "$ROOTIOROOT/src/test/readHeadersOptions.txt"
+#include "$ROOTIOROOT/src/test/readHeadersOptions.txt"
 
 //ApplicationMgr.TopAlg +=  { "testReadAlg"};
 
