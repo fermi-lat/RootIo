@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Apr  5 23:44:43 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+set default tree size to 10 GB
+    *
+------------------------------------------------------------
 User: heather  Tue Apr  5 23:44:04 PDT 2005
 RootIo/src
 
