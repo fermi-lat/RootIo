@@ -27,7 +27,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.3 2002/09/25 18:45:06 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.4 2002/09/25 20:13:23 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -126,7 +126,7 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
 	unsigned int run = 4;
 	int sourceId = 7;
 	unsigned int sequence = 3;
-	mcEvt->initialize(run, sourceId, sequence);
+	mcEvt->initialize(run, sourceId, sequence, 99.0);
 
     // create the TDS location for the McParticle Collection
     Event::McParticleCol* mcParticleTdsCol = new Event::McParticleCol;
