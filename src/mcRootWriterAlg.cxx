@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.2 2002/04/29 14:17:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.3 2002/05/01 23:34:40 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -84,6 +84,8 @@ private:
     int m_splitMode;
     /// Buffer Size for the ROOT file
     int m_bufSize;
+    /// Compression level for the ROOT file
+    int m_compressionLevel;
 
     /// Keep track of MC particles as we retrieve them from TDS
     /// Used only to aid in writing the ROOT file.
@@ -103,6 +105,8 @@ Algorithm(name, pSvcLocator)
     declareProperty("mcRootFile",m_fileName="mc.root");
     declareProperty("splitMode", m_splitMode=1);
     declareProperty("bufferSize", m_bufSize=64000);
+    // ROOT default compression
+    declareProperty("compressionLevel", m_compressionLevel=1);
     declareProperty("treeName", m_treeName="Mc");
 
     m_particleMap.clear();
@@ -128,6 +132,7 @@ StatusCode mcRootWriterAlg::initialize()
     m_mcFile = new TFile(m_fileName.c_str(), "RECREATE");
     if (!m_mcFile->IsOpen()) sc = StatusCode::FAILURE;
     m_mcFile->cd();
+    m_mcFile->SetCompressionLevel(m_compressionLevel);
     m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
     m_mcEvt = new McEvent();
     m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
