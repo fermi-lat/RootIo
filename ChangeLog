@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Sep  2 08:55:42 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+	readRootOptions.txt 
+Log Message:
+Fix file checking
+    *
+------------------------------------------------------------
 User: heather  Tue Sep  2 08:52:01 PDT 2003
 RootIo/doc
 
