@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 11:45:52 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+remove testReadAlg when writing
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 11:45:06 PDT 2002
 RootIo/src/test
 
