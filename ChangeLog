@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Oct 25 06:46:13 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+actually set the view when making a call to convert from ROOT
+to TDS view
+    *
+------------------------------------------------------------
 User: heather  Fri Oct 25 06:45:02 PDT 2002
 RootIo/doc
 
