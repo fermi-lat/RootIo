@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 30 12:54:27 PST 2004
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	requirements 
+Log Message:
+handle store of livetime in EventHeader
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 30 12:54:19 PST 2004
 RootIo/doc
 
