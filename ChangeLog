@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 10 15:10:07 PDT 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix reading AcdDigi volIds
+    *
+------------------------------------------------------------
 User: heather  Tue Aug 10 15:09:05 PDT 2004
 RootIo/src
 
