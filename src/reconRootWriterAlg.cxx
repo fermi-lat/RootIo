@@ -9,7 +9,7 @@
 #include "Event/TopLevel/EventModel.h"
 
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
-#include "Event/Recon/TkrRecon/TkrPatCandCol.h"
+#include "Event/Recon/TkrRecon/TkrPatCand.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
@@ -34,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.20 2002/09/20 20:24:53 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.21 2002/10/02 14:06:18 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -295,9 +295,10 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
 
     // Loop over the candidate tracks in the TDS
     int                     candId  = 0;
-    while(candId < candidatesTds->getNumCands())
+    Event::TkrPatCandColPtr cands   = candidatesTds->begin();
+    while(candId < candidatesTds->size())
     {
-        Event::TkrPatCand* candTds = candidatesTds->getTrack(candId);
+        Event::TkrPatCand* candTds = *cands++;
         Double_t           x = candTds->getPosition().x();
         Double_t           y = candTds->getPosition().y();
         Double_t           z = candTds->getPosition().z();
