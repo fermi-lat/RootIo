@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Nov 25 07:17:29 PST 2004
+RootIo/src
+
+Modified Files:
+	FhDemoGetAlg.cxx 
+Log Message:
+hide the chrono values, so to avoid meaningless output differences
+    *
+------------------------------------------------------------
 User: chamont  Thu Nov 25 07:06:40 PST 2004
 RootIo/src/test
 
