@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Aug 25 11:47:38 PDT 2003
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx RootIoSvc.cxx 
+Log Message:
+try using BuildIndex
+    *
+------------------------------------------------------------
 User: heather  Sat Aug 23 18:00:21 PDT 2003
 RootIo/src
 
