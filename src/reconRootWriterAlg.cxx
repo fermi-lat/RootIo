@@ -28,7 +28,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.2 2002/05/16 05:14:50 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.3 2002/05/16 13:42:28 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -56,7 +56,9 @@ private:
     StatusCode writeTkrRecon();
 
     /// These are the methods specific to filling the pieces of the TkrRecon stuff
-    void       fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* tracksTds);
+    void       fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol*  candidatesTds);
+    void       fillFitTracks(      TkrRecon* recon, Event::TkrFitTrackCol* tracksTds);
+    void       fillVertices(       TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrFitTrackCol* tracksTds);
 
     /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
     /// ROOT object
@@ -201,13 +203,61 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     // Get pointer to TkrRecon part of ReconEvent
     TkrRecon* recon = m_reconEvt->getTkrRecon();
 
+    // Retrieve the information on candidate tracks
+    SmartDataPtr<Event::TkrPatCandCol> candidatesTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
+
+    // Fill the candidate tracks
+    fillCandidateTracks(recon, candidatesTds);
+
     // Retrieve the information on fit tracks
     SmartDataPtr<Event::TkrFitTrackCol> tracksTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
 
     // Fill the fit tracks
     fillFitTracks(recon, tracksTds);
 
+    // Retrieve the information on vertices
+    SmartDataPtr<Event::TkrVertexCol> verticesTds(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
+
+    // Fill the vertices
+    fillVertices(recon, verticesTds, tracksTds);
+
     return sc;
+}
+
+void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandCol* candidatesTds)
+{
+    // Purpose and Method:  This creates root candidate tracks from tds candidate tracks 
+    //                      and adds them to the list kept in TkrRecon
+
+    // Loop over the candidate tracks in the TDS
+    int                     candId  = 0;
+    while(candId < candidatesTds->getNumCands())
+    {
+        Event::TkrPatCand* candTds = candidatesTds->getTrack(candId);
+        TVectorD           pos(candTds->getPosition().x(), candTds->getPosition().y(), candTds->getPosition().z());
+        TVectorD           dir(candTds->getDirection().x(),candTds->getDirection().z(),candTds->getDirection().z());
+        TkrCandTrack*      cand    = new TkrCandTrack(candId, candTds->getLayer(), candTds->getTower(),
+                                                      candTds->getQuality(), candTds->getEnergy(), pos, dir);
+
+        // Now we go through the candidate hits (if they are included) and fill those objects
+        int                nHits   = 0;
+        while(nHits < candTds->numPatCandHits())
+        {
+            Event::TkrPatCandHit* candHitTds = candTds->getCandHit(nHits);
+            TVectorD              pos(candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
+            TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::view::X ? TkrCandHit::AXIS::X : TkrCandHit::AXIS::Y;
+            TkrCandHit            candHit;
+
+            candHit.initialize(pos, candHitTds->HitIndex(), candHitTds->TowerIndex(), candHitTds->PlaneIndex(), view); 
+
+            //cand->addHit(candHit);
+            nHits++;
+        }
+
+        // Add the candidate to the list
+        recon->addTrackCand(cand);
+        candId++;
+    }
 }
 
 void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* tracksTds)
@@ -346,6 +396,66 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
     }
 
     return;
+}
+
+void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* verticesTds, Event::TkrFitTrackCol* tracksTds)
+{
+    // Purpose and Method:  This creates root vertex output objects from tds vertices 
+    //                      and adds them to the list kept in TkrRecon
+
+    // Loop over the candidate tracks in the TDS
+    int                     vtxId  = 0;
+    while(vtxId < verticesTds->getNumVertices())
+    {
+        Event::TkrVertex*   vtxTds = verticesTds->getVertex(vtxId);
+        TkrVertex*          vtx    = new TkrVertex();
+        TVectorD            pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
+        TVectorD            dir(vtxTds->getDirection().x(),vtxTds->getDirection().z(),vtxTds->getDirection().z());
+        Event::TkrFitPar    parTds = vtxTds->getTrackPar();
+        Event::TkrFitMatrix covTds = vtxTds->getTrackCov();
+
+        vtx->initializeVals(TkrParams(parTds.getXPosition(),
+                                      parTds.getXSlope(),
+                                      parTds.getYPosition(),
+                                      parTds.getYSlope()),
+                            TkrCovMat(covTds.getcovX0X0(),
+                                      covTds.getcovSxSx(),
+                                      covTds.getcovX0Sx(),
+                                      covTds.getcovY0Y0(),
+                                      covTds.getcovSySy(),
+                                      covTds.getcovY0Sy() ),
+                            pos,
+                            dir );
+        vtx->initializeInfo(vtxId, 
+                            vtxTds->getLayer(), 
+                            vtxTds->getTower(), 
+                            vtxTds->getQuality(), 
+                            vtxTds->getEnergy());
+
+        // Now add the track ids 
+        // This is pretty ugly because we don't store track ids in the TDS classes
+        Event::TkrFitColPtr vtxTrkIter = vtxTds->getTrackIterBegin();
+        while(vtxTrkIter != vtxTds->getTrackIterEnd())
+        {
+            // Basically... take the pointer to the track from the vertex list and loop
+            // over the track pointers in the track list looking for the match. Assign 
+            // the id according to the loop variable value.
+            // This ALWAYS succeeds (and I'm also selling valuable swampland in Florida!)
+            int                 trkId  = 0;
+            Event::TkrFitColPtr trkPtr = tracksTds->getTrackIterBegin();
+            while(trkPtr != tracksTds->getTrackIterEnd())
+            {
+                if (*vtxTrkIter == *trkPtr++) break;
+                trkId++;
+            }
+
+            vtx->addTrackId(trkId);
+        }
+
+        // Add the candidate to the list
+        recon->addVertex(vtx);
+        vtxId++;
+    }
 }
 
 
