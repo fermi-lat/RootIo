@@ -1,4 +1,55 @@
 ------------------------------------------------------------
+TAG
+Tag name: v12r10gr3, operation: add
+Package: RootIo
+User: heather  Tue Nov 30 12:55:04 2004
+Files:
+  RootIo/.cvsignore  1.1.1.1
+  RootIo/ChangeLog  1.439
+  RootIo/RootIo/IRootIoSvc.h  1.3
+  RootIo/cmt/.cvsignore  1.1.1.1
+  RootIo/cmt/requirements  1.109.2.4
+  RootIo/doc/release.notes  1.93.2.4
+  RootIo/src/mcRootWriterAlg.cxx  1.32.2.1
+  RootIo/src/digiRootWriterAlg.cxx  1.32.2.4
+  RootIo/src/RootIoSvc.cxx  1.9
+  RootIo/src/RootIoRandom.cxx  1.1
+  RootIo/src/FileHeadersTool.h  1.2
+  RootIo/src/writeReconRootOptions.txt  1.1
+  RootIo/src/commonData.h  1.3
+  RootIo/src/mcRootReaderAlg.cxx  1.40
+  RootIo/src/relationRootReaderAlg.cxx  1.15
+  RootIo/src/writeMcRootOptions.txt  1.1
+  RootIo/src/testCaloFileHeadersSetAlg.h  1.1
+  RootIo/src/testCaloFileHeadersSetAlg.cxx  1.1
+  RootIo/src/writeRootOptions.txt  1.4
+  RootIo/src/mainpage.h  1.9
+  RootIo/src/FileHeadersSetAlg.h  1.3
+  RootIo/src/reconRootReaderAlg.cxx  1.37
+  RootIo/src/digiRootReaderAlg.cxx  1.38.2.3
+  RootIo/src/commonData.cxx  1.2
+  RootIo/src/reconRootWriterAlg.cxx  1.39.2.1
+  RootIo/src/testFileHeadersAlg.cxx  1.2
+  RootIo/src/relationRootWriterAlg.cxx  1.9.2.1
+  RootIo/src/writeDigiRootOptions.txt  1.1
+  RootIo/src/FileHeadersSetAlg.cxx  1.5
+  RootIo/src/readRootOptions.txt  1.5
+  RootIo/src/FileHeadersTool.cxx  1.3
+  RootIo/src/Dll/RootIo_load.cxx  1.9
+  RootIo/src/Dll/RootIo_dll.cxx  1.1.1.1
+  RootIo/src/test/writeHeadersOptions.txt  1.2
+  RootIo/src/test/testRootIoSvcAlg.cxx  1.4
+  RootIo/src/test/readOptions.txt  1.8
+  RootIo/src/test/.cvsignore  1.2
+  RootIo/src/test/g4Options.txt  1.10
+  RootIo/src/test/testReadAlg.cxx  1.10
+  RootIo/src/test/jobOptions.txt  1.11
+  RootIo/src/test/readHeadersOptions.txt  1.1
+  RootIo/src/test/writeOptions.txt  1.6
+  RootIo/src/test/createFakeTdsDataAlg.cxx  1.6
+
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 30 12:54:49 PST 2004
 RootIo/src
 
