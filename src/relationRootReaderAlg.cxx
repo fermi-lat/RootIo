@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.16.2.1 2004/12/17 06:07:44 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.16.2.2 2005/01/25 09:51:31 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -221,7 +221,7 @@ StatusCode relationRootReaderAlg::execute()
 
     StatusCode sc = StatusCode::SUCCESS;
     
-    static Int_t evtId = 0;
+    static Long64_t evtId = 0;
     Long64_t readInd;
     int numBytes;
 	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
