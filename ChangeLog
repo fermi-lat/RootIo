@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 16 08:49:03 PST 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+address JIRA ROOT-3 handle automatic creation of multiple output files
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 16 08:48:47 PST 2004
 RootIo/src
 
