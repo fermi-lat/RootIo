@@ -35,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.23 2003/07/20 15:43:13 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.24 2003/08/21 18:29:24 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -398,24 +398,26 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         // Check version < ROOT 3.04.02, and do not attempt to read in daughters
         static bool warn = false;
         int ver = m_mcTree->GetCurrentFile()->GetVersion();
-        if (!warn) {
-        //if (ver < 30402) {
+       //// if (!warn) {
+        if (ver < 30402) {
             log << MSG::WARNING << "Cannot read in TRef with ROOT 3.02.07"
                 " McParticle daughter list is unavailable" << endreq;
             warn = true;
         }
         
-        /*
+        
         // Process the list of daughters
         const TRefArray daughterArr = pRoot->getDaughterList();
-        McParticle *daughterPartRoot;
+        const McParticle *daughterPartRoot;
         unsigned int iPart;
         for (iPart = 0; iPart < daughterArr.GetEntries(); iPart++) {
-            daughterPartRoot = (McParticle*)daughterArr.At(iPart);
+			// Retrieving the daughter directly - rather than through my copy of TRefArray
+            //daughterPartRoot = (McParticle*)daughterArr.At(iPart);
+            daughterPartRoot = pRoot->getDaughter(iPart);
             if (!daughterPartRoot) {
                 static bool warn = false;
                 if (!warn) {
-                    log << MSG::WARNING << "Cannot read in TRef with ROOT 3.02.07"
+                    log << MSG::WARNING << "Cannot read in TRef "
                         " McParticle daughter list is unavailable" << endreq;
                     warn = true;
                 }
@@ -430,7 +432,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             }
             
         }
-        */
+        
 
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
