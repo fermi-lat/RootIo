@@ -16,6 +16,7 @@
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
+#include "LdfEvent/Gem.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -38,7 +39,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.2 2004/08/10 22:11:41 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.3 2004/08/14 06:12:13 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -63,6 +64,8 @@ private:
 
     /// Reads in EM event summary word
     StatusCode readEventSummary();
+
+    StatusCode readGem();
 
     /// Reads in the EM Diagnostic trigger primitive data
     StatusCode readDiagnostic();
@@ -249,6 +252,13 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
+    sc = readGem();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to read in GEM" << endreq;
+        return sc;
+    }
+    
+
     sc = readDiagnostic();
     if (sc.isFailure()) {
         log << MSG::INFO << "Failed to read in diagnostic data" << endreq;
@@ -347,6 +357,35 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     return sc;
 }
 
+StatusCode digiRootReaderAlg::readGem() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    const Gem &gemRoot = m_digiEvt->getGem();
+    GemTileList tileListRoot = gemRoot.getTileList();
+    LdfEvent::Gem *gemTds = new LdfEvent::Gem();
+    LdfEvent::GemDataTileList tileListTds(tileListRoot.getXzm(), tileListRoot.getXzp(), 
+              tileListRoot.getYzm(), tileListRoot.getYzp(), tileListRoot.getXy(), 
+              tileListRoot.getRbn(), tileListRoot.getNa());
+    gemTds->initTrigger(gemRoot.getTkrVector(), gemRoot.getRoiVector(),
+            gemRoot.getCalLeVector(), gemRoot.getCalHeVector(),
+            gemRoot.getCnoVector(), gemRoot.getConditionSummary(),
+            tileListTds);
+    LdfEvent::GemDataOnePpsTime ppsTimeTds(gemRoot.getOnePpsTime().getTimebase(),
+                            gemRoot.getOnePpsTime().getSeconds());
+    gemTds->initSummary(gemRoot.getLiveTime(), gemRoot.getPrescaled(),
+                        gemRoot.getDiscarded(), gemRoot.getSent(),
+                        gemRoot.getTriggerTime(), ppsTimeTds, 
+                        gemRoot.getDeltaEventTime());
+
+    sc = eventSvc()->registerObject("/Event/Gem", gemTds);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register /Event/Gem " << endreq
+;
+        return sc;
+    }
+    return sc;
+}
 
 StatusCode digiRootReaderAlg::readDiagnostic() {
 
