@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul 13 11:39:47 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch for reading LdfTime
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 15:11:17 PDT 2004
 RootIo/cmt
 
