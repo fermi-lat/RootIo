@@ -1,5 +1,5 @@
 package RootIo
-version v9r5p0em5
+version v9r5p0em6
 
 branches src doc
 
@@ -12,7 +12,7 @@ apply_pattern package_include
 
 use RootPolicy v2r*
 use mcRootData v2r*
-use digiRootData v4r*
+use digiRootData v4r2p0em*
 use reconRootData v4r*
 use commonRootData v0r*
 
