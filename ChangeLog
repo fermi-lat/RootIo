@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jul  8 14:20:18 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+fix writing calxtal collection
+    *
+------------------------------------------------------------
 User: heather  Wed Jul  3 10:48:53 PDT 2002
 RootIo/cmt
 
