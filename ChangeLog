@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul 20 14:22:51 PDT 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+reset index and run/evt pair at end of event
+    *
+------------------------------------------------------------
 User: heather  Tue Jul 13 18:36:15 PDT 2004
 RootIo/cmt
 
