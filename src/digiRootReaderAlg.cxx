@@ -13,7 +13,7 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
-#include "EbfConverter/DiagnosticData.h"
+//#include "EbfConverter/DiagnosticData.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.1 2003/11/12 07:22:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.2 2003/11/19 07:55:35 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -60,7 +60,7 @@ private:
     StatusCode readDigiEvent();
 
     /// Reads in the EM Diagnostic trigger primitive data
-    StatusCode readDiagnostic();
+    //StatusCode readDiagnostic();
 
     /// Reads ACD digi data from ROOT and puts data on TDS
     StatusCode readAcdDigi();
@@ -235,11 +235,13 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
+/*
     sc = readDiagnostic();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to read in diagnostic data" << endreq;
         return sc;
     }
+*/
 
     sc = readAcdDigi();
     if (sc.isFailure()) {
@@ -308,6 +310,7 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     return sc;
 }
 
+/*
 StatusCode digiRootReaderAlg::readDiagnostic() {
 
     MsgStream log(msgSvc(), name());
@@ -342,6 +345,7 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
 
     return sc;
 }
+*/
 
 StatusCode digiRootReaderAlg::readAcdDigi() {
     // Purpose and Method:  Read in ACD digi collection from ROOT file

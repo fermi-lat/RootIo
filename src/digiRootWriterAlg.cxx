@@ -11,7 +11,7 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-#include "EbfConverter/DiagnosticData.h"
+//#include "EbfConverter/DiagnosticData.h"
 
 
 #include "idents/CalXtalId.h"
@@ -34,7 +34,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.1 2003/11/12 07:22:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.2 2003/11/19 07:55:35 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -58,7 +58,7 @@ private:
     StatusCode writeDigiEvent();
 
     /// Writes the EM Diagnostic data from TDS and fills the ROOT version
-    StatusCode writeDiagnostic();
+    //StatusCode writeDiagnostic();
 
     /// Retrieves ACD digitization data from the TDS and fill the AcdDigi
     /// ROOT collection
@@ -205,11 +205,11 @@ StatusCode digiRootWriterAlg::execute()
         return sc;
     }
   
-    sc = writeDiagnostic();
+    /*sc = writeDiagnostic();
     if (sc.isFailure()) { 
         log << MSG::ERROR << "Failed to write diagnostic data" << endreq;
         return sc;
-    }
+    }*/
 
     writeEvent();
     return sc;
@@ -244,6 +244,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     return sc;
 }
 
+/*
 StatusCode digiRootWriterAlg::writeDiagnostic() {
     // Purpose and Method:  Retrieve the Diagnostic object from the TDS and write the
     // CAL and TKR trigger primitives to ROOT
@@ -274,7 +275,7 @@ StatusCode digiRootWriterAlg::writeDiagnostic() {
 
     return sc;
 }
-
+*/
 
 
 StatusCode digiRootWriterAlg::writeAcdDigi() {
