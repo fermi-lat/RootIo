@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jun 17 12:27:37 PDT 2003
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+fix writing of AcdDigi low discrim for PMT B
+    *
+------------------------------------------------------------
 User: heather  Tue Jun 17 12:26:29 PDT 2003
 RootIo/doc
 
