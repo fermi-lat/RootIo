@@ -41,7 +41,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.1 2002/12/02 21:54:19 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.2 2003/03/18 15:01:43 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -296,7 +296,8 @@ StatusCode relationRootWriterAlg::writeTkrTrackRelations() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Recover the pat track - fit track relational table
-    SmartDataPtr<Event::TkrFitTrackTabList> tkrTable(SmartDataPtr<Event::TkrFitTrackTabList >(eventSvc(),EventModel::TkrRecon::TkrTrackTab));
+    SmartDataPtr<Event::TkrFitTrackTabList> tkrTable(eventSvc(),EventModel::TkrRecon::TkrTrackTab);
+    //SmartDataPtr<Event::TkrFitTrackTabList> tkrTable(SmartDataPtr<Event::TkrFitTrackTabList >(eventSvc(),EventModel::TkrRecon::TkrTrackTab));
 
     Event::TkrFitTrackTabList::const_iterator relation;
 
@@ -344,7 +345,7 @@ StatusCode relationRootWriterAlg::writeTkrVertexRelations() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Recover the fit track - vertex relational table
-    SmartDataPtr<Event::TkrVertexTabList> tkrTable(SmartDataPtr<Event::TkrVertexTabList >(eventSvc(),EventModel::TkrRecon::TkrVertexTab));
+    SmartDataPtr<Event::TkrVertexTabList> tkrTable(eventSvc(),EventModel::TkrRecon::TkrVertexTab);
 
     Event::TkrVertexTabList::const_iterator relation;
 
