@@ -29,6 +29,8 @@
 
 #include "commonData.h"
 
+#include "IRootIoSvc.h"
+
 #include <vector>
 #include <map>
 
@@ -37,7 +39,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.19 2003/03/18 15:01:43 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.20 2003/03/19 17:24:13 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -112,6 +114,8 @@ private:
 
     commonData m_common;
 
+    IRootIoSvc*   m_rootIoSvc;
+
 };
 
 static const AlgFactory<reconRootReaderAlg>  Factory;
@@ -141,6 +145,13 @@ StatusCode reconRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
     
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::ERROR << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::DEBUG << "Event loop will not terminate gracefully" << endreq;
+        m_rootIoSvc = 0;
+        //return StatusCode::FAILURE;
+    }
+
     facilities::Util::expandEnvVar(&m_fileName);
     
     // Save the current directory for the ntuple writer service
@@ -165,7 +176,9 @@ StatusCode reconRootReaderAlg::initialize()
     m_common.m_reconEvt = m_reconEvt;
 
     m_numEvents = m_reconTree->GetEntries();
-    
+      
+    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+
     saveDir->cd();
     return sc;
     
@@ -188,7 +201,7 @@ StatusCode reconRootReaderAlg::execute()
     
     if (m_reconEvt) m_reconEvt->Clear();
 
-    static UInt_t evtId = 0;
+    static Int_t evtId = 0;
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;
         return StatusCode::FAILURE;
@@ -394,7 +407,7 @@ StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
         // Keep relation between Event and Root candidate tracks
         m_common.m_rootTkrCandMap[candTrackRoot] = track;        
 
-        for (int idx = 0; idx < candTrackRoot->getNumHits(); idx++) {
+        for (unsigned int idx = 0; idx < candTrackRoot->getNumHits(); idx++) {
             const TkrCandHit* hitIt = candTrackRoot->getHitPlane(idx);
             TVector3 posRoot = hitIt->getPosition();
             Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
@@ -536,7 +549,7 @@ Event::TkrFitTrackBase* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trac
         trackRoot->getRmsResid(), trackRoot->getQuality(), 
         trackRoot->getKalEnergy(), trackRoot->getKalThetaMS());
     
-    for (int idx = 0; idx < trackRoot->getNumHits(); idx++) {
+    for (unsigned int idx = 0; idx < trackRoot->getNumHits(); idx++) {
         const TkrHitPlane* hitItRoot = trackRoot->getHitPlane(idx);
         Event::TkrFitPlane planeTds;
         Event::TkrCluster::view projTds, projPlusTds;
@@ -601,7 +614,7 @@ Event::TkrFitTrackBase* reconRootReaderAlg::convertTkrKalFitTrack(const TkrKalFi
         trackRoot->getNumYHits(),
         trackRoot->getTkrCalRadlen());
     
-    for (int idx = 0; idx < trackRoot->getNumHits(); idx++) {
+    for (unsigned int idx = 0; idx < trackRoot->getNumHits(); idx++) {
         const TkrHitPlane* hitItRoot = trackRoot->getHitPlane(idx);
         
         Event::TkrFitPlane planeTds;

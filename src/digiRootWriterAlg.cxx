@@ -32,7 +32,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.12 2003/03/18 15:01:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.13 2003/03/25 15:46:23 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -401,7 +401,7 @@ void digiRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId,
     //     version of the idents::VolumeIdentifier and append each to the ROOT
     //     VolumeIdentifier
     
-    unsigned int index;
+    int index;
     rootVolId.Clear();
     for (index = 0; index < tdsVolId.size(); index++) {
         rootVolId.append(tdsVolId.operator [](index));

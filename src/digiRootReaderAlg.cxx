@@ -26,12 +26,14 @@
 
 #include "commonData.h"
 
+#include "IRootIoSvc.h"
+
 /** @class digiRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.9 2003/03/18 15:01:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.10 2003/03/25 15:46:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -84,6 +86,7 @@ private:
     int m_numEvents;
   
     commonData m_common;
+    IRootIoSvc*   m_rootIoSvc;
 
 };
 
@@ -113,6 +116,13 @@ StatusCode digiRootReaderAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
+   
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
+        m_rootIoSvc = 0;
+        //return StatusCode::FAILURE;
+    }
 
     facilities::Util::expandEnvVar(&m_fileName);
     
@@ -137,19 +147,7 @@ StatusCode digiRootReaderAlg::initialize()
 
     m_numEvents = m_digiTree->GetEntries();
     
-    /* Saving code to eventually set the evtMax
-    IProperty* glastPropMgr=0;
-    sc = service("EventSelector", glastPropMgr, true);
-    if( sc.isFailure() ) return sc;
-    IntegerProperty evtMax("EvtMax",0);
-    sc = glastPropMgr->getProperty( &evtMax );
-    if (sc.isFailure()) return sc;
-    if (m_numEvents < evtMax) {
-        evtMax = m_numEvents;
-        sc = glastPropMgr->setProperty( evtMax );
-    }
-    glastPropMgr->release();
-    */
+    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
 
     saveDir->cd();
     return sc;
@@ -174,7 +172,7 @@ StatusCode digiRootReaderAlg::execute()
         return StatusCode::FAILURE;
     }
 
-    static UInt_t evtId = 0;
+    static Int_t evtId = 0;
 
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;
@@ -443,7 +441,7 @@ void digiRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId,
     // Input:  ROOT VolumeIdentifier
     // Ouput:  idents::VolumeIdentifier
 
-    unsigned int index;
+    int index;
     for (index = 0; index < rootVolId.size(); index++) {
         tdsVolId.append(rootVolId.operator [](index));
     }
