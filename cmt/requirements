@@ -14,7 +14,7 @@ use GlastPolicy v4r*
 use RootPolicy v1r0p3
 use mcRootData v2r5p6
 use digiRootData v3r5p5
-use reconRootData v3r4
+use reconRootData v3r5
 
 
 public
