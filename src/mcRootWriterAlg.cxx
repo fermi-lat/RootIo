@@ -35,7 +35,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.30 2004/06/10 17:03:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.31 2004/08/09 17:57:31 chamont Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -591,5 +591,6 @@ StatusCode mcRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }

@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.38 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.39 2004/09/15 04:19:30 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -648,5 +648,6 @@ StatusCode mcRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }
