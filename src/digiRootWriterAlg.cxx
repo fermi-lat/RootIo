@@ -36,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.21 2004/01/13 00:28:22 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.22 2004/03/15 06:33:29 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -212,7 +212,7 @@ StatusCode digiRootWriterAlg::execute()
   
     sc = writeDiagnostic();
     if (sc.isFailure()) { 
-        log << MSG::INFO << "Failed to write diagnostic data" << endreq;
+        log << MSG::DEBUG << "Failed to write diagnostic data" << endreq;
         //return sc;
     }
 
@@ -272,7 +272,7 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     SmartDataPtr<EbfConverterTds::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
 
     if (!summaryTds) {
-      log << MSG::INFO << "No Event Summary Data found on TDS" << endreq;
+      log << MSG::DEBUG << "No Event Summary Data found on TDS" << endreq;
       return sc;
     }
     m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
