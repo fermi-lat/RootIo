@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue May 14 08:21:31 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	writeOptions.txt testReadAlg.cxx readOptions.txt 
+	jobOptions.txt g4Options.txt 
+Log Message:
+updates for new digi algs
+    *
+------------------------------------------------------------
 User: heather  Tue May 14 08:19:00 PDT 2002
 RootIo/src/Dll
 
