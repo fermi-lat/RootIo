@@ -43,7 +43,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.39 2004/09/24 19:14:05 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.40 2004/10/07 12:15:16 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -205,7 +205,7 @@ StatusCode reconRootWriterAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    if (!m_reconFile->IsOpen()) {
+    if(!m_reconTree->GetCurrentFile()->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for writing." << endreq;
         return StatusCode::FAILURE;
@@ -817,10 +817,10 @@ void reconRootWriterAlg::writeEvent()
     m_reconTree->GetCurrentFile()->cd();
     //m_reconFile->cd();
     m_reconTree->Fill();
-    saveDir->cd();
     ++eventCounter;
     if (m_rootIoSvc)
         if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_reconTree->AutoSave();
+    saveDir->cd();
 
     return;
 }
