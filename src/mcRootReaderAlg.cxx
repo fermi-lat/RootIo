@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.8 2002/06/06 20:10:12 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.9 2002/06/18 14:48:54 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -82,6 +82,8 @@ private:
     std::string m_fileName;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
+    /// Number of Events in the input ROOT TTree
+    int m_numEvents;
 
     /// Keep track of MC particles as we retrieve them from the ROOT file
     /// The id is the unique id assigned by ROOT for every TObject.
@@ -130,9 +132,31 @@ StatusCode mcRootReaderAlg::initialize()
     }
     m_mcFile->cd();
     m_mcTree = (TTree*)m_mcFile->Get(m_treeName.c_str());
+    if (!m_mcTree) {
+        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
+            " from file " << m_fileName << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
     
+    m_numEvents = m_mcTree->GetEntries();
+    
+    /* Saving code to eventually set the evtMax
+    IProperty* glastPropMgr=0;
+    sc = service("EventSelector", glastPropMgr, true);
+    if( sc.isFailure() ) return sc;
+    IntegerProperty evtMax("EvtMax",0);
+    sc = glastPropMgr->getProperty( &evtMax );
+    if (sc.isFailure()) return sc;
+    if (m_numEvents < evtMax) {
+        evtMax = m_numEvents;
+        sc = glastPropMgr->setProperty( evtMax );
+    }
+    glastPropMgr->release();
+    */
+
     saveDir->cd();
     return sc;
     
@@ -154,6 +178,12 @@ StatusCode mcRootReaderAlg::execute()
     }
 
     static UInt_t evtId = 0;
+
+    if (evtId >= m_numEvents) {
+        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
+        return StatusCode::FAILURE;
+    }
+
     m_mcTree->GetEvent(evtId);
 
     sc = readMcEvent();
