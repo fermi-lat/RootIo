@@ -4,11 +4,11 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-#include "GlastEvent/TopLevel/Event.h"
-#include "GlastEvent/TopLevel/EventModel.h"
-#include "GlastEvent/MonteCarlo/McParticle.h"
-#include "GlastEvent/MonteCarlo/McIntegratingHit.h"
-#include "GlastEvent/MonteCarlo/McPositionHit.h"
+#include "Event/TopLevel/Event.h"
+#include "Event/TopLevel/EventModel.h"
+#include "Event/MonteCarlo/McParticle.h"
+#include "Event/MonteCarlo/McIntegratingHit.h"
+#include "Event/MonteCarlo/McPositionHit.h"
 
 #include <map>
 
@@ -16,7 +16,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.2 2002/05/01 23:35:00 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -66,37 +66,37 @@ StatusCode testReadAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    SmartDataPtr<mc::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
+    SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
     if (particles) {
         log << MSG::DEBUG << "Retrieved McParticles from the TDS" << endreq;
         log << MSG::DEBUG << "Number of McParticles in the event = " << particles->size() << endreq;
-        mc::McParticleCol::const_iterator p;
+        Event::McParticleCol::const_iterator p;
         for (p = particles->begin(); p != particles->end(); p++) {
             log << MSG::DEBUG << (*p)->fillStream(log.stream()) << endreq;
         }
 
     }
 
-    SmartDataPtr<McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);
+    SmartDataPtr<Event::McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);
     if (posHits) {
         log << MSG::DEBUG << "Retrieved McPositionHits from the TDS" << endreq;
         log << MSG::DEBUG << "Number of McPositionHits in the event = " << posHits->size() << endreq;
-        McPositionHitVector::const_iterator hit;
+        Event::McPositionHitVector::const_iterator hit;
         for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {   
             log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
         }
             
     }
 
-    SmartDataPtr<McIntegratingHitVector> intHits(eventSvc(), EventModel::MC::McIntegratingHitCol);
+    SmartDataPtr<Event::McIntegratingHitVector> intHits(eventSvc(), EventModel::MC::McIntegratingHitCol);
     if (intHits) {
         log << MSG::DEBUG << "Retrieved McIntegratingHits from the TDS" << endreq;
         log << MSG::DEBUG << "Number of McIntegratingHits in the event = " << intHits->size() << endreq;
-        McIntegratingHitVector::const_iterator hit;
+        Event::McIntegratingHitVector::const_iterator hit;
         for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {   
             log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
-            mc::McIntegratingHit::energyDepositMap mcPartMap = (*hit)->itemizedEnergy();
-            mc::McIntegratingHit::energyDepositMap::const_iterator partIt;
+            Event::McIntegratingHit::energyDepositMap mcPartMap = (*hit)->itemizedEnergy();
+            Event::McIntegratingHit::energyDepositMap::const_iterator partIt;
             log << MSG::DEBUG << "McIntegratingHit energy Map" << endreq;
             for (partIt = mcPartMap.begin(); partIt != mcPartMap.end(); partIt++) {
                 log << MSG::DEBUG << "(McPartId, energy) = (" << partIt->first->particleProperty()
