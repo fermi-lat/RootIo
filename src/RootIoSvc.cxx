@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.13 2005/04/04 17:42:51 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.14 2005/04/06 06:44:04 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.13 2005/04/04 17:42:51 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.14 2005/04/06 06:44:04 heather Exp $
 */
 
 // includes
@@ -144,7 +144,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("EndTime",      m_endTime=0);
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
     declareProperty("StartingIndex", m_startIndex=0);
-    // limited by the size of an unsigned int
+    // limited by the size of an unsigned int, expecting MB
     declareProperty("MaxTreeSize", m_treeSize=0);
     m_index = m_startIndex;
     m_rootEvtMax = 0;
@@ -190,7 +190,9 @@ StatusCode RootIoSvc::initialize ()
     gSystem->ResetSignal(kSigFloatingException);  
 
     if (m_treeSize > 0) {
-        TTree::SetMaxTreeSize(m_treeSize);
+        // JO parameter in MB - need to convert to bytes
+        Long64_t maxTreeSize = m_treeSize * 1000000;
+        TTree::SetMaxTreeSize(maxTreeSize);
     } else if (m_treeSize == 0) {
         // 10 GB default
         Long64_t maxTreeSize = 10000000000;
