@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.9 2004/09/15 04:19:30 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10 2004/11/24 14:16:31 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.9 2004/09/15 04:19:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.10 2004/11/24 14:16:31 chamont Exp $
 */
 
 // includes
@@ -79,10 +79,14 @@ public:
     virtual void registerRootTree(TChain *ch);
 
     virtual bool setIndex(int i);
+    virtual void setActualIndex(int i) { m_index = i; };
     virtual int index() { return m_index; };
 
     virtual bool setRunEventPair(std::pair<int,int> ids);
     virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
+    
+    virtual bool useIndex() { return m_useIndex; };
+    virtual bool useRunEventPair() { return m_useRunEventPair; };
 
     virtual int getAutoSaveInterval() { return m_autoSaveInterval; };
 
@@ -116,6 +120,7 @@ private:
     std::pair<int, int> m_runEventPair;
     std::vector<TChain *> m_chainCol;
 
+    bool m_useIndex, m_useRunEventPair;
 };
 
 // declare the service factories for the RootIoSvc
@@ -134,11 +139,12 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartTime"   , m_startTime=0);
     declareProperty("EndTime",      m_endTime=0);
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
-    declareProperty("StartingIndex", m_index=-1);
+    declareProperty("StartingIndex", m_index=0);
     m_rootEvtMax = 0;
-    //m_index = -1;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_chainCol.clear();
+    m_useIndex = false;
+    m_useRunEventPair = false;
 }
 
 
@@ -233,6 +239,8 @@ bool RootIoSvc::setIndex(int i) {
      }
      m_index = i;
      m_runEventPair = std::pair<int, int>(-1,-1);
+     m_useIndex = true;
+     m_useRunEventPair = false;
      return true;
 }
 
@@ -244,7 +252,8 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
         if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) return false;
     }
     m_runEventPair = ids;
-    m_index=-1;
+    m_useIndex = false;
+    m_useRunEventPair = true;
     return true;
 }
 
@@ -262,7 +271,9 @@ void RootIoSvc::beginEvent() // should be called at the beginning of an event
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
 {        
-    m_index = -1;
+    m_useIndex = false;
+    m_useRunEventPair = false;
+
     m_runEventPair = std::pair<int, int>(-1,-1);
 }
 
