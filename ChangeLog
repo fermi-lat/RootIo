@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  5 00:04:03 PDT 2004
+RootIo/cmt
+
+Modified Files:
+      Tag: beforeheader
+	requirements 
+Log Message:
+actually register the EventSummary obj on TDS when reading
+    *
+------------------------------------------------------------
 User: heather  Wed Aug  4 23:24:35 PDT 2004
 RootIo/doc
 
