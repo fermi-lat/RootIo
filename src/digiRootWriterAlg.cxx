@@ -29,7 +29,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.6 2002/06/11 00:38:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.7 2002/10/10 02:27:43 burnett Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -227,7 +227,11 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
     Event::AcdDigiCol::const_iterator acdDigiTds;
     
     for (acdDigiTds = acdDigiColTds->begin(); acdDigiTds != acdDigiColTds->end(); acdDigiTds++) {
-        log << MSG::DEBUG << acdDigiTds << endreq;
+        log << MSG::DEBUG ;
+        if( log.isActive()) {
+            (*acdDigiTds)->fillStream(log.stream());
+        }
+        log << endreq;
         Float_t energyRoot = (*acdDigiTds)->getEnergy();
         UShort_t phaRoot[2] = { (*acdDigiTds)->getPulseHeight(Event::AcdDigi::A),
             (*acdDigiTds)->getPulseHeight(Event::AcdDigi::B) };
