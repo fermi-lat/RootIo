@@ -1,5 +1,7 @@
 package RootIo
-version v12r2
+version v12r3
+
+# $Header$
 
 branches src doc
 
@@ -9,26 +11,28 @@ use ROOT v2r* IExternal
 apply_pattern packageShr
 apply_pattern package_include
 
-use RootPolicy v4r*
-use mcRootData v2r*
-use digiRootData v7r*
-use reconRootData v4r*
-use commonRootData v0r*
+use RootPolicy v4r* -no_auto_imports
+use mcRootData v2r* -no_auto_imports
+use digiRootData v7r* -no_auto_imports
+use reconRootData v4r* -no_auto_imports
+use commonRootData v0r* -no_auto_imports
+
 use LdfEvent v*
 
 private
 use GlastSvc v9r*
 
-apply_pattern package_headers
+# for building this DLL, need includes from the rootData packages
 
-library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
+macro_append RootIo_cppflags " $(RootPolicy_cppflags) $(root_packages_include)"
+
+macro source "*.cxx" WIN32 "*.cxx *.h"
+library RootIo  $(root_packages_import) -s=../RootIo $(source) -s=../src $(source) -s=Dll *.cxx 
 
 apply_pattern package_test
-
-
 apply_pattern package_Cshlibflags
 
-public
-# copied from RootPolicy to work with CMT v1r14
+#specify these to disable rootcint portion of vcproj_library_header set by RootPolicy
+
 macro rootcint_begin "" vsnet "<!--"
 macro rootcint_end   "" vsnet "-->"
