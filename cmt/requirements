@@ -1,5 +1,5 @@
 package RootIo
-version v4r10
+version v4r10p1
 
 branches src doc
 
@@ -7,10 +7,14 @@ use GaudiSvc v7r*
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
+
+use GlastPolicy v4r*
+
+### checkout for these packages
+use RootPolicy v1r0p3
 use mcRootData v2r5p5
 use digiRootData v3r5p4
 use reconRootData v3r3p0
-use GlastPolicy v4r*
 
 
 public
@@ -21,14 +25,8 @@ apply_pattern package_headers
 
 library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
 
-
 apply_pattern package_test
 
 
 apply_pattern package_Cshlibflags
-
-
-
-
-
 
