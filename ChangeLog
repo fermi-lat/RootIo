@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr  4 10:41:51 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+allow setting of MaxTreeSize
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r0p1, operation: add
 Package: RootIo
