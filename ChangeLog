@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Dec 16 14:37:56 PST 2003
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+read in CalXtal positions
+    *
+------------------------------------------------------------
 User: heather  Tue Dec 16 14:35:12 PST 2003
 RootIo/cmt
 
