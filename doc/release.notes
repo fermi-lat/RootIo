@@ -1,66 +1,68 @@
 /** @file release.notes
  Package RootIo
  Coordinator:H.Kelly
-
- v6r3p0  28-Feb-2003 HMK Modify reading of AcdDigis to ignore volId in ROOT file\n
-         and compute the volId using the idents::AcdId::volId routine.\n
- v6r3    26-Feb-2003 HMK Update to read/write CalCluster energyCorrected\n
- v6r2    11-Feb-2003 HMK Insert IsActive for each MSG::DEBUG message\n
-         08-Feb-2003 TU  Update to recon reading & writing TKR \n
- v6r0p0  31-Dec-2002 HMK update reconRootData tag\n
- v6r0    20-Dec-2002 TU  Update to recon writing and reading for TkrKalFitTrack\n
- v5r0    02-Dec-2002 HMK Update to use commonRootData and write out relations\n
- v4r21   19-Nov-2002 HMK Update to use new reconRootData v3r7\n
- v4r20p4 18-Nov-2002 HMK add TkrPlanes to track when reading\n
- v4r20p3 27-Oct-2002 THB gcc 3.x fix\n
- v4r20p2 25-Oct-2002 HMK Fix 3 warnings in reconRootReaderAlg - it turns out the view\n
-          was not being set properly.\n
- v4r20p1 24-Oct-2002 HMK Do not even attempt to read in Daughter TRefs when \n
-          using Root 3.02.07\n
- v4r20p0 21-Oct-2002 HMK update version of mcRootData to use TString\n
- v4r20  15-Oct-2002 HMK Register TkrClusterCol when reading\n
-        Fix double-counting of McParticles\n
- v4r19\n
- v4r18  09-Oct-2002 LSR add Randoms, Fix debug output, mods for new TkrPatCand\n
- v4r17  02-Sep-2002 HMK update to write out energy collection for AcdRecon\n
- v4r16  25-Sep-2002 HMK add in sourceId and sequence reading and writing in McEvent\n
- v4r15  24-Sep-2002 HMK update versions of ROOT class and handle McParticle daughters\n
- v4r13  20-Sep-2002 HMK update to fill and read TkrClusterCol\n
- v4r12  10-Sep-2002 HMK update versions of Event and GlastSvc to v9r*\n
- v4r11  29-Aug-2002 HMK update reconRootData to include active distance collecton\n
- v4r10  27-Aug-2002 HMK updated version of Root packages - including bug fix for TkrCovMat in reconRootData\n
- v4r9p3 26-Aug-2002 HMK update versions of Root class packages - now uses RootPolicy\n
+ @verbatim
+ v6r4    18-Mar-2003 TU  Make relation reading functional
+ v6r3p0  28-Feb-2003 HMK Modify reading of AcdDigis to ignore volId in ROOT file
+         and compute the volId using the idents::AcdId::volId routine.
+ v6r3    26-Feb-2003 HMK Update to read/write CalCluster energyCorrected
+ v6r2    11-Feb-2003 HMK Insert IsActive for each MSG::DEBUG message
+         08-Feb-2003 TU  Update to recon reading & writing TKR 
+ v6r0p0  31-Dec-2002 HMK update reconRootData tag
+ v6r0    20-Dec-2002 TU  Update to recon writing and reading for TkrKalFitTrack
+ v5r0    02-Dec-2002 HMK Update to use commonRootData and write out relations
+ v4r21   19-Nov-2002 HMK Update to use new reconRootData v3r7
+ v4r20p4 18-Nov-2002 HMK add TkrPlanes to track when reading
+ v4r20p3 27-Oct-2002 THB gcc 3.x fix
+ v4r20p2 25-Oct-2002 HMK Fix 3 warnings in reconRootReaderAlg - it turns out the view
+          was not being set properly.
+ v4r20p1 24-Oct-2002 HMK Do not even attempt to read in Daughter TRefs when 
+          using Root 3.02.07
+ v4r20p0 21-Oct-2002 HMK update version of mcRootData to use TString
+ v4r20  15-Oct-2002 HMK Register TkrClusterCol when reading
+        Fix double-counting of McParticles
+ v4r19
+ v4r18  09-Oct-2002 LSR add Randoms, Fix debug output, mods for new TkrPatCand
+ v4r17  02-Sep-2002 HMK update to write out energy collection for AcdRecon
+ v4r16  25-Sep-2002 HMK add in sourceId and sequence reading and writing in McEvent
+ v4r15  24-Sep-2002 HMK update versions of ROOT class and handle McParticle daughters
+ v4r13  20-Sep-2002 HMK update to fill and read TkrClusterCol
+ v4r12  10-Sep-2002 HMK update versions of Event and GlastSvc to v9r*
+ v4r11  29-Aug-2002 HMK update reconRootData to include active distance collecton
+ v4r10  27-Aug-2002 HMK updated version of Root packages - including bug fix for TkrCovMat in reconRootData
+ v4r9p3 26-Aug-2002 HMK update versions of Root class packages - now uses RootPolicy
  v4r9p1 08-Aug-2002 HMK use new access methods in Event and mcRootData for
-        McIntegratingHit\n
- v4r9   30-Jul-2002 HMK Upgrade mcRootData classes and writing/reading accordingly\n
+        McIntegratingHit
+ v4r9   30-Jul-2002 HMK Upgrade mcRootData classes and writing/reading accordingly
  v4r8   03-Jul-2002 HMK Finish Recon ROOT Reading and fix calXtalRec col
-        writing, and update version of mcRootData \n
+        writing, and update version of mcRootData 
  v4r7p1 20-Jun-2002 HMK Terminate nicely if we reach the end of a ROOT
-        file during reading\n
+        file during reading
  v4r7   17-Jun-2002 HMK Update MC Writing & Reading for Particle Id 
-        in McPositionHit\n
- v4r6p1 13-Jun-2002 HMK Make AcdRecon use private for test routine\n
- v4r6   11-Jun-2002 HMK Add in AcdRecon writing and replace CalRecon writing\n
- v4r5   11-Jun-2002 HMK New reconRootData version includes new TKR data member\n
- v4r4   10-Jun-2002 HMK Store VolumeId with AcdDigi\n
+        in McPositionHit
+ v4r6p1 13-Jun-2002 HMK Make AcdRecon use private for test routine
+ v4r6   11-Jun-2002 HMK Add in AcdRecon writing and replace CalRecon writing
+ v4r5   11-Jun-2002 HMK New reconRootData version includes new TKR data member
+ v4r4   10-Jun-2002 HMK Store VolumeId with AcdDigi
  v4r3   06-Jun-2002 HMK Handle time stamp and trigger bits in digi
-        reading and writing\n
+        reading and writing
  v4r2   06-Jun-2002 HMK Add in AcdDigi handling and more gracefully
-        handle ROOT file opening failures\n
- v4r1p6 06-Jun-2002 HMK fix use of enum in reconRootWriterAlg\n
- v4r1p5 05-Jun-2002 THB accumulated fixes for Eventmodel changes\n
- v4r1p1 24-May-2002 HMK Use new CalCluser ctro to set energy sum\n
- v4r1p0 23-May-2002 HMK Fix up enum usage for Linux \n
- v4r1   22-May-2002 HMK Add in TkrDigi writing and reading \n
- v4r0   21-May-2002 HMK Complete CalRecon writing\n
-        19-May-2002 TU  Updates for TkrRecon writing\n
- v3r1   14-May-2002 HMK Update for initialPosition in McParticle\n
- v3r0   14-May-2002 HMK Add in new algs for digi handling\n
- v2r0p1 13-May-2002 HMK Write event and run ids when reading from ROOT\n
- v2r0   10-May-2002 THB Conversion to Event\n
- v1r0   01-May-2002 HMK Fix for v2r1 version of mcRootData \n
-        Seems able to write and read mcRootData to/from ROOT \n
-        But note that TRefs do not function when reading in a program \n
+        handle ROOT file opening failures
+ v4r1p6 06-Jun-2002 HMK fix use of enum in reconRootWriterAlg
+ v4r1p5 05-Jun-2002 THB accumulated fixes for Eventmodel changes
+ v4r1p1 24-May-2002 HMK Use new CalCluser ctro to set energy sum
+ v4r1p0 23-May-2002 HMK Fix up enum usage for Linux 
+ v4r1   22-May-2002 HMK Add in TkrDigi writing and reading 
+ v4r0   21-May-2002 HMK Complete CalRecon writing
+        19-May-2002 TU  Updates for TkrRecon writing
+ v3r1   14-May-2002 HMK Update for initialPosition in McParticle
+ v3r0   14-May-2002 HMK Add in new algs for digi handling
+ v2r0p1 13-May-2002 HMK Write event and run ids when reading from ROOT
+ v2r0   10-May-2002 THB Conversion to Event
+ v1r0   01-May-2002 HMK Fix for v2r1 version of mcRootData 
+        Seems able to write and read mcRootData to/from ROOT 
+        But note that TRefs do not function when reading in a program 
         It only works when reading the file in ROOT itself.
- v0     22-Apr-2002 HMK initial import \n
+ v0     22-Apr-2002 HMK initial import 
+@endverbatim
 */
