@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/IRootIoSvc.h,v 1.1 2003/06/02 01:53:19 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.1 2003/08/21 23:31:48 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -20,7 +20,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/IRootIoSvc.h,v 1.1 2003/06/02 01:53:19 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.1 2003/08/21 23:31:48 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
@@ -34,6 +34,8 @@ public:
 
 	virtual void setRunEventPair(std::pair<int,int> ids) = 0;
 	virtual std::pair<int,int> runEventPair() = 0;
+
+    virtual int getAutoSaveInterval() = 0;
 
     /// Retrieve interface ID
     static const InterfaceID& interfaceID() { return IID_IRootIoSvc; }
