@@ -1,7 +1,7 @@
 package RootIo
-version v12r3
+version v12r4p0
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.95 2004/06/20 18:08:24 burnett Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.96 2004/06/21 06:22:16 burnett Exp $
 
 branches src doc
 
@@ -18,6 +18,10 @@ use reconRootData v4r* -no_auto_imports
 use commonRootData v0r* -no_auto_imports
 
 use LdfEvent v*
+
+
+macro_append ROOT_libs " -lHist -lGraf -lGraf3d -lTreePlayer "\
+                 WIN32 " libHist.lib libGraf.lib libGraf3d.lib libTreePlayer.lib "
 
 private
 use GlastSvc v9r*
