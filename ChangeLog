@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Wed Nov 24 06:16:32 PST 2004
+RootIo/src/test
+
+Modified Files:
+	readHeadersOptions.txt writeHeadersOptions.txt 
+Log Message:
+Replace occurences of TString::ReadLine() ; I could not test because my last cvs update made my RootIo incompatible with my GlastReleasev4r5... I will try just now with GlastReleasev4r6 and under windows
+    *
+------------------------------------------------------------
+User: chamont  Wed Nov 24 06:16:32 PST 2004
 RootIo/src/Dll
 
 Modified Files:
