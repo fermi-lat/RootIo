@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Jan  9 10:56:23 PST 2004
+RootIo/src
+
+Modified Files:
+	commonData.h digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+remove GlastDetSvc include
+    *
+------------------------------------------------------------
 User: heather  Fri Jan  9 10:30:47 PST 2004
 RootIo/doc
 
