@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue May 14 14:01:16 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+updates for the new initialPosition data member in McParticle
+    *
+------------------------------------------------------------
 User: heather  Tue May 14 08:58:42 PDT 2002
 RootIo/doc
 
