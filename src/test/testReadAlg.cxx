@@ -20,6 +20,7 @@
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
 
+#include "LdfEvent/Gem.h"
 
 #include <map>
 
@@ -27,7 +28,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.8 2002/10/10 07:57:12 cohen Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.9.6.1 2004/08/18 19:14:16 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -49,6 +50,7 @@ private:
     StatusCode readMcData();
 
     StatusCode readDigiData();
+    StatusCode readGemData();
 
     StatusCode readReconData();
     
@@ -84,6 +86,7 @@ StatusCode testReadAlg::execute()
     sc = readMcData();
 
     sc = readDigiData();
+    sc = readGemData();
 
     sc = readReconData();
 
@@ -188,6 +191,23 @@ StatusCode testReadAlg::readDigiData() {
                 const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(range);
             }
         }
+    }
+
+    return sc;
+}
+
+StatusCode testReadAlg::readGemData() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<LdfEvent::Gem> gemTds(eventSvc(), "/Event/Gem");
+    if (!gemTds) {
+        log << MSG::INFO << "No GEM available" << endreq;
+    } else {
+       log << MSG::INFO;
+       (*gemTds).fillStream(log.stream());
+       log << endreq;
     }
 
     return sc;

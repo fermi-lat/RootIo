@@ -16,6 +16,8 @@
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
 
+#include "LdfEvent/EventSummaryData.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -43,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34 2004/07/06 22:10:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34.2.2 2004/08/27 04:44:50 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -189,6 +191,7 @@ StatusCode reconRootReaderAlg::initialize()
       }
 	  f.Close();
 	  m_reconTree->Add(m_fileName.c_str());
+          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
@@ -200,9 +203,10 @@ StatusCode reconRootReaderAlg::initialize()
           log << MSG::ERROR << "ROOT file " << theFile.c_str()
               << " could not be opened for reading." << endreq;
           return StatusCode::FAILURE;
-       }
-		f.Close();
-	   m_reconTree->Add(theFile.c_str());
+        }
+        f.Close();
+        m_reconTree->Add(theFile.c_str());
+        log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
       }
     }
 
@@ -322,6 +326,20 @@ StatusCode reconRootReaderAlg::readReconEvent() {
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
     
+    // Only update the eventflags on the TDS if the /Event/EventSummary
+    // does not yet exist (digiRootReader may fill this for us)
+    SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
+    if (!summaryTds) {
+      LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
+      evtSumTds->initEventFlags(m_reconEvt->getEventFlags());
+      sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
+      if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register /Event/EventSummary " << endreq
+;
+        return sc;
+      }
+    }
+
     return sc;
 }
 

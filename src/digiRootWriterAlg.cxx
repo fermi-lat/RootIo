@@ -15,7 +15,7 @@
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
-
+#include "LdfEvent/Gem.h"
 
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
@@ -41,7 +41,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26 2004/06/10 17:03:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.26.4.5 2004/08/27 04:45:17 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -63,6 +63,9 @@ private:
 
     /// Retrieves event Id and run Id from TDS and fills the McEvent ROOT object
     StatusCode writeDigiEvent();
+
+    // GEM data
+    StatusCode writeGem();
 
     /// EM summary word
     StatusCode writeEventSummary();
@@ -240,10 +243,15 @@ StatusCode digiRootWriterAlg::execute()
 
     sc = writeEventSummary();
     if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to write diagnostic data" << endreq;
+        log << MSG::ERROR << "Failed to write EventSummary data" << endreq;
         return sc;
     }
     
+    sc = writeGem();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write GEM data" << endreq;
+        return sc;
+    }
 
     writeEvent();
     return sc;
@@ -294,13 +302,42 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
 
     if (!summaryTds) {
+      // Not a big deal - for simulated data it won't exist right now
       log << MSG::DEBUG << "No Event Summary Data found on TDS" << endreq;
       return sc;
     }
     m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
+    m_digiEvt->getEventSummaryData().initEventFlags(summaryTds->eventFlags());
     return sc;
 }
 
+StatusCode digiRootWriterAlg::writeGem() {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Retrieve the Event Summary data for this event
+    SmartDataPtr<LdfEvent::Gem> gemTds(eventSvc(), "/Event/Gem");
+
+    if (!gemTds) {
+      log << MSG::DEBUG << "No GEM found on TDS" << endreq;
+      return sc;
+    }
+    const LdfEvent::GemTileList tileListTds = gemTds->tileList();
+    Gem gemRoot;
+    GemTileList tileListRoot(tileListTds.xzm(), tileListTds.xzp(), 
+                tileListTds.yzm(), tileListTds.yzp(), tileListTds.xy(),
+                tileListTds.rbn(), tileListTds.na());
+    GemOnePpsTime ppsTimeRoot(gemTds->onePpsTime().timebase(), gemTds->onePpsTime().seconds());
+    gemRoot.initTrigger(gemTds->tkrVector(), gemTds->roiVector(), 
+             gemTds->calLEvector(), gemTds->calHEvector(), gemTds->cnoVector(),
+             gemTds->conditionSummary(), tileListRoot);
+    gemRoot.initSummary(gemTds->liveTime(), gemTds->prescaled(), 
+             gemTds->discarded(), gemTds->sent(), gemTds->triggerTime(),
+             ppsTimeRoot, gemTds->deltaEventTime());
+    m_digiEvt->initGem(gemRoot);
+    return sc;
+
+}
 
 StatusCode digiRootWriterAlg::writeDiagnostic() {
     // Purpose and Method:  Retrieve the Diagnostic object from the TDS and write the

@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.7 2004/07/06 21:54:59 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.8.2.1 2004/08/05 06:21:35 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.7 2004/07/06 21:54:59 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.8.2.1 2004/08/05 06:21:35 heather Exp $
 */
 
 // includes
@@ -229,7 +229,7 @@ bool RootIoSvc::setIndex(int i) {
      if (i < 0) return false;
      std::vector<TChain*>::iterator it;
      for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
-       if (i > (*it)->GetEntries()) return false;
+       if (i >= (*it)->GetEntries()) return false;
      }
      m_index = i;
      m_runEventPair = std::pair<int, int>(-1,-1);
@@ -241,7 +241,7 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
     std::vector<TChain*>::iterator it;
     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
         int readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
-        if ( (readInd < 0) || (readInd > (*it)->GetEntries()) ) return false;
+        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) return false;
     }
     m_runEventPair = ids;
     m_index=-1;

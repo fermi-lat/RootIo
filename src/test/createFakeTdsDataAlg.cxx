@@ -15,6 +15,8 @@
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 
+#include "LdfEvent/Gem.h"
+
 #include "idents/CalXtalId.h"
 #include "idents/VolumeIdentifier.h"
 #include "idents/AcdId.h"
@@ -27,7 +29,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.4 2002/09/25 20:13:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.5.6.2 2004/08/18 20:37:46 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -49,6 +51,8 @@ private:
     StatusCode storeDigiData();
 
     StatusCode storeReconData();
+
+    StatusCode storeGemData();
 
     unsigned int m_numMcParticles, m_numMcPosHits, m_numMcIntHits;
     unsigned int m_numAcdDigi, m_numCalDigi, m_numTkrDigi;
@@ -102,6 +106,7 @@ StatusCode createFakeTdsDataAlg::execute()
 
     sc = storeMcData();
 
+    sc = storeGemData();
     sc = storeDigiData();
 
     sc = storeReconData();
@@ -206,6 +211,26 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
 }
 
 
+StatusCode createFakeTdsDataAlg::storeGemData() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+   
+    // create the TDS location for the Gem
+    LdfEvent::Gem *gemTds= new LdfEvent::Gem;
+    LdfEvent::GemTileList tileListTds(1,2, 3, 4, 5, 6, 7);
+    gemTds->initTrigger(8, 9, 10, 11, 12, 13, tileListTds);
+    LdfEvent::GemOnePpsTime ppsTimeTds(14, 15);
+    gemTds->initSummary(16, 17, 18, 19, 20, ppsTimeTds, 21);
+
+    sc = eventSvc()->registerObject("/Event/Gem", gemTds);
+    if (sc.isFailure()) {
+        log << "Failed to register Gem" << endreq;
+        return StatusCode::FAILURE;
+    }
+    return sc;
+
+}
 StatusCode createFakeTdsDataAlg::storeDigiData() {
     // Purpose and Method:  Create fake digitization data for ACD, CAL,
     //   TKR.  The data is stored on the TDS.
