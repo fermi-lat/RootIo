@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Thu May 16 11:06:27 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Add the code to fill candidate tracks, fit tracks and vertices
+Note: not yet tested - code compiles at this point
+
+    *
+------------------------------------------------------------
 User: heather  Thu May 16 07:03:33 PDT 2002
 RootIo/src
 
