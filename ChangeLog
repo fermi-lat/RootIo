@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Tue Jun 11 12:36:44 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Added code to fill the "Active Distance" data member in TkrHitPlane
+
+    *
+------------------------------------------------------------
 User: heather  Tue Jun 11 09:53:47 PDT 2002
 RootIo/cmt
 
