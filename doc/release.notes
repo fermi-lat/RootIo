@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r4p0 05-Jul-2004 HMK Fix to link to all ROOT libs required for BuildIndex on Linux
+ v12r4               
  v12r3   20-Jun-2004 THB set no_auto_imports for all rootData included packages
  v12r2   17-Jun-2004 HMK Pick up new RootPolicy v4
  v12r1   10-Jun-2004 HMK Re-activate BuildIndex. Now saves an index based on runid and eventid when writing
