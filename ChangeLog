@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Wed Dec 15 16:24:30 PST 2004
+RootIo/src
+
+Modified Files:
+	commonData.cxx commonData.h reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+Modifications needed to use new TkrRecon PDS scheme. Removed all obsolete TkrRecon references
+    *
+------------------------------------------------------------
 User: usher  Wed Dec 15 16:24:29 PST 2004
 RootIo/doc
 
