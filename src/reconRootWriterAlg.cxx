@@ -39,7 +39,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.36 2004/06/10 17:03:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.36.4.1 2004/08/27 04:45:00 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -245,7 +245,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
 
     // For simulated data - this may not exist on the TDS and that is ok
     // no need to fail for that
-    SmartDataPtr<LdfEvent::EventSummary> summaryTds(eventSvc(), "/Event/EventSummary");
+    SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
     if (summaryTds) 
         m_reconEvt->initEventFlags(summaryTds->eventFlags());
         
