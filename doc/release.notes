@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v12r7p0 28-Aug-2004 HMK event flags in recon too
  v12r7   27-Aug-2004 HMK Handle new event flags
  v12r6   18-Aug-2004 HMK Handle GEM data
  v12r5p7 10-Aug-2004 HMK Remove use of RootPolicy - does not appear to be 
