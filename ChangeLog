@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Feb  1 21:21:01 PST 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+handle DigiEvent::fromMc properly
+    *
+------------------------------------------------------------
 User: heather  Tue Feb  1 21:20:57 PST 2005
 RootIo/cmt
 
