@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  1 10:42:15 PDT 2003
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+	readDigiRootOptions.txt readMcRootOptions.txt 
+	readReconRootOptions.txt mainpage.h 
+Log Message:
+allow reading in list of root files using chains
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  1 07:25:08 PDT 2003
 RootIo/doc
 
