@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.28 2004/07/06 21:54:09 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.29 2004/07/06 22:10:34 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -317,9 +317,14 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
-    SmartDataPtr<LdfEvent::LdfTime> timeTds(eventSvc(), "/Event/Time");
-    if (timeTds) {
-        timeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec(), m_digiEvt->getEbfUpperPpcTimeBase(), m_digiEvt->getEbfLowerPpcTimeBase());
+    LdfEvent::LdfTime *ldfTimeTds = new LdfEvent::LdfTime();
+    if (ldfTimeTds) {
+        ldfTimeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec(), m_digiEvt->getEbfUpperPpcTimeBase(), m_digiEvt->getEbfLowerPpcTimeBase());
+        sc = eventSvc()->registerObject("/Event/Time", ldfTimeTds);
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "could not register /Event/Time " << endreq;
+            return sc;
+        }
     }
     return sc;
 }
