@@ -6,10 +6,10 @@
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 
-ApplicationMgr.TopAlg +=  { "digirRootReaderAlg"};
+ApplicationMgr.TopAlg +=  { "reconRootReaderAlg"};
 
-digiRootReaderAlg.OutputLevel = 3;
-digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
+reconRootReaderAlg.OutputLevel = 3;
+reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
 
 
 //==============================================================
