@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Thu Aug 26 10:24:04 PDT 2004
+RootIo/src/test
+
+Modified Files:
+	.cvsignore jobOptions.txt 
+Log Message:
+remove a StatusCode::FAILURE
+    *
+------------------------------------------------------------
+User: chamont  Thu Aug 26 10:24:04 PDT 2004
 RootIo/src
 
 Modified Files:
