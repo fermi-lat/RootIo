@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 30 23:23:41 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+store contribution lengths
+    *
+------------------------------------------------------------
 User: heather  Fri Sep 24 12:14:06 PDT 2004
 RootIo/src
 
