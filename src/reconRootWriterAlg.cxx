@@ -10,7 +10,7 @@
 
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
 #include "Event/Recon/TkrRecon/TkrPatCandCol.h"
-#include "Event/Recon/TkrRecon/TkrFitTrackCol.h"
+#include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
 #include "Event/Recon/CalRecon/CalCluster.h"
@@ -32,7 +32,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.9 2002/05/24 20:55:49 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.10 2002/06/02 02:38:50 burnett Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -284,8 +284,8 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
 
     // Iterate over the tracks in the TDS
     int                 trkId  = 0;
-    Event::TkrFitColPtr trkPtr = tracksTds->getTrackIterBegin();
-    while(trkPtr != tracksTds->getTrackIterEnd())
+    std::vector<Event::TkrFitTrack*>::iterator trkPtr = tracksTds->begin();
+    while(trkPtr != tracksTds->end())
     {
         Event::TkrFitTrack* trackTds  = *trkPtr++;       // The TDS track
         TkrTrack*           track = new TkrTrack();      // Create a new Root Track
@@ -460,7 +460,7 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
         // Now add the track ids 
         // This is pretty ugly because we don't store track ids in the TDS classes
 
-        Event::TkrFitColPtr vtxTrkIter = vtxTds->getTrackIterBegin();
+        SmartRefVector<Event::TkrFitTrack>::const_iterator vtxTrkIter = vtxTds->getTrackIterBegin();
         while(vtxTrkIter != vtxTds->getTrackIterEnd())
         {
             // Basically... take the pointer to the track from the vertex list and loop
@@ -468,10 +468,10 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
             // the id according to the loop variable value.
             // This ALWAYS succeeds (and I'm also selling valuable swampland in Florida!)
             int                 trkId  = 0;
-            Event::TkrFitColPtr trkPtr = tracksTds->getTrackIterBegin();
+            std::vector<Event::TkrFitTrack*>::iterator trkPtr = tracksTds->begin();
             Event::TkrFitTrack* fitTrk = *vtxTrkIter++;
 
-            while(trkPtr != tracksTds->getTrackIterEnd())
+            while(trkPtr != tracksTds->end())
             {
                 if (fitTrk == *trkPtr++) break;
                 trkId++;
