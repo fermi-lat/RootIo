@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: chamont  Fri Aug 27 06:55:40 PDT 2004
+RootIo/src
+
+Added Files:
+	testCaloFileHeadersSetAlg.cxx testCaloFileHeadersSetAlg.h 
+Removed Files:
+	CaloFileHeadersSetAlg.cxx CaloFileHeadersSetAlg.h 
+Log Message:
+rename CaloFileHeadersSetAlg into testCaloFileHeadersSetAlg
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 23:37:02 PDT 2004
 RootIo/src
 
