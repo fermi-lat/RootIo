@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.9 2002/10/09 23:42:02 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.10 2002/10/16 02:02:06 heather Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -71,9 +71,9 @@ private:
     /// convert a ROOT TkrCovMat to a CLHEP HepMatrix
     void convertMatrix(const TkrCovMat& matRoot, HepMatrix &matTds);
     /// convert a ROOT TkrCandHit::AXIS to a TDS Event::TkrCluster::view
-    void convertCandHitView(TkrCandHit::AXIS viewRoot, Event::TkrCluster::view viewTds);
+    void convertCandHitView(TkrCandHit::AXIS viewRoot, Event::TkrCluster::view &viewTds);
     /// convert a ROOT TkrHitPlane::AXIS to a TDS Event::TkrCluster::view
-    void convertHitPlaneView(TkrHitPlane::AXIS viewRoot, Event::TkrCluster::view viewTds);
+    void convertHitPlaneView(TkrHitPlane::AXIS viewRoot, Event::TkrCluster::view &viewTds);
 
     /// Reads CAL recon data from ROOT and puts data on TDS
     StatusCode readCalRecon();
@@ -324,7 +324,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
 
 	while (clusterRoot = (TkrCluster*)clusterIter.Next()) {
 		TkrCluster::view viewRoot = clusterRoot->getView();
-		Event::TkrCluster::view viewTds;
+                Event::TkrCluster::view viewTds;
 		
 		if (viewRoot == TkrCluster::X) viewTds = Event::TkrCluster::X;
 		else viewTds = Event::TkrCluster::Y;
@@ -507,7 +507,7 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
 }
 
 
-void reconRootReaderAlg::convertCandHitView(TkrCandHit::AXIS viewRoot, Event::TkrCluster::view viewTds) {
+void reconRootReaderAlg::convertCandHitView(TkrCandHit::AXIS viewRoot, Event::TkrCluster::view &viewTds) {
     // Purpose and Method:  Converts from ROOT TkrCandHit::AXIS to a Event::TkrCluster::view
 
     viewTds = (viewRoot == TkrCandHit::X) ? Event::TkrCluster::X : Event::TkrCluster::Y;
@@ -515,7 +515,7 @@ void reconRootReaderAlg::convertCandHitView(TkrCandHit::AXIS viewRoot, Event::Tk
     return;
 }
 
-void reconRootReaderAlg::convertHitPlaneView(TkrHitPlane::AXIS viewRoot, Event::TkrCluster::view viewTds) {
+void reconRootReaderAlg::convertHitPlaneView(TkrHitPlane::AXIS viewRoot, Event::TkrCluster::view &viewTds) {
     // Purpose and Method:  Convertes from ROOT TkrHitPlane::AXIS to an Event::TkrCluster::view
 
     viewTds = (viewRoot == TkrHitPlane::X) ? Event::TkrCluster::X : Event::TkrCluster::Y;
