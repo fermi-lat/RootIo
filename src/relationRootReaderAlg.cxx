@@ -42,7 +42,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.4 2003/07/01 17:42:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.5 2003/08/21 23:37:28 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -213,11 +213,11 @@ StatusCode relationRootReaderAlg::execute()
     
     static Int_t evtId = 0;
 	int readInd, numBytes;
-	std::pair<int,int> runEventPair = m_rootIoSvc->runEventPair();
+	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 	
-	if (m_rootIoSvc->index() >= 0) {
+	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
 		readInd = m_rootIoSvc->index();
-	} else if ((runEventPair.first != -1) && (runEventPair.second != -1)) {
+	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
 		char cutStr[100];
