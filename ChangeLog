@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: als  Mon Jun 10 12:02:22 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+remove private use, now compiles on linux
+
+    *
+------------------------------------------------------------
 User: heather  Fri Jun  7 07:36:14 PDT 2002
 RootIo/cmt
 
