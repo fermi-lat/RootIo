@@ -1,5 +1,5 @@
 package RootIo
-version v4r9p1
+version v4r9p3
 
 branches src doc
 
@@ -7,9 +7,9 @@ use GaudiSvc v7r*
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
-use mcRootData v2r5p2
-use digiRootData v3r5p1
-use reconRootData v3r2p1
+use mcRootData v2r5p3
+use digiRootData v3r5p2
+use reconRootData v3r2p2
 use GlastPolicy v4r*
 
 public
