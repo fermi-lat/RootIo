@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Nov 25 05:37:11 PST 2004
+RootIo/src
+
+Modified Files:
+	FhTool.cxx reconRootWriterAlg.cxx 
+Log Message:
+additionnal debugging display, and revert erroneous replacements
+    *
+------------------------------------------------------------
 User: chamont  Thu Nov 25 02:42:35 PST 2004
 RootIo/src
 
