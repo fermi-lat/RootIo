@@ -12,7 +12,7 @@
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
-#include "Event/Recon/CalRecon/CalXtalRecData.h"   
+#include "Event/Recon/CalRecon/CalXtalRecData.h"  
 
 #include "LdfEvent/EventSummaryData.h"
 
@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.42 2004/12/26 23:22:58 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.43 2005/01/25 19:14:29 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -402,7 +402,15 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
     const TObjArray * clusterRootCol = tkrRecRoot->getClusterCol();
     TIter clusterIter(clusterRootCol);
     TkrCluster *clusterRoot = 0;
-    
+
+    Event::TkrIdClusterMap* clusMap = new Event::TkrIdClusterMap;
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrIdClusterMap,
+        clusMap);
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "failed to register TkrIdClusterMap on the TDS" << endreq;
+        return sc;
+    }
+     
     while ((clusterRoot = (TkrCluster*)clusterIter.Next())!=0) 
     {
         commonRootData::TkrId tkrIdRoot = clusterRoot->getTkrId();
@@ -416,17 +424,19 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
         TVector3 posRoot = clusterRoot->getPosition();
         Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
 
-        Event::TkrCluster* clusterTds = new Event::TkrCluster(tkrId, 
-                                                              clusterRoot->getFirstStrip(),
-                                                              clusterRoot->getLastStrip(),
-                                                              posTds,
-                                                              clusterRoot->getToT(),
-                                                              clusterRoot->getStatusWord()//,
-                                                              //clusterRoot->getId() 
-                                                              );
-        
-        clusterTdsCol->push_back(clusterTds);
+        Event::TkrCluster* clusterTds 
+            = new Event::TkrCluster(tkrId, 
+            clusterRoot->getFirstStrip(),
+            clusterRoot->getLastStrip(),
+            posTds,
+            clusterRoot->getMips(),
+            clusterRoot->getStatusWord(),
+            clusterRoot->getNBad()
+            );
 
+        clusterTdsCol->push_back(clusterTds);
+        (*clusMap)[tkrId].push_back(clusterTds);
+ 
         m_common.m_rootTkrClusterMap[clusterRoot] = clusterTds;
     }
     
