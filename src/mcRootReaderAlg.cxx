@@ -4,12 +4,12 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-#include "GlastEvent/TopLevel/Event.h"
-#include "GlastEvent/TopLevel/MCEvent.h"
-#include "GlastEvent/TopLevel/EventModel.h"
-#include "GlastEvent/MonteCarlo/McParticle.h"
-#include "GlastEvent/MonteCarlo/McIntegratingHit.h"
-#include "GlastEvent/MonteCarlo/McPositionHit.h"
+#include "Event/TopLevel/Event.h"
+#include "Event/TopLevel/MCEvent.h"
+#include "Event/TopLevel/EventModel.h"
+#include "Event/MonteCarlo/McParticle.h"
+#include "Event/MonteCarlo/McIntegratingHit.h"
+#include "Event/MonteCarlo/McPositionHit.h"
 
 
 #include "TROOT.h"
@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.2 2002/04/29 14:17:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.3 2002/05/01 23:34:40 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -79,7 +79,7 @@ private:
 
     /// Keep track of MC particles as we retrieve them from the ROOT file
     /// The id is the unique id assigned by ROOT for every TObject.
-    std::map<UInt_t, mc::McParticle*> m_particleMap;
+    std::map<UInt_t, Event::McParticle*> m_particleMap;
     
 };
 
@@ -167,7 +167,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     // Purpose and Method:  Retrieve the McParticle collection from the ROOT file 
     //    and fill the TDS McParticle collection
     // Input:  ROOT McParticle collection
-    // TDS Output:  EventModel::MC::McParticleCol
+    // TDS Output:  EventModel::EVENT::McParticleCol
 
     MsgStream log(msgSvc(), name());
 
@@ -178,7 +178,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     TIter partIter(particles);
 
     // create the TDS location for the McParticle Collection
-    mc::McParticleCol* pTdsCol = new mc::McParticleCol;
+    Event::McParticleCol* pTdsCol = new Event::McParticleCol;
     sc = eventSvc()->registerObject(EventModel::MC::McParticleCol, pTdsCol);
     if (sc.isFailure()) {
         log << "Failed to register McParticle Collection" << endreq;
@@ -188,7 +188,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     McParticle *pRoot;
     // Create the map of ROOT unique ids and TDS McParticle objects
     while (pRoot = (McParticle*)partIter.Next()) {
-        mc::McParticle *pTds = new mc::McParticle();
+        Event::McParticle *pTds = new Event::McParticle();
         m_particleMap[pRoot->GetUniqueID()] = pTds;
     }
 
@@ -198,7 +198,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     // Now that the map is available, we initialize all of the TDS McParticles
     while (pRoot = (McParticle*)partIter.Next()) {
 
-        mc::McParticle *pTds = m_particleMap[pRoot->GetUniqueID()];
+        Event::McParticle *pTds = m_particleMap[pRoot->GetUniqueID()];
 
         int idTds = pRoot->getParticleId();
 
@@ -218,7 +218,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
 
         const McParticle *momRoot = pRoot->getMother();
 
-        mc::McParticle *momTds = 0;
+        Event::McParticle *momTds = 0;
 
         if (momRoot != 0) {
             // The case where this is the primary particle
@@ -252,14 +252,14 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    //SmartDataPtr<McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);    
+    //SmartDataPtr<McPositionHitVector> posHits(eventSvc(), EventModel::EVENT::McPositionHitCol);    
     
     const TObjArray *posHits = m_mcEvt->getMcPositionHitCol();
     if (!posHits) return sc;
     TIter hitIter(posHits);
 
     // create the TDS location for the McParticle Collection
-    McPositionHitVector* pTdsCol = new McPositionHitVector;
+    Event::McPositionHitVector* pTdsCol = new Event::McPositionHitVector;
     sc = eventSvc()->registerObject(EventModel::MC::McPositionHitCol, pTdsCol);
     if (sc.isFailure()) {
         log << "Failed to register McPositionHit Collection" << endreq;
@@ -269,7 +269,7 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
     const McPositionHit *posHitRoot;
     while (posHitRoot = (McPositionHit*)hitIter.Next()) {
     
-        mc::McPositionHit *posHitTds = new mc::McPositionHit();
+        Event::McPositionHit *posHitTds = new Event::McPositionHit();
 
         VolumeIdentifier volIdRoot = posHitRoot->getVolumeId();
         idents::VolumeIdentifier volIdTds;
@@ -290,14 +290,14 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         posHitTds->setTimeOfFlight(tofTds);
         
         const McParticle *mcRoot = posHitRoot->getMcParticle();
-        mc::McParticle *mcTds = 0;
+        Event::McParticle *mcTds = 0;
         if (mcRoot != 0) {
             mcTds = m_particleMap[mcRoot->GetUniqueID()];
             posHitTds->setMcParticle(mcTds);
         }
       
         const McParticle *originRoot = posHitRoot->getOriginMcParticle();
-        mc::McParticle *originTds = 0;
+        Event::McParticle *originTds = 0;
         if (originRoot != 0) {
             originTds = m_particleMap[originRoot->GetUniqueID()];
             posHitTds->setOriginMcParticle(originTds);
@@ -316,7 +316,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     // Purpose and Method:  Retrieve the McIntegratingHit collection from the
     //     ROOT file and fill the TDS McIntegratingHit collection.
     // Input:  ROOT McIntegratingHit collection
-    // TDS Output:  EventModel::MC::McIntegratingHitCol
+    // TDS Output:  EventModel::EVENT::McIntegratingHitCol
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
@@ -326,7 +326,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     TIter hitIter(intHits);
 
     // create the TDS location for the McParticle Collection
-    McIntegratingHitVector* pTdsCol = new McIntegratingHitVector;
+    Event::McIntegratingHitVector* pTdsCol = new Event::McIntegratingHitVector;
     sc = eventSvc()->registerObject(EventModel::MC::McIntegratingHitCol, pTdsCol);
     if (sc.isFailure()) {
         log << "Failed to register McIntegratingHit" << endreq;
@@ -336,7 +336,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     McIntegratingHit *intHitRoot;
     while (intHitRoot = (McIntegratingHit*)hitIter.Next()) {
 
-        mc::McIntegratingHit *intHitTds = new mc::McIntegratingHit();
+        Event::McIntegratingHit *intHitTds = new Event::McIntegratingHit();
 
         const VolumeIdentifier idRoot = intHitRoot->getVolumeId();
         idents::VolumeIdentifier idTds;
@@ -344,14 +344,14 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
 
         intHitTds->setVolumeID(idTds);
 
-        const McIntegratingHit::energyDepositMap mcPartMapRoot = intHitRoot->getItemizedEnergy();
-        McIntegratingHit::energyDepositMap::const_iterator rootMapIt;
-        log << MSG::DEBUG << "EnergyMap size: " << mcPartMapRoot.size() << endreq;
+	//        const McIntegratingHit::energyDepositMap mcPartMapRoot = intHitRoot->getItemizedEnergy();
+	//        McIntegratingHit::energyDepositMap::const_iterator rootMapIt;
+	//        log << MSG::DEBUG << "EnergyMap size: " << mcPartMapRoot.size() << endreq;
         // Can't seem to read this back in due to TRef problem in Root 3.02.03
         /*
         for (rootMapIt = mcPartMapRoot.begin(); rootMapIt != mcPartMapRoot.end(); rootMapIt++){
             McParticle* mcPartRoot = rootMapIt->first;
-            mc::McParticle *mcPartTds = m_particleMap[mcPartRoot->GetUniqueID()];
+            Event::McParticle *mcPartTds = m_particleMap[mcPartRoot->GetUniqueID()];
             double e = rootMapIt->second;
             TVector3 posRoot = mcPartRoot->getFinalPosition();
             HepPoint3D posTds(posRoot.X(), posRoot.Y(), posRoot.Z());

@@ -4,12 +4,12 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-#include "GlastEvent/TopLevel/Event.h"
+#include "Event/TopLevel/Event.h"
 #include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
-#include "GlastEvent/TopLevel/EventModel.h"
-#include "GlastEvent/MonteCarlo/McParticle.h"
-#include "GlastEvent/MonteCarlo/McIntegratingHit.h"
-#include "GlastEvent/MonteCarlo/McPositionHit.h"
+#include "Event/TopLevel/EventModel.h"
+#include "Event/MonteCarlo/McParticle.h"
+#include "Event/MonteCarlo/McIntegratingHit.h"
+#include "Event/MonteCarlo/McPositionHit.h"
 
 #include "facilities/Util.h"
 
@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.3 2002/05/01 23:34:40 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.4 2002/05/07 20:51:32 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -89,7 +89,7 @@ private:
 
     /// Keep track of MC particles as we retrieve them from TDS
     /// Used only to aid in writing the ROOT file.
-    std::map<const mc::McParticle*, McParticle*> m_particleMap;
+    std::map<const Event::McParticle*, McParticle*> m_particleMap;
     
 };
 
@@ -196,18 +196,18 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
 StatusCode mcRootWriterAlg::writeMcParticles() {
     // Purpose and Method:  Retrieve the McParticle collection from the TDS 
     //    and fill the ROOT McParticle collection
-    // TDS Input:  EventModel::MC::McParticleCol
+    // TDS Input:  EventModel::EVENT::McParticleCol
     // Output:  ROOT McParticle Collection
 
     MsgStream log(msgSvc(), name());
 
     StatusCode sc = StatusCode::SUCCESS;
 
-    SmartDataPtr<mc::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
+    SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
 
     if (!particles) return sc;
 
-    mc::McParticleCol::const_iterator p;
+    Event::McParticleCol::const_iterator p;
 
     // Create map of TDS McParticles and ROOT McParticles
     for (p = particles->begin(); p != particles->end(); p++) {
@@ -235,7 +235,7 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         HepLorentzVector finalMomTds = (*p)->finalFourMomentum();
         TLorentzVector finalMomRoot(finalMomTds.x(), finalMomTds.y(), finalMomTds.z(), finalMomTds.t());
 
-        const mc::McParticle *momTds = &((*p)->mother());
+        const Event::McParticle *momTds = &((*p)->mother());
         McParticle *momRoot = 0;
         if (momTds != 0) {
             // The case where this is the primary particle
@@ -265,14 +265,14 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
 StatusCode mcRootWriterAlg::writeMcPositionHits() {
     // Purpose and Method:  Retrieve the McPositionHit collection from the TDS 
     //  and fill the ROOT McPositionHit collection.
-    // TDS Input:  EventModel::MC::McPositionHitCol
+    // TDS Input:  EventModel::EVENT::McPositionHitCol
     // Output:  ROOT McPositionHit collection
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
     // Get the McPositionHits Collection from the TDS
-    SmartDataPtr<McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);
+    SmartDataPtr<Event::McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);
     if (!posHits) return sc;
     
     log << MSG::DEBUG << "Number of McPositionHits in the event = " << posHits->size() << endreq;
@@ -307,13 +307,13 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
                 
         Double_t tofRoot = (*hit)->timeOfFlight();
         
-        const mc::McParticle *mcTds = (*hit)->mcParticle();
+        const Event::McParticle *mcTds = (*hit)->mcParticle();
         McParticle *mcRoot = 0;
         if (mcTds != 0) {
             mcRoot = m_particleMap[mcTds];
         }
       
-        const mc::McParticle *originTds = (*hit)->originMcParticle();
+        const Event::McParticle *originTds = (*hit)->originMcParticle();
         McParticle *originRoot = 0;
         if (originTds != 0) {
             originRoot = m_particleMap[originTds];
@@ -334,14 +334,14 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
     // Purpose and Method:  Retrieve the McIntegratingHit collection from the
     //     TDS and fill the ROOT McIntegratingHit collection.
-    // TDS Input:  EventModel::MC::McIntegratingHitCol
+    // TDS Input:  EventModel::EVENT::McIntegratingHitCol
     // Output:  ROOT McIntegratingHit collection
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
     // Retrieve the McIntegratingHit collection from the TDS
-    SmartDataPtr<McIntegratingHitVector> intHits(eventSvc(), 
+    SmartDataPtr<Event::McIntegratingHitVector> intHits(eventSvc(), 
         EventModel::MC::McIntegratingHitCol);
     if (!intHits) return sc;
     
@@ -371,10 +371,10 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         // Setup the ROOT McIntegratingHit
         mcIntHit->initialize(idRoot);
 
-        mc::McIntegratingHit::energyDepositMap tdsMap = (*hit)->itemizedEnergy();
-        mc::McIntegratingHit::energyDepositMap::const_iterator mapIt;
+        Event::McIntegratingHit::energyDepositMap tdsMap = (*hit)->itemizedEnergy();
+        Event::McIntegratingHit::energyDepositMap::const_iterator mapIt;
         for (mapIt = tdsMap.begin(); mapIt != tdsMap.end(); mapIt++) {
-            mc::McParticle *mcPartTds = mapIt->first;
+            Event::McParticle *mcPartTds = mapIt->first;
             McParticle *mcPartRoot = m_particleMap[mcPartTds];
             Double_t e = mapIt->second;
             HepPoint3D posTds = mcPartTds->finalPosition();
