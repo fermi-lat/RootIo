@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul 30 12:51:39 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+begin upgrade for new mcRootData classes
+    *
+------------------------------------------------------------
 User: heather  Tue Jul 30 12:50:11 PDT 2002
 RootIo/doc
 
