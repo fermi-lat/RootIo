@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Jul  3 06:35:03 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	readOptions.txt testReadAlg.cxx 
+Log Message:
+update testing for recon reading
+    *
+------------------------------------------------------------
 User: heather  Wed Jul  3 06:33:52 PDT 2002
 RootIo/src
 
