@@ -31,7 +31,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.8 2003/02/28 23:22:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.9 2003/03/18 15:01:43 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -312,7 +312,7 @@ StatusCode digiRootReaderAlg::readCalDigi() {
     MsgStream log(msgSvc(), name());
 
     StatusCode sc = StatusCode::SUCCESS;
-    const TObjArray *calDigiRootCol = m_digiEvt->getCalDigiCol();
+    const TClonesArray *calDigiRootCol = m_digiEvt->getCalDigiCol();
     if (!calDigiRootCol) return sc;
     TIter calDigiIter(calDigiRootCol);
 
