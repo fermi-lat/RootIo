@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 18 12:01:40 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle GEM
+    *
+------------------------------------------------------------
 User: heather  Fri Aug 13 23:12:13 PDT 2004
 RootIo/src
 
