@@ -1,5 +1,5 @@
 package RootIo
-version v6r4p0
+version v7r0
 
 branches src doc
 
@@ -12,7 +12,7 @@ use GlastPolicy v5r*
 ### checkout for these packages
 use RootPolicy v2r*
 use mcRootData v2r*
-use digiRootData v3r*
+use digiRootData v4r*
 use reconRootData v4r*
 use commonRootData v0r*
 
