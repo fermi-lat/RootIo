@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Mar 14 22:33:29 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx RootIoSvc.cxx 
+Log Message:
+merging EM branch
+    *
+------------------------------------------------------------
 User: heather  Sun Mar 14 22:32:11 PST 2004
 RootIo/doc
 
