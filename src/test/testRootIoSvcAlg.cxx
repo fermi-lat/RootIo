@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.2 2004/01/12 19:28:54 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.3 2004/06/10 18:37:51 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -62,12 +62,18 @@ StatusCode testRootIoSvcAlg::execute()
 
 	static int flag = 0;
 	
-	if (flag % 2)
-		m_rootIoSvc->setIndex(flag);
-    else {
-		m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,48));
-        log << MSG::INFO << "Requesting run/event (10,48) randomly" << endreq;
-    }
+	if (flag % 2) {
+            bool good = m_rootIoSvc->setRunEventPair(std::pair<int,int>(20,400));
+            if (good) {
+                log << MSG::INFO << "Failed test, Found run/event 20,400 - which does not exist" << endreq;
+            } else {
+                log << MSG::INFO << "Passed test, could not find run/event 20,400" << endreq;
+            }
+            m_rootIoSvc->setIndex(flag);
+        } else {
+            m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,48));
+            log << MSG::INFO << "Requesting run/event (10,48) randomly" << endreq;
+         }
         //m_rootIoSvc->setIndex(flag);
 
 	flag++;
