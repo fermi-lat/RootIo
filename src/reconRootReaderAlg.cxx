@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.36 2004/09/15 04:19:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.37 2004/09/24 19:14:05 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -437,7 +437,8 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
         
         Event::TkrCluster *clusterTds = new Event::TkrCluster(clusterRoot->getId(),
             clusterRoot->getPlane(), viewTds, clusterRoot->getFirstStrip(),
-            clusterRoot->getLastStrip(), posTds, clusterRoot->getToT(), clusterRoot->getTower());
+            clusterRoot->getLastStrip(), posTds, clusterRoot->getToT(), 
+            clusterRoot->getTower(), clusterRoot->getStatusWord());
         
         clusterTdsCol->addCluster(clusterTds);
     }
