@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 15 15:27:15 PST 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+store all diag and err lengths
+    *
+------------------------------------------------------------
 TAG
 Tag name: v14r7p1, operation: add
 Package: RootIo
