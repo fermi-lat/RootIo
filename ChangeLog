@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Apr  5 23:44:04 PDT 2005
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+set default tree size to 10 GB
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r2, operation: add
 Package: RootIo
