@@ -2,6 +2,8 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
+ v9r0    06-Jun-2003 UB  Reset ObjectNumber after each event for TRef to avoid 
+         memory leak
  v8r0    31-May-2003 HMK Introduce RootIoSvc which uses IRunable interface to control event loop
  v7r0    25-Mar-2003 AC  Updates for writing TClonesArray in Cal Digi
  v6r4p0  20-Mar-2003 HMK Minor fix for Linux
