@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Mar  3 21:31:15 PST 2004
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx 
+Log Message:
+fix up some warnings
+    *
+------------------------------------------------------------
 User: heather  Wed Mar  3 21:30:03 PST 2004
 RootIo/cmt
 
