@@ -11,7 +11,7 @@
 #include "Event/MonteCarlo/McPositionHit.h"
 #include "Event/Digi/CalDigi.h"
 #include "idents/CalXtalId.h"
-#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
 #include "Event/Recon/TkrRecon/TkrPatCandCol.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
@@ -26,7 +26,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.5 2002/05/14 21:02:27 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.6 2002/07/03 13:35:03 heather Exp $
  */
 
 class testReadAlg : public Algorithm

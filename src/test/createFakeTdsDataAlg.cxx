@@ -12,7 +12,7 @@
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
-#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdRecon.h"
 
 #include "idents/CalXtalId.h"
 #include "idents/VolumeIdentifier.h"
@@ -26,7 +26,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.5 2002/05/14 21:02:27 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.1 2002/06/18 14:51:16 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
