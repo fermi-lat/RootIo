@@ -20,18 +20,18 @@
 #include <sstream>
 #endif
 
-/** @class FhDemoCaloSetAlg
+/** @class FhDemoGetAlg
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoCaloSetAlg.cxx,v 1.1 2004/10/07 12:15:16 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.1 2004/11/24 14:16:31 chamont Exp $
  */
 
-class FhDemoCaloSetAlg : public Algorithm
+class FhDemoGetAlg : public Algorithm
 {	
 public:
     
-    FhDemoCaloSetAlg(const std::string& name, ISvcLocator* pSvcLocator);
+    FhDemoGetAlg(const std::string& name, ISvcLocator* pSvcLocator);
     
     StatusCode initialize();
    
@@ -47,16 +47,16 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<FhDemoCaloSetAlg>  Factory;
-const IAlgFactory& FhDemoCaloSetAlgFactory = Factory;
+static const AlgFactory<FhDemoGetAlg>  Factory;
+const IAlgFactory& FhDemoGetAlgFactory = Factory;
 
 
-FhDemoCaloSetAlg::FhDemoCaloSetAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
+FhDemoGetAlg::FhDemoGetAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator)
 {
 }
 
-StatusCode FhDemoCaloSetAlg::initialize()
+StatusCode FhDemoGetAlg::initialize()
 {
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
@@ -72,7 +72,7 @@ StatusCode FhDemoCaloSetAlg::initialize()
     
 }
 
-StatusCode FhDemoCaloSetAlg::execute()
+StatusCode FhDemoGetAlg::execute()
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
@@ -80,7 +80,7 @@ StatusCode FhDemoCaloSetAlg::execute()
     return sc;
 }
 
-StatusCode FhDemoCaloSetAlg::finalize()
+StatusCode FhDemoGetAlg::finalize()
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
@@ -112,7 +112,7 @@ StatusCode FhDemoCaloSetAlg::finalize()
     return sc;
 }
 
-StatusCode FhDemoCaloSetAlg::finalize_common(
+StatusCode FhDemoGetAlg::finalize_common(
     MsgStream & log, const std::string & prefix, const FileHeader * header ) {
     
     if (!header) return StatusCode::SUCCESS ;
