@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Mar 25 12:17:38 PST 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+remove EbfConverter, use EbfEvent instead
+    *
+------------------------------------------------------------
 User: heather  Thu Mar 25 10:06:58 PST 2004
 RootIo/doc
 
