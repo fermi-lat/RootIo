@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 24 13:47:33 PST 2004
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	requirements 
+Log Message:
+store tower and layer/gtcc for CAL/TKR diagnostic
+    *
+------------------------------------------------------------
 User: chamont  Wed Nov 24 06:16:32 PST 2004
 RootIo/src/test
 
