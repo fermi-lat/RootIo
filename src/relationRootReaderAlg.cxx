@@ -25,6 +25,7 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
+#include "TEventList.h"
 
 #include "mcRootData/McEvent.h"
 #include "digiRootData/DigiEvent.h"
@@ -34,14 +35,14 @@
 #include "facilities/Util.h"
 
 #include "commonData.h"
-#include "IRootIoSvc.h"
+#include "RootIo/IRootIoSvc.h"
 
 /** @class relationRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.3 2003/06/02 01:51:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.4 2003/07/01 17:42:14 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -188,21 +189,6 @@ StatusCode relationRootReaderAlg::initialize()
        }
      }
     }
-/*
-    m_relFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_relFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_relFile->cd();
-    m_relTree = (TTree*)m_relFile->Get(m_treeName.c_str());
-    if (!m_relTree) {
-        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
-            " from file " << m_fileName << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
 
     m_relTab = 0;
     m_relTree->SetBranchAddress("RelTable", &m_relTab);
@@ -225,22 +211,40 @@ StatusCode relationRootReaderAlg::execute()
 
     StatusCode sc = StatusCode::SUCCESS;
     
-/*
-    if (!m_relFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
-
     static Int_t evtId = 0;
+	int readInd, numBytes;
+	std::pair<int,int> runEventPair = m_rootIoSvc->runEventPair();
+	
+	if (m_rootIoSvc->index() >= 0) {
+		readInd = m_rootIoSvc->index();
+	} else if ((runEventPair.first != -1) && (runEventPair.second != -1)) {
+		int run = runEventPair.first;
+		int evt = runEventPair.second;
+		char cutStr[100];
+		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
+		m_relTree->Draw(">>mylist", cutStr);
+		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
+		if (elist->GetN() <= 0) {
+			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
+				<< evt << endreq;
+			return sc;
+		}
+		readInd = elist->GetEntry(0);
+	} else {
+		readInd = evtId;
+	}
 
-    if (evtId >= m_numEvents) {
-        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
+    if (readInd >= m_numEvents) {
+        log << MSG::WARNING << "Requested index is out of bounds" << endreq;
         return StatusCode::FAILURE;
     }
 
-    m_relTree->GetEvent(evtId);
+    numBytes = m_relTree->GetEvent(readInd);
+	
+	if ((numBytes <= 0) || (!m_relTab)) {
+		log << MSG::WARNING << "Failed to Relational Table" << endreq;
+		return StatusCode::SUCCESS;
+	}
 
 
     sc = createTDSTables();
@@ -264,7 +268,8 @@ StatusCode relationRootReaderAlg::execute()
 
 
     m_relTab->Clear();
-    evtId++;
+
+	evtId = readInd+1;
 
     m_common.clear();
     

@@ -3,13 +3,23 @@
 // Job options file for Reading in a ROOT file
 //
 
+#include "$GLEAMROOT/src/basicOptions.txt"
+Generator.Members = {"mcRootReaderAlg"};
+Digitization.Members = {"digiRootReaderAlg"};
+Reconstruction.Members = {"reconRootReaderAlg" };
+Output.Members = {};
+
+mcRootReaderAlg.mcRootFileList = {"$(ROOTIOROOT)/src/test/mc.root"};
+digiRootReaderAlg.digiRootFileList = {"$(ROOTIOROOT)/src/test/digi.root"};
+reconRootReaderAlg.reconRootFileList = {"$(ROOTIOROOT)/src/test/recon.root"};
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 
 ApplicationMgr.ExtSvc += { "RootIoSvc" };
-// controls the event loop
-ApplicationMgr.Runable= "RootIoSvc";
 
+// controls the event loop
+// If using the GUI - comment this out
+ApplicationMgr.Runable= "RootIoSvc";
 
 //==============================================================
 //

@@ -23,6 +23,7 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
+#include "TEventList.h"
 
 #include "reconRootData/ReconEvent.h"
 
@@ -30,7 +31,7 @@
 
 #include "commonData.h"
 
-#include "IRootIoSvc.h"
+#include "RootIo/IRootIoSvc.h"
 
 #include <vector>
 #include <map>
@@ -40,7 +41,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.21 2003/06/02 01:51:28 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.22 2003/07/01 17:42:14 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -191,21 +192,6 @@ StatusCode reconRootReaderAlg::initialize()
     }
 
 
-/*
-    m_reconFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_reconFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_reconFile->cd();
-    m_reconTree = (TTree*)m_reconFile->Get(m_treeName.c_str());
-    if (!m_reconTree) {
-        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
-            " from file " << m_fileName << endreq;
-        return StatusCode::FAILURE;
-    }
-*/    
     m_reconEvt = 0;
     m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
     
@@ -228,25 +214,44 @@ StatusCode reconRootReaderAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
-/*
-    if (!m_reconFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
-    
+        
     if (m_reconEvt) m_reconEvt->Clear();
 
-    static Int_t evtId = 0;
-    if (evtId >= m_numEvents) {
-        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
-        return StatusCode::FAILURE;
-    }
-    
-    if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
-    m_reconTree->GetEvent(evtId);
+	static Int_t evtId = 0;
+	int readInd, numBytes;
+	std::pair<int,int> runEventPair = m_rootIoSvc->runEventPair();
+
+	if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
+
+	if (m_rootIoSvc->index() >= 0) {
+		readInd = m_rootIoSvc->index();
+	} else if ((runEventPair.first != -1) && (runEventPair.second != -1)) {
+		int run = runEventPair.first;
+		int evt = runEventPair.second;
+		char cutStr[100];
+		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
+		m_reconTree->Draw(">>mylist", cutStr);
+		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
+		if (elist->GetN() <= 0) {
+			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
+				<< evt << endreq;
+			return sc;
+		}
+		readInd = elist->GetEntry(0);
+	} else {
+		readInd = evtId;
+	}
+
+	if (readInd >= m_numEvents) {
+		log << MSG::WARNING << "Requested index is out of bounds" << endreq;
+		return StatusCode::FAILURE;
+	}
+	numBytes = m_reconTree->GetEvent(readInd);
+
+	if ((numBytes <= 0) || (!m_reconEvt)) {
+		log << MSG::ERROR << "Failed to Load Recon Event" << endreq;
+		return StatusCode::FAILURE;
+	}
     
     sc = readReconEvent();
     if (sc.isFailure()) {
@@ -273,7 +278,7 @@ StatusCode reconRootReaderAlg::execute()
     }
     
     //m_reconEvt->Clear();
-    evtId++;
+	evtId = readInd+1;
     
     return sc;
 }

@@ -20,12 +20,13 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
+#include "TEventList.h"
 
 #include "mcRootData/McEvent.h"
 
 #include "facilities/Util.h"
 #include "commonData.h"
-#include "IRootIoSvc.h"
+#include "RootIo/IRootIoSvc.h"
 
 #include <map>
 #include <string>
@@ -35,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.24 2003/08/21 18:29:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.25 2003/08/21 20:24:33 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -172,23 +173,6 @@ StatusCode mcRootReaderAlg::initialize()
         }
       }
     }
-
-
-  /* Old method before using TChain
-    m_mcFile = new TFile(m_fileName.c_str(), "READ");
-    if (!m_mcFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_mcFile->cd();
-    m_mcTree = (TTree*)m_mcFile->Get(m_treeName.c_str());
-    if (!m_mcTree) {
-        log << MSG::ERROR << "Could not load Tree " << m_treeName << 
-            " from file " << m_fileName << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
     
     m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
@@ -213,36 +197,46 @@ StatusCode mcRootReaderAlg::execute()
     StatusCode sc = StatusCode::SUCCESS;
     
     if (m_mcEvt) m_mcEvt->Clear();
-
-/*
-    if (!m_mcFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-    }
-*/
-    
+   
     if (!m_mcTree) {
       log << MSG::WARNING << "MC Root unreadable" << endreq;
       return sc;
     }
 
-    static Int_t evtId = 0;
-    if (evtId==0)m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
-    
-    if (evtId >= m_numEvents) {
-        log << MSG::ERROR << "ROOT file contains no more events" << endreq;
-        return StatusCode::FAILURE;
-    }
-    
-    int numBytes = m_mcTree->GetEntry(evtId); 
-    if (numBytes <= 0) {
-      log << MSG::ERROR << "Failed to Load Mc Event" << endreq;
-      return StatusCode::FAILURE;
-    }
-    
-    if (!m_mcEvt) 
-      log << MSG::WARNING << "evt ptr is null" << endreq;
+	static Int_t evtId = 0;
+	int readInd, numBytes;
+	if (evtId==0)m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
+	std::pair<int,int> runEventPair = m_rootIoSvc->runEventPair();
+
+	if (m_rootIoSvc->index() >= 0) {
+		readInd = m_rootIoSvc->index();
+	} else if ((runEventPair.first != -1) && (runEventPair.second != -1)) {
+		int run = runEventPair.first;
+		int evt = runEventPair.second;
+		char cutStr[100];
+		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
+		m_mcTree->Draw(">>mylist", cutStr);
+		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
+		if (elist->GetN() <= 0) {
+			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
+				<< evt << endreq;
+			return sc;
+		}
+		readInd = elist->GetEntry(0);
+	} else {
+		readInd = evtId;
+	}
+
+	if (readInd >= m_numEvents) {
+		log << MSG::WARNING << "Requested index is out of bounds" << endreq;
+		return StatusCode::FAILURE;
+	}
+
+	numBytes = m_mcTree->GetEntry(readInd); 
+	if ((numBytes <= 0) || (!m_mcEvt)) {
+		log << MSG::ERROR << "Failed to Load Mc Event" << endreq;
+		return StatusCode::FAILURE;
+	}
 
     sc = readMcEvent();
     if (sc.isFailure()) {
@@ -268,8 +262,8 @@ StatusCode mcRootReaderAlg::execute()
     sc = readMcIntegratingHits();
     if (sc.isFailure()) return sc;
     
-    evtId++;
-    
+	evtId = readInd+1;
+     
     return sc;
 }
 
@@ -409,7 +403,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         // Process the list of daughters
         const TRefArray daughterArr = pRoot->getDaughterList();
         const McParticle *daughterPartRoot;
-        unsigned int iPart;
+        int iPart;
         for (iPart = 0; iPart < daughterArr.GetEntries(); iPart++) {
 			// Retrieving the daughter directly - rather than through my copy of TRefArray
             //daughterPartRoot = (McParticle*)daughterArr.At(iPart);

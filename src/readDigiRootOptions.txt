@@ -9,11 +9,12 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 ApplicationMgr.TopAlg +=  { "digiRootReaderAlg"};
 
 ApplicationMgr.ExtSvc += { "RootIoSvc" };
-// controls the event loop
+
+// controls the event loop - should be commented out if using GUI
 ApplicationMgr.Runable= "RootIoSvc";
 
 digiRootReaderAlg.OutputLevel = 3;
-digiRootReaderAlg.digiRootFileList = {"$(ROOTIOROOT)/digi.root"};
+digiRootReaderAlg.digiRootFileList = {"$(ROOTIOROOT)/src/test/digi.root"};
 
 
 //==============================================================
