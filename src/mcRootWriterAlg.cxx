@@ -18,6 +18,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TDirectory.h"
+#include "TProcessID.h"
 
 #include "mcRootData/McEvent.h"
 
@@ -29,7 +30,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.22 2003/03/18 15:01:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.23 2003/06/02 01:51:28 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -175,6 +176,8 @@ StatusCode mcRootWriterAlg::execute()
         return StatusCode::FAILURE;
     }
 
+    Int_t ObjectNumber = TProcessID::GetObjectCount();
+
     m_common.m_mcPartMap.clear();
     m_common.m_mcPosHitMap.clear();
     m_common.m_mcIntHitMap.clear();
@@ -192,6 +195,10 @@ StatusCode mcRootWriterAlg::execute()
     if (sc.isFailure()) return sc;
    
     writeEvent();
+
+    // reset object nr in order to avoid memleak
+    TProcessID::SetObjectCount(ObjectNumber);
+
     return sc;
 }
 
