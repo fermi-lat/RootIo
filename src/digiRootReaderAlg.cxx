@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.4 2002/06/06 20:10:12 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.5 2002/06/06 22:13:56 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -64,6 +64,10 @@ private:
 
     /// Closes the ROOT file
     void close();
+
+    /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
+    void convertVolumeId(VolumeIdentifier rootVolId, 
+        idents::VolumeIdentifier &tdsVolId);
    
     /// ROOT file pointer
     TFile *m_digiFile;
@@ -240,9 +244,15 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
     AcdDigi *acdDigiRoot = 0;
     while (acdDigiRoot = (AcdDigi*)acdDigiIter.Next()) {
         float energyTds = acdDigiRoot->getEnergy();
+        
         AcdId idRoot = acdDigiRoot->getId();
         idents::AcdId idTds(idRoot.getLayer(), idRoot.getFace(), 
             idRoot.getRow(), idRoot.getColumn());
+
+        const VolumeIdentifier volIdRoot = acdDigiRoot->getVolId();
+        idents::VolumeIdentifier volIdTds;
+        convertVolumeId(volIdRoot, volIdTds);
+
         unsigned short phaTds[2] = { acdDigiRoot->getPulseHeight(AcdDigi::A),
             acdDigiRoot->getPulseHeight(AcdDigi::B) };
         bool vetoTds[2] = { acdDigiRoot->getVeto(AcdDigi::A),
@@ -251,8 +261,10 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
             acdDigiRoot->getLowDiscrim(AcdDigi::B) };
         bool highTds[2] = { acdDigiRoot->getHighDiscrim(AcdDigi::A),
             acdDigiRoot->getHighDiscrim(AcdDigi::B) };
-        Event::AcdDigi *acdDigiTds = new Event::AcdDigi(idTds, energyTds,
-            phaTds, vetoTds, lowTds, highTds);
+
+        Event::AcdDigi *acdDigiTds = new Event::AcdDigi(idTds, volIdTds, 
+            energyTds,phaTds, vetoTds, lowTds, highTds);
+
         acdDigiTdsCol->push_back(acdDigiTds);
     }
 
@@ -380,4 +392,23 @@ StatusCode digiRootReaderAlg::finalize()
     
     StatusCode sc = StatusCode::SUCCESS;
     return sc;
+}
+
+void digiRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId, 
+                                      idents::VolumeIdentifier& tdsVolId) 
+{
+    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
+    //     in the ROOT class.  The idents::VolumeIdentifier class stores the
+    //     data in one 64 bit word.  We must convert from the two 32 bit words
+    //     into the 64 bit word.  We perform the conversion by iterating over
+    //     all of the ids in the ROOT VolumeIdentifier and appending them to
+    //     the TDS idents::VolumeIdentifier.
+    // Input:  ROOT VolumeIdentifier
+    // Ouput:  idents::VolumeIdentifier
+
+    unsigned int index;
+    for (index = 0; index < rootVolId.size(); index++) {
+        tdsVolId.append(rootVolId.operator [](index));
+    }
+
 }
