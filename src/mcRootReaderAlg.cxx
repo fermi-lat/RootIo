@@ -35,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.31 2003/09/02 15:55:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.32 2004/01/20 19:14:52 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -322,7 +322,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     
     McParticle *pRoot;
     // Create the map of ROOT unique ids and TDS McParticle objects
-    while (pRoot = (McParticle*)partIter.Next()) {
+    while ((pRoot = (McParticle*)partIter.Next()) != 0) {
         Event::McParticle *pTds = new Event::McParticle();
         m_particleMap[pRoot->GetUniqueID()] = pTds;
     }
@@ -331,7 +331,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
     partIter.Reset();
     
     // Now that the map is available, we initialize all of the TDS McParticles
-    while (pRoot = (McParticle*)partIter.Next()) {
+    while ((pRoot = (McParticle*)partIter.Next())!=0) {
         
         Event::McParticle *pTds = m_particleMap[pRoot->GetUniqueID()];
         
@@ -459,7 +459,7 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
     }
     
     const McPositionHit *posHitRoot;
-    while (posHitRoot = (McPositionHit*)hitIter.Next()) {
+    while ((posHitRoot = (McPositionHit*)hitIter.Next())!=0) {
         
         Event::McPositionHit *posHitTds = new Event::McPositionHit();
         
@@ -542,7 +542,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     }
     
     McIntegratingHit *intHitRoot;
-    while (intHitRoot = (McIntegratingHit*)hitIter.Next()) {
+    while ((intHitRoot = (McIntegratingHit*)hitIter.Next())!=0) {
         
         Event::McIntegratingHit *intHitTds = new Event::McIntegratingHit();
         

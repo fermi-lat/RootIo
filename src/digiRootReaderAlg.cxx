@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18 2003/10/13 23:02:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.19 2004/01/20 19:14:52 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -317,7 +317,7 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
     }
 
     AcdDigi *acdDigiRoot = 0;
-    while (acdDigiRoot = (AcdDigi*)acdDigiIter.Next()) {
+    while ((acdDigiRoot = (AcdDigi*)acdDigiIter.Next())!=0) {
         float energyTds = acdDigiRoot->getEnergy();
         
         AcdId idRoot = acdDigiRoot->getId();
@@ -366,7 +366,7 @@ StatusCode digiRootReaderAlg::readCalDigi() {
     }
 
     CalDigi *calDigiRoot = 0;
-    while (calDigiRoot = (CalDigi*)calDigiIter.Next()) {
+    while ((calDigiRoot = (CalDigi*)calDigiIter.Next())!=0) {
         Event::CalDigi *calDigiTds = new Event::CalDigi();
         CalXtalId::CalTrigMode modeRoot = calDigiRoot->getMode();
         CalXtalId idRoot = calDigiRoot->getPackedId();
@@ -422,7 +422,7 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
     }
 
     TkrDigi *tkrDigiRoot = 0;
-    while (tkrDigiRoot = (TkrDigi*)tkrDigiIter.Next()) {
+    while ((tkrDigiRoot = (TkrDigi*)tkrDigiIter.Next())!=0) {
         TowerId towerRoot = tkrDigiRoot->getTower();
         idents::TowerId towerTds(towerRoot.ix(), towerRoot.iy());
         GlastAxis::axis axisRoot = tkrDigiRoot->getView();

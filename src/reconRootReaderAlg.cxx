@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.28 2003/12/16 22:37:56 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.29 2004/01/20 19:14:52 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -389,7 +389,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
     TIter clusterIter(clusterRootCol);
     TkrCluster *clusterRoot = 0;
     
-    while (clusterRoot = (TkrCluster*)clusterIter.Next()) {
+    while ((clusterRoot = (TkrCluster*)clusterIter.Next())!=0) {
         TkrCluster::view viewRoot = clusterRoot->getView();
         Event::TkrCluster::view viewTds;
         
@@ -434,7 +434,7 @@ StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
     TIter candTrackIter(candTrackColRoot);
     TkrCandTrack *candTrackRoot = 0;
     
-    while(candTrackRoot = (TkrCandTrack*)candTrackIter.Next()) {
+    while((candTrackRoot = (TkrCandTrack*)candTrackIter.Next())!=0) {
         TVector3 posRoot = candTrackRoot->getPosition();
         TVector3 dirRoot = candTrackRoot->getDirection();
         Ray rayTds( Point(posRoot.X(), posRoot.Y(), posRoot.Z()), 
@@ -499,7 +499,7 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     TIter trackIter(trackRootCol);
     TObject *trackObj = 0;
     
-    while (trackObj = trackIter.Next()) {
+    while ((trackObj = trackIter.Next())!=0) {
         int trkIdx = -1;
         
         if      (TkrTrack*       trackRoot = dynamic_cast<TkrTrack*>(trackObj))
@@ -543,7 +543,7 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     TIter vertexIter(vertexColRoot);
     TkrVertex *vertexRoot = 0;
     
-    while (vertexRoot = (TkrVertex*)vertexIter.Next()) {
+    while ((vertexRoot = (TkrVertex*)vertexIter.Next())!=0) {
         TVector3 posRoot = vertexRoot->getPosition();
         TVector3 dirRoot = vertexRoot->getDirection();
         Ray rayTds(Point(posRoot.X(), posRoot.Y(), posRoot.Z()), 
@@ -797,7 +797,7 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     const TObjArray *calXtalRecColRoot = calRecRoot->getCalXtalRecCol();
     TIter calXtalIter(calXtalRecColRoot);
     const CalXtalRecData *calXtalRecRoot = 0;
-    while (calXtalRecRoot = (CalXtalRecData*)calXtalIter.Next()) {
+    while ((calXtalRecRoot = (CalXtalRecData*)calXtalIter.Next())!=0) {
         CalXtalId idRoot = calXtalRecRoot->getPackedId();
         idents::CalXtalId idTds(idRoot.getTower(), idRoot.getLayer(), idRoot.getColumn());
         // create new object to store crystal reconstructed data 
@@ -857,7 +857,7 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     
     Event::CalClusterCol *calClusterColTds = new Event::CalClusterCol();
     
-    while (calClusterRoot = (CalCluster*)calClusterIter.Next()) {
+    while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {
         TVector3 calPosRoot = calClusterRoot->getPosition();
         Point pos(calPosRoot.X(), calPosRoot.Y(), calPosRoot.Z());
         Event::CalCluster *calClusterTds = new Event::CalCluster(
