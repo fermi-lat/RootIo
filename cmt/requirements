@@ -1,7 +1,7 @@
 package RootIo
-version v14r2
+version v14r3
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.116 2005/01/13 23:48:49 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.117 2005/01/25 19:11:59 heather Exp $
 
 branches src doc
 
