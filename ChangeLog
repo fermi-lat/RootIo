@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 13 12:48:31 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+make use of AcdRecon private to allow test programs to work on
+windows..hope that's ok in Linux-land..
+    *
+------------------------------------------------------------
 User: heather  Wed Jun 12 00:54:26 PDT 2002
 RootIo/doc
 
