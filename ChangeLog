@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu May 27 23:14:03 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+move from ebf to ldf
+    *
+------------------------------------------------------------
 User: heather  Thu May 27 23:13:04 PDT 2004
 RootIo/cmt
 
