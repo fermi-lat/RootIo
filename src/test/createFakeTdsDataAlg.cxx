@@ -6,6 +6,7 @@
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
+#include "Event/TopLevel/MCEvent.h"
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
@@ -26,7 +27,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.1 2002/06/18 14:51:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.2 2002/08/29 15:33:04 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -51,7 +52,7 @@ private:
 
     unsigned int m_numMcParticles, m_numMcPosHits, m_numMcIntHits;
     unsigned int m_numAcdDigi, m_numCalDigi, m_numTkrDigi;
-    unsigned int m_numAcdRecon, m_numCalXtals, m_numTkrTracks;
+    unsigned int m_numCalXtals, m_numTkrTracks;
     
 };
 
@@ -62,6 +63,16 @@ const IAlgFactory& createFakeTdsDataAlgFactory = Factory;
 createFakeTdsDataAlg::createFakeTdsDataAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator)
 {
+
+	declareProperty("numMcParticles", m_numMcParticles=20);
+    declareProperty("numMcPosHits", m_numMcPosHits=15);
+    declareProperty("numMcIntHits", m_numMcIntHits=5);
+    declareProperty("numAcdDigi", m_numAcdDigi=4);
+    declareProperty("numCalDigi", m_numCalDigi=12);
+	declareProperty("numTkrDigi", m_numTkrDigi=30);
+    declareProperty("numCalXtals", m_numCalXtals=12);
+    declareProperty("numTkrTracks", m_numTkrTracks=5);
+	
 }
 
 StatusCode createFakeTdsDataAlg::initialize()
@@ -106,6 +117,13 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
+	// Make sure MC branch is created on TDS
+    DataObject *mc = new Event::MCEvent;
+    sc=eventSvc()->registerObject(EventModel::MC::Event , mc);
+    if(sc.isFailure()) {
+        log << MSG::WARNING << EventModel::MC::Event  <<" could not be registered on data store" << endreq;
+        return sc;
+    }
     // create the TDS location for the McParticle Collection
     Event::McParticleCol* mcParticleTdsCol = new Event::McParticleCol;
     sc = eventSvc()->registerObject(EventModel::MC::McParticleCol, mcParticleTdsCol);
@@ -114,10 +132,12 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
         return sc;
     }
 
+	Event::McParticle *daughterPart = 0;
+
     unsigned int ipart;
     for (ipart = 0; ipart < m_numMcParticles; ipart++) {
         Event::McParticle *mcPart = new Event::McParticle();
-        Event::McParticle *mom = 0;
+        Event::McParticle *mom = mcPart;
         int id = ipart;
         unsigned int statusBits = 0;
 
@@ -131,9 +151,13 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
         mcPart->init(mom, id, statusBits, initialMom, 
             finalMom, initPos, finalPos);
 
+		if (ipart != 0) mcPart->addDaughter(mcPart);
+
         // Add the TDS McParticle to the TDS collection of McParticles
         mcParticleTdsCol->push_back(mcPart);
+		daughterPart = mcPart;
     }
+
 
     // create the TDS location for the McParticle Collection
     Event::McPositionHitVector* mcPositionHitTdsCol = new Event::McPositionHitVector;
