@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3.6.1 2004/12/17 06:07:20 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -12,7 +12,7 @@
 #include <TChain.h>
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
-static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0); 
+static const InterfaceID IID_IRootIoSvc("RootIoSvc", 2 , 0); 
 
 /** 
 * \class IRootIoSvc
@@ -20,7 +20,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 1 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3 2004/07/06 21:53:16 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.3.6.1 2004/12/17 06:07:20 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
