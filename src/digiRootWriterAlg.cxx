@@ -33,7 +33,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19 2003/10/13 23:02:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.20 2004/01/09 18:56:23 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -375,7 +375,8 @@ void digiRootWriterAlg::writeEvent()
     //    tree.  The m_digiEvt object is cleared for the next event.
     static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
-    m_digiFile->cd();
+    m_digiTree->GetCurrentFile()->cd();
+    //m_digiFile->cd();
     m_digiTree->Fill();
     //m_digiEvt->Clear();
     saveDir->cd();
@@ -389,15 +390,18 @@ void digiRootWriterAlg::writeEvent()
 void digiRootWriterAlg::close() 
 {
     // Purpose and Method:  Writes the ROOT file at the end of the run.
-    //    The TObject::kOverWrite parameter is used in the Write method
+    //    The TObject::kWriteDelete parameter is used in the Write method
+    //    replacing TObject::kOverwrite - supposed to be safer
     //    since ROOT will periodically write to the ROOT file when the bufSize
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
     TDirectory *saveDir = gDirectory;
-    m_digiFile->cd();
-    m_digiFile->Write(0, TObject::kOverwrite);
-    m_digiFile->Close();
+    TFile *f = m_digiTree->GetCurrentFile();
+    //m_digiFile->cd();
+    f->cd();
+    f->Write(0, TObject::kWriteDelete);
+    f->Close();
     saveDir->cd();
     return;
 }
