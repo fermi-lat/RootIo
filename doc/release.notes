@@ -3,7 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
- v12p5p3 22-Jul-2004 HMK Address JIRA CMT-25, bug in CMT, add extra private statement
+ v12r5p4 22-Jul-2004 HMK Pick up latest version of commonRootData
+ v12r5p3 22-Jul-2004 HMK Address JIRA CMT-25, bug in CMT, add extra private statement
  v12p5p2 20-Jul-2004 HMK Reset index and evnt/run id pair to -1 at end of event
  v12r5p1 13-Jul-2004 HMK Use new rootTestData package
  v12r5p0 13-Jul-2004 HMK Patch reading of LdfTime
