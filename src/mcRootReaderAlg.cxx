@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.25 2003/08/21 20:24:33 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.26 2003/08/21 23:37:28 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -447,6 +447,10 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
     
     const TObjArray *posHits = m_mcEvt->getMcPositionHitCol();
     if (!posHits) return sc;
+    
+    // this test and alternate return needed to feed to G4Generator, which wants to register its own collection
+    if(  posHits->GetLast() ==-1)  return sc;
+
     TIter hitIter(posHits);
     
     // create the TDS location for the McParticle Collection
@@ -526,6 +530,10 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     
     const TObjArray *intHits = m_mcEvt->getMcIntegratingHitCol();
     if (!intHits) return sc;
+
+    // this test and alternate return needed to feed to G4Generator, which wants to register its own collection
+    if(  intHits->GetLast() ==-1)  return sc;
+
     TIter hitIter(intHits);
     
     // create the TDS location for the McParticle Collection
