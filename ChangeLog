@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 18 07:01:43 PST 2003
+RootIo/src
+
+Modified Files:
+	relationRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	digiRootReaderAlg.cxx commonData.h commonData.cxx 
+Log Message:
+update for reading relational tables from ROOT and filling the TDS.
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 18 06:56:16 PST 2003
 RootIo/doc
 
