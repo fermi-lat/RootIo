@@ -40,7 +40,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.16 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.17 2004/12/16 00:24:29 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -95,7 +95,7 @@ private:
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Stores number of events available in the input ROOT TTree
-    int m_numEvents;
+    Long64_t m_numEvents;
 
     commonData m_common;
     IRootIoSvc*   m_rootIoSvc;
@@ -215,8 +215,9 @@ StatusCode relationRootReaderAlg::execute()
 
     StatusCode sc = StatusCode::SUCCESS;
     
-    static Int_t evtId = 0;
-	int readInd, numBytes;
+    static Long64_t evtId = 0;
+    Long64_t readInd;
+    int numBytes;
 	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 	
 	if ((m_rootIoSvc) && (m_rootIoSvc->index() >= 0)) {
