@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v4r20p4 18-Nov-2002 HMK add TkrPlanes to track when reading\n
  v4r20p3 27-Oct-2002 THB gcc 3.x fix\n
  v4r20p2 25-Oct-2002 HMK Fix 3 warnings in reconRootReaderAlg - it turns out the view\n
           was not being set properly.\n
