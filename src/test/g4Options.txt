@@ -2,7 +2,7 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/G4Generator/src/test/jobOptions.txt,v 1.26 2002/04/08 14:59:07 riccardo Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.1.1.1 2002/04/22 17:10:24 heather Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GaudiAlg",  "GlastSvc"};
@@ -27,8 +27,7 @@ GlastDetSvc.topVolume="LAT";         // the whole schebang
 FluxSvc.source_lib = {"$(G4GENERATORROOT)/src/test/test_sources.xml"};
 
 //----------------- local algorithms to run -------------------
-ApplicationMgr.TopAlg = { 
-    "G4Generator"};
+ApplicationMgr.TopAlg = { "FluxAlg", "G4Generator"};
 
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
 MessageSvc.OutputLevel      = 2;
@@ -37,10 +36,10 @@ MessageSvc.OutputLevel      = 2;
 // ask for a source that is in the library
 //G4Generator.source_name="gamma_patch_for_G4";
 //G4Generator.source_name="muon_pencil";
-G4Generator.source_name="muon_patch";
+//G4Generator.source_name="muon_patch";
 //G4Generator.source_name="gamma_test";
 
-
+FluxAlg.source_name="muon_pencil_angle";
 G4Generator.UIcommands+={"/tracking/storeTrajectory 1"};
 
 ApplicationMgr.EvtMax =100;

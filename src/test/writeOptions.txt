@@ -10,6 +10,7 @@ ApplicationMgr.TopAlg +=  { "mcRootWriterAlg"};
 mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
 mcRootWriterAlg.splitMode = 1;
 mcRootWriterAlg.bufferSize = 64000;
+mcRootWriterAlg.compressionLevel = 9;
 
 //==============================================================
 //
