@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Mon Sep 13 04:51:19 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersTool.cxx 
+Log Message:
+enable to read back files without header, with a simple warning ; and enables to write files without a crash when headers have not been prepared
+    *
+------------------------------------------------------------
 User: chamont  Mon Sep 13 04:49:36 PDT 2004
 RootIo/src
 
