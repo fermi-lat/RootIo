@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 13:11:18 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+handle writing/reading sourceId and sequence in McEvent
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 11:45:52 PDT 2002
 RootIo/src/test
 
