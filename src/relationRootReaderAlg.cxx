@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.10 2004/06/10 17:03:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.11 2004/06/10 17:12:30 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -197,10 +197,11 @@ StatusCode relationRootReaderAlg::initialize()
     m_relTree->SetBranchAddress("RelTable", &m_relTab);
 
     m_numEvents = m_relTree->GetEntries();
-	if (m_rootIoSvc) {
-		m_rootIoSvc->setRootEvtMax(m_numEvents);
-		if(!m_relTree->GetIndex()) m_relTree->BuildIndex("m_runId", "m_eventId");
-	}
+    if (m_rootIoSvc) {
+        m_rootIoSvc->setRootEvtMax(m_numEvents);
+        if(!m_relTree->GetIndex()) m_relTree->BuildIndex("m_runId", "m_eventId");
+        m_rootIoSvc->registerRootTree(m_relTree);
+    }
 
     saveDir->cd();
     return sc;

@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.5 2004/01/20 19:14:52 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.6 2004/03/15 06:33:29 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -19,15 +19,16 @@
 
 #include "CLHEP/Random/Random.h"
 
-
+#include <vector>
 #include <algorithm>
+
 /** 
 * \class RootIoSvc
 *
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.5 2004/01/20 19:14:52 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.6 2004/03/15 06:33:29 heather Exp $
 */
 
 // includes
@@ -44,7 +45,7 @@ class IAppMgrUI;
 
 class RootIoSvc : 
     virtual public Service, 
-	virtual public IIncidentListener,
+    virtual public IIncidentListener,
     virtual public IRootIoSvc,
     virtual public IRunable
 {  
@@ -69,17 +70,19 @@ public:
 	/// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
 	
-	virtual int getEvtMax() { return m_evtMax; };
+    virtual int getEvtMax() { return m_evtMax; };
 
     virtual void setRootEvtMax(unsigned int max);
 
     virtual void setRootTimeMax(unsigned int max);
 
-	virtual void setIndex(int i);
-	virtual int index() { return m_index; };
+    virtual void registerRootTree(TChain *ch);
 
-	virtual void setRunEventPair(std::pair<int,int> ids);
-	virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
+    virtual bool setIndex(int i);
+    virtual int index() { return m_index; };
+
+    virtual bool setRunEventPair(std::pair<int,int> ids);
+    virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
 
     virtual int getAutoSaveInterval() { return m_autoSaveInterval; };
 
@@ -96,7 +99,7 @@ private:
     void beginEvent();
     void endEvent();
 	
-	/// Allow SvcFactory to instantiate the service.
+    /// Allow SvcFactory to instantiate the service.
     friend class SvcFactory<RootIoSvc>;
    
     /// Reference to application manager UI
@@ -109,8 +112,9 @@ private:
     DoubleProperty m_endTime;
 
     unsigned int m_rootEvtMax;
-	int m_index;
-	std::pair<int, int> m_runEventPair;
+    int m_index;
+    std::pair<int, int> m_runEventPair;
+    std::vector<TChain *> m_chainCol;
 
 };
 
@@ -132,14 +136,16 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
     declareProperty("StartingIndex", m_index=-1);
     m_rootEvtMax = 0;
-	//m_index = -1;
-	m_runEventPair = std::pair<int,int>(-1,-1);
+    //m_index = -1;
+    m_runEventPair = std::pair<int,int>(-1,-1);
+    m_chainCol.clear();
 }
 
 
 /// Standard Destructor
 RootIoSvc::~RootIoSvc()  
 {
+    m_chainCol.clear();
 }
 
 
@@ -215,15 +221,33 @@ void RootIoSvc::setRootTimeMax(unsigned int max) {
     return;
 }
 
-void RootIoSvc::setIndex(int i) {
-	m_index = i;
-	m_runEventPair = std::pair<int, int>(-1,-1);
+void RootIoSvc::registerRootTree(TChain *ch) {
+    m_chainCol.push_back(ch);
 }
 
-void RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
-	m_runEventPair = ids;
-	m_index=-1;
+bool RootIoSvc::setIndex(int i) {
+     if (i < 0) return false;
+     std::vector<TChain*>::iterator it;
+     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
+       if (i > (*it)->GetEntries()) return false;
+     }
+     m_index = i;
+     m_runEventPair = std::pair<int, int>(-1,-1);
+     return true;
 }
+
+
+bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
+    std::vector<TChain*>::iterator it;
+    for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
+        int readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
+        if ( (readInd < 0) || (readInd > (*it)->GetEntries()) ) return false;
+    }
+    m_runEventPair = ids;
+    m_index=-1;
+    return true;
+}
+
 // handle "incidents"
 void RootIoSvc::handle(const Incident &inc)
 {

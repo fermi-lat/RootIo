@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.31 2004/06/10 17:03:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.32 2004/06/10 17:12:30 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -202,10 +202,11 @@ StatusCode reconRootReaderAlg::initialize()
 
     m_numEvents = m_reconTree->GetEntries();
       
-	if (m_rootIoSvc) {
-		m_rootIoSvc->setRootEvtMax(m_numEvents);
-		if(!m_reconTree->GetIndex()) m_reconTree->BuildIndex("m_runId", "m_eventId");
-	}
+    if (m_rootIoSvc) {
+        m_rootIoSvc->setRootEvtMax(m_numEvents);
+	if(!m_reconTree->GetIndex()) m_reconTree->BuildIndex("m_runId", "m_eventId");
+        m_rootIoSvc->registerRootTree(m_reconTree);
+    }
 
     saveDir->cd();
     return sc;
