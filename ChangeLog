@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Dec  2 11:56:24 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+merge GR v4r6 branch into mainline
+    *
+------------------------------------------------------------
 User: heather  Thu Dec  2 11:55:36 PST 2004
 RootIo/doc
 
