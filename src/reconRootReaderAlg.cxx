@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.34.2.2 2004/08/27 04:44:50 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.36 2004/09/15 04:19:30 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -1013,5 +1013,6 @@ StatusCode reconRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }

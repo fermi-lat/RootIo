@@ -42,7 +42,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.34 2004/09/15 04:19:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.35 2004/09/24 17:40:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -618,6 +618,7 @@ StatusCode digiRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }
 

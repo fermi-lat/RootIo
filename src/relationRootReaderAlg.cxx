@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.13.2.1 2004/08/14 06:12:13 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.14 2004/09/15 04:19:30 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -488,6 +488,7 @@ StatusCode relationRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }
 

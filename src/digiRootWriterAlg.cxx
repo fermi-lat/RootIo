@@ -41,7 +41,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.28 2004/09/15 04:19:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.29 2004/09/24 17:40:24 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -560,6 +560,7 @@ StatusCode digiRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
+    setFinalized();
     return sc;
 }
 
