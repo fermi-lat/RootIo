@@ -35,7 +35,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.30 2003/08/28 15:15:09 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.31 2003/09/02 15:55:42 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -137,7 +137,7 @@ StatusCode mcRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
      
-    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+    if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;

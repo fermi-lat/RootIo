@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.17 2003/09/02 15:55:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18 2003/10/13 23:02:39 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -126,7 +126,7 @@ StatusCode digiRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
    
-    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+    if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
