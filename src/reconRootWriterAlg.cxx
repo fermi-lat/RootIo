@@ -21,6 +21,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TDirectory.h"
+#include "TVector3.h"
 
 #include "reconRootData/ReconEvent.h"
 
@@ -28,7 +29,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.4 2002/05/16 18:06:27 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.5 2002/05/18 02:50:06 usher Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -130,7 +131,7 @@ StatusCode reconRootWriterAlg::initialize()
     m_reconFile->SetCompressionLevel(m_compressionLevel);
     m_reconTree = new TTree(m_treeName.c_str(), "GLAST Reconstruction Data");
     m_reconEvt = new ReconEvent();
-    m_reconTree->Bronch("ReconEvent","ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
+    m_reconTree->Branch("ReconEvent","ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
     
     saveDir->cd();
     return sc;
@@ -202,24 +203,26 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
 
     // Get pointer to TkrRecon part of ReconEvent
     TkrRecon* recon = m_reconEvt->getTkrRecon();
+    if (!recon) return StatusCode::FAILURE;
+    recon->initialize();
 
     // Retrieve the information on candidate tracks
     SmartDataPtr<Event::TkrPatCandCol> candidatesTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
 
     // Fill the candidate tracks
-    fillCandidateTracks(recon, candidatesTds);
+    if (candidatesTds) fillCandidateTracks(recon, candidatesTds);
 
     // Retrieve the information on fit tracks
     SmartDataPtr<Event::TkrFitTrackCol> tracksTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
 
     // Fill the fit tracks
-    fillFitTracks(recon, tracksTds);
+    if (tracksTds) fillFitTracks(recon, tracksTds);
 
     // Retrieve the information on vertices
     SmartDataPtr<Event::TkrVertexCol> verticesTds(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
 
     // Fill the vertices
-    fillVertices(recon, verticesTds, tracksTds);
+    if (verticesTds && tracksTds) fillVertices(recon, verticesTds, tracksTds);
 
     return sc;
 }
@@ -237,9 +240,9 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
         Double_t           x = candTds->getPosition().x();
         Double_t           y = candTds->getPosition().y();
         Double_t           z = candTds->getPosition().z();
-        TVectorD           pos(0,2,x,y,z);
-        TVectorD           dir(0,2,candTds->getDirection().x(),candTds->getDirection().z(),candTds->getDirection().z());
-        TkrCandTrack       cand(candId, candTds->getLayer(), candTds->getTower(),
+        TVector3           pos(x,y,z);
+        TVector3           dir(candTds->getDirection().x(),candTds->getDirection().z(),candTds->getDirection().z());
+        TkrCandTrack *cand = new TkrCandTrack(candId, candTds->getLayer(), candTds->getTower(),
                                         candTds->getQuality(), candTds->getEnergy(), pos, dir);
 
         // Now we go through the candidate hits (if they are included) and fill those objects
@@ -247,13 +250,13 @@ void reconRootWriterAlg::fillCandidateTracks(TkrRecon* recon, Event::TkrPatCandC
         while(nHits < candTds->numPatCandHits())
         {
             Event::TkrPatCandHit* candHitTds = candTds->getCandHit(nHits);
-            TVectorD              pos(0,2,candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
+            TVector3              pos(candHitTds->Position().x(),candHitTds->Position().y(),candHitTds->Position().z());
             TkrCandHit::AXIS      view = candHitTds->View() == Event::TkrCluster::view::X ? TkrCandHit::AXIS::X : TkrCandHit::AXIS::Y;
-            TkrCandHit            candHit;
+            TkrCandHit candHit;
 
             candHit.initialize(pos, candHitTds->HitIndex(), candHitTds->TowerIndex(), candHitTds->PlaneIndex(), view); 
 
-            cand.addHit(candHit);
+            cand->addHit(candHit);
             nHits++;
         }
 
@@ -274,17 +277,16 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
     while(trkPtr != tracksTds->getTrackIterEnd())
     {
         Event::TkrFitTrack* trackTds  = *trkPtr++;       // The TDS track
-        TkrTrack            track;                       // Create a new Root Track
+        TkrTrack*           track = new TkrTrack();      // Create a new Root Track
 
         // Initialize the track
-        track.initializeInfo(trkId++,
+        track->initializeInfo(trkId++,
                              trackTds->getNumXGaps(),
                              trackTds->getNumYGaps(),
                              trackTds->getNumXFirstGaps(),
                              trackTds->getNumYFirstGaps() );
 
-        // HMK Why is this method called initializeQaul?  was it supposed to be Qual?
-        track.initializeQaul(trackTds->getChiSquare(),
+        track->initializeQual(trackTds->getChiSquare(),
                              trackTds->getChiSquareSmooth(),
                              trackTds->getScatter(),
                              trackTds->getQuality(),
@@ -393,7 +395,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
             plane.initializeHits(measHit, predHit, filtHit, smooHit, scatCov);
 
             // Finally! Add this root track to the list
-            track.addHit(plane);
+            track->addHit(plane);
         }
 
         // Ok, now add the track to the list!
@@ -413,13 +415,13 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
     while(vtxId < verticesTds->getNumVertices())
     {
         Event::TkrVertex*   vtxTds = verticesTds->getVertex(vtxId);
-        TkrVertex           vtx;
-        TVectorD            pos(0,2,vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
-        TVectorD            dir(0,2,vtxTds->getDirection().x(),vtxTds->getDirection().z(),vtxTds->getDirection().z());
+        TkrVertex*          vtx = new TkrVertex();
+        TVector3            pos(vtxTds->getPosition().x(), vtxTds->getPosition().y(), vtxTds->getPosition().z());
+        TVector3            dir(vtxTds->getDirection().x(),vtxTds->getDirection().z(),vtxTds->getDirection().z());
         Event::TkrFitPar    parTds = vtxTds->getTrackPar();
         Event::TkrFitMatrix covTds = vtxTds->getTrackCov();
 
-        vtx.initializeVals(TkrParams(parTds.getXPosition(),
+        vtx->initializeVals(TkrParams(parTds.getXPosition(),
                                      parTds.getXSlope(),
                                      parTds.getYPosition(),
                                      parTds.getYSlope()),
@@ -431,7 +433,7 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
                                      covTds.getcovY0Sy() ),
                            pos,
                            dir );
-        vtx.initializeInfo(vtxId, 
+        vtx->initializeInfo(vtxId, 
                            vtxTds->getLayer(), 
                            vtxTds->getTower(), 
                            vtxTds->getQuality(), 
@@ -456,7 +458,7 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
                 trkId++;
             }
 
-            vtx.addTrackId(trkId);
+            vtx->addTrackId(trkId);
         }
 
         // Add the candidate to the list
