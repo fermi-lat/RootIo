@@ -1,12 +1,12 @@
 
-#ifndef testCaloFhSetAlg_H
-#define testCaloFhSetAlg_H
+#ifndef FhDemoCaloSetAlg_H
+#define FhDemoCaloSetAlg_H
 
 #include "GaudiKernel/Algorithm.h"
 
 /*!
 
- @class testCaloFhSetAlg        
+ @class FhDemoCaloSetAlg        
  @brief Prepare the calo specific attributes and set them in the relevant file headers
 
  This Gaudi algorithm is expected to prepare and set the file header data which is
@@ -22,11 +22,11 @@
 
 */
 
-class testCaloFhSetAlg : public Algorithm  {
+class FhDemoCaloSetAlg : public Algorithm  {
         
 public:
     
-    testCaloFhSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
+    FhDemoCaloSetAlg( const std::string& name, ISvcLocator* pSvcLocator ) ;
     
     /// 
     StatusCode initialize();

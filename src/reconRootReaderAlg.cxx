@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.37 2004/09/24 19:14:05 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.38 2004/10/07 12:15:16 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -168,6 +168,7 @@ StatusCode reconRootReaderAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
     
+    m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::DEBUG << "Event loop will not terminate gracefully" << endreq;

@@ -43,7 +43,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.40 2004/10/07 12:15:16 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.41 2004/11/16 16:48:46 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -167,6 +167,7 @@ StatusCode reconRootWriterAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
     
+    m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "No Auto Saving" << endreq;

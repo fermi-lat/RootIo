@@ -42,7 +42,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.9 2004/09/24 19:14:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.10 2004/11/16 16:48:46 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -132,6 +132,7 @@ StatusCode relationRootWriterAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
 
+    m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "No Auto Saving" << endreq;

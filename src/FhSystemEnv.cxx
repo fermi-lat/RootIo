@@ -1,8 +1,13 @@
 
 #include "RootIo/FhSystemEnv.h"
-#include <sstream>
 #include <string>
 #include <cstdio>
+
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
+#include <sstream>
+#endif
 
 FILE* fhOpenEnv() {
 #ifdef WIN32
@@ -48,10 +53,11 @@ void FhSystemEnv::store( FileHeader * header ) const {
 void FhSystemEnv::rawToMap() {
     m_map.DeleteAll() ;
     std::istringstream is(m_raw.Data()) ;
-    std::string line, name, value ;
-    TString buffer ;
-    while (buffer.ReadLine(is)) {
-        line = buffer ;
+    unsigned int buffer_size = m_raw.Length()+1  ;
+    char * buffer = new char [buffer_size] ;
+    std::string name, value ;
+    while (is.getline(buffer,buffer_size)) {
+        std::string line(buffer) ;
         std::string::size_type pos = line.find('=') ;
         if (pos!=std::string::npos) {
             name = line.substr(0,pos) ;
@@ -59,6 +65,8 @@ void FhSystemEnv::rawToMap() {
             m_map.add(name.c_str(),value.c_str()) ;
         }
     }
+    delete [] buffer ;
+    buffer = 0 ;
 }
 
 void FhSystemEnv::getVariableNames( TRegexp exp, TCollection & names ) const {

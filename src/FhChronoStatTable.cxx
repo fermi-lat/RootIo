@@ -2,7 +2,13 @@
 #include "RootIo/FhChronoStatTable.h"
 #include <GaudiKernel/IService.h>
 #include <GaudiKernel/IMessageSvc.h>
+
+#ifdef DEFECT_NO_STRINGSTREAM
+#include <strstream>
+#else
 #include <sstream>
+#endif
+
 #include <string>
 
 FhChronoStatTable::FhChronoStatTable() {
@@ -16,8 +22,8 @@ void FhChronoStatTable::init( const FileHeader * header ) {
 
 void FhChronoStatTable::init( ISvcLocator * svcLocator ) {
     m_raw = "" ;
-    IService * theChronoSvc, * aSvc ;
-    IMessageSvc * theMessageSvc ;
+    IService * theChronoSvc =0, * aSvc =0 ;
+    IMessageSvc * theMessageSvc = 0 ;
     StatusCode theChronoSc, theMessageSc ;
     theMessageSc = svcLocator->getService("MessageSvc",aSvc,false) ;
     if (theMessageSc==StatusCode::SUCCESS) {
