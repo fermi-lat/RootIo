@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jun  3 14:32:54 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+explicitly define Root class versions
+    *
+------------------------------------------------------------
 User: burnett  Sat Jun  1 19:38:50 PDT 2002
 RootIo/src
 
