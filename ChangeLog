@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  9 06:44:59 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	readOptions.txt 
+Added Files:
+	muon_patch-digi.root muon_patch-mc.root muon_patch-recon.root 
+Log Message:
+new ROOT test files for reading
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  9 06:16:52 PDT 2002
 RootIo/src
 
