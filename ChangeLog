@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 25 01:50:46 PST 2005
+RootIo/doc
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	release.notes 
+Log Message:
+use Long64 as appropriate for ROOT4
+    *
+------------------------------------------------------------
 TAG
 Tag name: v14r2, operation: add
 Package: RootIo
