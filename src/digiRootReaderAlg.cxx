@@ -14,6 +14,7 @@
 #include "idents/TowerId.h"
 
 //#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/EventSummaryData.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -36,7 +37,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.2 2003/11/19 07:55:35 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.3 2003/11/25 05:42:12 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -58,6 +59,9 @@ private:
 
     /// Reads top-level DigiEvent
     StatusCode readDigiEvent();
+
+    /// Reads in EM event summary word
+    StatusCode readEventSummary();
 
     /// Reads in the EM Diagnostic trigger primitive data
     //StatusCode readDiagnostic();
@@ -235,6 +239,11 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
+    sc = readEventSummary();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to read in eventsummary data" << endreq;
+        return sc;
+    }
 /*
     sc = readDiagnostic();
     if (sc.isFailure()) {
@@ -306,6 +315,18 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
+
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readEventSummary() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    unsigned summaryWord = m_digiEvt->getEventSummaryData().summary();
+
+    EbfConverterTds::EventSummaryData *evtSumTds = new EbfConverterTds::EventSummaryData();
+    evtSumTds->initialize(summaryWord);
 
     return sc;
 }
