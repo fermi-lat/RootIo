@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Aug  6 14:22:52 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+update requirements file to use new mcRootData tag
+    *
+------------------------------------------------------------
 User: heather  Tue Jul 30 12:51:39 PDT 2002
 RootIo/src
 
