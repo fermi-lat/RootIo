@@ -30,7 +30,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.23 2003/06/02 01:51:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.24 2003/06/03 09:44:57 berthon Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -222,12 +222,13 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
     Int_t sourceId = mcEvt->getSourceId();
     UInt_t sequence = mcEvt->getSequence();
+    Double_t timestamp = mcEvt->time();  /// note: converting from timestamp to double
     
     log << MSG::DEBUG;
     if( log.isActive()) evt->fillStream(log.stream());
     log << endreq;
     
-    m_mcEvt->initialize(evtId, runId, sourceId, sequence);
+    m_mcEvt->initialize(evtId, runId, sourceId, sequence, timestamp);
     
     return sc;
 }

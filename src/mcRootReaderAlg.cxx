@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.21 2003/06/02 01:51:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.22 2003/07/01 17:42:14 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -300,7 +300,7 @@ StatusCode mcRootReaderAlg::readMcEvent() {
     
     SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
     if (!mcEvt) return sc;
-    mcEvt->initialize(runIdTds, sourceIdRoot, sequenceRoot);
+    mcEvt->initialize(runIdTds, sourceIdRoot, sequenceRoot,0); // do we care if this has the right time
     
     return sc;
 }
