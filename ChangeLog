@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Tue Jun  4 16:04:51 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Fix bug in calculation of vertex direction!
+
+    *
+------------------------------------------------------------
 User: usher  Tue Jun  4 12:42:41 PDT 2002
 RootIo/src
 
