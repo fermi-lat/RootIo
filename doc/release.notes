@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r5p0em1 17-Nov-2003 HMK fix to diagnostic data - remove label
+ v9r5p0em0 16-Nov-2003 HMK Initial EM branch for diagnostic data
  v9r5p0  17-Oct-2003 LSR read/write TKR ToT
  v9r5    13-Oct-2003 HMK Handle ACD ribbons ids in digi reading/writing
  v9r4p0  29-Sep-2003 HMK Fix up test 
