@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  6 08:58:02 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	g4Options.txt 
+Log Message:
+update test options to use acdDigiAlg
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  6 08:57:08 PDT 2002
 RootIo/doc
 
