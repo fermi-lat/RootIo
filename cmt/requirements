@@ -1,10 +1,9 @@
 package RootIo
-version v11r1p0
+version v12r0
 
 branches src doc
 
 use Event v9r*
-use EbfEvent v*
 use ROOT v2r* IExternal
 
 apply_pattern packageShr
@@ -12,9 +11,10 @@ apply_pattern package_include
 
 use RootPolicy v2r*
 use mcRootData v2r*
-use digiRootData v6r*
+use digiRootData v7r*
 use reconRootData v4r*
 use commonRootData v0r*
+use LdfEvent v*
 
 private
 use GlastSvc v9r*
