@@ -84,10 +84,10 @@ void FhCmtConfig::rawToMap() {
     TRegexp expComment("^#") ;
     while (isUses.getline(buffer,buffer_size)) {
         TString lineUses(buffer) ;
-        if ((step==0)&&(lineUses.Index(expHierarchy)>0))) {
+        if ((step==0)&&(lineUses.Index(expHierarchy)>0)) {
             lineUses.Remove(0,2) ;
             m_useHierarchy += lineUses ;
-        } else if ((step<2)&&(lineUses.Index(expComment)>0))) {
+        } else if ((step<2)&&(lineUses.Index(expComment)>0)) {
             step = 1 ;
         } else {
             step = 2 ;
