@@ -25,7 +25,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header$
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.1 2002/05/14 15:23:00 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -191,6 +191,9 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
     Event::CalDigiCol::const_iterator calDigiTds;
 
     for (calDigiTds = calDigiColTds->begin(); calDigiTds != calDigiColTds->end(); calDigiTds++) {
+        log << MSG::DEBUG;
+        (*calDigiTds)->fillStream(log.stream());
+        log << endreq;
         CalDigi *calDigiRoot = new CalDigi();
         idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
         idents::CalXtalId idTds = (*calDigiTds)->getPackedId();
