@@ -9,8 +9,11 @@
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
 #include "Event/Digi/CalDigi.h"
+#include "Event/Digi/TkrDigi.h"
+
 
 #include "idents/CalXtalId.h"
+#include "idents/TowerId.h"
 
 #include "facilities/Util.h"
 
@@ -25,7 +28,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.1 2002/05/14 15:23:00 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.2 2002/05/14 21:01:16 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -49,10 +52,14 @@ private:
     StatusCode writeDigiEvent();
 
     /// Retrieves the CAL digitization data from the TDS and fills the CalDigi
-    /// ROOT object
+    /// ROOT collection
     StatusCode writeCalDigi();
 
-    /// Calls TTree::Fill for each event and clears m_mcEvt
+    /// Retrieves TKR digitization data from the TDS and fills the TkrDigi
+    /// ROOT collection
+    StatusCode writeTkrDigi();
+
+    /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
 
     /// Performs the final write to the ROOT file and closes
@@ -146,6 +153,12 @@ StatusCode digiRootWriterAlg::execute()
         log << MSG::ERROR << "Failed to write Cal Digi Collection" << endreq;
         return sc;
     }
+
+    sc = writeTkrDigi();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write Tkr Digi Collection" << endreq;
+        return sc;
+    }
    
     writeEvent();
     return sc;
@@ -223,6 +236,42 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
         }
 
         m_digiEvt->addCalDigi(calDigiRoot);
+    }
+
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeTkrDigi() {
+    // Purpose and Method:  Retrieve the TkrDigi collection from the TDS and set the
+    //    TkrDigi ROOT collection
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    SmartDataPtr<Event::TkrDigiCol> tkrDigiColTds(eventSvc(), EventModel::Digi::TkrDigiCol);
+    if (!tkrDigiColTds) return sc;
+    Event::TkrDigiCol::const_iterator tkrDigiTds;
+
+    for (tkrDigiTds = tkrDigiColTds->begin(); tkrDigiTds != tkrDigiColTds->end(); tkrDigiTds++) {
+        idents::GlastAxis::axis axisTds = (*tkrDigiTds)->getView();
+        GlastAxis::axis axisRoot = (axisTds == idents::GlastAxis::X) ? GlastAxis::X : GlastAxis::Y;
+        idents::TowerId idTds = (*tkrDigiTds)->getTower();
+        TowerId towerRoot(idTds.ix(), idTds.iy());
+        Int_t totRoot[2] = {(*tkrDigiTds)->getToT(0), (*tkrDigiTds)->getToT(1)};
+        Int_t lastController0Strip = (*tkrDigiTds)->getLastController0Strip();
+        TkrDigi *tkrDigiRoot = new TkrDigi();
+        tkrDigiRoot->initialize((*tkrDigiTds)->getBilayer(), axisRoot, towerRoot, totRoot);
+        UInt_t numHits = (*tkrDigiTds)->getNumHits();
+        unsigned int iHit;
+        for (iHit = 0; iHit < numHits; iHit++) {
+            Int_t strip = (*tkrDigiTds)->getHit(iHit);
+            if (strip < lastController0Strip) {
+                tkrDigiRoot->addC0Hit(strip);
+            } else {
+                tkrDigiRoot->addC1Hit(strip);
+            }
+        }
+        m_digiEvt->addTkrDigi(tkrDigiRoot);
     }
 
     return sc;
