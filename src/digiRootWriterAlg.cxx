@@ -29,7 +29,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.5 2002/06/06 22:13:56 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.6 2002/06/11 00:38:24 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -206,7 +206,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
     Bool_t fromMc = true;
 
     log << MSG::DEBUG;
-    evtTds->fillStream(log.stream());
+    if( log.isActive()) evtTds->fillStream(log.stream());
     log << endreq;
 
     L1T levelOne(evtTds->trigger());
