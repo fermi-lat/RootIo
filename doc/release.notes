@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v11r0p0 25-Mar-2004 HMK Make EbfConverter useage public
  v11r0   14-Mar-2004 HMK Merge EM version
  v10r1p0 03-Mar-2004 HMK Fix up some warnings
  v10r0   20-Jan-2004 HMK Reset signals that ROOT wants to handle to default behavior in RootIoSvc
