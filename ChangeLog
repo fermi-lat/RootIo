@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Wed Oct  9 19:27:44 PDT 2002
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+
+simple mods to the debug output to skip a lot of formatting if output not required.
+    *
+------------------------------------------------------------
 User: usher  Wed Oct  9 16:42:02 PDT 2002
 RootIo/src
 
