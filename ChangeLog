@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jun 10 17:50:40 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	g4Options.txt 
+Log Message:
+remove GuiSvc from test
+    *
+------------------------------------------------------------
 User: heather  Mon Jun 10 17:38:25 PDT 2002
 RootIo/src
 
