@@ -13,6 +13,10 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
+#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/EventSummaryData.h"
+#include "EbfConverter/EbfTime.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -34,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.19 2004/01/20 19:14:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.20 2004/03/04 05:31:15 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -56,6 +60,12 @@ private:
 
     /// Reads top-level DigiEvent
     StatusCode readDigiEvent();
+
+    /// Reads in EM event summary word
+    StatusCode readEventSummary();
+
+    /// Reads in the EM Diagnostic trigger primitive data
+    StatusCode readDiagnostic();
 
     /// Reads ACD digi data from ROOT and puts data on TDS
     StatusCode readAcdDigi();
@@ -230,6 +240,19 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
+    sc = readEventSummary();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to read in eventsummary data" << endreq;
+        return sc;
+    }
+
+    sc = readDiagnostic();
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to read in diagnostic data" << endreq;
+        // Do not return failure - diagnostic data may not be in all data
+    }
+
+
     sc = readAcdDigi();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load AcdDigi" << endreq;
@@ -293,9 +316,59 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
+    SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    if (timeTds) {
+        timeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec(), m_digiEvt->getEbfUpperPpcTimeBase(), m_digiEvt->getEbfLowerPpcTimeBase());
+    }
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readEventSummary() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    unsigned summaryWord = m_digiEvt->getEventSummaryData().summary();
+
+    EbfConverterTds::EventSummaryData *evtSumTds = new EbfConverterTds::EventSummaryData();
+    evtSumTds->initialize(summaryWord);
 
     return sc;
 }
+
+
+StatusCode digiRootReaderAlg::readDiagnostic() {
+
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const TClonesArray *calCol = m_digiEvt->getCalDiagnosticCol();
+    const TClonesArray *tkrCol = m_digiEvt->getTkrDiagnosticCol();
+    EbfConverterTds::DiagnosticData *diagTds = new EbfConverterTds::DiagnosticData();
+    TIter calIt(calCol);
+    CalDiagnosticData *cDiagRoot;
+    while (cDiagRoot = (CalDiagnosticData*)calIt.Next()) {
+        EbfConverterTds::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
+        diagTds->addCalDiagnostic(cDiagTds);
+    }
+
+    TIter tkrIt(tkrCol);
+    TkrDiagnosticData *tDiagRoot;
+    while(tDiagRoot = (TkrDiagnosticData*)tkrIt.Next()) {
+        EbfConverterTds::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
+        diagTds->addTkrDiagnostic(tDiagTds);
+    }
+
+    sc = eventSvc()->registerObject("/Event/Diagnostic", diagTds);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register " << "/Event/Diagnostic" << endreq;
+        return sc;
+    }
+    
+
+    return sc;
+}
+
 
 StatusCode digiRootReaderAlg::readAcdDigi() {
     // Purpose and Method:  Read in ACD digi collection from ROOT file
