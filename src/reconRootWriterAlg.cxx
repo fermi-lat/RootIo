@@ -16,7 +16,7 @@
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
   
-#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdRecon.h"
 
 #include "idents/CalXtalId.h"
 
@@ -34,7 +34,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.17 2002/06/12 07:52:35 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.18 2002/07/08 21:20:18 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -638,7 +638,7 @@ StatusCode reconRootWriterAlg::writeAcdRecon() {
     AcdId acdIdRoot(acdIdTds.layer(), acdIdTds.face(), acdIdTds.row(), acdIdTds.column());
     acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getTileCount(),
         acdRecTds->getGammaDoca(), acdRecTds->getDoca(), acdRecTds->getActiveDist(), acdIdRoot, 
-        acdRecTds->getRowDocaCol());
+        acdRecTds->getRowDocaCol(), acdRecTds->getRowActDistCol());
 
     return sc;
 }

@@ -7,7 +7,7 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "idents/CalXtalId.h"
-#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrClusterCol.h"
 #include "Event/Recon/TkrRecon/TkrPatCandCol.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
@@ -34,7 +34,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.4 2002/06/20 21:36:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.5 2002/07/03 13:33:51 heather Exp $
  */
 
 class reconRootReaderAlg : public Algorithm
@@ -682,7 +682,7 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     acdRecTds->initialize(acdRecRoot->getEnergy(), acdRecRoot->getTileCount(),
         acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), 
         acdRecRoot->getActiveDist(), acdIdTds, 
-        acdRecRoot->getRowDocaCol(), energyColTds);
+        acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), energyColTds);
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
