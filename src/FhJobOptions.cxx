@@ -83,7 +83,7 @@ void FhJobOptions::rawToMap() {
     std::string name, value ;
     const char * c1,* line2 ;
     char * c2 ;
-    while (is.getline(buffer,buffer_size) {
+    while (is.getline(buffer,buffer_size)) {
         std::string line1(buffer) ;
         c1 = line1.data() ;
         line2 = c2 = new char [(line1.size()+1)] ;
