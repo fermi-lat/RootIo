@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Dec 16 22:06:58 PST 2004
+RootIo/cmt
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	requirements 
+Log Message:
+Make sure index is not reset at end of event
+    *
+------------------------------------------------------------
 TAG
 Tag name: EngineeringModel-v3r0407p1, operation: add
 Package: RootIo
