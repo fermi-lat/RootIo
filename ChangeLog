@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jan  6 13:46:33 PST 2005
+RootIo/src/test
+
+Modified Files:
+	readOptions.txt 
+Log Message:
+use vertical test data for unit test
+    *
+------------------------------------------------------------
 TAG
 Tag name: v14r1, operation: add
 Package: RootIo
