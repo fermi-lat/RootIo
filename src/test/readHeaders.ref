@@ -22,14 +22,14 @@ FhDemoGetAlg         INFO Mc Const JobOptions.reconRootWriterAlg.bufferSize: 640
 FhDemoGetAlg         INFO Mc Const JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Mc Const JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Mc Const JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Mc Const ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Mc Const ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Digi Const SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
 FhDemoGetAlg         INFO Digi Const CmtUses.Event: v9r13p1
 FhDemoGetAlg         INFO Digi Const CmtMacros.package: RootIo
@@ -54,14 +54,14 @@ FhDemoGetAlg         INFO Digi Const JobOptions.reconRootWriterAlg.bufferSize: 6
 FhDemoGetAlg         INFO Digi Const JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Digi Const JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Digi Const JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Digi Const ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Digi Const ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Recon Const SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
 FhDemoGetAlg         INFO Recon Const CmtUses.Event: v9r13p1
 FhDemoGetAlg         INFO Recon Const CmtMacros.package: RootIo
@@ -86,12 +86,12 @@ FhDemoGetAlg         INFO Recon Const JobOptions.reconRootWriterAlg.bufferSize: 
 FhDemoGetAlg         INFO Recon Const JobOptions.reconRootWriterAlg.compressionLevel: 1
 FhDemoGetAlg         INFO Recon Const JobOptions.reconRootWriterAlg.reconRootFile: "$(ROOTIOROOT)/src/test/recon-fake.root"
 FhDemoGetAlg         INFO Recon Const JobOptions.reconRootWriterAlg.splitMode: 1
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.ChronoStatSvc: 410 [ms]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhDemoCaloSetAl...: 0 [us]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhDemoGetAlg:ex...: 0 [us]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhSetAlg:execute: 0 [us]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.createFakeTdsDa...: 20 [ms]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.digiRootWriterA...: 20 [ms]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.mcRootWriterAlg...: 230 [ms]
-FhDemoGetAlg         INFO Recon Const ChronoStatTable.reconRootWriter...: 0 [us]
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.ChronoStatSvc
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhDemoCaloSetAl...
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhDemoGetAlg:ex...
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.FhSetAlg:execute
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.createFakeTdsDa...
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.digiRootWriterA...
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.mcRootWriterAlg...
+FhDemoGetAlg         INFO Recon Const ChronoStatTable.reconRootWriter...
 FhDemoGetAlg         INFO Digi Const CaloString: Demo String
