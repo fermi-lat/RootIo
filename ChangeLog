@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 13:13:23 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	createFakeTdsDataAlg.cxx 
+Log Message:
+update test for sourceId & sequence in McEvent
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 13:12:58 PDT 2002
 RootIo/src
 
