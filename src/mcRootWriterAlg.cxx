@@ -28,14 +28,14 @@
 #include <map>
 
 // ADDED FOR THE FILE HEADERS DEMO
-#include "src/FileHeadersTool.h"
+#include "RootIo/FhTool.h"
 #include <cstdlib>
 
 /** @class mcRootWriterAlg
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.31 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.32 2004/09/24 19:14:05 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -104,7 +104,7 @@ private:
     IRootIoSvc* m_rootIoSvc;
 
     // ADDED FOR THE FILE HEADERS DEMO
-    IFileHeadersTool * m_headersTool ;
+    IFhTool * m_headersTool ;
 };
 
 
@@ -145,7 +145,7 @@ StatusCode mcRootWriterAlg::initialize()
     MsgStream log(msgSvc(), name());
     
     // ADDED FOR THE FILE HEADERS DEMO
-    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    StatusCode headersSc = toolSvc()->retrieveTool("FhTool",m_headersTool) ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }

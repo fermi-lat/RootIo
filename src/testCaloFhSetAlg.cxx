@@ -1,6 +1,6 @@
 
-#include "src/testCaloFileHeadersSetAlg.h"
-#include "src/FileHeadersTool.h"
+#include "src/testCaloFhSetAlg.h"
+#include "RootIo/FhTool.h"
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
@@ -15,17 +15,17 @@
 
 #include <cstdio>
 
-static const AlgFactory<testCaloFileHeadersSetAlg> Factory ;
-const IAlgFactory& testCaloFileHeadersSetAlgFactory = Factory ;
+static const AlgFactory<testCaloFhSetAlg> Factory ;
+const IAlgFactory& testCaloFhSetAlgFactory = Factory ;
 
-StatusCode testCaloFileHeadersSetAlg::finalize() {
+StatusCode testCaloFhSetAlg::finalize() {
     
     MsgStream log(msgSvc(),name()) ;
     StatusCode sc ;
     
     // retrieve the headers
-    IFileHeadersTool * headersTool ;
-    sc = toolSvc()->retrieveTool("FileHeadersTool",headersTool) ;
+    IFhTool * headersTool ;
+    sc = toolSvc()->retrieveTool("FhTool",headersTool) ;
     if (sc.isFailure()) {
         log<<MSG::WARNING << "Failed to retrieve headers tool" << endreq ;
         return StatusCode::FAILURE ;
@@ -36,23 +36,23 @@ StatusCode testCaloFileHeadersSetAlg::finalize() {
     
     // cal string
     if (digiHeader) {
-        digiHeader->setString("caloString","Demo Cal String") ;
+        digiHeader->setString("CaloString","Demo Cal String") ;
     }
     
     // end
 	return StatusCode::SUCCESS ;
 }
     
-testCaloFileHeadersSetAlg::testCaloFileHeadersSetAlg
+testCaloFhSetAlg::testCaloFhSetAlg
 ( const std::string& name, ISvcLocator* pSvcLocator)
 :  Algorithm(name, pSvcLocator) {
 }
 
-StatusCode testCaloFileHeadersSetAlg::initialize() {
+StatusCode testCaloFhSetAlg::initialize() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode testCaloFileHeadersSetAlg::execute() {
+StatusCode testCaloFhSetAlg::execute() {
 	return StatusCode::SUCCESS ;
 }
     

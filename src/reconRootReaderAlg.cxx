@@ -35,7 +35,7 @@
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
-#include "src/FileHeadersTool.h"
+#include "RootIo/FhTool.h"
 
 #include <vector>
 #include <map>
@@ -45,7 +45,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.36 2004/09/15 04:19:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.37 2004/09/24 19:14:05 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -126,7 +126,7 @@ private:
 
 
     // ADDED FOR THE FILE HEADERS DEMO
-    IFileHeadersTool * m_headersTool ;
+    IFhTool * m_headersTool ;
 };
 
 static const AlgFactory<reconRootReaderAlg>  Factory;
@@ -159,7 +159,7 @@ StatusCode reconRootReaderAlg::initialize()
     MsgStream log(msgSvc(), name());
     
     // ADDED FOR THE FILE HEADERS DEMO
-    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    StatusCode headersSc = toolSvc()->retrieveTool("FhTool",m_headersTool) ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }

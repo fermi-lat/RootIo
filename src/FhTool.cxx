@@ -1,16 +1,16 @@
 
-#include "src/FileHeadersTool.h"
+#include "RootIo/FhTool.h"
 #include <GaudiKernel/ToolFactory.h>
 #include <GaudiKernel/MsgStream.h>
 
-static ToolFactory<FileHeadersTool> s_factory ;
-const IToolFactory & FileHeadersToolFactory = s_factory ;
+static ToolFactory<FhTool> s_factory ;
+const IToolFactory & FhToolFactory = s_factory ;
 
-FileHeadersTool::FileHeadersTool( const std::string & type,
+FhTool::FhTool( const std::string & type,
     const std::string & name, const IInterface * parent )
     : AlgTool(type,name,parent) {
     	
-    declareInterface<IFileHeadersTool>(this) ;
+    declareInterface<IFhTool>(this) ;
     
     m_mcHeader = 0 ;
     m_digiHeader = 0 ;
@@ -22,7 +22,7 @@ FileHeadersTool::FileHeadersTool( const std::string & type,
    
 }
 
-FileHeadersTool::~FileHeadersTool() {
+FhTool::~FhTool() {
     	
     delete m_mcHeader ;
     delete m_digiHeader ;
@@ -34,31 +34,31 @@ FileHeadersTool::~FileHeadersTool() {
    
 }
 
-FileHeader * FileHeadersTool::mcHeader() {
+FileHeader * FhTool::mcHeader() {
 	return m_mcHeader ;
 }
 
-FileHeader * FileHeadersTool::digiHeader() {
+FileHeader * FhTool::digiHeader() {
 	return m_digiHeader ;
 }
 
-FileHeader * FileHeadersTool::reconHeader() {
+FileHeader * FhTool::reconHeader() {
 	return m_reconHeader ;
 }
 
-const FileHeader * FileHeadersTool::constMcHeader() {
+const FileHeader * FhTool::constMcHeader() {
 	return m_constMcHeader ;
 }
 
-const FileHeader * FileHeadersTool::constDigiHeader() {
+const FileHeader * FhTool::constDigiHeader() {
 	return m_constDigiHeader ;
 }
 
-const FileHeader * FileHeadersTool::constReconHeader() {
+const FileHeader * FhTool::constReconHeader() {
 	return m_constReconHeader ;
 }
 
-StatusCode FileHeadersTool::newMcHeader() {
+StatusCode FhTool::newMcHeader() {
     if (m_mcHeader) {
         MsgStream log(msgSvc(),name()) ;
 	    log<<MSG::WARNING<<"Mc FileHeader already existing"<<endreq ;
@@ -69,7 +69,7 @@ StatusCode FileHeadersTool::newMcHeader() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode FileHeadersTool::newDigiHeader() {
+StatusCode FhTool::newDigiHeader() {
     if (m_digiHeader) {
         MsgStream log(msgSvc(),name()) ;
 	    log<<MSG::WARNING<<"Digi FileHeader already existing"<<endreq ;
@@ -80,7 +80,7 @@ StatusCode FileHeadersTool::newDigiHeader() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode FileHeadersTool::newReconHeader() {
+StatusCode FhTool::newReconHeader() {
     if (m_reconHeader) {
         MsgStream log(msgSvc(),name()) ;
 	    log<<MSG::WARNING<<"Recon FileHeader already existing"<<endreq ;
@@ -91,31 +91,31 @@ StatusCode FileHeadersTool::newReconHeader() {
 	return StatusCode::SUCCESS ;
 }
 
-StatusCode FileHeadersTool::writeMcHeader( TFile * file ) {
+StatusCode FhTool::writeMcHeader( TFile * file ) {
 	return writeHeader(file,m_mcHeader) ;
 }
 
-StatusCode FileHeadersTool::writeDigiHeader( TFile * file ) {
+StatusCode FhTool::writeDigiHeader( TFile * file ) {
 	return writeHeader(file,m_digiHeader) ;
 }
 
-StatusCode FileHeadersTool::writeReconHeader( TFile * file ) {
+StatusCode FhTool::writeReconHeader( TFile * file ) {
 	return writeHeader(file,m_reconHeader) ;
 }
 
-StatusCode FileHeadersTool::readConstMcHeader( TFile * file ) {
+StatusCode FhTool::readConstMcHeader( TFile * file ) {
 	return readHeader(file,m_constMcHeader) ;
 }
 
-StatusCode FileHeadersTool::readConstDigiHeader( TFile * file ) {
+StatusCode FhTool::readConstDigiHeader( TFile * file ) {
 	return readHeader(file,m_constDigiHeader) ;
 }
 
-StatusCode FileHeadersTool::readConstReconHeader( TFile * file ) {
+StatusCode FhTool::readConstReconHeader( TFile * file ) {
 	return readHeader(file,m_constReconHeader) ;
 }
 
-StatusCode FileHeadersTool::writeHeader( TFile * file,
+StatusCode FhTool::writeHeader( TFile * file,
   FileHeader * header ) {
 	
     static TFile * oldFile = 0 ;
@@ -140,7 +140,7 @@ StatusCode FileHeadersTool::writeHeader( TFile * file,
     
 }
 
-StatusCode FileHeadersTool::readHeader( TFile * file,
+StatusCode FhTool::readHeader( TFile * file,
   const FileHeader * & header ) {
 
     static TFile * oldFile = 0 ;

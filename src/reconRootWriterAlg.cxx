@@ -36,14 +36,14 @@
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
-#include "src/FileHeadersTool.h"
+#include "RootIo/FhTool.h"
 #include <cstdlib>
 
 /** @class reconRootWriterAlg
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.38 2004/09/15 04:19:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.39 2004/09/24 19:14:05 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -122,7 +122,7 @@ private:
     IRootIoSvc* m_rootIoSvc;
 
     // ADDED FOR THE FILE HEADERS DEMO
-    IFileHeadersTool * m_headersTool ;
+    IFhTool * m_headersTool ;
 };
 
 
@@ -154,7 +154,7 @@ StatusCode reconRootWriterAlg::initialize()
     MsgStream log(msgSvc(), name());
     
     // ADDED FOR THE FILE HEADERS DEMO
-    StatusCode headersSc = toolSvc()->retrieveTool("FileHeadersTool",m_headersTool) ;
+    StatusCode headersSc = toolSvc()->retrieveTool("FhTool",m_headersTool) ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }

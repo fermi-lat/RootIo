@@ -1,6 +1,6 @@
 
-#ifndef FileHeadersTool_H
-#define FileHeadersTool_H
+#ifndef FhTool_H
+#define FhTool_H
 
 #include "commonRootData/FileHeader.h"
 #include <GaudiKernel/AlgTool.h>
@@ -10,10 +10,10 @@
 
 /*!
 
- @class IFileHeadersTool        
+ @class IFhTool        
  @brief Interface for the tool managing the instances of FileHeader
 
- Interface for FileHeadersTool, the tool which manage the instances
+ Interface for FhTool, the tool which manage the instances
  of FileHeader. Using a Gaudi tool for such task permits any piece
  of client code to access the shared headers, provided it can retrieve
  the tool.
@@ -35,20 +35,20 @@
  @author David Chamont - CNRS IN2P3 LLR Ecole Polytechnique
 
 */
-/** @class IFileHeadersTool
- * @brief Interface for FileHeadersTool.
+/** @class IFhTool
+ * @brief Interface for FhTool.
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FileHeadersTool.h,v 1.1 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhTool.h,v 1.2 2004/08/10 14:47:42 chamont Exp $
  */
 
-static const InterfaceID IID_IFileHeadersTool("IFileHeadersTool",1,0) ;
+static const InterfaceID IID_IFhTool("IFhTool",1,0) ;
 
-class IFileHeadersTool : virtual public IAlgTool {
+class IFhTool : virtual public IAlgTool {
 
 public:
 
     /// retreive interface id
-    static const InterfaceID & interfaceID() { return IID_IFileHeadersTool ; }
+    static const InterfaceID & interfaceID() { return IID_IFhTool ; }
     
     /// create a writable mc header
     virtual StatusCode newMcHeader() =0 ;
@@ -97,19 +97,19 @@ public:
     
 } ; 
  
-/** @class FileHeadersTool
+/** @class FhTool
  * @brief Tool which manage the files headers.
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FileHeadersTool.h,v 1.1 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhTool.h,v 1.2 2004/08/10 14:47:42 chamont Exp $
  */
 
-class FileHeadersTool : public AlgTool, virtual public IFileHeadersTool {
+class FhTool : public AlgTool, virtual public IFhTool {
 
 public:
 
-    FileHeadersTool( const std::string & type,
+    FhTool( const std::string & type,
         const std::string & name, const IInterface * parent ) ;
-    virtual ~FileHeadersTool() ;
+    virtual ~FhTool() ;
     
     StatusCode newMcHeader() ;
     FileHeader * mcHeader() ;
