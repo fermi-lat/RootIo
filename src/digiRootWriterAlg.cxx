@@ -25,11 +25,14 @@
 
 #include "digiRootData/DigiEvent.h"
 
+#include "commonData.h"
+
+
 /** @class digiRootWriterAlg
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.7 2002/10/10 02:27:43 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.8 2002/10/27 17:36:53 burnett Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -88,6 +91,8 @@ private:
     /// Compression level for the ROOT file
     int m_compressionLevel;
     
+    commonData m_common;
+
 };
 
 
@@ -135,6 +140,7 @@ StatusCode digiRootWriterAlg::initialize()
     m_digiFile->SetCompressionLevel(m_compressionLevel);
     m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
     m_digiEvt = new DigiEvent();
+    m_common.m_digiEvt = m_digiEvt;
     m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
     
     saveDir->cd();
@@ -157,6 +163,8 @@ StatusCode digiRootWriterAlg::execute()
             << " could not be opened for writing." << endreq;
         return StatusCode::FAILURE;
     }
+    
+    m_digiEvt->Clear();
 
     sc = writeDigiEvent();
     if (sc.isFailure()) {
@@ -271,7 +279,10 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
         log << MSG::DEBUG;
         (*calDigiTds)->fillStream(log.stream());
         log << endreq;
+        
         CalDigi *calDigiRoot = new CalDigi();
+        m_common.m_calDigiMap[(*calDigiTds)] = calDigiRoot;
+
         idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
         idents::CalXtalId idTds = (*calDigiTds)->getPackedId();
         CalXtalId idRoot(idTds.getTower(), idTds.getLayer(), idTds.getColumn());
@@ -323,7 +334,10 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
         TowerId towerRoot(idTds.ix(), idTds.iy());
         Int_t totRoot[2] = {(*tkrDigiTds)->getToT(0), (*tkrDigiTds)->getToT(1)};
         Int_t lastController0Strip = (*tkrDigiTds)->getLastController0Strip();
+       
         TkrDigi *tkrDigiRoot = new TkrDigi();
+        m_common.m_tkrDigiMap[(*tkrDigiTds)] = tkrDigiRoot;
+
         tkrDigiRoot->initialize((*tkrDigiTds)->getBilayer(), axisRoot, towerRoot, totRoot);
         UInt_t numHits = (*tkrDigiTds)->getNumHits();
         unsigned int iHit;
@@ -349,7 +363,7 @@ void digiRootWriterAlg::writeEvent()
     TDirectory *saveDir = gDirectory;
     m_digiFile->cd();
     m_digiTree->Fill();
-    m_digiEvt->Clear();
+    //m_digiEvt->Clear();
     saveDir->cd();
     return;
 }
