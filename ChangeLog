@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 17 19:02:21 PDT 2004
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+use new RootPolicy
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 17 19:00:40 PDT 2004
 RootIo/cmt
 
