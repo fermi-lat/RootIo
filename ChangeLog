@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Sep 13 09:21:34 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx 
+Log Message:
+needed by change to MCEvent
+    *
+------------------------------------------------------------
 User: heather  Tue Sep 10 08:22:13 PDT 2002
 RootIo/src
 
