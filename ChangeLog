@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Nov 18 14:36:48 PST 2002
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+fix formatting
+and actually add TkrPlane to TkrTrack when reading
+    *
+------------------------------------------------------------
 User: heather  Mon Nov 18 14:28:09 PST 2002
 RootIo/doc
 
