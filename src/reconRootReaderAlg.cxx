@@ -40,7 +40,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.26 2003/09/02 15:55:42 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.27 2003/10/16 14:19:41 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -807,21 +807,27 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
             unsigned int range;
             for (range = idents::CalXtalId::LEX8; range < idents::CalXtalId::HEX1; range++) {    
                 const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(range);
+                TVector3 posRoot = xtalRangeRoot->getPosition();
+                Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
                 Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
                     new Event::CalXtalRecData::CalRangeRecData(
                     xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
                     xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
+                xtalRangeTds->setPosition(posTds);
                 calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
             }
         } else if (calXtalRecRoot->getMode() == CalXtalId::BESTRANGE) {
             
             calXtalRecDataTds = new Event::CalXtalRecData(idents::CalXtalId::BESTRANGE, idTds);
             const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(0);   
+            TVector3 posRoot = xtalRangeRoot->getPosition();
+            Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
             
             Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
                 new Event::CalXtalRecData::CalRangeRecData(
                 xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
                 xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
+            xtalRangeTds->setPosition(posTds);
             calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
         }
         
