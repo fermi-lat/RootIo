@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Sep 14 21:19:30 PDT 2004
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+merging beforeheader branch
+    *
+------------------------------------------------------------
 User: heather  Tue Sep 14 21:17:49 PDT 2004
 RootIo/doc
 
