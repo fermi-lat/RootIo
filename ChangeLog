@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr  6 13:05:15 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+default tree size 25 GB
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r2p1, operation: add
 Package: RootIo
