@@ -1,11 +1,11 @@
 package RootIo
-version v4r11
+version v4r12
 
 branches src doc
 
 use GaudiSvc v7r*
-use GlastSvc v8r*
-use Event v8r*
+use GlastSvc v9r*
+use Event v9r*
 use ROOT v3r2p*
 
 use GlastPolicy v4r*
