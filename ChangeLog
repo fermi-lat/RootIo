@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  6 14:55:28 PDT 2004
+RootIo/src/test
+
+Modified Files:
+	testRootIoSvcAlg.cxx 
+Log Message:
+update test to check mechanism to see if run/event pair exists
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 14:55:00 PDT 2004
 RootIo/src
 
