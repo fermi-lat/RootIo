@@ -33,7 +33,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.16 2003/06/27 02:49:20 lsrea Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.17 2003/09/28 05:22:28 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -130,7 +130,7 @@ StatusCode digiRootWriterAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
 
-    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+    if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "No Auto Saving" << endreq;
         m_rootIoSvc = 0;
@@ -376,7 +376,8 @@ void digiRootWriterAlg::writeEvent()
     //m_digiEvt->Clear();
     saveDir->cd();
     ++eventCounter;
-    if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_digiTree->AutoSave();
+    if (m_rootIoSvc)
+        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_digiTree->AutoSave();
 
     return;
 }
