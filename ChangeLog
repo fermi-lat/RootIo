@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 24 13:48:24 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+store tower and layer/gtcc for CAL/TKR diagnostic
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 24 13:48:09 PST 2004
 RootIo/doc
 
