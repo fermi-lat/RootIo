@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.40 2004/11/11 07:00:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.41 2004/11/24 14:16:31 chamont Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -356,8 +356,8 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     }
     unsigned int iTower = 0;
     for (iTower = 0; iTower < 16; iTower++) {
-        rowbits->setTriRowBits(iTower, m_digiEvt->getL1T().getTriRowBits(iTowe
-r));
+        rowbits->setTriRowBits(iTower,
+            m_digiEvt->getL1T().getTriRowBits(iTower));
     }
 
     LdfEvent::LdfTime *ldfTimeTds = new LdfEvent::LdfTime();
