@@ -11,6 +11,14 @@
 #include "Event/MonteCarlo/McPositionHit.h"
 #include "Event/Digi/CalDigi.h"
 #include "idents/CalXtalId.h"
+#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/TkrRecon/TkrClusterCol.h"
+#include "Event/Recon/TkrRecon/TkrPatCandCol.h"
+#include "Event/Recon/TkrRecon/TkrFitTrack.h"
+#include "Event/Recon/TkrRecon/TkrVertex.h"
+#include "Event/Recon/CalRecon/CalCluster.h"   
+#include "Event/Recon/CalRecon/CalXtalRecData.h"   
+
 
 #include <map>
 
@@ -18,7 +26,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.4 2002/05/14 15:21:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.5 2002/05/14 21:02:27 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -39,6 +47,7 @@ private:
 
     StatusCode readDigiData();
 
+    StatusCode readReconData();
     
 };
 
@@ -71,6 +80,8 @@ StatusCode testReadAlg::execute()
     sc = readMcData();
 
     sc = readDigiData();
+
+    sc = readReconData();
 
     return sc;
 }
@@ -136,6 +147,7 @@ StatusCode testReadAlg::readMcData() {
 StatusCode testReadAlg::readDigiData() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+    
     SmartDataPtr<Event::CalDigiCol> calDigiColTds(eventSvc(), EventModel::Digi::CalDigiCol);
     if (!calDigiColTds) return sc;
     Event::CalDigiCol::const_iterator calDigiTds;
@@ -159,6 +171,47 @@ StatusCode testReadAlg::readDigiData() {
     return sc;
 }
 
+StatusCode testReadAlg::readReconData() {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<Event::TkrPatCandCol> candidatesColTds(eventSvc(), EventModel::TkrRecon::TkrPatCandCol);
+    if (!candidatesColTds) 
+        log << MSG::INFO << "No TKR candidate tracks on the TDS" << endreq;
+    else 
+        log << MSG::DEBUG << candidatesColTds->getNumCands() << " TKR candidate tracks on TDS" << endreq;
+
+    SmartDataPtr<Event::TkrFitTrackCol> trackColTds(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
+    if (!trackColTds)
+        log << MSG::INFO << "No TKR track collection on the TDS" << endreq;
+    else
+        log << MSG::DEBUG << trackColTds->size() << " tracks in TDS" << endreq;
+
+    SmartDataPtr<Event::TkrVertexCol> vertexColTds(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
+    if (!vertexColTds) 
+        log << MSG::INFO << "No TKR vertex collection on TDS" << endreq;
+    else 
+        log << MSG::DEBUG << vertexColTds->size() << " TKR vertices on TDS" << endreq;
+
+
+    SmartDataPtr<Event::CalXtalRecCol> xtalRecColTds(eventSvc(),EventModel::CalRecon::CalXtalRecCol);
+    if (!xtalRecColTds)
+        log << MSG::INFO << "No CAL recon xtal collection on the TDS" << endreq;
+    else 
+        log << MSG::DEBUG << xtalRecColTds->size() << " CAL recon xtals on TDS" << endreq;
+
+    SmartDataPtr<Event::CalClusterCol> calClusterColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
+    if (!calClusterColTds)
+        log << MSG::INFO << "No CAL recon cluster collection on the TDS" << endreq;
+    else 
+        log << MSG::DEBUG << calClusterColTds->num() << " CAL clusters on TDS" << endreq;
+
+    SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
+    if (!acdRecTds) 
+        log << MSG::INFO << "No ACD recon data on TDS" << endreq;
+
+    return sc;
+}
 
 
 StatusCode testReadAlg::finalize()
