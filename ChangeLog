@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr 24 12:47:33 PDT 2002
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix wildcard usage
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 22 10:25:36 PDT 2002
 RootIo/src
 
