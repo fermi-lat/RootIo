@@ -15,17 +15,17 @@ ApplicationMgr.ExtSvc = {
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
 EventSelector.Input = "NONE";
 
-mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/mc.root";
+mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-writetest.root";
 mcRootWriterAlg.splitMode = 1;
 mcRootWriterAlg.bufferSize = 64000;
 mcRootWriterAlg.compressionLevel = 1;
 
-digiRootWriterAlg.digiRootFile = "$(ROOTIOROOT)/digi.root";
+digiRootWriterAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi-writetest.root";
 digiRootWriterAlg.splitMode = 1;
 digiRootWriterAlg.bufferSize = 64000;
 digiRootWriterAlg.compressionLevel = 1;
 
-reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
+reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon-writetest.root";
 reconRootWriterAlg.splitMode = 1;
 reconRootWriterAlg.bufferSize = 64000;
 reconRootWriterAlg.compressionLevel = 1;

@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.1 2003/08/21 23:33:30 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.2 2004/01/12 19:28:54 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -64,9 +64,11 @@ StatusCode testRootIoSvcAlg::execute()
 	
 	if (flag % 2)
 		m_rootIoSvc->setIndex(flag);
-	else 
-		//m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,5));
-        m_rootIoSvc->setIndex(flag);
+    else {
+		m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,48));
+        log << MSG::INFO << "Requesting run/event (10,48) randomly" << endreq;
+    }
+        //m_rootIoSvc->setIndex(flag);
 
 	flag++;
 
