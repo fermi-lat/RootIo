@@ -13,6 +13,8 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
+#include "EbfConverter/DiagnosticData.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -34,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.17 2003/09/02 15:55:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18 2003/10/13 23:02:39 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -56,6 +58,9 @@ private:
 
     /// Reads top-level DigiEvent
     StatusCode readDigiEvent();
+
+    /// Reads in the EM Diagnostic trigger primitive data
+    StatusCode readDiagnostic();
 
     /// Reads ACD digi data from ROOT and puts data on TDS
     StatusCode readAcdDigi();
@@ -230,6 +235,12 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
+    sc = readDiagnostic();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to read in diagnostic data" << endreq;
+        return sc;
+    }
+
     sc = readAcdDigi();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load AcdDigi" << endreq;
@@ -293,6 +304,41 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
+
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readDiagnostic() {
+
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const TClonesArray *calCol = m_digiEvt->getCalDiagnosticCol();
+    const TClonesArray *tkrCol = m_digiEvt->getTkrDiagnosticCol();
+    EbfConverterTds::DiagnosticData *diagTds = new EbfConverterTds::DiagnosticData();
+    TIter calIt(calCol);
+    CalDiagnostic *cDiagRoot;
+    while (cDiagRoot = (CalDiagnostic*)calIt.Next()) {
+        EbfConverterTds::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord(), 
+            cDiagRoot->getLabel(), cDiagRoot->getGccc(), cDiagRoot->getLayer());
+        diagTds->addCalDiagnostic(cDiagTds);
+    }
+
+    TIter tkrIt(tkrCol);
+    TkrDiagnostic *tDiagRoot;
+    while(tDiagRoot = (TkrDiagnostic*)tkrIt.Next()) {
+        EbfConverterTds::TkrDiagnosticData tDiagTds(tDiagRoot->getTriggerRequest(), 
+            tDiagRoot->getGtcc());
+        diagTds->addTkrDiagnostic(tDiagTds);
+    }
+
+    sc = eventSvc()->registerObject("/Event/Diagnostic", diagTds);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register " << "/Event/Diagnostic" << endreq;
+        return sc;
+    }
+    
 
     return sc;
 }
