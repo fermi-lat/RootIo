@@ -31,12 +31,13 @@
 #include "TVector3.h"
 
 #include "reconRootData/ReconEvent.h"
+#include "RootIo/IRootIoSvc.h"
 
 /** @class reconRootWriterAlg
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.29 2003/03/18 15:01:43 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.30 2003/06/02 01:51:28 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -112,7 +113,7 @@ private:
 
     /// Keep track of relation between TDS objs and ROOT counterparts
     commonData m_common;
-    
+    IRootIoSvc* m_rootIoSvc;
 };
 
 
@@ -129,8 +130,7 @@ Algorithm(name, pSvcLocator)
     declareProperty("bufferSize", m_bufSize=64000);
     // ROOT default compression
     declareProperty("compressionLevel", m_compressionLevel=1);
-    declareProperty("treeName", m_treeName="Recon");
-    
+    declareProperty("treeName", m_treeName="Recon");    
 }
 
 StatusCode reconRootWriterAlg::initialize()
@@ -145,6 +145,12 @@ StatusCode reconRootWriterAlg::initialize()
     // This will retrieve parameters set in the job options file
     setProperties();
     
+    if ( service("RootIoSvc", m_rootIoSvc).isFailure() ){
+        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
+        log << MSG::INFO << "No Auto Saving" << endreq;
+        m_rootIoSvc = 0;
+    } 
+
     facilities::Util::expandEnvVar(&m_fileName);
     
     // Save the current directory for the ntuple writer service
@@ -778,10 +784,14 @@ void reconRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
     
+    static int eventCounter = 0;
     TDirectory *saveDir = gDirectory;
     m_reconFile->cd();
     m_reconTree->Fill();
     saveDir->cd();
+    ++eventCounter;
+    if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_reconTree->AutoSave();
+
     return;
 }
 
