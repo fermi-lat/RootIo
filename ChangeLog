@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Nov 16 08:48:47 PST 2004
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+address JIRA ROOT-3 handle automatic creation of multiple output files
+    *
+------------------------------------------------------------
 User: heather  Tue Nov 16 08:17:42 PST 2004
 RootIo/src
 
