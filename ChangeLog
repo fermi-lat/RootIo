@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sat Sep 27 22:20:44 PDT 2003
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+add autosave interval method
+    *
+------------------------------------------------------------
 User: heather  Sat Sep 27 22:20:04 PDT 2003
 RootIo/doc
 
