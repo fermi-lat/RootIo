@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Aug 26 10:24:04 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersTool.cxx 
+Log Message:
+remove a StatusCode::FAILURE
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 18 13:39:22 PDT 2004
 RootIo/cmt
 
