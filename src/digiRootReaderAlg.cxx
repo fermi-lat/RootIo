@@ -41,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.31 2004/08/09 17:57:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.32 2004/08/10 22:09:05 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -552,7 +552,10 @@ void digiRootReaderAlg::close()
     //m_digiFile->cd();
     //m_digiFile->Close();
     //saveDir->cd();
-    if (m_digiTree) delete m_digiTree;
+    if (m_digiTree) {
+        delete m_digiTree ;
+        m_digiTree = 0 ;
+    }
 }
 
 StatusCode digiRootReaderAlg::finalize()
