@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: richard  Thu May  9 22:27:34 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+change to Event package/namespace
+    *
+------------------------------------------------------------
 User: heather  Tue May  7 14:21:50 PDT 2002
 RootIo/src
 
