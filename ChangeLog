@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Mon Jan 12 10:26:20 PST 2004
+RootIo/src/test
+
+Modified Files:
+	mc.root digi.root recon.root 
+Removed Files:
+	muon_patch-recon.root muon_patch-mc.root muon_patch-digi.root 
+Log Message:
+update test root files
+    *
+------------------------------------------------------------
 User: heather  Fri Jan  9 10:56:23 PST 2004
 RootIo/src
 
