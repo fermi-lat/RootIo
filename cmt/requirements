@@ -1,5 +1,5 @@
 package RootIo
-version v12r1
+version v12r2
 
 branches src doc
 
@@ -9,7 +9,7 @@ use ROOT v2r* IExternal
 apply_pattern packageShr
 apply_pattern package_include
 
-use RootPolicy v2r*
+use RootPolicy v4r*
 use mcRootData v2r*
 use digiRootData v7r*
 use reconRootData v4r*
