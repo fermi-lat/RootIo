@@ -29,7 +29,7 @@
  * @brief Writes Recon TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly and Tracy Usher
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.14 2002/06/06 12:43:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.15 2002/06/06 16:03:18 heather Exp $
  */
 
 class reconRootWriterAlg : public Algorithm
@@ -320,7 +320,8 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrFitTrackCol* t
                                  projPlus,
                                  planeTds.getZPlane(),
                                  planeTds.getEnergy(),
-                                 planeTds.getRadLen() );
+                                 planeTds.getRadLen(),
+                                 planeTds.getActiveDist() );
 
             // Here we build the hit info (one at a time) starting with measured
             TkrParams           params;
