@@ -27,6 +27,8 @@
 
 #include "facilities/Util.h"
 
+#include "commonData.h"
+
 #include <vector>
 #include <map>
 
@@ -35,7 +37,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.17 2003/02/11 23:05:25 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.18 2003/02/26 20:09:01 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -107,7 +109,9 @@ private:
     std::string m_treeName;
     /// Number of events in the input ROOT TTree
     int m_numEvents;
-    
+
+    commonData m_common;
+
 };
 
 static const AlgFactory<reconRootReaderAlg>  Factory;
@@ -158,6 +162,8 @@ StatusCode reconRootReaderAlg::initialize()
     m_reconEvt = 0;
     m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
     
+    m_common.m_reconEvt = m_reconEvt;
+
     m_numEvents = m_reconTree->GetEntries();
     
     saveDir->cd();
@@ -180,6 +186,8 @@ StatusCode reconRootReaderAlg::execute()
         return StatusCode::FAILURE;
     }
     
+    if (m_reconEvt) m_reconEvt->Clear();
+
     static UInt_t evtId = 0;
     if (evtId >= m_numEvents) {
         log << MSG::ERROR << "ROOT file contains no more events" << endreq;
@@ -380,9 +388,12 @@ StatusCode reconRootReaderAlg::storeTkrCandidateTrackCol(TkrRecon *tkrRecRoot) {
         
         Event::TkrPatCand *track = new Event::TkrPatCand(
             candTrackRoot->getLayer(), candTrackRoot->getTower(),
-            candTrackRoot->getEnergy(), candTrackRoot->getQuality(),
+            candTrackRoot->getEnergy(), 1.0, candTrackRoot->getQuality(),
             rayTds); 
         
+        // Keep relation between Event and Root candidate tracks
+        m_common.m_rootTkrCandMap[candTrackRoot] = track;        
+
         for (int idx = 0; idx < candTrackRoot->getNumHits(); idx++) {
             const TkrCandHit* hitIt = candTrackRoot->getHitPlane(idx);
             TVector3 posRoot = hitIt->getPosition();
@@ -448,6 +459,10 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
             trackTds = convertTkrKalFitTrack(trackRoot);
         }
         
+        // Keep relation between Event and Root fit tracks
+        m_common.m_rootTkrTrackMap[trackObj] = trackTds;
+
+
         // Store track id to properly associate tracks and vertices later
         trackMap[trkIdx] = trackTds;
         
@@ -484,6 +499,10 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
             vertexRoot->getLayer(), vertexRoot->getTower(),
             vertexRoot->getEnergy(), vertexRoot->getQuality(), rayTds);
         
+
+        // Keep relation between Event and Root vertices
+        m_common.m_rootTkrVertexMap[vertexRoot] = vertexTds;
+
         unsigned int numTracks = vertexRoot->getNumTracks();
         unsigned int iTrack;
         for (iTrack = 0; iTrack < numTracks; iTrack++) {

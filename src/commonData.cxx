@@ -6,14 +6,46 @@ std::map<const Event::McIntegratingHit*, TRef> commonData::m_mcIntHitMap;
 std::map<const Event::McPositionHit*, TRef> commonData::m_mcPosHitMap;
 std::map<const Event::TkrDigi*, TRef> commonData::m_tkrDigiMap;
 std::map<const Event::CalDigi*, TRef> commonData::m_calDigiMap;
+std::map<const Event::TkrPatCand*, TRef> commonData::m_tkrCandMap;
+std::map<const Event::TkrFitTrackBase*, TRef> commonData::m_tkrTrackMap;
+std::map<const Event::TkrVertex*, TRef> commonData::m_tkrVertexMap;
+
+std::map<const TObject*, const Event::McParticle*>       commonData::m_rootMcPartMap;
+std::map<const TObject*, const Event::McIntegratingHit*> commonData::m_rootMcIntHitMap;
+std::map<const TObject*, const Event::McPositionHit*>    commonData::m_rootMcPosHitMap;
+std::map<const TObject*, const Event::TkrDigi*>          commonData::m_rootTkrDigiMap;
+std::map<const TObject*, const Event::CalDigi*>          commonData::m_rootCalDigiMap;
+std::map<const TObject*, const Event::TkrPatCand*>       commonData::m_rootTkrCandMap;
+std::map<const TObject*, const Event::TkrFitTrackBase*>  commonData::m_rootTkrTrackMap;
+std::map<const TObject*, const Event::TkrVertex*>        commonData::m_rootTkrVertexMap;
+
+
 
 McEvent* commonData::m_mcEvt;
 DigiEvent* commonData::m_digiEvt;
+ReconEvent* commonData::m_reconEvt;
 
 
 void commonData::clear() { 
     m_mcPartMap.clear(); 
     m_mcIntHitMap.clear();
     m_mcPosHitMap.clear();
+    m_tkrDigiMap.clear();
     m_calDigiMap.clear(); 
+    m_tkrCandMap.clear();
+    m_tkrTrackMap.clear();
+    m_tkrVertexMap.clear();
+
+    m_rootMcPartMap.clear(); 
+    m_rootMcIntHitMap.clear();
+    m_rootMcPosHitMap.clear();
+
+    m_rootTkrDigiMap.clear();
+    m_rootCalDigiMap.clear();
+    
+    m_rootTkrCandMap.clear();
+    m_rootTkrTrackMap.clear();
+    m_rootTkrVertexMap.clear();
+
+
 }

@@ -29,7 +29,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.20 2002/12/02 21:54:19 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.21 2003/02/11 23:05:25 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -152,8 +152,6 @@ StatusCode mcRootWriterAlg::initialize()
     m_mcEvt = new McEvent();
     m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
     
-    //m_common.m_mcFile = m_mcFile;
-    //m_common.m_mcTree = m_mcTree;
     m_common.m_mcEvt = m_mcEvt;
 
     saveDir->cd();

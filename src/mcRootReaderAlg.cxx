@@ -22,6 +22,7 @@
 #include "mcRootData/McEvent.h"
 
 #include "facilities/Util.h"
+#include "commonData.h"
 
 #include <map>
 
@@ -30,7 +31,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.18 2002/10/21 19:53:05 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.19 2002/10/24 14:06:40 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -84,7 +85,9 @@ private:
     std::string m_treeName;
     /// Number of Events in the input ROOT TTree
     int m_numEvents;
-    
+
+    commonData m_common;
+
     /// Keep track of MC particles as we retrieve them from the ROOT file
     /// The id is the unique id assigned by ROOT for every TObject.
     std::map<UInt_t, Event::McParticle*> m_particleMap;
@@ -140,6 +143,7 @@ StatusCode mcRootReaderAlg::initialize()
     
     m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
+    m_common.m_mcEvt = m_mcEvt;
     
     m_numEvents = m_mcTree->GetEntries();
     
@@ -171,6 +175,8 @@ StatusCode mcRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
+    if (m_mcEvt) m_mcEvt->Clear();
+
     if (!m_mcFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for reading." << endreq;
@@ -210,7 +216,7 @@ StatusCode mcRootReaderAlg::execute()
     sc = readMcIntegratingHits();
     if (sc.isFailure()) return sc;
     
-    m_mcEvt->Clear();
+    //m_mcEvt->Clear();
     evtId++;
     
     return sc;
