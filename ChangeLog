@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri May 10 16:13:02 PDT 2002
+RootIo/src/test
+
+Modified Files:
+	testReadAlg.cxx 
+Log Message:
+missed this: will move the tag
+    *
+------------------------------------------------------------
 User: burnett  Fri May 10 14:56:36 PDT 2002
 RootIo/src
 
