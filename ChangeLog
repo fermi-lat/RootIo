@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  9 06:16:52 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+remove McParticle* from mcRootData::McPositionHit writing
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  9 06:15:59 PDT 2002
 RootIo/doc
 
