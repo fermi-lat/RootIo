@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 24 10:54:41 PDT 2004
+RootIo/src
+
+Modified Files:
+	FileHeadersSetAlg.cxx 
+Log Message:
+use set rather than printenv for WIN32
+    *
+------------------------------------------------------------
 User: heather  Fri Sep 24 10:42:42 PDT 2004
 RootIo/doc
 
