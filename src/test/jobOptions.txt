@@ -4,14 +4,15 @@
 //
 
 
-//#include "$ROOTIOROOT/src/test/writeOptions.txt"
-#include "$ROOTIOROOT/src/test/readOptions.txt"
+#include "$ROOTIOROOT/src/test/writeOptions.txt"
+//#include "$ROOTIOROOT/src/test/readOptions.txt"
 
 ApplicationMgr.TopAlg +=  { "testReadAlg"};
 
 
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
 MessageSvc.OutputLevel      = 3;
+testReadAlg.OutputLevel = 2;
 
 ApplicationMgr.EvtMax = 10;
 
