@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon May 20 19:33:31 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+attempt to update TKR recon writing for new version of ROOT classes
+    *
+------------------------------------------------------------
 User: usher  Fri May 17 19:50:06 PDT 2002
 RootIo/src
 
