@@ -1,12 +1,12 @@
 package RootIo
-version v13r1em0
+version v13r1em2
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.113 2004/12/14 23:02:08 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.113.2.1 2004/12/17 06:06:57 heather Exp $
 
 branches src doc
 
 use Event v9r*
-use ROOT v2r* IExternal
+use ROOT v3r* IExternal
 
 apply_pattern packageShr
 apply_pattern package_include
