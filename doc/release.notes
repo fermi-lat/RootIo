@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator: H. Kelly
 
+ v4r1p5 05-Jun-2002 THB accumulated fixes for Eventmodel changes\n
  v4r1p1 24-May-2002 HMK Use new CalCluser ctro to set energy sum\n
  v4r1p0 23-May-2002 HMK Fix up enum usage for Linux \n
  v4r1   22-May-2002 HMK Add in TkrDigi writing and reading \n
