@@ -13,7 +13,7 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
-//#include "EbfConverter/DiagnosticData.h"
+#include "EbfConverter/DiagnosticData.h"
 #include "EbfConverter/EventSummaryData.h"
 
 #include "TROOT.h"
@@ -37,7 +37,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.3 2003/11/25 05:42:12 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.4 2003/11/27 06:31:17 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -64,7 +64,7 @@ private:
     StatusCode readEventSummary();
 
     /// Reads in the EM Diagnostic trigger primitive data
-    //StatusCode readDiagnostic();
+    StatusCode readDiagnostic();
 
     /// Reads ACD digi data from ROOT and puts data on TDS
     StatusCode readAcdDigi();
@@ -244,13 +244,13 @@ StatusCode digiRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to read in eventsummary data" << endreq;
         return sc;
     }
-/*
+
     sc = readDiagnostic();
     if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to read in diagnostic data" << endreq;
-        return sc;
+        log << MSG::INFO << "Failed to read in diagnostic data" << endreq;
+        // Do not return failure - diagnostic data may not be in all data
     }
-*/
+
 
     sc = readAcdDigi();
     if (sc.isFailure()) {
@@ -331,7 +331,7 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     return sc;
 }
 
-/*
+
 StatusCode digiRootReaderAlg::readDiagnostic() {
 
     MsgStream log(msgSvc(), name());
@@ -342,18 +342,16 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
     const TClonesArray *tkrCol = m_digiEvt->getTkrDiagnosticCol();
     EbfConverterTds::DiagnosticData *diagTds = new EbfConverterTds::DiagnosticData();
     TIter calIt(calCol);
-    CalDiagnostic *cDiagRoot;
-    while (cDiagRoot = (CalDiagnostic*)calIt.Next()) {
-        EbfConverterTds::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord(), 
-            cDiagRoot->getGccc(), cDiagRoot->getLayer());
+    CalDiagnosticData *cDiagRoot;
+    while (cDiagRoot = (CalDiagnosticData*)calIt.Next()) {
+        EbfConverterTds::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord());
         diagTds->addCalDiagnostic(cDiagTds);
     }
 
     TIter tkrIt(tkrCol);
-    TkrDiagnostic *tDiagRoot;
-    while(tDiagRoot = (TkrDiagnostic*)tkrIt.Next()) {
-        EbfConverterTds::TkrDiagnosticData tDiagTds(tDiagRoot->getTriggerRequest(), 
-            tDiagRoot->getGtcc());
+    TkrDiagnosticData *tDiagRoot;
+    while(tDiagRoot = (TkrDiagnosticData*)tkrIt.Next()) {
+        EbfConverterTds::TkrDiagnosticData tDiagTds(tDiagRoot->getDataWord());
         diagTds->addTkrDiagnostic(tDiagTds);
     }
 
@@ -366,7 +364,7 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
 
     return sc;
 }
-*/
+
 
 StatusCode digiRootReaderAlg::readAcdDigi() {
     // Purpose and Method:  Read in ACD digi collection from ROOT file
