@@ -14,7 +14,8 @@ use GlastPolicy v4r*
 apply_pattern packageShr
 
 # uses for test program: make private here 
-private
+# the private use breaks linux build
+# private
 use G4Generator v4r*
 use FluxSvc v5r*
 use GuiSvc v3
