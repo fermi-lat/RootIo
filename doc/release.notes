@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
 
+ v6r0p0  31-Dec-2002 HMK update reconRootData tag\n
  v6r0    20-Dec-2002 TU  Update to recon writing and reading for TkrKalFitTrack\n
  v5r0    02-Dec-2002 HMK Update to use commonRootData and write out relations\n
  v4r21   19-Nov-2002 HMK Update to use new reconRootData v3r7\n
