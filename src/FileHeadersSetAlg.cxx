@@ -36,6 +36,9 @@ StatusCode FileHeadersSetAlg::finalize() {
     FileHeader * mcHeader = headersTool->mcHeader() ;
     FileHeader * digiHeader = headersTool->digiHeader() ;
     FileHeader * reconHeader = headersTool->reconHeader() ;
+    
+    FILE * pipe ;
+    char buffer[256] ;
   
 //    better stored event by event  
 //    // runId
@@ -45,11 +48,24 @@ StatusCode FileHeadersSetAlg::finalize() {
 //    if (reconHeader) reconHeader->setInteger("runId"eventHeader->run()) ;
     
     
+    // unix environment variables
+    TString unixEnv ;
+    pipe = popen("printenv 2>&1","r") ;
+    while ( fgets(buffer,256,pipe) != NULL )
+     { unixEnv += buffer ; }
+    pclose(pipe) ;
+    if (mcHeader) mcHeader->setString("unixEnv",unixEnv) ;
+    if (digiHeader) digiHeader->setString("unixEnv",unixEnv) ;
+    if (reconHeader) reconHeader->setString("unixEnv",unixEnv) ;
+    
+    // David: for the cmt commands below, I must provide a package
+    // name ; I would like to provide higher level package used for
+    // the current appplication, but I found no way to guess it ; It
+    // is why I am using RootIo. 
+    
     // cmt show uses
     TString cmtUses ;
-    FILE * pipe ;
-    char buffer[256] ;
-    pipe = popen("cmt show uses 2>&1","r") ;
+    pipe = popen("cmt -pack=RootIo show uses 2>&1","r") ;
     while ( fgets(buffer,256,pipe) != NULL )
      { cmtUses += buffer ; }
     pclose(pipe) ;
@@ -59,7 +75,7 @@ StatusCode FileHeadersSetAlg::finalize() {
         
     // cmt show macros
     TString cmtMacros ;
-    pipe = popen("cmt show macros 2>&1","r") ;
+    pipe = popen("cmt -pack=RootIo show macros 2>&1","r") ;
     while ( fgets(buffer,256,pipe) != NULL )
      { cmtMacros += buffer ; }
     pclose(pipe) ;

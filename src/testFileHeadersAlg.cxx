@@ -15,7 +15,7 @@
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.9 2003/08/21 18:29:49 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/testFileHeadersAlg.cxx,v 1.1 2004/08/09 17:57:31 chamont Exp $
  */
 
 class testFileHeadersSetAlg : public Algorithm
@@ -108,11 +108,16 @@ StatusCode testFileHeadersSetAlg::finalize_common(
 
     if (!header) return StatusCode::SUCCESS ;
     
-//    better stored event by event  
-//    log << MSG::INFO << prefix << " RunId: " << header->getString("runId") << endreq ;
+    std::string word, word2 ;
+    
+    std::istringstream unixEnv(header->getString("unixEnv").Data()) ;
+    while (unixEnv>>word) {
+    	if (word.find("RootIoShr=")==0) {
+            log << MSG::INFO << prefix << " Unix Env: " << word << endreq ;
+    	}
+    }
 
     std::istringstream cmtUses(header->getString("cmtUses").Data()) ;
-    std::string word, word2 ;
     while ((cmtUses>>word)&&(word!="Selection")) ;
     while (cmtUses>>word) {
     	if (word=="Event") {
