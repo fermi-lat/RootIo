@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep 25 11:43:21 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx 
+Log Message:
+write and read McParticle daughters
+    *
+------------------------------------------------------------
 User: heather  Wed Sep 25 11:27:21 PDT 2002
 RootIo/doc
 
