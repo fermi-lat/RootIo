@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 25 07:46:24 PST 2003
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+udpate to use TClonesArray calls for CalDigi
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 25 07:42:36 PST 2003
 RootIo/doc
 
