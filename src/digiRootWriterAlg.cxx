@@ -13,6 +13,7 @@
 #include "Event/Digi/TkrDigi.h"
 #include "EbfConverter/DiagnosticData.h"
 #include "EbfConverter/EventSummaryData.h"
+#include "EbfConverter/EbfTime.h"
 
 
 #include "idents/CalXtalId.h"
@@ -35,7 +36,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.4 2003/11/27 06:31:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.19.2.5 2003/12/18 22:15:24 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -251,6 +252,11 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
 
     L1T levelOne(evtTds->trigger());
     m_digiEvt->initialize(evtId, runId, timeObj.time(), levelOne, fromMc);
+
+    SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    if (timeTds) {
+        m_digiEvt->setEbfTime(timeTds->timeSec(), timeTds->timeNanoSec());
+    }
 
     return sc;
 }

@@ -15,6 +15,7 @@
 
 #include "EbfConverter/DiagnosticData.h"
 #include "EbfConverter/EventSummaryData.h"
+#include "EbfConverter/EbfTime.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -37,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.4 2003/11/27 06:31:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.5 2003/12/18 22:15:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -315,7 +316,10 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
         bool fromMc = m_digiEvt->getFromMc();
         digiEventTds->initialize(fromMc);
     }
-
+    SmartDataPtr<EbfConverterTds::EbfTime> timeTds(eventSvc(), "/Event/Time");
+    if (timeTds) {
+        timeTds->initialize(m_digiEvt->getEbfTimeSec(), m_digiEvt->getEbfTimeNanoSec());
+    }
     return sc;
 }
 
