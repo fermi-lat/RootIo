@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul 13 15:39:22 PDT 2004
+RootIo/src
+
+Modified Files:
+	readRootOptions.txt 
+Log Message:
+use the ROOT files in the rootTestData package
+    *
+------------------------------------------------------------
 User: heather  Tue Jul 13 15:35:59 PDT 2004
 RootIo/src
 
