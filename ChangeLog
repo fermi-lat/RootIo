@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Jun  1 18:52:54 PDT 2003
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+add RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Sun Jun  1 18:51:28 PDT 2003
 RootIo/src
 
