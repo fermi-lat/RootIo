@@ -35,7 +35,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.16 2003/02/06 21:55:53 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.17 2003/02/11 23:05:25 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -817,6 +817,8 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
             calClusterRoot->getCsiStart(),
             calClusterRoot->getCsiAlpha(),
             calClusterRoot->getCsiLambda());
+
+        calClusterTds->setEnergyCorrected(calClusterRoot->getEnergyCorrected());
         
         calClusterColTds->push_back(calClusterTds);
     }

@@ -35,7 +35,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.26 2002/12/20 19:38:36 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.27 2003/02/06 21:55:53 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -662,7 +662,8 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
             rmsLayerRoot.push_back(curVec);   
         }   
         
-        clusterRoot->initialize(clusterTds->getEnergyLeak(),    
+        clusterRoot->initialize(clusterTds->getEnergyLeak(), 
+            clusterTds->getEnergyCorrected(),
             clusterTds->getEneLayer(),   
             posLayerRoot, rmsLayerRoot,    
             clusterTds->getRmsLong(), clusterTds->getRmsTrans(),    
