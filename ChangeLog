@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  6 14:54:10 PDT 2004
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+provide mechanism to check existence of run/event pair
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 14:53:17 PDT 2004
 RootIo/RootIo
 
