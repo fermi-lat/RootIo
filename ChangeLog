@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Fri May 10 14:56:36 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx 
+Log Message:
+
+tagging v2r0
+    *
+------------------------------------------------------------
+User: burnett  Fri May 10 14:56:36 PDT 2002
 RootIo/doc
 
 Modified Files:
