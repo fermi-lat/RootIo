@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.5 2002/05/10 05:27:33 richard Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.6 2002/05/10 21:56:36 burnett Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -102,11 +102,15 @@ mcRootWriterAlg::mcRootWriterAlg(const std::string& name,
 Algorithm(name, pSvcLocator)
 {
     // Input parameters available to be set via the jobOptions file
+    // Output ROOT file name
     declareProperty("mcRootFile",m_fileName="mc.root");
+    // Split mode for writing the TTree [0,99]
     declareProperty("splitMode", m_splitMode=1);
+    // Buffer size for writing ROOT data
     declareProperty("bufferSize", m_bufSize=64000);
     // ROOT default compression
     declareProperty("compressionLevel", m_compressionLevel=1);
+    // ROOT TTree name
     declareProperty("treeName", m_treeName="Mc");
 
     m_particleMap.clear();
@@ -203,7 +207,8 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
 
     StatusCode sc = StatusCode::SUCCESS;
 
-    SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
+    SmartDataPtr<Event::McParticleCol> particles(eventSvc(), 
+        EventModel::MC::McParticleCol);
 
     if (!particles) return sc;
 
@@ -230,10 +235,12 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         TVector3 finalPosRoot(finalPosTds.x(), finalPosTds.y(), finalPosTds.z());
         
         HepLorentzVector initMomTds = (*p)->initialFourMomentum();
-        TLorentzVector initMomRoot(initMomTds.x(), initMomTds.y(), initMomTds.z(), initMomTds.t());
+        TLorentzVector initMomRoot(initMomTds.x(), initMomTds.y(), 
+            initMomTds.z(), initMomTds.t());
         
         HepLorentzVector finalMomTds = (*p)->finalFourMomentum();
-        TLorentzVector finalMomRoot(finalMomTds.x(), finalMomTds.y(), finalMomTds.z(), finalMomTds.t());
+        TLorentzVector finalMomRoot(finalMomTds.x(), finalMomTds.y(), 
+            finalMomTds.z(), finalMomTds.t());
 
         const Event::McParticle *momTds = &((*p)->mother());
         McParticle *momRoot = 0;
@@ -245,14 +252,16 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
                 // Otherwise we retrieve the McParticle from the map
                 momRoot = m_particleMap[momTds];
             } else {
-                log << MSG::WARNING << "Did not find mother McParticle in the map!!" << endreq;
+                log << MSG::WARNING << "Did not find mother McParticle in the"
+                    << "map!!" << endreq;
             }
         } else {
             log << MSG::WARNING << "TDS McParticle Mother is null" << endreq;
         }
                 
         // Setup the ROOT McParticle
-        mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, finalMomRoot, finalPosRoot);
+        mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, 
+            finalMomRoot, finalPosRoot);
         // Add the ROOT McParticle to the ROOT collection of McParticle
         m_mcEvt->addMcParticle(mcPart);     
 
@@ -272,10 +281,12 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
     StatusCode sc = StatusCode::SUCCESS;
 
     // Get the McPositionHits Collection from the TDS
-    SmartDataPtr<Event::McPositionHitVector> posHits(eventSvc(), EventModel::MC::McPositionHitCol);
+    SmartDataPtr<Event::McPositionHitVector> posHits(eventSvc(), 
+        EventModel::MC::McPositionHitCol);
     if (!posHits) return sc;
     
-    log << MSG::DEBUG << "Number of McPositionHits in the event = " << posHits->size() << endreq;
+    log << MSG::DEBUG << "Number of McPositionHits in the event = " 
+        << posHits->size() << endreq;
     
     Event::McPositionHitVector::const_iterator hit;
     for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {
@@ -323,7 +334,8 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         McPositionHit *mcPosHit = new McPositionHit();
         // Setup the ROOT McPositionHit
-        mcPosHit->initialize(edepRoot, volIdRoot, entryRoot, exitRoot, mcRoot, originRoot, epartRoot, tofRoot, flagsRoot);
+        mcPosHit->initialize(edepRoot, volIdRoot, entryRoot, exitRoot, mcRoot, 
+            originRoot, epartRoot, tofRoot, flagsRoot);
         // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
         m_mcEvt->addMcPositionHit(mcPosHit);
     }
@@ -443,4 +455,3 @@ StatusCode mcRootWriterAlg::finalize()
     StatusCode sc = StatusCode::SUCCESS;
     return sc;
 }
-
