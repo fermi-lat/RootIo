@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Feb 11 15:05:25 PST 2003
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	digiRootWriterAlg.cxx 
+Log Message:
+fix up MSG::DEBUG to use log.isActive
+    *
+------------------------------------------------------------
 User: heather  Tue Feb 11 14:50:09 PST 2003
 RootIo/doc
 
