@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Fri Aug 13 23:12:13 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+add some MSG::INFO statements when reading in ROOT files
+    *
+------------------------------------------------------------
 User: heather  Tue Aug 10 16:34:50 PDT 2004
 RootIo/doc
 
