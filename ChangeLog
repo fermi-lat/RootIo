@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon May 13 11:43:43 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx mcRootReaderAlg.cxx mainpage.h 
+Log Message:
+put event and run id on TDS when reading and fix line lengths
+    *
+------------------------------------------------------------
 User: heather  Mon May 13 11:42:14 PDT 2002
 RootIo/doc
 
