@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sun Dec 19 21:19:29 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: EngineeringModel-v3r0407p1
+	RootIoSvc.cxx 
+Log Message:
+put in all mods
+    *
+------------------------------------------------------------
 TAG
 Tag name: v14r0p3, operation: add
 Package: RootIo
