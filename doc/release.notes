@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v9r5p0em4 26-Nov-2003 HMK handle event summary word in EM
  v9r5p0em3 24-Nov-2003 HMK Comment out Diagnostic handling for now
  v9r5p0em2 18-Nov-2003 HMK Add Xin's property for setting starting event
  v9r5p0em1 17-Nov-2003 HMK fix to diagnostic data - remove label
