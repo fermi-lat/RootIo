@@ -42,7 +42,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.33 2004/09/13 11:49:36 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.34 2004/09/15 04:19:30 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -480,6 +480,14 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
         Event::AcdDigi *acdDigiTds = new Event::AcdDigi(idTds, volIdTds, 
             energyTds,phaTds, vetoTds, lowTds, highTds);
 
+        Event::AcdDigi::Range range[2];
+        range[0] = (acdDigiRoot->getRange(AcdDigi::A) == AcdDigi::LOW) ? Event::AcdDigi::LOW : Event::AcdDigi::HIGH;
+        range[1] = (acdDigiRoot->getRange(AcdDigi::B) == AcdDigi::LOW) ? Event::AcdDigi::LOW : Event::AcdDigi::HIGH;
+        Event::AcdDigi::ParityError err[2];
+        err[0] = (acdDigiRoot->getParityError(AcdDigi::A) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
+        err[1] = (acdDigiRoot->getParityError(AcdDigi::B) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
+        acdDigiTds->initLdfParameters(acdDigiRoot->getTileName(), acdDigiRoot->getTileNumber(),
+                    range, err);
         acdDigiTdsCol->push_back(acdDigiTds);
     }
 

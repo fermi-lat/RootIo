@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
  
+ v12r9   24-Sep-2004 HMK Fully populate LDF AcdDigi Parameters
+                         Replace call to printenv to set for Windows
  v12r8p1 23-Sep-2004 HMK Add testFileHeadersSetAlg to RootIo_load.cxx
  v12r8p0 23-Sep-2004 HMK Patch to popen and pclose for Linux
  v12r8   21-Aug-2004 DC  Add in file header demo
