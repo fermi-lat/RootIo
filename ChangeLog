@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  8 09:05:06 PDT 2002
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+update to read/write for McIntegratingHit
+    *
+------------------------------------------------------------
 User: heather  Thu Aug  8 08:58:58 PDT 2002
 RootIo/cmt
 
