@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header$
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.1 2003/06/02 01:53:19 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -14,6 +14,8 @@
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IAppMgrUI.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
 
 #include "CLHEP/Random/Random.h"
 
@@ -25,14 +27,14 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header$
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.1 2003/06/02 01:53:19 heather Exp $
 */
 
 // includes
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
-#include "IRootIoSvc.h"
+#include "RootIo/IRootIoSvc.h"
 
 //forward declarations
 template <class TYPE> class SvcFactory;
@@ -41,6 +43,7 @@ class IAppMgrUI;
 
 class RootIoSvc : 
     virtual public Service, 
+	virtual public IIncidentListener,
     virtual public IRootIoSvc,
     virtual public IRunable
 {  
@@ -62,11 +65,20 @@ public:
     /// Query interface
     virtual StatusCode queryInterface( const IID& riid, void** ppvUnknown );
 
-    virtual int getEvtMax() { return m_evtMax; };
+	/// Handles incidents, implementing IIncidentListener interface
+    virtual void handle(const Incident& inc);    
+	
+	virtual int getEvtMax() { return m_evtMax; };
 
     virtual void setRootEvtMax(unsigned int max);
 
     virtual void setRootTimeMax(unsigned int max);
+
+	virtual void setIndex(int i);
+	virtual int index() { return m_index; };
+
+	virtual void setRunEventPair(std::pair<int,int> ids);
+	virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
 
 protected: 
     
@@ -77,8 +89,11 @@ protected:
     virtual ~RootIoSvc();
     
 private:
-        
-    /// Allow SvcFactory to instantiate the service.
+
+    void beginEvent();
+    void endEvent();
+	
+	/// Allow SvcFactory to instantiate the service.
     friend class SvcFactory<RootIoSvc>;
    
     /// Reference to application manager UI
@@ -90,6 +105,9 @@ private:
     DoubleProperty m_endTime;
 
     unsigned int m_rootEvtMax;
+	int m_index;
+	std::pair<int, int> m_runEventPair;
+
 };
 
 // declare the service factories for the RootIoSvc
@@ -108,6 +126,8 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartTime"   , m_startTime=0);
     declareProperty("EndTime",      m_endTime=0);
     m_rootEvtMax = 0;
+	m_index = -1;
+	m_runEventPair = std::pair<int,int>(-1,-1);
 }
 
 
@@ -130,6 +150,15 @@ StatusCode RootIoSvc::initialize ()
     
     status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
     
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    status = service ("IncidentSvc", incsvc, true);
+
+    if( status.isFailure() ) return status;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
     return StatusCode::SUCCESS;
 }
 
@@ -147,7 +176,9 @@ StatusCode RootIoSvc::queryInterface(const IID& riid, void** ppvInterface)  {
         *ppvInterface = (IRootIoSvc*)this;
     }else if (IID_IRunable.versionMatch(riid) ) {
       *ppvInterface = (IRunable*)this;
-    } else  {
+	} else if (IID_IIncidentListener.versionMatch(riid) ) {
+		*ppvInterface = (IIncidentListener*)this;
+	} else  {
         return Service::queryInterface(riid, ppvInterface);
     }
 
@@ -170,6 +201,35 @@ void RootIoSvc::setRootEvtMax(unsigned int max) {
 void RootIoSvc::setRootTimeMax(unsigned int max) {
     // Not yet used
     return;
+}
+
+void RootIoSvc::setIndex(int i) {
+	m_index = i;
+	m_runEventPair = std::pair<int, int>(-1,-1);
+}
+
+void RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
+	m_runEventPair = ids;
+	m_index=-1;
+}
+// handle "incidents"
+void RootIoSvc::handle(const Incident &inc)
+{
+    if( inc.type()=="BeginEvent")beginEvent();
+    else if(inc.type()=="EndEvent")endEvent();
+}
+
+
+void RootIoSvc::beginEvent() // should be called at the beginning of an event
+{ 
+	setIndex(-1);
+	setRunEventPair(std::pair<int,int>(-1,-1));
+}
+
+void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
+{        
+	setIndex(-1);
+	setRunEventPair(std::pair<int,int>(-1,-1));
 }
 
 StatusCode RootIoSvc::run(){

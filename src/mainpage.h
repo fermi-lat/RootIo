@@ -11,6 +11,10 @@
 * - reconRootWriterAlg: writes a Recon ROOT file using recon data from the TDS.
 * - reconRootReaderAlg: reads in a Recon ROOT file and puts Recon data on the TDS.
 *
+* Services:  RootIoSvc
+* Allows for random event access via the GUI (when using RootDisplay) and can control
+* the event loop depending upon the min number of events in all read root files
+*
 * <hr>
 * @section jobOptions jobOptions
 * @param mcRootWriterAlg.mcRootFile
