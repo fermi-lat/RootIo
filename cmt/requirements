@@ -4,7 +4,7 @@ version v1r0
 branches src doc
 
 use GlastSvc v7r*
-use GlastEvent v7r*
+use Event v8*
 use ROOT v3r2p*
 use mcRootData v2r*
 use GlastPolicy v4r*
