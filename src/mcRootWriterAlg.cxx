@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.6 2002/05/10 21:56:36 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.7 2002/05/13 18:43:43 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -190,7 +190,9 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     UInt_t evtId = evt->event();
     UInt_t runId = evt->run();
 
-    log << MSG::DEBUG << evt->fillStream(log.stream()) << endreq;
+    log << MSG::DEBUG;
+    evt->fillStream(log.stream());
+    log << endreq;
 
     m_mcEvt->initialize(evtId, runId);
 
@@ -216,7 +218,9 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
 
     // Create map of TDS McParticles and ROOT McParticles
     for (p = particles->begin(); p != particles->end(); p++) {
-        log << MSG::DEBUG << (*p)->fillStream(log.stream()) << endreq;
+        log << MSG::DEBUG;
+        (*p)->fillStream(log.stream());
+        log << endreq;
         McParticle *mcPart = new McParticle();
         m_particleMap[(*p)] = mcPart;
     }
@@ -291,7 +295,9 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
     Event::McPositionHitVector::const_iterator hit;
     for (hit = posHits->begin(); hit != posHits->end(); hit++ ) {
     
-        log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
+        log << MSG::DEBUG;
+        (*hit)->fillStream(log.stream());
+        log << endreq;
 
         idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
         VolumeIdentifier volIdRoot;
@@ -364,7 +370,9 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
     Event::McIntegratingHitVector::const_iterator hit;
     for (hit = intHits->begin(); hit != intHits->end(); hit++ ) {
 
-        log << MSG::DEBUG << (*hit)->fillStream(log.stream()) << endreq;
+        log << MSG::DEBUG;
+        (*hit)->fillStream(log.stream());
+        log << endreq;
 
         const idents::VolumeIdentifier idTds = (*hit)->volumeID();
         VolumeIdentifier idRoot;

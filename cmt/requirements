@@ -1,5 +1,5 @@
 package RootIo
-version v2r0p1
+version v3r0
 
 branches src doc
 
@@ -7,12 +7,14 @@ use GlastSvc v8r*
 use Event v8*
 use ROOT v3r2p*
 use mcRootData v2r*
+use digiRootData v3r*
 use GlastPolicy v4r*
 
 # uses for test program
 use G4Generator v4r*
 use FluxSvc v5r*
 use GuiSvc v3
+use GlastDigi v4r*
 
 
 apply_pattern package_headers
