@@ -1,5 +1,5 @@
 package RootIo
-version v9r5p0
+version v9r5p1
 
 branches src doc
 
@@ -17,6 +17,7 @@ use reconRootData v4r*
 use commonRootData v0r*
 
 private
+use EbfConverter v*
 apply_pattern package_headers
 
 library RootIo  *.cxx Dll/*.cxx ${RootIo_headers}
