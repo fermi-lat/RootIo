@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Tue Jan 25 12:01:19 PST 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+prepare for tag v14r4: mods for TkrCluster, and add generation of TkrIdClusterMap
+
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 25 11:45:28 PST 2005
 RootIo/doc
 
