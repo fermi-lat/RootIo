@@ -19,6 +19,8 @@
 
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 
+#include "LdfEvent/EventSummaryData.h"
+
 #include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
@@ -37,7 +39,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.35 2004/01/13 00:28:22 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.36 2004/06/10 17:03:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -240,6 +242,13 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     log << endreq;
     
     m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon);
+
+    // For simulated data - this may not exist on the TDS and that is ok
+    // no need to fail for that
+    SmartDataPtr<LdfEvent::EventSummary> summaryTds(eventSvc(), "/Event/EventSummary");
+    if (summaryTds) 
+        m_reconEvt->initEventFlags(summaryTds->eventFlags());
+        
     
     return sc;
 }
