@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 22:50:31 PST 2004
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle Luis' 3-in-a-row trigger bits for all towers
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 22:49:47 PST 2004
 RootIo/doc
 
