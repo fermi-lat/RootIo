@@ -1,0 +1,20 @@
+//##############################################################
+//
+// Job options file for writing a ROOT file
+//
+ApplicationMgr.DLLs +=    { "RootIo" };
+
+ApplicationMgr.TopAlg +=  { "reconRootWriterAlg"};
+
+reconRootWriterAlg.OutputLevel = 3;
+reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/recon.root";
+reconRootWriterAlg.splitMode = 1;
+reconRootWriterAlg.bufferSize = 64000;
+reconRootWriterAlg.compressionLevel = 2;
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+
