@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Sun Dec 26 15:22:58 PST 2004
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+prepare for tag v14r1: mods to sync with TkrCluster
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v13r1em1, operation: add
 Package: RootIo
