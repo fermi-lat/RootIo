@@ -25,7 +25,6 @@
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
-#include "TEventList.h"
 
 #include "mcRootData/McEvent.h"
 #include "digiRootData/DigiEvent.h"
@@ -42,7 +41,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.5 2003/08/21 23:37:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.6 2003/08/24 01:00:21 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -194,7 +193,10 @@ StatusCode relationRootReaderAlg::initialize()
     m_relTree->SetBranchAddress("RelTable", &m_relTab);
 
     m_numEvents = m_relTree->GetEntries();
-    if (m_rootIoSvc) m_rootIoSvc->setRootEvtMax(m_numEvents);
+	if (m_rootIoSvc) {
+		m_rootIoSvc->setRootEvtMax(m_numEvents);
+		//m_relTree->BuildIndex("m_runId", "m_eventId");
+	}
 
     saveDir->cd();
     return sc;
@@ -220,16 +222,7 @@ StatusCode relationRootReaderAlg::execute()
 	} else if ((m_rootIoSvc) && (runEventPair.first != -1) && (runEventPair.second != -1)) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
-		char cutStr[100];
-		sprintf(cutStr,"%s%d%s%d","m_runId == ",run,"&& m_eventId == ", evt);
-		m_relTree->Draw(">>mylist", cutStr);
-		TEventList *elist = (TEventList*)gDirectory->Get("mylist"); 
-		if (elist->GetN() <= 0) {
-			log << MSG::WARNING << "Requested run, event pair not found " << run << " "
-				<< evt << endreq;
-			return sc;
-		}
-		readInd = elist->GetEntry(0);
+		readInd = m_relTree->GetEntryWithIndex(run, evt);
 	} else {
 		readInd = evtId;
 	}
