@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kyoung  Tue Oct  8 15:17:03 PDT 2002
+RootIo/src
+
+Added Files:
+	RootIoRandom.cxx 
+Log Message:
+Add RootIoRandom tool
+    *
+------------------------------------------------------------
 User: heather  Wed Oct  2 07:06:18 PDT 2002
 RootIo/src
 
