@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug  4 23:24:35 PDT 2004
+RootIo/doc
+
+Modified Files:
+      Tag: beforeheader
+	release.notes 
+Log Message:
+fixed if statement bug checking GetEntries
+    *
+------------------------------------------------------------
 User: heather  Wed Aug  4 23:22:34 PDT 2004
 RootIo/cmt
 
