@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v14r7p1   08-Mar-2005 HMK Minor bug in digiRootReader for EventSummary 
+           retrieval from TDS - if reconRootReader is run first
  v14r7p0   01-Mar-2005 HMK Fix TriRowBits TDS path
  v14r7     23-Feb-2005 HMK Gobble up fixes for FRED on branch
  v14r6     22-Feb-2005 HMK prepare for new GEM in LDF

@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.46 2005/02/23 19:24:20 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.47 2005/03/01 20:00:24 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -385,7 +385,22 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     unsigned eventFlags = m_digiEvt->getEventSummaryData().eventFlags();
     EventSummaryData evtSummary = m_digiEvt->getEventSummaryData();
 
-    LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
+//    LdfEvent::EventSummaryData *evtSumTds;
+
+    // Only update the eventflags on the TDS if the /Event/EventSummary
+    // does not yet exist (digiRootReader may fill this for us)
+    SmartDataPtr<LdfEvent::EventSummaryData> evtSumTds(eventSvc(), "/Event/Even
+tSummary");
+    if (!evtSumTds) {
+      evtSumTds = new LdfEvent::EventSummaryData();
+      sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
+      if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register /Event/EventSummary " << endreq
+;
+        return sc;
+      }
+    }
+
     evtSumTds->initialize(summaryWord);
     evtSumTds->initEventFlags(eventFlags);
     const unsigned int nTem = 16;
@@ -393,13 +408,9 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     unsigned int tem[nTem];
     for (iTem = 0; iTem < nTem; iTem++) 
         tem[iTem] = evtSummary.temLength(iTem);
-    evtSumTds->initContribLen(tem, evtSummary.gemLength(), evtSummary.oswLength(),
-        evtSummary.errLength(), evtSummary.diagLength(), evtSummary.aemLength());
-    sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
-    if( sc.isFailure() ) {
-        log << MSG::ERROR << "could not register /Event/EventSummary " << endreq;
-        return sc;
-    }
+    evtSumTds->initContribLen(tem, evtSummary.gemLength(), 
+                              evtSummary.oswLength(), evtSummary.errLength(), 
+                              evtSummary.diagLength(), evtSummary.aemLength());
     return sc;
 }
 
