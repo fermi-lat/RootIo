@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul  6 14:53:17 PDT 2004
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+provide mechanism to check existence of run/event pair
+    *
+------------------------------------------------------------
 User: heather  Tue Jul  6 14:51:31 PDT 2004
 RootIo/doc
 
