@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Jun  1 19:38:50 PDT 2002
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+adjust to new TkrVertex
+    *
+------------------------------------------------------------
 User: heather  Fri May 24 13:58:11 PDT 2002
 RootIo/doc
 
