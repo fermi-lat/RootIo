@@ -1,5 +1,5 @@
 package RootIo
-version v4r21
+version v5r0
 
 branches src doc
 
@@ -15,6 +15,7 @@ use RootPolicy v1r0p3
 use mcRootData v2r8p0
 use digiRootData v3r5p7
 use reconRootData v3r7
+use commonRootData v0
 
 
 public
