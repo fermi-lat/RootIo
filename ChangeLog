@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 26 13:46:43 PDT 2004
+RootIo/src
+
+Modified Files:
+      Tag: beforeheader
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+handle new event flag
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 13:45:42 PDT 2004
 RootIo/cmt
 
