@@ -39,7 +39,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.4 2004/08/18 19:01:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.30.2.5 2004/08/18 20:36:59 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -346,9 +346,11 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     unsigned summaryWord = m_digiEvt->getEventSummaryData().summary();
+    unsigned eventFlags = m_digiEvent->getEventSummaryData().eventFlags();
 
     LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
     evtSumTds->initialize(summaryWord);
+    evtSumTds->initEventFlags(eventFlags);
     sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
     if( sc.isFailure() ) {
         log << MSG::ERROR << "could not register /Event/EventSummary " << endreq;
