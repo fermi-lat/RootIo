@@ -30,7 +30,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.16 2002/09/25 18:43:21 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.17 2002/09/25 20:12:58 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -333,9 +333,10 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             momTds = pTds;
         }
 
+        std::string processTdsStr(pRoot->getProcess().Data());
         // Setup the TDS version fo the McParticle
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
-            finalMomTds, initPosTds, finalPosTds, pRoot->getProcess() );
+            finalMomTds, initPosTds, finalPosTds, processTdsStr );
 
 		// Process the list of daughters
 		const TRefArray daughterArr = pRoot->getDaughterList();
