@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.13 2002/07/30 19:51:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.14 2002/08/08 16:05:06 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -280,6 +280,20 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         // Setup the ROOT McParticle
         mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, 
             finalMomRoot, initPosRoot, finalPosRoot, (*p)->getProcess());
+
+		// Process the Daughter Particles
+		const SmartRefVector<Event::McParticle> daughterCol = (*p)->daughterList();
+		SmartRefVector<Event::McParticle>::const_iterator daughterIt;
+		for (daughterIt = daughterCol.begin(); daughterIt != daughterCol.end(); daughterIt++) {
+			if (m_particleMap.find((*daughterIt)) != m_particleMap.end()) {
+				McParticle *daughter = m_particleMap[(*daughterIt)];
+				mcPart->addDaughter(daughter);
+			} else {
+				log << MSG::WARNING << "Did not find daughter McParticle in the"
+					<< " map!" << endreq;
+			}
+		}
+
         // Add the ROOT McParticle to the ROOT collection of McParticle
         m_mcEvt->addMcParticle(mcPart);     
 
