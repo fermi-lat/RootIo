@@ -7,11 +7,11 @@ use GaudiSvc v7r*
 use GlastSvc v8r*
 use Event v8r*
 use ROOT v3r2p*
-use RootPolicy v1r0p2
-use mcRootData v2r5p4
-use digiRootData v3r5p3
+use mcRootData v2r5p5
+use digiRootData v3r5p4
 use reconRootData v3r3p0
 use GlastPolicy v4r*
+
 
 public
 
