@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct  4 14:48:02 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+finish up handling event contrib lengths
+    *
+------------------------------------------------------------
 User: heather  Mon Oct  4 14:39:24 PDT 2004
 RootIo/cmt
 
