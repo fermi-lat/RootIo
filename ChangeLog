@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr  4 10:42:51 PDT 2005
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+allow setting of MaxTreeSize
+    *
+------------------------------------------------------------
 User: heather  Mon Apr  4 10:42:03 PDT 2005
 RootIo/doc
 
