@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Wed Mar 19 09:24:13 PST 2003
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+Comment out reconevt clear at end of Execute() method
+
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 18 07:01:43 PST 2003
 RootIo/src
 
