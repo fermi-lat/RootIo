@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 29 15:10:03 PST 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+patcho for CalRecon xtal data ALLRANGE read/write
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 29 15:09:41 PST 2005
 RootIo/doc
 
