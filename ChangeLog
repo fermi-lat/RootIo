@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 10 15:09:05 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+fix up reading of AcdDigi VolIds
+    *
+------------------------------------------------------------
 User: chamont  Tue Aug 10 07:47:42 PDT 2004
 RootIo/src
 
