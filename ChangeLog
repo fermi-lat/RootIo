@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 24 12:14:06 PDT 2004
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+add setFinalized as some insurance if we use JO branches
+    *
+------------------------------------------------------------
 User: heather  Fri Sep 24 10:54:41 PDT 2004
 RootIo/src
 
