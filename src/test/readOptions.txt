@@ -25,7 +25,7 @@ ApplicationMgr.ExtSvc += { "RootIoSvc" };
 // controls the event loop
 ApplicationMgr.Runable= "RootIoSvc";
 
-ApplicationMgr.TopAlg +=  { "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg"};
+ApplicationMgr.TopAlg +=  { "testRootIoSvcAlg", "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg"};
 mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc.root";
 digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi.root";
 reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon.root";

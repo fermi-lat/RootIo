@@ -14,6 +14,11 @@ MessageSvc.OutputLevel      = 2;
 
 ApplicationMgr.EvtMax = 10;
 
+mcRootReaderAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc.root";
+digiRootReaderAlg.digiRootFile = "$(ROOTIOROOT)/src/test/digi.root";
+reconRootReaderAlg.reconRootFile = "$(ROOTIOROOT)/src/test/recon.root";
+
+
 //==============================================================
 //
 // End of job options file
