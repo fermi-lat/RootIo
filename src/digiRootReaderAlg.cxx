@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18 2003/10/13 23:02:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.18.2.1 2003/11/12 07:22:17 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -321,7 +321,7 @@ StatusCode digiRootReaderAlg::readDiagnostic() {
     CalDiagnostic *cDiagRoot;
     while (cDiagRoot = (CalDiagnostic*)calIt.Next()) {
         EbfConverterTds::CalDiagnosticData cDiagTds(cDiagRoot->getDataWord(), 
-            cDiagRoot->getLabel(), cDiagRoot->getGccc(), cDiagRoot->getLayer());
+            cDiagRoot->getGccc(), cDiagRoot->getLayer());
         diagTds->addCalDiagnostic(cDiagTds);
     }
 
