@@ -26,7 +26,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.9 2002/05/14 21:01:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.10 2002/06/06 16:03:18 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -313,6 +313,8 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         (*hit)->fillStream(log.stream());
         log << endreq;
 
+        Int_t particleId = (*hit)->getMcParticleId();
+
         idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
         VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
@@ -354,8 +356,8 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         McPositionHit *mcPosHit = new McPositionHit();
         // Setup the ROOT McPositionHit
-        mcPosHit->initialize(edepRoot, volIdRoot, entryRoot, exitRoot, mcRoot, 
-            originRoot, epartRoot, tofRoot, flagsRoot);
+        mcPosHit->initialize(particleId, edepRoot, volIdRoot, entryRoot, 
+            exitRoot, mcRoot, originRoot, epartRoot, tofRoot, flagsRoot);
         // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
         m_mcEvt->addMcPositionHit(mcPosHit);
     }
