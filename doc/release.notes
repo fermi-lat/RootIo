@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator: H. Kelly
 
+ v4r9p3 26-Aug-2002 HMK update versions of Root class packages - now uses RootPolicy\n
  v4r9p1 08-Aug-2002 HMK use new access methods in Event and mcRootData for
         McIntegratingHit\n
  v4r9   30-Jul-2002 HMK Upgrade mcRootData classes and writing/reading accordingly\n
