@@ -2,6 +2,7 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
+ v9r2p0  21-Aug-2003 HMK Read timestamp in McEvent
  v9r2    20-Jul-2003 THB added field in McEvent 
  v9r1    01-Jul-2003 HMK Allow chains of root files to be read in
  v9r0p1  26-Jun-2003 LSR Fix i/o of TkrDigi lastController0Strip
