@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 16 12:22:31 PST 2004
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+Make some statements in debug mode
+    *
+------------------------------------------------------------
 User: heather  Sun Mar 14 22:43:44 PST 2004
 RootIo/src
 
