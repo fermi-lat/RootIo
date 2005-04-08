@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Apr  8 14:05:17 PDT 2005
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx digiRootReaderAlg.cxx 
+Log Message:
+fix up StartingIndex JO param and eventseq reading
+    *
+------------------------------------------------------------
 User: heather  Fri Apr  8 13:53:13 PDT 2005
 RootIo/cmt
 
