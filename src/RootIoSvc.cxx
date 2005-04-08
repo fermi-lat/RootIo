@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.15 2005/04/06 16:16:39 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.16 2005/04/06 20:07:43 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.15 2005/04/06 16:16:39 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.16 2005/04/06 20:07:43 heather Exp $
 */
 
 // includes
@@ -119,7 +119,7 @@ private:
 
     unsigned int m_rootEvtMax;
     Long64_t m_index;
-    int m_startIndex;
+    UnsignedLongProperty m_startIndex;
     std::pair<int, int> m_runEventPair;
     std::vector<TChain *> m_chainCol;
 
@@ -140,13 +140,19 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 {
     
     declareProperty("EvtMax"     , m_evtMax=0);
-    declareProperty("StartTime"   , m_startTime=0);
-    declareProperty("EndTime",      m_endTime=0);
+
+    // disable for now
+    //declareProperty("StartTime"   , m_startTime=0);
+    //declareProperty("EndTime",      m_endTime=0);
+    m_endTime = 0;
+    m_startTime = 0;
+
     declareProperty("AutoSaveInterval", m_autoSaveInterval=1000);
     declareProperty("StartingIndex", m_startIndex=0);
     // limited by the size of an unsigned int, expecting MB
     declareProperty("MaxTreeSize", m_treeSize=0);
-    m_index = m_startIndex;
+
+    m_index = 0;
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_chainCol.clear();
@@ -169,8 +175,6 @@ StatusCode RootIoSvc::initialize ()
     // bind all of the properties for this service
     setProperties ();
     
-    // open the message log
-    MsgStream log( msgSvc(), name() );
     m_appMgrUI = 0 ;
     status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
     
@@ -198,6 +202,10 @@ StatusCode RootIoSvc::initialize ()
         Long64_t maxTreeSize = 25000000000;
         TTree::SetMaxTreeSize(maxTreeSize);
     }
+
+
+    m_index = m_startIndex;
+    if (m_startIndex > 0) m_useIndex = true;
 
     return StatusCode::SUCCESS;
 }
@@ -315,8 +323,10 @@ StatusCode RootIoSvc::run(){
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if (rootEvtMax < evtMax) setProperty(rootEvtMax);
-    else setProperty(evtMax);
+    if ((rootEvtMax-m_startIndex) < evtMax) {
+       evtMax = rootEvtMax - m_startIndex;
+       setProperty(evtMax);
+    } else setProperty(evtMax);
 
     // now find the top alg so we can monitor its error count
     //
@@ -372,7 +382,7 @@ StatusCode RootIoSvc::run(){
         //if(flux!=0){
          //   currentTime = flux->gpsTime();
        // }
-        eventNumber ++;
+        eventNumber++;
     }
     if( status.isFailure()){
         log << MSG::ERROR << "Terminating RootIoSvc loop due to error" << endreq;
