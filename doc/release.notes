@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r3     08-Apr-2005 HMK Fix up RootIoSvc StartingIndex JO param so that
+                       it does something useful
+                       Also fix reading in of eventsequence
  v15r2p2   06-Apr-2005 HMK Listen to Anders..make default 25 GB for trees
  v15r2p1   06-Apr-2005 HMK used my thinking cap and assume the JO param for
            MaxTreeSize is in MB rather than bytes
