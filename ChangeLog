@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Apr  8 13:52:57 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix eventseq reading, and StartingIndex JO param in RootIoSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r2p2, operation: add
 Package: RootIo
