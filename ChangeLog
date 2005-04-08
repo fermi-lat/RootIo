@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Apr  8 13:53:13 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix eventseq reading, and StartingIndex JO param in RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Fri Apr  8 13:52:57 PDT 2005
 RootIo/doc
 
