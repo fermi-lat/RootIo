@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 11 12:05:54 PDT 2005
+RootIo/src
+
+Modified Files:
+	FhCmtConfig.cxx 
+Log Message:
+add show packages to ROOT header
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r3, operation: add
 Package: RootIo
