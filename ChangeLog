@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 11 12:06:42 PDT 2005
+RootIo/RootIo
+
+Modified Files:
+	FhCmtConfig.h 
+Log Message:
+add show packages to ROOT header
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 11 12:06:30 PDT 2005
 RootIo/cmt
 
