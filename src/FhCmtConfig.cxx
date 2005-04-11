@@ -30,10 +30,11 @@ FhCmtConfig::FhCmtConfig() {
 }
 
 void FhCmtConfig::init( const FileHeader * header ) {
-    if (!header) { m_rawUses = m_rawMacros = "" ; }
+    if (!header) { m_rawUses = m_rawMacros = m_rawPackages = "" ; }
     else {
          m_rawUses = header->getString("CmtUses") ;
          m_rawMacros = header->getString("CmtMacros") ;
+         m_rawPackages = header->getString("CmtPackages") ;
     }
     rawToMap() ;
 }
@@ -57,6 +58,12 @@ void FhCmtConfig::init() {
     while ( fgets(buffer,256,pipe) != NULL )
      { m_rawMacros += buffer ; }
     fhPclose(pipe) ;
+
+    m_rawPackages = "";
+    pipe = fhPopen("cmt show packages 2>&1", "r");
+    while ( fgets(buffer,256,pipe) != NULL )
+      { m_rawPackages += buffer ; }
+    fhPclose(pipe);
               
     rawToMap() ;
 }
@@ -65,6 +72,7 @@ void FhCmtConfig::store( FileHeader * header ) const {
         if (header) {
             header->setString("CmtUses",m_rawUses) ;
             header->setString("CmtMacros",m_rawMacros) ;
+            header->setString("CmtPackages",m_rawPackages) ;
         }
 }
 
@@ -122,6 +130,26 @@ void FhCmtConfig::rawToMap() {
     }
     delete [] buffer ;
     buffer = 0 ;
+
+
+   // cmt show packages
+   m_mapPackages.DeleteAll();
+   std::istringstream isPackages(m_rawPackages.Data()) ;
+   buffer_size = m_rawPackages.Length()+1 ;
+   buffer = new char [buffer_size] ;
+   while (isPackages.getline(buffer,buffer_size)) {
+       std::string cmtPackage(buffer) ;
+       std::string::size_type pos = cmtPackage.find(' ') ;
+       if (pos!=std::string::npos) {
+           std::string name = cmtPackage.substr(0,pos) ;
+           std::string version = cmtPackage.substr(pos+1, std::string::npos-1) ;
+           std::string::size_type versionPos = version.find(' ') ;
+           std::string value = version.substr(0,versionPos) ; 
+           m_mapPackages.add(name.c_str(), value.c_str()) ;
+       }
+   }
+   delete [] buffer ;
+   buffer = 0;
 }
 
 void FhCmtConfig::getPackageNames( TRegexp exp, TCollection & names ) const {
