@@ -45,6 +45,8 @@ private:
 	FhStringMap m_mapUses ;
 	TString m_rawMacros ;
 	FhStringMap m_mapMacros ;
+        TString m_rawPackages ;
+        FhStringMap m_mapPackages ;
     
 } ;
 
