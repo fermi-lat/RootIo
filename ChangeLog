@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Wed Apr 13 15:28:53 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+upgrade for commonRootData namespace
+    *
+------------------------------------------------------------
 User: heather  Wed Apr 13 15:25:51 PDT 2005
 RootIo/cmt
 
