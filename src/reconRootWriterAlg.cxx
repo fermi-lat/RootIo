@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.50 2005/02/07 20:36:23 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.51 2005/03/29 23:10:03 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -598,10 +598,10 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
         CalXtalRecData *xtalRoot = new CalXtalRecData();   
         idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();   
         idents::CalXtalId idTds = (*xtalTds)->getPackedId();   
-        CalXtalId idRoot;   
+        commonRootData::CalXtalId idRoot;   
         idRoot.init(idTds.getTower(), idTds.getLayer(), idTds.getColumn());   
         if (modeTds == idents::CalXtalId::BESTRANGE) {   
-            xtalRoot->initialize(CalXtalId::BESTRANGE, idRoot);   
+            xtalRoot->initialize(commonRootData::CalXtalId::BESTRANGE, idRoot);   
             Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
                 (*xtalTds)->getRangeRecData(0);   
             CalRangeRecData recRoot(   
@@ -614,7 +614,7 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
             recRoot.initialize(posRoot);   
             xtalRoot->addRangeRecData(recRoot);   
         } else {   
-            xtalRoot->initialize(CalXtalId::ALLRANGE, idRoot);   
+            xtalRoot->initialize(commonRootData::CalXtalId::ALLRANGE, idRoot);   
             int range;   
             for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {   
                 Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
@@ -654,13 +654,13 @@ StatusCode reconRootWriterAlg::writeAcdRecon() {
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
     idents::AcdId acdIdTds = acdRecTds->getMinDocaId();
-    std::vector<AcdId> idRootCol;
+    std::vector<commonRootData::AcdId> idRootCol;
     std::vector<idents::AcdId>::const_iterator idTdsIt;
     for (idTdsIt = acdRecTds->getIdCol().begin(); idTdsIt != acdRecTds->getIdCol().end(); idTdsIt++) {
-        idRootCol.push_back(AcdId(idTdsIt->layer(), idTdsIt->face(), 
+        idRootCol.push_back(commonRootData::AcdId(idTdsIt->layer(), idTdsIt->face(), 
             idTdsIt->row(), idTdsIt->column()));
     }
-    AcdId acdIdRoot(acdIdTds.layer(), acdIdTds.face(), acdIdTds.row(), acdIdTds.column());
+    commonRootData::AcdId acdIdRoot(acdIdTds.layer(), acdIdTds.face(), acdIdTds.row(), acdIdTds.column());
     acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getTileCount(),
         acdRecTds->getGammaDoca(), acdRecTds->getDoca(), acdRecTds->getActiveDist(), acdIdRoot, 
         acdRecTds->getRowDocaCol(), acdRecTds->getRowActDistCol(),
