@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.46 2005/02/23 19:24:20 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.47 2005/03/29 23:10:03 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -724,11 +724,11 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     TIter calXtalIter(calXtalRecColRoot);
     const CalXtalRecData *calXtalRecRoot = 0;
     while ((calXtalRecRoot = (CalXtalRecData*)calXtalIter.Next())!=0) {
-        CalXtalId idRoot = calXtalRecRoot->getPackedId();
+        commonRootData::CalXtalId idRoot = calXtalRecRoot->getPackedId();
         idents::CalXtalId idTds(idRoot.getTower(), idRoot.getLayer(), idRoot.getColumn());
         // create new object to store crystal reconstructed data 
         Event::CalXtalRecData* calXtalRecDataTds = 0;
-        if (calXtalRecRoot->getMode() == CalXtalId::ALLRANGE) {
+        if (calXtalRecRoot->getMode() == commonRootData::CalXtalId::ALLRANGE) {
             calXtalRecDataTds = new Event::CalXtalRecData(idents::CalXtalId::ALLRANGE, idTds);
             unsigned int range;
             for (range = idents::CalXtalId::LEX8; range < idents::CalXtalId::HEX1; range++) {    
@@ -743,12 +743,12 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
                 Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
                 Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
                     new Event::CalXtalRecData::CalRangeRecData(
-                    xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
-                    xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
+                    xtalRangeRoot->getRange(commonRootData::CalXtalId::POS), xtalRangeRoot->getEnergy(commonRootData::CalXtalId::POS),
+                    xtalRangeRoot->getRange(commonRootData::CalXtalId::NEG), xtalRangeRoot->getEnergy(commonRootData::CalXtalId::NEG));
                 xtalRangeTds->setPosition(posTds);
                 calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
             }
-        } else if (calXtalRecRoot->getMode() == CalXtalId::BESTRANGE) {
+        } else if (calXtalRecRoot->getMode() == commonRootData::CalXtalId::BESTRANGE) {
             
             calXtalRecDataTds = new Event::CalXtalRecData(idents::CalXtalId::BESTRANGE, idTds);
             const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(0);   
@@ -757,8 +757,8 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
             
             Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
                 new Event::CalXtalRecData::CalRangeRecData(
-                xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
-                xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
+                xtalRangeRoot->getRange(commonRootData::CalXtalId::POS), xtalRangeRoot->getEnergy(commonRootData::CalXtalId::POS),
+                xtalRangeRoot->getRange(commonRootData::CalXtalId::NEG), xtalRangeRoot->getEnergy(commonRootData::CalXtalId::NEG));
             xtalRangeTds->setPosition(posTds);
             calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
         }
@@ -861,11 +861,11 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     }
     
     // create the TDS location for the AcdRecon
-    const AcdId acdIdRoot = acdRecRoot->getMinDocaId();
+    const commonRootData::AcdId acdIdRoot = acdRecRoot->getMinDocaId();
     const idents::AcdId acdIdTds(acdIdRoot.getLayer(), acdIdRoot.getFace(), 
         acdIdRoot.getRow(), acdIdRoot.getColumn());
     std::vector<idents::AcdId> idColTds;
-    std::vector<AcdId>::const_iterator idRootIt;
+    std::vector<commonRootData::AcdId>::const_iterator idRootIt;
     for (idRootIt = acdRecRoot->getIdCol().begin(); idRootIt != acdRecRoot->getIdCol().end(); idRootIt++) {
         idColTds.push_back(idents::AcdId(idRootIt->getLayer(), idRootIt->getFace(),
             idRootIt->getRow(), idRootIt->getColumn()));

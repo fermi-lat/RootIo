@@ -35,7 +35,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.34 2004/11/16 16:48:46 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.35 2004/11/24 14:16:31 chamont Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -71,7 +71,7 @@ private:
 
     /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
     void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-        VolumeIdentifier &rootVolId);
+        commonRootData::VolumeIdentifier &rootVolId);
 
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -392,7 +392,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         Int_t originPartId = (*hit)->getOriginMcParticleId();
 
         idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
-        VolumeIdentifier volIdRoot;
+        commonRootData::VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
 
         HepPoint3D entryTds = (*hit)->entryPoint();
@@ -484,7 +484,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         log << endreq;
 
         const idents::VolumeIdentifier idTds = (*hit)->volumeID();
-        VolumeIdentifier idRoot;
+        commonRootData::VolumeIdentifier idRoot;
         convertVolumeId(idTds, idRoot);
 
         Double_t e = (*hit)->totalEnergy();
@@ -529,7 +529,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
 }
 
 void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-                     VolumeIdentifier& rootVolId) 
+                     commonRootData::VolumeIdentifier& rootVolId) 
 {
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
     //     in the ROOT class.  Hence, we must convert the 64 bit representation
