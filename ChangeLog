@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr 13 15:25:51 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+v2 for commonRootData
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r4, operation: add
 Package: RootIo
