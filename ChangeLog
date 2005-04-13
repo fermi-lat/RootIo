@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr 13 16:49:50 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+use commonRootData namespace
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r4, operation: add
 Package: RootIo
