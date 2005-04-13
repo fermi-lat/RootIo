@@ -1,7 +1,7 @@
 package RootIo
 version v15r4
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.134 2005/04/08 20:53:13 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.135 2005/04/11 19:06:30 heather Exp $
 
 branches src doc
 
@@ -14,7 +14,7 @@ apply_pattern package_include
 use mcRootData v2r* -no_auto_imports
 use digiRootData v8r* -no_auto_imports
 use reconRootData v5r* -no_auto_imports
-use commonRootData v1r* -no_auto_imports
+use commonRootData v2r* -no_auto_imports
 
 use rootTestData v*
 
