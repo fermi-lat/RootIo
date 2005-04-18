@@ -71,7 +71,7 @@ private:
 
     /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
     void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-        commonRootData::VolumeIdentifier &rootVolId);
+        VolumeIdentifier &rootVolId);
 
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -392,7 +392,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         Int_t originPartId = (*hit)->getOriginMcParticleId();
 
         idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
-        commonRootData::VolumeIdentifier volIdRoot;
+        VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
 
         HepPoint3D entryTds = (*hit)->entryPoint();
@@ -484,7 +484,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         log << endreq;
 
         const idents::VolumeIdentifier idTds = (*hit)->volumeID();
-        commonRootData::VolumeIdentifier idRoot;
+        VolumeIdentifier idRoot;
         convertVolumeId(idTds, idRoot);
 
         Double_t e = (*hit)->totalEnergy();
@@ -529,7 +529,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
 }
 
 void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-                     commonRootData::VolumeIdentifier& rootVolId) 
+                     VolumeIdentifier& rootVolId) 
 {
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
     //     in the ROOT class.  Hence, we must convert the 64 bit representation
