@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r6p0   18-Apr-2005 HMK fix up const error on windows
  v15r6     17-Apr-2005 HMK back out commonRootData namespace
            handel Gem.Missed and EventSummary.EventSizeInBytes
  v15r5     13-Apr-2005 HMK use commonRootData namespace
