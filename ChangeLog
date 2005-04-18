@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Sun Apr 17 23:47:20 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+back out namespace
+    *
+------------------------------------------------------------
 User: heather  Sun Apr 17 23:47:10 PDT 2005
 RootIo/cmt
 
