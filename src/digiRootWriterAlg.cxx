@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.46 2005/04/05 21:36:57 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.48 2005/04/18 06:47:20 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -330,6 +330,7 @@ StatusCode digiRootWriterAlg::writeEventSummary() {
     m_digiEvt->getEventSummaryData().initialize(summaryTds->summary());
     m_digiEvt->getEventSummaryData().initEventFlags(summaryTds->eventFlags());
     m_digiEvt->getEventSummaryData().initEventSequence(summaryTds->eventSequence());
+    m_digiEvt->getEventSummaryData().initEventSizeInBytes(summaryTds->eventSizeInBytes());
 
     //const unsigned int nTem = 16;
     //unsigned int tem[nTem];
@@ -363,7 +364,7 @@ StatusCode digiRootWriterAlg::writeGem() {
     GemOnePpsTime ppsTimeRoot(gemTds->onePpsTime().timebase(), gemTds->onePpsTime().seconds());
     gemRoot.initTrigger(gemTds->tkrVector(), gemTds->roiVector(), 
              gemTds->calLEvector(), gemTds->calHEvector(), gemTds->cnoVector(),
-             gemTds->conditionSummary(), tileListRoot);
+             gemTds->conditionSummary(), gemTds->missed(), tileListRoot);
     gemRoot.initSummary(gemTds->liveTime(), gemTds->prescaled(), 
              gemTds->discarded(), gemTds->condArrTime().condArr(), 
              gemTds->triggerTime(), ppsTimeRoot, gemTds->deltaEventTime(),

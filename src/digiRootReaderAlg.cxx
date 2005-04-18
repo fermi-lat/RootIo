@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.53 2005/04/08 21:05:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.55 2005/04/18 06:47:20 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -386,6 +386,7 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     unsigned summaryWord = evtSummary.summary();
     unsigned eventFlags = evtSummary.eventFlags();
     unsigned int evtSeq = evtSummary.eventSequence();
+    unsigned long evtSizeInBytes = evtSummary.eventSizeInBytes();
 
     // Only update the eventflags on the TDS if the /Event/EventSummary
     // does not yet exist (digiRootReader may fill this for us)
@@ -403,6 +404,7 @@ StatusCode digiRootReaderAlg::readEventSummary() {
     evtSumTds->initialize(summaryWord);
     evtSumTds->initEventFlags(eventFlags);
     evtSumTds->initOswEvtSequence(evtSeq);
+    evtSumTds->initEventSizeInBytes(evtSizeInBytes);
 
     //const unsigned int nTem = 16;
     //unsigned int iTem;
@@ -425,10 +427,12 @@ StatusCode digiRootReaderAlg::readGem() {
     LdfEvent::GemTileList tileListTds(tileListRoot.getXzm(), tileListRoot.getXzp(), 
               tileListRoot.getYzm(), tileListRoot.getYzp(), tileListRoot.getXy(), 
               tileListRoot.getRbn(), tileListRoot.getNa());
+
     gemTds->initTrigger(gemRoot.getTkrVector(), gemRoot.getRoiVector(),
             gemRoot.getCalLeVector(), gemRoot.getCalHeVector(),
             gemRoot.getCnoVector(), gemRoot.getConditionSummary(),
-            tileListTds);
+            gemRoot.getMissed(), tileListTds);
+
     LdfEvent::GemOnePpsTime ppsTimeTds(gemRoot.getOnePpsTime().getTimebase(),
                             gemRoot.getOnePpsTime().getSeconds());
     LdfEvent::GemDataCondArrivalTime gemCondTimeTds;
