@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 18 10:31:53 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+handle event size and gem.missed
+    *
+------------------------------------------------------------
 User: heather  Sun Apr 17 23:47:20 PDT 2005
 RootIo/src
 
