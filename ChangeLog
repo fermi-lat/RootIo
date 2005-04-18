@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 18 10:32:04 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx digiRootReaderAlg.cxx 
+Log Message:
+handle event size and gem.missed
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 18 10:31:53 PDT 2005
 RootIo/doc
 
