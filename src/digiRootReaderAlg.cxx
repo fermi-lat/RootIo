@@ -88,7 +88,7 @@ private:
     void close();
 
     /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
-    void convertVolumeId(commonRootData::VolumeIdentifier rootVolId, 
+    void convertVolumeId(VolumeIdentifier rootVolId, 
         idents::VolumeIdentifier &tdsVolId);
    
     /// ROOT file pointer
@@ -505,7 +505,7 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
     while ((acdDigiRoot = (AcdDigi*)acdDigiIter.Next())!=0) {
         float energyTds = acdDigiRoot->getEnergy();
         
-        commonRootData::AcdId idRoot = acdDigiRoot->getId();
+        AcdId idRoot = acdDigiRoot->getId();
         idents::AcdId idTds(idRoot.getId(2));
 
         // Rather than using the volId stored in the ROOT file - recompute using the 
@@ -557,17 +557,17 @@ StatusCode digiRootReaderAlg::readCalDigi() {
     CalDigi *calDigiRoot = 0;
     while ((calDigiRoot = (CalDigi*)calDigiIter.Next())!=0) {
         Event::CalDigi *calDigiTds = new Event::CalDigi();
-        commonRootData::CalXtalId::CalTrigMode modeRoot = calDigiRoot->getMode();
-        commonRootData::CalXtalId idRoot = calDigiRoot->getPackedId();
+        CalXtalId::CalTrigMode modeRoot = calDigiRoot->getMode();
+        CalXtalId idRoot = calDigiRoot->getPackedId();
         idents::CalXtalId idTds(idRoot.getTower(), idRoot.getLayer(), idRoot.getColumn());
         idents::CalXtalId::CalTrigMode modeTds;
-        if (modeRoot == commonRootData::CalXtalId::BESTRANGE) {
+        if (modeRoot == CalXtalId::BESTRANGE) {
             modeTds = idents::CalXtalId::BESTRANGE;
             const CalXtalReadout *readoutRoot = calDigiRoot->getXtalReadout(0);
-            Char_t rangePlusRoot = readoutRoot->getRange(commonRootData::CalXtalId::POS);
-            UInt_t adcPlusRoot = readoutRoot->getAdc(commonRootData::CalXtalId::POS);
-            Char_t rangeMinRoot = readoutRoot->getRange(commonRootData::CalXtalId::NEG);
-            UInt_t adcMinRoot = readoutRoot->getAdc(commonRootData::CalXtalId::NEG);
+            Char_t rangePlusRoot = readoutRoot->getRange(CalXtalId::POS);
+            UInt_t adcPlusRoot = readoutRoot->getAdc(CalXtalId::POS);
+            Char_t rangeMinRoot = readoutRoot->getRange(CalXtalId::NEG);
+            UInt_t adcMinRoot = readoutRoot->getAdc(CalXtalId::NEG);
             Event::CalDigi::CalXtalReadout r(rangePlusRoot, adcPlusRoot, 
                 rangeMinRoot, adcMinRoot);
             calDigiTds->initialize(modeTds, idTds);
@@ -576,12 +576,12 @@ StatusCode digiRootReaderAlg::readCalDigi() {
             modeTds = idents::CalXtalId::ALLRANGE;
             calDigiTds->initialize(modeTds, idTds);
             int range;
-            for (range = commonRootData::CalXtalId::LEX8; range <= commonRootData::CalXtalId::HEX1; range++) {
+            for (range = CalXtalId::LEX8; range <= CalXtalId::HEX1; range++) {
                 const CalXtalReadout *readoutRoot = calDigiRoot->getXtalReadout(range);
-                Char_t rangePlusRoot = readoutRoot->getRange(commonRootData::CalXtalId::POS);
-                UInt_t adcPlusRoot = readoutRoot->getAdc(commonRootData::CalXtalId::POS);
-                Char_t rangeMinRoot = readoutRoot->getRange(commonRootData::CalXtalId::NEG);
-                UInt_t adcMinRoot = readoutRoot->getAdc(commonRootData::CalXtalId::NEG);
+                Char_t rangePlusRoot = readoutRoot->getRange(CalXtalId::POS);
+                UInt_t adcPlusRoot = readoutRoot->getAdc(CalXtalId::POS);
+                Char_t rangeMinRoot = readoutRoot->getRange(CalXtalId::NEG);
+                UInt_t adcMinRoot = readoutRoot->getAdc(CalXtalId::NEG);
                 Event::CalDigi::CalXtalReadout r(rangePlusRoot, adcPlusRoot, 
                     rangeMinRoot, adcMinRoot);
                 calDigiTds->addReadout(r);
@@ -612,7 +612,7 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
 
     TkrDigi *tkrDigiRoot = 0;
     while ((tkrDigiRoot = (TkrDigi*)tkrDigiIter.Next())!=0) {
-        commonRootData::TowerId towerRoot = tkrDigiRoot->getTower();
+        TowerId towerRoot = tkrDigiRoot->getTower();
         idents::TowerId towerTds(towerRoot.ix(), towerRoot.iy());
         GlastAxis::axis axisRoot = tkrDigiRoot->getView();
         idents::GlastAxis::axis axisTds = 
@@ -666,7 +666,7 @@ StatusCode digiRootReaderAlg::finalize()
     return sc;
 }
 
-void digiRootReaderAlg::convertVolumeId(commonRootData::VolumeIdentifier rootVolId, 
+void digiRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId, 
                                       idents::VolumeIdentifier& tdsVolId) 
 {
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t

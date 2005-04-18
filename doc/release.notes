@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r6     17-Apr-2005 HMK back out commonRootData namespace
  v15r5     13-Apr-2005 HMK use commonRootData namespace
  v15r4     11-Apr-2005 HMK Add cmt show packages to file headers
  v15r3     08-Apr-2005 HMK Fix up RootIoSvc StartingIndex JO param so that

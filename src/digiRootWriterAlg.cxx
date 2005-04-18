@@ -90,7 +90,7 @@ private:
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
     /// Converts from TDS VolId to ROOT VolId
-    void convertVolumeId(idents::VolumeIdentifier tdsVolId, commonRootData::VolumeIdentifier& rootVolId) ;
+    void convertVolumeId(idents::VolumeIdentifier tdsVolId, VolumeIdentifier& rootVolId) ;
     /// Performs the final write to the ROOT file and closes
     void close();
    
@@ -433,14 +433,14 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         Bool_t highRoot[2] = { (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::A),
             (*acdDigiTds)->getHighDiscrim(Event::AcdDigi::B) };
         idents::AcdId idTds = (*acdDigiTds)->getId();
-        commonRootData::AcdId idRoot;
+        AcdId idRoot;
         if (idTds.tile())
             idRoot.initialize(idTds.layer(), idTds.face(), idTds.row(), idTds.column());
         else
             idRoot.initialize(idTds.ribbonOrientation(), idTds.ribbonNum());
 
         const idents::VolumeIdentifier volIdTds = (*acdDigiTds)->getVolId();
-        commonRootData::VolumeIdentifier volIdRoot;
+        VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
 
         AcdDigi *digi = m_digiEvt->addAcdDigi(idRoot, volIdRoot, energyRoot, phaRoot, 
@@ -479,10 +479,10 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
 
         idents::CalXtalId::CalTrigMode modeTds = (*calDigiTds)->getMode();
         idents::CalXtalId idTds = (*calDigiTds)->getPackedId();
-        commonRootData::CalXtalId idRoot(idTds.getTower(), idTds.getLayer(), idTds.getColumn());
-        commonRootData::CalXtalId::CalTrigMode modeRoot;
+        CalXtalId idRoot(idTds.getTower(), idTds.getLayer(), idTds.getColumn());
+        CalXtalId::CalTrigMode modeRoot;
         if (modeTds == idents::CalXtalId::BESTRANGE) {
-            modeRoot = commonRootData::CalXtalId::BESTRANGE;
+            modeRoot = CalXtalId::BESTRANGE;
             calDigiRoot->initialize(modeRoot, idRoot);
             const Event::CalDigi::CalXtalReadout *readoutTds = (*calDigiTds)->getXtalReadout(0);
             Char_t rangePlusRoot = readoutTds->getRange(idents::CalXtalId::POS);
@@ -491,7 +491,7 @@ StatusCode digiRootWriterAlg::writeCalDigi() {
             UInt_t adcMinRoot = readoutTds->getAdc(idents::CalXtalId::NEG);
             calDigiRoot->addReadout(rangePlusRoot, adcPlusRoot, rangeMinRoot, adcMinRoot);
         } else {
-            modeRoot = commonRootData::CalXtalId::ALLRANGE;
+            modeRoot = CalXtalId::ALLRANGE;
             calDigiRoot->initialize(modeRoot, idRoot);
             int range;
             for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {
@@ -524,7 +524,7 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
         idents::GlastAxis::axis axisTds = (*tkrDigiTds)->getView();
         GlastAxis::axis axisRoot = (axisTds == idents::GlastAxis::X) ? GlastAxis::X : GlastAxis::Y;
         idents::TowerId idTds = (*tkrDigiTds)->getTower();
-        commonRootData::TowerId towerRoot(idTds.ix(), idTds.iy());
+        TowerId towerRoot(idTds.ix(), idTds.iy());
         Int_t totRoot[2] = {(*tkrDigiTds)->getToT(0), (*tkrDigiTds)->getToT(1)};
         Int_t lastController0Strip = (*tkrDigiTds)->getLastController0Strip();
        
@@ -599,7 +599,7 @@ StatusCode digiRootWriterAlg::finalize()
 }
 
 void digiRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-                     commonRootData::VolumeIdentifier& rootVolId) 
+                     VolumeIdentifier& rootVolId) 
 {
     // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
     //     in the ROOT class.  Hence, we must convert the 64 bit representation
