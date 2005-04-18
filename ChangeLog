@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 18 12:22:14 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+bug fix for windows
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 18 12:21:57 PDT 2005
 RootIo/doc
 
