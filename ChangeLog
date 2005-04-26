@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 25 17:57:29 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+ditch EventSummaryData eventSequence in favor of top level event id
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 25 17:57:16 PDT 2005
 RootIo/doc
 
