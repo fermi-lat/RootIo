@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 25 17:57:16 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+ditch EventSummaryData eventSequence in favor of top level event id
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r6p0, operation: add
 Package: RootIo
