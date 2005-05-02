@@ -23,7 +23,7 @@ public:
     
     // global read/write methods
     void init( const FileHeader *  ) ;
-    void init() ;
+    int init() ;
     void store( FileHeader * ) const ;
    
     // David: I keep an interface dependant on ROOT classes,

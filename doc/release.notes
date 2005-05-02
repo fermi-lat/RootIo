@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8     01-May-2005 HMK Move FileHeader pipe stuff to FhSetAlg::init, to
+           avoid crashing.
  v15r7     25-Apr-2005 HMK Stop filling EventSummaryData's EventSequence
            will use top-level event id in all cases
  v15r6p0   18-Apr-2005 HMK fix up const error on windows

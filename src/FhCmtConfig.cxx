@@ -39,7 +39,7 @@ void FhCmtConfig::init( const FileHeader * header ) {
     rawToMap() ;
 }
 
-void FhCmtConfig::init() {
+int FhCmtConfig::init() {
     
     // David: for the cmt commands below, I must provide a package
     // name ; I would like to provide higher level package used for
@@ -48,6 +48,7 @@ void FhCmtConfig::init() {
     
     m_rawUses = "" ;
     FILE * pipe = fhPopen("cmt -pack=RootIo show uses 2>&1","r") ;
+    if (!pipe) return -1;
     char buffer[256] ;
     while ( fgets(buffer,256,pipe) != NULL )
      { m_rawUses += buffer ; }
@@ -55,17 +56,20 @@ void FhCmtConfig::init() {
        
     m_rawMacros = "" ;
     pipe = fhPopen("cmt -pack=RootIo show macros 2>&1","r") ;
+    if (!pipe) return -1;
     while ( fgets(buffer,256,pipe) != NULL )
      { m_rawMacros += buffer ; }
     fhPclose(pipe) ;
 
     m_rawPackages = "";
     pipe = fhPopen("cmt show packages 2>&1", "r");
+    if (!pipe) return -1;
     while ( fgets(buffer,256,pipe) != NULL )
       { m_rawPackages += buffer ; }
     fhPclose(pipe);
               
     rawToMap() ;
+    return 0;
 }
 
 void FhCmtConfig::store( FileHeader * header ) const {

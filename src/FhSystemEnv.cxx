@@ -34,14 +34,16 @@ void FhSystemEnv::init( const FileHeader * header ) {
     rawToMap() ;
 }
 
-void FhSystemEnv::init() {
+int FhSystemEnv::init() {
     m_raw = "" ;
     FILE * pipe = fhOpenEnv() ;
+    if (!pipe) return -1;
     char buffer[256] ;
     while ( fgets(buffer,256,pipe) != NULL )
      { m_raw += buffer ; }
     fhClose(pipe) ;
     rawToMap() ;
+    return 0;
 }
 
 void FhSystemEnv::store( FileHeader * header ) const {
