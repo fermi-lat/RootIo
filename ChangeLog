@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun May  1 22:58:41 PDT 2005
+RootIo/src
+
+Modified Files:
+	FhCmtConfig.cxx FhSetAlg.cxx FhSystemEnv.cxx 
+Log Message:
+put pipe for file headers in initialize to avoid core dump
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r7, operation: add
 Package: RootIo
