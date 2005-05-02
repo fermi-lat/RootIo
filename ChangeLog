@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun May  1 22:59:57 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+put pipe for file headers in initialize to avoid core dump
+    *
+------------------------------------------------------------
 User: heather  Sun May  1 22:59:05 PDT 2005
 RootIo/RootIo
 
