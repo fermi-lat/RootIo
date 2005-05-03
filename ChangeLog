@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon May  2 22:24:16 PDT 2005
+RootIo/src
+
+Modified Files:
+	FhJobOptions.cxx digiRootWriterAlg.cxx reconRootWriterAlg.cxx 
+	mcRootWriterAlg.cxx 
+Log Message:
+clean up file headers now that pipes are created during init
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8, operation: add
 Package: RootIo
