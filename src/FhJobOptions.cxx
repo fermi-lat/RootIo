@@ -55,9 +55,13 @@ void FhJobOptions::init( ISvcLocator * svcLocator ) {
 }
 
 void FhJobOptions::store( FileHeader * header ) const {
+    static bool print=false;
     if (header) {
             header->setString("JobOptions",m_raw) ;
-            std::cout<<"%%%%% JOB OPTIONS %%%%%\n"<<m_raw<<std::endl ;
+            if (!print) {
+                std::cout<<"%%%%% JOB OPTIONS %%%%%\n"<<m_raw<<std::endl ;
+                print = true;
+            }
 //        TOrdCollection names ;
 //        m_raw.getNames(".*",names) ;
 //        TIterator * iter = names.MakeIterator() ;
