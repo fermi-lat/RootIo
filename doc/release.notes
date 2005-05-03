@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p0   02-May-2005 HMK Clean up now that file headers using pipes are 
+           created during initialize
  v15r8     01-May-2005 HMK Move FileHeader pipe stuff to FhSetAlg::init, to
            avoid crashing.
  v15r7     25-Apr-2005 HMK Stop filling EventSummaryData's EventSequence

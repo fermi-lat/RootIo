@@ -43,7 +43,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.49 2005/04/18 17:32:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.50 2005/04/26 00:57:52 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -154,7 +154,7 @@ StatusCode digiRootWriterAlg::initialize()
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    headersSc = m_headersTool->newDigiHeader() ;
+    //headersSc = m_headersTool->newDigiHeader() ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to create a new Digi FileHeader" << endreq;
     }

@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.51 2005/03/29 23:10:03 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.53 2005/04/18 06:47:20 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -154,7 +154,7 @@ StatusCode reconRootWriterAlg::initialize()
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    headersSc = m_headersTool->newReconHeader() ;
+    //headersSc = m_headersTool->newReconHeader() ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to create a new Recon FileHeader" << endreq;
     }
