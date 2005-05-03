@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon May  2 22:25:06 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+clean up file headers now that pipes are created during init
+    *
+------------------------------------------------------------
 User: heather  Mon May  2 22:24:16 PDT 2005
 RootIo/src
 
