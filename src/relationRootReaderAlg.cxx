@@ -40,7 +40,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.18 2005/01/25 19:14:29 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.19 2005/02/23 19:24:20 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -196,7 +196,10 @@ StatusCode relationRootReaderAlg::initialize()
     m_numEvents = m_relTree->GetEntries();
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
-        if(!m_relTree->GetIndex()) m_relTree->BuildIndex("m_runId", "m_eventId");
+        if(!m_relTree->GetTreeIndex()) {
+            log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+            m_relTree->BuildIndex("m_runId", "m_eventId");
+        }
         m_rootIoSvc->registerRootTree(m_relTree);
     }
 
