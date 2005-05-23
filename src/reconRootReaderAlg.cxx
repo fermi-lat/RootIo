@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.47 2005/03/29 23:10:03 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.49 2005/04/18 06:47:20 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -211,7 +211,10 @@ StatusCode reconRootReaderAlg::initialize()
       
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
-	if(!m_reconTree->GetIndex()) m_reconTree->BuildIndex("m_runId", "m_eventId");
+        if(!m_reconTree->GetTreeIndex()) {
+            log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+            m_reconTree->BuildIndex("m_runId", "m_eventId");
+        }
         m_rootIoSvc->registerRootTree(m_reconTree);
     }
 
