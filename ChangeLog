@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon May 23 13:35:47 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+use new GetTreeIndex call rather than GetIndex
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p0, operation: add
 Package: RootIo
