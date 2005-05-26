@@ -35,7 +35,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.37 2005/04/18 06:47:20 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.38 2005/05/03 05:24:16 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -409,7 +409,9 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         
         Double_t edepRoot = (*hit)->depositedEnergy();
         
-        Double_t epartRoot = (*hit)->particleEnergy();
+        HepLorentzVector part4momTds = (*hit)->particleFourMomentum();
+        TLorentzVector part4MomRoot(part4momTds.x(), part4momTds.y(), 
+            part4momTds.z(), part4momTds.t());
         
         //bool primaryOrigin = (*hit)->primaryOrigin();
         //log << MSG::INFO << "primaryOrigin " << primaryOrigin << endreq;
@@ -448,7 +450,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
 
         mcPosHit->initialize(particleId, originPartId, edepRoot, volIdRoot, 
             entryRoot, exitRoot, globalEntryRoot, globalExitRoot, 
-            mcPartRoot, originRoot, epartRoot, tofRoot, flagsRoot);
+            mcPartRoot, originRoot, part4MomRoot, tofRoot, flagsRoot);
 
         // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
         m_mcEvt->addMcPositionHit(mcPosHit);
