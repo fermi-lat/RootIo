@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.46 2005/04/18 06:47:20 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.47 2005/05/23 20:35:47 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -510,8 +510,10 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         
         double edepTds= posHitRoot->getDepositedEnergy();
         
-        double epartTds = posHitRoot->getParticleEnergy();
-        posHitTds->setParticleEnergy(epartTds);
+        TLorentzVector part4MomRoot = posHitRoot->getParticle4Momentum();
+        HepLorentzVector part4MomTds(part4MomRoot.X(), part4MomRoot.Y(), 
+            part4MomRoot.Z(), part4MomRoot.T());
+        posHitTds->setParticle4Momentum(part4MomTds);
         
         double tofTds = posHitRoot->getTimeOfFlight();
         posHitTds->setTimeOfFlight(tofTds);

@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.49 2005/04/18 06:47:20 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.50 2005/05/23 20:35:47 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -795,9 +795,9 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {
         TVector3 calPosRoot = calClusterRoot->getPosition();
         Point pos(calPosRoot.X(), calPosRoot.Y(), calPosRoot.Z());
-        Event::CalCluster *calClusterTds = new Event::CalCluster(
-            calClusterRoot->getEnergySum(),
-            pos);
+        Event::CalCluster *calClusterTds = new Event::CalCluster();
+        //    calClusterRoot->getEnergySum(),
+        //    pos);
         TVector3 dirRoot = calClusterRoot->getDirection();
         Vector dirTds(dirRoot.X(), dirRoot.Y(), dirRoot.Z());
         std::vector<Vector> posLayerTds;
@@ -816,23 +816,24 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
             rmsLayerTds.push_back(vecTds);
         }
         
-        calClusterTds->initialize(
-            calClusterRoot->getEnergyLeak(),
-            calClusterRoot->getEneLayer(),
-            posLayerTds,
-            rmsLayerTds,
-            calClusterRoot->getRmsLong(),
-            calClusterRoot->getRmsTrans(),
-            dirTds,
-            calClusterRoot->getTransvOffset());
-        calClusterTds->initProfile(
-            calClusterRoot->getFitEnergy(),
-            calClusterRoot->getProfChisq(),
-            calClusterRoot->getCsiStart(),
-            calClusterRoot->getCsiAlpha(),
-            calClusterRoot->getCsiLambda());
+        /// TEMPORARILY NEUTRALIZE THE READING OF CALCLUSTERS WHILE UPGRADING TO NEW VERSION
+        //calClusterTds->initialize(
+        //    calClusterRoot->getEnergyLeak(),
+        //    calClusterRoot->getEneLayer(),
+        //    posLayerTds,
+        //    rmsLayerTds,
+        //    calClusterRoot->getRmsLong(),
+        //    calClusterRoot->getRmsTrans(),
+        //    dirTds,
+        //    calClusterRoot->getTransvOffset());
+        //calClusterTds->initProfile(
+        //    calClusterRoot->getFitEnergy(),
+        //    calClusterRoot->getProfChisq(),
+        //    calClusterRoot->getCsiStart(),
+        //    calClusterRoot->getCsiAlpha(),
+        //    calClusterRoot->getCsiLambda());
 
-        calClusterTds->setEnergyCorrected(calClusterRoot->getEnergyCorrected());
+        //calClusterTds->setEnergyCorrected(calClusterRoot->getEnergyCorrected());
         
         calClusterColTds->push_back(calClusterTds);
     }

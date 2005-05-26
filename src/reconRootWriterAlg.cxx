@@ -11,6 +11,7 @@
 #include "Event/Recon/TkrRecon/TkrCluster.h"
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
+//#include "Event/Recon/TkrRecon/TkrDiagnostics.h"  // This future expansion coming soon
 
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
@@ -41,7 +42,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.53 2005/04/18 06:47:20 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54 2005/05/03 05:24:16 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -295,7 +296,30 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     
     // Fill the vertices
     if (verticesTds && tracksTds) fillVertices(recon, verticesTds, tracksTds);
-    
+
+    // Future Diagnostics will plug in here
+    //Event::TkrDiagnostics* diagnosticsTds = SmartDataPtr<Event::TkrDiagnostics>(eventSvc(), EventModel::TkrRecon::TkrDiagnostics);
+    //
+    //TkrDiagnostics* diagnosticsRoot = new TkrDiagnostics();
+    //
+    //if (diagnosticsTds != 0)
+    //{
+    //    diagnosticsRoot->initializeInfo(diagnosticsTds->getNumClusters(),
+    //                                    diagnosticsTds->getNumVecPoints(),
+    //                                    diagnosticsTds->getNumVecLinks(),
+    //                                    diagnosticsTds->getnLinksNonZeroLayers(),
+    //                                    diagnosticsTds->getAveNumLinksLayer(),
+    //                                    diagnosticsTds->getNumLinkCombinations(),
+    //                                    diagnosticsTds->getNumTrackElements(),
+    //                                    diagnosticsTds->getNumTkrTracks());
+    //}
+    //else
+    //{
+    //    diagnosticsRoot->Clear();
+    //}
+    //
+    //recon->addDiagnostics(diagnosticsRoot);
+
     return sc;
 }
 
@@ -543,43 +567,44 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
     // Purpose and Method:  Given the CalCluster collection from the TDS, we fill the ROOT   
     //  CalCluster collection.   
     
-    unsigned int numClusters = clusterColTds->num();   
+    unsigned int numClusters = clusterColTds->size();   
     unsigned int iCluster;   
     for (iCluster = 0; iCluster < numClusters; iCluster++) {   
-        Event::CalCluster *clusterTds = clusterColTds->getCluster(iCluster);   
+        Event::CalCluster *clusterTds = (*clusterColTds)[iCluster];   
         Point posTds = clusterTds->getPosition();   
         TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
         
         CalCluster *clusterRoot = new CalCluster(   
-            clusterTds->getEnergySum(), posRoot);   
+            clusterTds->getCalParams().getEnergy(), posRoot);   
         
         Vector dirTds = clusterTds->getDirection();   
         TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());   
         
-        std::vector<Vector> posLayerTds = clusterTds->getPosLayer();   
-        std::vector<Vector> rmsLayerTds = clusterTds->getRmsLayer();   
-        std::vector<TVector3> posLayerRoot;   
-        std::vector<Vector>::const_iterator tdsIt;   
-        for (tdsIt = posLayerTds.begin(); tdsIt != posLayerTds.end(); tdsIt++) {   
-            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
-            posLayerRoot.push_back(curVec);   
-        }   
-        std::vector<TVector3> rmsLayerRoot;   
-        for (tdsIt = rmsLayerTds.begin(); tdsIt != rmsLayerTds.end(); tdsIt++) {   
-            TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
-            rmsLayerRoot.push_back(curVec);   
-        }   
+        // TEMPORARILY NEUTRALIZE WHILE CALRECON TDS CLASSES ARE UPGRADED
+        //std::vector<Vector> posLayerTds = clusterTds->getPosLayer();   
+        //std::vector<Vector> rmsLayerTds = clusterTds->getRmsLayer();   
+        //std::vector<TVector3> posLayerRoot;   
+        //std::vector<Vector>::const_iterator tdsIt;   
+        //for (tdsIt = posLayerTds.begin(); tdsIt != posLayerTds.end(); tdsIt++) {   
+        //    TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
+        //    posLayerRoot.push_back(curVec);   
+        //}   
+        //std::vector<TVector3> rmsLayerRoot;   
+        //for (tdsIt = rmsLayerTds.begin(); tdsIt != rmsLayerTds.end(); tdsIt++) {   
+        //    TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
+        //    rmsLayerRoot.push_back(curVec);   
+        //}   
         
-        clusterRoot->initialize(clusterTds->getEnergyLeak(), 
-            clusterTds->getEnergyCorrected(),
-            clusterTds->getEneLayer(),   
-            posLayerRoot, rmsLayerRoot,    
-            clusterTds->getRmsLong(), clusterTds->getRmsTrans(),    
-            dirRoot, clusterTds->getTransvOffset());   
+        //clusterRoot->initialize(clusterTds->getEnergyLeak(), 
+        //    clusterTds->getEnergyCorrected(),
+        //    clusterTds->getEneLayer(),   
+        //    posLayerRoot, rmsLayerRoot,    
+        //    clusterTds->getRmsLong(), clusterTds->getRmsTrans(),    
+        //    dirRoot, clusterTds->getTransvOffset());   
         
-        clusterRoot->initProfile(clusterTds->getFitEnergy(),    
-            clusterTds->getProfChisq(), clusterTds->getCsiStart(),   
-            clusterTds->getCsiAlpha(), clusterTds->getCsiLambda());   
+        //clusterRoot->initProfile(clusterTds->getFitEnergy(),    
+        //    clusterTds->getProfChisq(), clusterTds->getCsiStart(),   
+        //    clusterTds->getCsiAlpha(), clusterTds->getCsiLambda());   
         
         calRec->addCalCluster(clusterRoot);   
     }   
@@ -593,7 +618,7 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
     
     MsgStream log(msgSvc(), name());
     Event::CalXtalRecCol::const_iterator xtalTds;   
-
+    
     for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {   
         CalXtalRecData *xtalRoot = new CalXtalRecData();   
         idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();   
