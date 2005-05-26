@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Thu May 26 14:06:12 PDT 2005
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+Two mods: 1) Support "improved" McPositionHits (mcRootReaderAlg, mcRootWriterAlg), 2) "Neutralize" CalRecon input/output while CalRecon TDS classes are still a little flexible
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1, operation: add
 Package: RootIo
