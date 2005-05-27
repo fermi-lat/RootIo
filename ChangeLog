@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri May 27 16:39:23 PDT 2005
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+add progress INFO output during loop.
+    *
+------------------------------------------------------------
 User: usher  Thu May 26 14:06:12 PDT 2005
 RootIo/src
 
