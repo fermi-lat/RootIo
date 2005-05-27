@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.16 2005/04/06 20:07:43 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.16 2005/04/06 20:07:43 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
 */
 
 // includes
@@ -103,7 +103,7 @@ private:
 
     void beginEvent();
     void endEvent();
-	
+    void loopStatus(int eventNumber, double currentTime, MsgStream& log);	
     /// Allow SvcFactory to instantiate the service.
     friend class SvcFactory<RootIoSvc>;
    
@@ -323,7 +323,7 @@ StatusCode RootIoSvc::run(){
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ((rootEvtMax-m_startIndex) < evtMax) {
+    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
        evtMax = rootEvtMax - m_startIndex;
        setProperty(evtMax);
     } else setProperty(evtMax);
@@ -370,6 +370,8 @@ StatusCode RootIoSvc::run(){
     while( m_evtMax>0 && eventNumber < m_evtMax
         || m_endTime>0 && currentTime< m_endTime ) {
         
+        loopStatus( eventNumber, currentTime, log);
+
         status =  m_appMgrUI->nextEvent(1); // currently, always success
         
         // the single event may have created a failure. Check the ErrorCount propery of the Top alg.
@@ -395,3 +397,22 @@ StatusCode RootIoSvc::run(){
     return status;
 }
 
+void RootIoSvc::loopStatus(int eventNumber, double currentTime, MsgStream& log)
+// purpose: print periodic messages
+{
+    static int last_fraction=0;
+
+    double efrac =   (m_evtMax>0? 100.*eventNumber/m_evtMax: 0.0), 
+        tfrac =   (m_endTime>0? 100.*(currentTime-m_startTime)/(m_endTime-m_startTime) : 0.0) ;
+
+    int percent_complete= static_cast<int>(  std::max( efrac, tfrac)  );
+    if( percent_complete!=last_fraction){
+        last_fraction=percent_complete;
+        if( percent_complete<10 || percent_complete%10 ==0){
+            log << MSG::INFO <<   percent_complete << "% complete: "
+                << " event "<< eventNumber<<",  time "<< currentTime << endreq;
+        }
+
+    }
+
+}
