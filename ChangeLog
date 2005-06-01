@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed Jun  1 01:17:43 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8em0, operation: add
 Package: RootIo
