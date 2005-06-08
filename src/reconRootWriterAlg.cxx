@@ -42,7 +42,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54 2005/05/03 05:24:16 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.55 2005/05/26 21:06:12 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -569,44 +569,44 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
     
     unsigned int numClusters = clusterColTds->size();   
     unsigned int iCluster;   
-    for (iCluster = 0; iCluster < numClusters; iCluster++) {   
-        Event::CalCluster *clusterTds = (*clusterColTds)[iCluster];   
-        Point posTds = clusterTds->getPosition();   
-        TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
+    for (iCluster = 0; iCluster < numClusters; iCluster++)
+     {
+      Event::CalCluster * clusterTds = (*clusterColTds)[iCluster] ;
         
-        CalCluster *clusterRoot = new CalCluster(   
-            clusterTds->getCalParams().getEnergy(), posRoot);   
-        
-        Vector dirTds = clusterTds->getDirection();   
-        TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());   
-        
-        // TEMPORARILY NEUTRALIZE WHILE CALRECON TDS CLASSES ARE UPGRADED
-        //std::vector<Vector> posLayerTds = clusterTds->getPosLayer();   
-        //std::vector<Vector> rmsLayerTds = clusterTds->getRmsLayer();   
-        //std::vector<TVector3> posLayerRoot;   
-        //std::vector<Vector>::const_iterator tdsIt;   
-        //for (tdsIt = posLayerTds.begin(); tdsIt != posLayerTds.end(); tdsIt++) {   
-        //    TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
-        //    posLayerRoot.push_back(curVec);   
-        //}   
-        //std::vector<TVector3> rmsLayerRoot;   
-        //for (tdsIt = rmsLayerTds.begin(); tdsIt != rmsLayerTds.end(); tdsIt++) {   
-        //    TVector3 curVec(tdsIt->x(), tdsIt->y(), tdsIt->z());   
-        //    rmsLayerRoot.push_back(curVec);   
-        //}   
-        
-        //clusterRoot->initialize(clusterTds->getEnergyLeak(), 
-        //    clusterTds->getEnergyCorrected(),
-        //    clusterTds->getEneLayer(),   
-        //    posLayerRoot, rmsLayerRoot,    
-        //    clusterTds->getRmsLong(), clusterTds->getRmsTrans(),    
-        //    dirRoot, clusterTds->getTransvOffset());   
-        
-        //clusterRoot->initProfile(clusterTds->getFitEnergy(),    
-        //    clusterTds->getProfChisq(), clusterTds->getCsiStart(),   
-        //    clusterTds->getCsiAlpha(), clusterTds->getCsiLambda());   
-        
-        calRec->addCalCluster(clusterRoot);   
+      std::vector<CalClusterLayerData> layersRoot ;
+      std::vector<Event::CalClusterLayerData>::iterator layerTds ;
+      for ( layerTds=clusterTds->begin() ;
+            layerTds!=clusterTds->end() ;
+            ++layerTds )
+       {
+        Double_t energyRoot = layerTds->getEnergy() ;
+        const Point & positionTds = layerTds->getPosition() ;
+        const Vector & rmsSpreadTds = layerTds->getRmsSpread() ;
+        TVector3 positionRoot(positionTds.x(),positionTds.y(),positionTds.z()) ;
+        TVector3 rmsSpreadRoot(rmsSpreadTds.x(),rmsSpreadTds.y(),rmsSpreadTds.z()) ;
+        CalClusterLayerData layerRoot(energyRoot,positionRoot,rmsSpreadRoot) ;
+        layersRoot.push_back(layerRoot) ;
+       }
+      
+      const Event::CalParams & paramsTds = clusterTds->getCalParams() ;
+      const Point & centroidTds = paramsTds.getCentroid() ;
+      const Vector & axisTds = paramsTds.getAxis() ;
+      TVector3 centroidRoot(centroidTds.x(),centroidTds.y(),centroidTds.z()) ;
+      TVector3 axisRoot(axisTds.x(),axisTds.y(),axisTds.z()) ;
+      CalParams paramsRoot
+       ( paramsTds.getEnergy(),paramsTds.getEnergyErr(),
+         centroidRoot,
+         paramsTds.getxPosxPos(),paramsTds.getxPosyPos(),paramsTds.getxPoszPos(),
+         paramsTds.getyPosyPos(),paramsTds.getyPoszPos(),paramsTds.getzPoszPos(),
+         axisRoot,
+         paramsTds.getxDirxDir(),paramsTds.getxDiryDir(),paramsTds.getxDirzDir(),
+         paramsTds.getyDiryDir(),paramsTds.getyDirzDir(),paramsTds.getzDirzDir() ) ;
+      
+      Double_t rmsLongRoot = clusterTds->getRmsLong() ;
+      Double_t rmsTransRoot = clusterTds->getRmsTrans() ;
+       
+      calRec->addCalCluster( new CalCluster
+        ( layersRoot,paramsRoot,rmsLongRoot,rmsTransRoot ) ) ;   
     }   
     
     return;   
