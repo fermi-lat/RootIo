@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.50 2005/05/23 20:35:47 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.51 2005/05/26 21:06:12 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -793,49 +793,40 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     Event::CalClusterCol *calClusterColTds = new Event::CalClusterCol();
     
     while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {
-        TVector3 calPosRoot = calClusterRoot->getPosition();
-        Point pos(calPosRoot.X(), calPosRoot.Y(), calPosRoot.Z());
-        Event::CalCluster *calClusterTds = new Event::CalCluster();
-        //    calClusterRoot->getEnergySum(),
-        //    pos);
-        TVector3 dirRoot = calClusterRoot->getDirection();
-        Vector dirTds(dirRoot.X(), dirRoot.Y(), dirRoot.Z());
-        std::vector<Vector> posLayerTds;
-        std::vector<TVector3> posLayerRoot = calClusterRoot->getPosLayer();
-        std::vector<TVector3>::const_iterator posLayerIt;
-        for (posLayerIt = posLayerRoot.begin(); posLayerIt != posLayerRoot.end(); posLayerIt++) {
-            Vector vecTds(posLayerIt->X(), posLayerIt->Y(), posLayerIt->Z());
-            posLayerTds.push_back(vecTds);
-        }
         
-        std::vector<Vector> rmsLayerTds;
-        std::vector<TVector3> rmsLayerRoot = calClusterRoot->getRmsLayer();
-        std::vector<TVector3>::const_iterator rmsLayerIt;
-        for (rmsLayerIt = rmsLayerRoot.begin(); rmsLayerIt != rmsLayerRoot.end(); rmsLayerIt++) {
-            Vector vecTds(rmsLayerIt->X(), rmsLayerIt->Y(), rmsLayerIt->Z());
-            rmsLayerTds.push_back(vecTds);
-        }
-        
-        /// TEMPORARILY NEUTRALIZE THE READING OF CALCLUSTERS WHILE UPGRADING TO NEW VERSION
-        //calClusterTds->initialize(
-        //    calClusterRoot->getEnergyLeak(),
-        //    calClusterRoot->getEneLayer(),
-        //    posLayerTds,
-        //    rmsLayerTds,
-        //    calClusterRoot->getRmsLong(),
-        //    calClusterRoot->getRmsTrans(),
-        //    dirTds,
-        //    calClusterRoot->getTransvOffset());
-        //calClusterTds->initProfile(
-        //    calClusterRoot->getFitEnergy(),
-        //    calClusterRoot->getProfChisq(),
-        //    calClusterRoot->getCsiStart(),
-        //    calClusterRoot->getCsiAlpha(),
-        //    calClusterRoot->getCsiLambda());
+        const CalParams & rootParams = calClusterRoot->getParams() ;
+        const TVector3 & rootCentroid = rootParams.getCentroid() ;
+        const TVector3 & rootAxis = rootParams.getAxis() ;
+        Event::CalParams tdsParams
+         ( rootParams.getEnergy(), rootParams.getEnergyErr(),
+           rootCentroid.X(),rootCentroid.Y(),rootCentroid.Z(),
+           rootParams.getxPosxPos(), rootParams.getxPosyPos(), rootParams.getxPoszPos(),
+           rootParams.getyPosyPos(), rootParams.getyPoszPos(), rootParams.getzPoszPos(),
+           rootAxis.X(),rootAxis.Y(),rootAxis.Z(),
+           rootParams.getxDirxDir(), rootParams.getxDiryDir(), rootParams.getxDirzDir(),
+           rootParams.getyDiryDir(), rootParams.getyDirzDir(), rootParams.getzDirzDir() ) ;
 
-        //calClusterTds->setEnergyCorrected(calClusterRoot->getEnergyCorrected());
+        Event::CalCluster * calClusterTds = new Event::CalCluster() ;
         
-        calClusterColTds->push_back(calClusterTds);
+        calClusterTds->initialize
+         ( tdsParams,
+           calClusterRoot->getRmsLong(),
+           calClusterRoot->getRmsTrans() ) ;
+    
+        int i ;
+        for ( i=0 ; i<NUMCALLAYERS ; ++i )
+         {
+          const CalClusterLayerData & rootLayer = calClusterRoot->getLayer(i) ;
+          const TVector3 & rootPosition = rootLayer.getPosition() ;
+          const TVector3 & rootRmsSpread = rootLayer.getRmsSpread() ;
+          Point tdsPosition(rootPosition.X(),rootPosition.Y(),rootPosition.Z()) ;
+          Vector tdsRmsSpread(rootRmsSpread.X(),rootRmsSpread.Y(),rootRmsSpread.Z()) ;
+          Event::CalClusterLayerData tdsLayer
+           ( rootLayer.getEnergy(),tdsPosition,tdsRmsSpread ) ;
+          calClusterTds->push_back(tdsLayer) ;
+         }
+          
+        calClusterColTds->push_back(calClusterTds) ;
     }
     
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterCol, calClusterColTds);
