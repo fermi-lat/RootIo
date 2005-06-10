@@ -32,8 +32,12 @@
 
 #include "RootIo/IRootIoSvc.h"
 
+
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
+
+// low level converters
+#include "RootConvert/Recon/CalClusterConvert.h"
 
 #include <vector>
 #include <map>
@@ -43,7 +47,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.51 2005/05/26 21:06:12 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.52 2005/06/08 16:09:41 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -434,7 +438,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             clusterRoot->getFirstStrip(),
             clusterRoot->getLastStrip(),
             posTds,
-            clusterRoot->getRawToT(),
+            (int)clusterRoot->getRawToT(),
             clusterRoot->getMips(),
             clusterRoot->getStatusWord(),
             clusterRoot->getNBad()
@@ -481,7 +485,7 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     
     while ((trackObj = trackIter.Next())!=0) 
     {
-        int trkIdx = -1;
+        // int trkIdx = -1;
         TkrTrack* trackRoot = dynamic_cast<TkrTrack*>(trackObj);
 
         trackTds = convertTkrTrack(trackRoot);
@@ -792,40 +796,9 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     
     Event::CalClusterCol *calClusterColTds = new Event::CalClusterCol();
     
-    while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {
-        
-        const CalParams & rootParams = calClusterRoot->getParams() ;
-        const TVector3 & rootCentroid = rootParams.getCentroid() ;
-        const TVector3 & rootAxis = rootParams.getAxis() ;
-        Event::CalParams tdsParams
-         ( rootParams.getEnergy(), rootParams.getEnergyErr(),
-           rootCentroid.X(),rootCentroid.Y(),rootCentroid.Z(),
-           rootParams.getxPosxPos(), rootParams.getxPosyPos(), rootParams.getxPoszPos(),
-           rootParams.getyPosyPos(), rootParams.getyPoszPos(), rootParams.getzPoszPos(),
-           rootAxis.X(),rootAxis.Y(),rootAxis.Z(),
-           rootParams.getxDirxDir(), rootParams.getxDiryDir(), rootParams.getxDirzDir(),
-           rootParams.getyDiryDir(), rootParams.getyDirzDir(), rootParams.getzDirzDir() ) ;
-
+    while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {        
         Event::CalCluster * calClusterTds = new Event::CalCluster() ;
-        
-        calClusterTds->initialize
-         ( tdsParams,
-           calClusterRoot->getRmsLong(),
-           calClusterRoot->getRmsTrans() ) ;
-    
-        int i ;
-        for ( i=0 ; i<NUMCALLAYERS ; ++i )
-         {
-          const CalClusterLayerData & rootLayer = calClusterRoot->getLayer(i) ;
-          const TVector3 & rootPosition = rootLayer.getPosition() ;
-          const TVector3 & rootRmsSpread = rootLayer.getRmsSpread() ;
-          Point tdsPosition(rootPosition.X(),rootPosition.Y(),rootPosition.Z()) ;
-          Vector tdsRmsSpread(rootRmsSpread.X(),rootRmsSpread.Y(),rootRmsSpread.Z()) ;
-          Event::CalClusterLayerData tdsLayer
-           ( rootLayer.getEnergy(),tdsPosition,tdsRmsSpread ) ;
-          calClusterTds->push_back(tdsLayer) ;
-         }
-          
+        RootPersistence::convert(*calClusterRoot,*calClusterTds) ;
         calClusterColTds->push_back(calClusterTds) ;
     }
     
