@@ -19,6 +19,7 @@
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
+#include "LdfEvent/ErrorData.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -44,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.58 2005/04/26 00:57:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59 2005/05/23 20:35:47 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -71,6 +72,9 @@ private:
     StatusCode readEventSummary();
 
     StatusCode readGem();
+ 
+    /// Reads in LDF Error data
+    StatusCode readError();
 
     /// Reads in the EM Diagnostic trigger primitive data
     StatusCode readDiagnostic();
@@ -282,6 +286,11 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
     
+    sc = readError();
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to read in error data" << endreq;
+        // Do not return failure - error data may not be in all data
+    }
 
     sc = readDiagnostic();
     if (sc.isFailure()) {
@@ -453,6 +462,29 @@ StatusCode digiRootReaderAlg::readGem() {
         return sc;
     }
     return sc;
+}
+
+StatusCode digiRootReaderAlg::readError() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    LdfEvent::ErrorData *errCol = new LdfEvent::ErrorData();
+
+    const TClonesArray *temRootCol = m_digiEvt->getTemCol();
+    TIter temRootIt(temRootCol);
+    Tem* temCur = 0;
+    while ((temCur = (Tem*)temRootIt.Next())) {
+
+        const ErrorData& errRoot = temCur->getError();
+        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        errCol->addTowerError(err);
+
+        sc = eventSvc()->registerObject("/Event/Error", errCol);
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "could not register " << "/Event/Error" << endreq;
+            return sc;
+        }
+    }
 }
 
 StatusCode digiRootReaderAlg::readDiagnostic() {
