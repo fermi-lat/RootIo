@@ -16,6 +16,7 @@
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
+#include "LdfEvent/ErrorData.h"
 
 #include "Trigger/TriRowBits.h"
 
@@ -43,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.50 2005/04/26 00:57:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.51 2005/05/03 05:24:16 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -71,6 +72,9 @@ private:
 
     /// EM summary word
     StatusCode writeEventSummary();
+
+    /// Writes the LDF Error from TDS and fills the ROOT version
+    StatusCode writeError();
 
     /// Writes the EM Diagnostic data from TDS and fills the ROOT version
     StatusCode writeDiagnostic();
@@ -238,6 +242,12 @@ StatusCode digiRootWriterAlg::execute()
         return sc;
     }
   
+    sc = writeError();
+    if (sc.isFailure()) { 
+        log << MSG::DEBUG << "Failed to write error data" << endreq;
+        //return sc;
+    }
+
     sc = writeDiagnostic();
     if (sc.isFailure()) { 
         log << MSG::DEBUG << "Failed to write diagnostic data" << endreq;
@@ -371,6 +381,25 @@ StatusCode digiRootWriterAlg::writeGem() {
              gemTds->deltaWindowOpenTime());
     m_digiEvt->initGem(gemRoot);
     return sc;
+
+}
+
+StatusCode digiRootWriterAlg::writeError() {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<LdfEvent::ErrorData> errTds(eventSvc(), "/Event/Error");
+    if (!errTds) return sc;
+
+    const std::vector<LdfEvent::TowerErrorData> errorCol = errTds->errorCol();
+    std::vector<LdfEvent::TowerErrorData>::const_iterator errorColIt;
+
+    for (errorColIt = errorCol.begin(); errorColIt != errorCol.end(); errorColIt++) {
+          Tem *temRoot = m_digiEvt->addTem();
+          ErrorData err(errorColIt->cal(), errorColIt->tkr(), 
+                        errorColIt->phs(), errorColIt->tmo());
+          temRoot->init(errorColIt->tower(), err);
+      }
 
 }
 
