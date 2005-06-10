@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Fri Jun 10 06:05:52 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+now require RootConvert, where the low level conversion code should be transfered
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em1, operation: add
 Package: RootIo
