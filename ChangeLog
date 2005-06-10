@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  9 23:26:37 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle error summary
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  9 23:25:16 PDT 2005
 RootIo/cmt
 
