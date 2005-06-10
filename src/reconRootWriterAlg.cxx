@@ -36,13 +36,17 @@
 
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
+
+// low level converters
+#include "RootConvert/Recon/CalClusterConvert.h"
+
 #include <cstdlib>
 
 /** @class reconRootWriterAlg
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.55 2005/05/26 21:06:12 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.56 2005/06/08 16:09:41 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -328,7 +332,7 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
     // Purpose and Method:  Reads collection of clusters from TDS and copies their
     //   contents to a ROOT version.
     
-    int numClusters = clusterColTds->size();
+    //int numClusters = clusterColTds->size();
 
     Event::TkrClusterColConItr clusterIter;
     for (clusterIter = clusterColTds->begin(); clusterIter != clusterColTds->end(); clusterIter++)
@@ -344,7 +348,7 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
                                                  clusterTds->firstStrip(), 
                                                  clusterTds->lastStrip(), 
                                                  posRoot, 
-                                                 clusterTds->getRawToT(),
+                                                 (int)clusterTds->getRawToT(),
                                                  clusterTds->getMips(), 
                                                  clusterTds->getStatusWord(),
                                                  clusterTds->getNBad()
@@ -424,7 +428,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrTrackCol* trac
     return;
 }
 
-void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* verticesTds, Event::TkrTrackCol* tracksTds)
+void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* verticesTds, Event::TkrTrackCol* /*tracksTds*/)
 {
     // Purpose and Method:  This creates root vertex output objects from tds vertices 
     //                      and adds them to the list kept in TkrRecon
@@ -572,41 +576,9 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
     for (iCluster = 0; iCluster < numClusters; iCluster++)
      {
       Event::CalCluster * clusterTds = (*clusterColTds)[iCluster] ;
-        
-      std::vector<CalClusterLayerData> layersRoot ;
-      std::vector<Event::CalClusterLayerData>::iterator layerTds ;
-      for ( layerTds=clusterTds->begin() ;
-            layerTds!=clusterTds->end() ;
-            ++layerTds )
-       {
-        Double_t energyRoot = layerTds->getEnergy() ;
-        const Point & positionTds = layerTds->getPosition() ;
-        const Vector & rmsSpreadTds = layerTds->getRmsSpread() ;
-        TVector3 positionRoot(positionTds.x(),positionTds.y(),positionTds.z()) ;
-        TVector3 rmsSpreadRoot(rmsSpreadTds.x(),rmsSpreadTds.y(),rmsSpreadTds.z()) ;
-        CalClusterLayerData layerRoot(energyRoot,positionRoot,rmsSpreadRoot) ;
-        layersRoot.push_back(layerRoot) ;
-       }
-      
-      const Event::CalParams & paramsTds = clusterTds->getCalParams() ;
-      const Point & centroidTds = paramsTds.getCentroid() ;
-      const Vector & axisTds = paramsTds.getAxis() ;
-      TVector3 centroidRoot(centroidTds.x(),centroidTds.y(),centroidTds.z()) ;
-      TVector3 axisRoot(axisTds.x(),axisTds.y(),axisTds.z()) ;
-      CalParams paramsRoot
-       ( paramsTds.getEnergy(),paramsTds.getEnergyErr(),
-         centroidRoot,
-         paramsTds.getxPosxPos(),paramsTds.getxPosyPos(),paramsTds.getxPoszPos(),
-         paramsTds.getyPosyPos(),paramsTds.getyPoszPos(),paramsTds.getzPoszPos(),
-         axisRoot,
-         paramsTds.getxDirxDir(),paramsTds.getxDiryDir(),paramsTds.getxDirzDir(),
-         paramsTds.getyDiryDir(),paramsTds.getyDirzDir(),paramsTds.getzDirzDir() ) ;
-      
-      Double_t rmsLongRoot = clusterTds->getRmsLong() ;
-      Double_t rmsTransRoot = clusterTds->getRmsTrans() ;
-       
-      calRec->addCalCluster( new CalCluster
-        ( layersRoot,paramsRoot,rmsLongRoot,rmsTransRoot ) ) ;   
+      CalCluster * clusterRoot = new CalCluster ;
+      RootPersistence::convert(*clusterTds,*clusterRoot) ;
+      calRec->addCalCluster(clusterRoot) ;   
     }   
     
     return;   
