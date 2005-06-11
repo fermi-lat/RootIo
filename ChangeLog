@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sat Jun 11 11:28:04 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootReaderAlg.cxx 
+Log Message:
+fix up reading error
+    *
+------------------------------------------------------------
 User: chamont  Fri Jun 10 06:05:52 PDT 2005
 RootIo/src
 
