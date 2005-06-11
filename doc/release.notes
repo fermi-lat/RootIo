@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p1em2 11-Jun-2005 HMK Fix reading error summary in digiRootReaderAlg
  v15r8p1em1 09-Jun-2005 HMK Handle Error Summary and fix read/write REVFIT track
            parameters
  v15r8p0   02-May-2005 HMK Clean up now that file headers using pipes are 
