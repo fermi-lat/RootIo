@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59 2005/05/23 20:35:47 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59.2.1 2005/06/10 06:26:37 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -478,12 +478,12 @@ StatusCode digiRootReaderAlg::readError() {
         const ErrorData& errRoot = temCur->getError();
         LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
         errCol->addTowerError(err);
+    }
 
-        sc = eventSvc()->registerObject("/Event/Error", errCol);
-        if( sc.isFailure() ) {
-            log << MSG::ERROR << "could not register " << "/Event/Error" << endreq;
-            return sc;
-        }
+    sc = eventSvc()->registerObject("/Event/Error", errCol);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register " << "/Event/Error" << endreq;
+        return sc;
     }
 }
 
