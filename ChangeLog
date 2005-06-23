@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Jun 23 13:36:16 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Final updates for new CalRecon output, preparing to tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em2, operation: add
 Package: RootIo
