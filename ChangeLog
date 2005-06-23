@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: usher  Thu Jun 23 13:36:17 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Final updates for new CalRecon output, preparing to tag
+    *
+------------------------------------------------------------
+User: usher  Thu Jun 23 13:36:17 PDT 2005
 RootIo/doc
 
 Modified Files:
