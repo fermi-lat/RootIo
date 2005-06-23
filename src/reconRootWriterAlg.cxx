@@ -4,7 +4,6 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
-//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 
@@ -15,6 +14,7 @@
 
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
+#include "Event/Recon/CalRecon/CalMipClasses.h"
 
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 
@@ -46,7 +46,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.56 2005/06/08 16:09:41 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.57 2005/06/10 13:05:52 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -92,6 +92,10 @@ private:
     /// Retrieves the CalXtalRecData collection from the TDS and fills the ROOT   
     /// xtal collection   
     void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds); 
+  
+    /// Retrieves the CalMipTrack collection from the TDS and fills the ROOT   
+    /// collection   
+    void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
     
     StatusCode writeAcdRecon();
     
@@ -268,9 +272,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     // For simulated data - this may not exist on the TDS and that is ok
     // no need to fail for that
     SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
-    if (summaryTds) 
-        m_reconEvt->initEventFlags(summaryTds->eventFlags());
-        
+    if (summaryTds) m_reconEvt->initEventFlags(summaryTds->eventFlags());
     
     return sc;
 }
@@ -563,6 +565,10 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     SmartDataPtr<Event::CalXtalRecCol> xtalColTds(eventSvc(), EventModel::CalRecon::CalXtalRecCol);   
     if (xtalColTds) fillCalXtalRec(calRec, xtalColTds); 
     
+    //SG
+    // Retrieve the calMipTrack collection   
+    SmartDataPtr<Event::CalMipTrackCol> calMipTrackColTds(eventSvc(), EventModel::CalRecon::CalMipTrackCol);   
+    if (calMipTrackColTds) fillCalMipTrack(calRec, calMipTrackColTds);   
     
     return sc;
 }
@@ -640,8 +646,54 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
     return;   
 } 
 
+void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds) 
+{   
+    // Purpose and Method:  Given the CalMipTrack collection from the TDS, we fill the ROOT   
+    //  CalMiptrack collection.   
+    StatusCode sc = StatusCode::SUCCESS;
+    MsgStream log(msgSvc(), name());
+    log << MSG::DEBUG << " SG : fillCalMipTrack in reconRootWriterAlg.cxx" << endreq;
 
-StatusCode reconRootWriterAlg::writeAcdRecon() {
+    unsigned int numCalMipTracks = calMipTrackColTds->size();   
+    unsigned int iCalMipTrack;   
+    for (iCalMipTrack = 0; iCalMipTrack < numCalMipTracks; iCalMipTrack++) 
+    {   
+        CalMipTrack* calMipTrackRoot = new CalMipTrack();
+
+        Event::CalMipTrack* calMipTrackTds = (*calMipTrackColTds)[iCalMipTrack];   
+
+        Point    pointTds = calMipTrackTds->getPoint();
+        Vector   dirTds   = calMipTrackTds->getDir();
+
+        TVector3 pointRoot(pointTds.x(), pointTds.y(), pointTds.z());
+        TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());
+
+        calMipTrackRoot->setPoint(pointRoot);
+        calMipTrackRoot->setDir(dirRoot);
+
+        double ndofTds = calMipTrackTds->getNdof();
+        double ki2Tds  = calMipTrackTds->getKi2();
+        double length  = calMipTrackTds->getLength();
+        double d2C     = calMipTrackTds->getD2C();
+        double d2Edge  = calMipTrackTds->getD2Edge();
+        double energy  = calMipTrackTds->getEnergy();
+
+        calMipTrackRoot->setNdof(ndofTds);
+        calMipTrackRoot->setKi2(ki2Tds);
+        calMipTrackRoot->setLength(length);
+        calMipTrackRoot->setD2C(d2C);
+        calMipTrackRoot->setD2Edge(d2Edge);
+        calMipTrackRoot->setEnergy(energy);
+
+        calRec->addCalMipTrack(calMipTrackRoot);
+    }
+
+    log << MSG::DEBUG << " SG : fillCalMipTrack - End" << endreq;
+    return;
+}   
+
+StatusCode reconRootWriterAlg::writeAcdRecon() 
+{
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
