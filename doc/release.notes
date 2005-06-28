@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v16r0p2   27-Jun-2005 HMK add author keyword
  v16r0p1   23-Jun-2005  TU grumble grumble fix explicit version numbers grumble grumble
  v16r0p0   23-Jun-2005  TU Initial tag with RootConverter and new CalRecon
  v15r8p0   02-May-2005 HMK Clean up now that file headers using pipes are 

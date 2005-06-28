@@ -1,7 +1,9 @@
 package RootIo
-version v16r0p1
+version v16r0p2
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.144 2005/06/23 20:36:16 usher Exp $
+author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
+
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.145 2005/06/23 22:24:59 usher Exp $
 
 branches src doc
 
