@@ -27,7 +27,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.10 2004/09/15 04:19:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.11 2004/12/16 18:09:09 usher Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -239,7 +239,7 @@ StatusCode testReadAlg::readReconData() {
     if (!calClusterColTds)
         log << MSG::INFO << "No CAL recon cluster collection on the TDS" << endreq;
     else 
-        log << MSG::DEBUG << calClusterColTds->num() << " CAL clusters on TDS" << endreq;
+        log << MSG::DEBUG << calClusterColTds->size() << " CAL clusters on TDS" << endreq;
 
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) 

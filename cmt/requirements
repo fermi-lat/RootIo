@@ -1,14 +1,15 @@
 package RootIo
-version v16r0p2
+version v16r0p3
 
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.145 2005/06/23 22:24:59 usher Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.146 2005/06/28 04:54:58 heather Exp $
 
 branches src doc
 
 use Event v11r*
 use ROOT v3r* IExternal
+use RootConvert v0r*
 
 apply_pattern packageShr
 apply_pattern package_include
