@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59.2.1 2005/06/10 06:26:37 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59.2.2 2005/06/11 18:28:04 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -485,6 +485,7 @@ StatusCode digiRootReaderAlg::readError() {
         log << MSG::ERROR << "could not register " << "/Event/Error" << endreq;
         return sc;
     }
+    return sc;
 }
 
 StatusCode digiRootReaderAlg::readDiagnostic() {
