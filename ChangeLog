@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Jul  6 10:12:14 PDT 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	release.notes 
+Log Message:
+add return sc to readError method
+    *
+------------------------------------------------------------
 TAG
 Tag name: v16r0p3, operation: add
 Package: RootIo
