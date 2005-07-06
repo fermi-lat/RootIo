@@ -30,6 +30,10 @@
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
 
+// low level converters
+#include <RootConvert/MonteCarlo/McPositionHitConvert.h>
+#include <RootConvert/Utilities/Toolkit.h>
+
 #include <map>
 #include <string>
 
@@ -38,7 +42,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.47 2005/05/23 20:35:47 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.48 2005/05/26 21:06:12 usher Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -72,10 +76,11 @@ private:
     /// Retrieves McIntegratingHits from the ROOT file and stores them on the
     /// TDS
     StatusCode readMcIntegratingHits();
-    
-    /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
-    void convertVolumeId(VolumeIdentifier rootVolId, 
-        idents::VolumeIdentifier &tdsVolId);
+
+// TRANSFERED TO RootConvert
+//    /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
+//    void convertVolumeId(VolumeIdentifier rootVolId, 
+//        idents::VolumeIdentifier &tdsVolId);
     
     /// Closes the ROOT file
     void close();
@@ -492,31 +497,7 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         
         Event::McPositionHit *posHitTds = new Event::McPositionHit();
         
-        VolumeIdentifier volIdRoot = posHitRoot->getVolumeId();
-        idents::VolumeIdentifier volIdTds;
-        convertVolumeId(volIdRoot, volIdTds);
-        
-        TVector3 entryRoot = posHitRoot->getEntryPosition();
-        HepPoint3D entryTds(entryRoot.X(), entryRoot.Y(), entryRoot.Z());
-        
-        TVector3 exitRoot = posHitRoot->getExitPosition();
-        HepPoint3D exitTds(exitRoot.X(), exitRoot.Y(), exitRoot.Z());
-        
-        TVector3 globalEntryRoot = posHitRoot->getGlobalEntryPosition();
-        HepPoint3D globalEntryTds(globalEntryRoot.X(), globalEntryRoot.Y(), globalEntryRoot.Z());
-        
-        TVector3 globalExitRoot = posHitRoot->getGlobalExitPosition();
-        HepPoint3D globalExitTds(globalExitRoot.X(), globalExitRoot.Y(), globalExitRoot.Z());
-        
-        double edepTds= posHitRoot->getDepositedEnergy();
-        
-        TLorentzVector part4MomRoot = posHitRoot->getParticle4Momentum();
-        HepLorentzVector part4MomTds(part4MomRoot.X(), part4MomRoot.Y(), 
-            part4MomRoot.Z(), part4MomRoot.T());
-        posHitTds->setParticle4Momentum(part4MomTds);
-        
-        double tofTds = posHitRoot->getTimeOfFlight();
-        posHitTds->setTimeOfFlight(tofTds);
+        RootPersistence::convert(*posHitRoot,*posHitTds) ;
         
         const McParticle* mcPartRoot = posHitRoot->getMcParticle();
         Event::McParticle *mcPartTds = 0;
@@ -531,14 +512,6 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
             originTds = m_particleMap[originRoot->GetUniqueID()];
             posHitTds->setOriginMcParticle(originTds);
         }
-        
-        Event::McParticle::StdHepId particleIdTds = posHitRoot->getMcParticleId();
-        Event::McParticle::StdHepId originIdTds = posHitRoot->getOriginMcParticleId();
-        
-        // setup the TDS McPositionHit
-        posHitTds->init(edepTds, volIdTds, entryTds, exitTds, globalEntryTds, globalExitTds);
-        posHitTds->setMcParticleId(particleIdTds);
-        posHitTds->setOriginMcParticleId(originIdTds);
         
         // add the McPositionHit to the TDS collection of McPositionHits
         pTdsCol->push_back(posHitTds);
@@ -579,7 +552,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
         
         const VolumeIdentifier idRoot = intHitRoot->getVolumeId();
         idents::VolumeIdentifier idTds;
-        convertVolumeId(idRoot, idTds);
+        idTds = RootPersistence::convert(idRoot) ;
         
         intHitTds->setVolumeID(idTds);
         
@@ -617,24 +590,24 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     return sc;
 }
 
-void mcRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId, 
-                                      idents::VolumeIdentifier& tdsVolId) 
-{
-    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
-    //	   in the ROOT class.  The idents::VolumeIdentifier class stores the
-    //	   data in one 64 bit word.  We must convert from the two 32 bit words
-    //	   into the 64 bit word.  We perform the conversion by iterating over
-    //	   all of the ids in the ROOT VolumeIdentifier and appending them to
-    //	   the TDS idents::VolumeIdentifier.
-    // Input:  ROOT VolumeIdentifier
-    // Ouput:  idents::VolumeIdentifier
-    
-    int index;
-    for (index = 0; index < rootVolId.size(); index++) {
-        tdsVolId.append(rootVolId.operator [](index));
-    }
-    
-}
+//void mcRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId, 
+//                                      idents::VolumeIdentifier& tdsVolId) 
+//{
+//    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
+//    //	   in the ROOT class.  The idents::VolumeIdentifier class stores the
+//    //	   data in one 64 bit word.  We must convert from the two 32 bit words
+//    //	   into the 64 bit word.  We perform the conversion by iterating over
+//    //	   all of the ids in the ROOT VolumeIdentifier and appending them to
+//    //	   the TDS idents::VolumeIdentifier.
+//    // Input:  ROOT VolumeIdentifier
+//    // Ouput:  idents::VolumeIdentifier
+//    
+//    int index;
+//    for (index = 0; index < rootVolId.size(); index++) {
+//        tdsVolId.append(rootVolId.operator [](index));
+//    }
+//    
+//}
 
 
 void mcRootReaderAlg::close() 

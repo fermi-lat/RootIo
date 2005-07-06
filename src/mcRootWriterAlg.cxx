@@ -25,17 +25,21 @@
 #include "commonData.h"
 #include "RootIo/IRootIoSvc.h"
 
-#include <map>
-
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
 #include <cstdlib>
+
+// low level converters
+#include <RootConvert/MonteCarlo/McPositionHitConvert.h>
+#include <RootConvert/Utilities/Toolkit.h>
+
+#include <map>
 
 /** @class mcRootWriterAlg
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.38 2005/05/03 05:24:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.39 2005/05/26 21:06:12 usher Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -69,10 +73,11 @@ private:
     /// writes McIntegratingHits to the ROOT file
     StatusCode writeMcIntegratingHits();
 
-    /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
-    void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-        VolumeIdentifier &rootVolId);
-
+// Moved to RootConvert
+//    /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
+//    void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
+//        VolumeIdentifier &rootVolId);
+//
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
 
@@ -386,44 +391,12 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
         log << MSG::DEBUG;
         if( log.isActive()) (*hit)->fillStream(log.stream());
         log << endreq;
-
-        Int_t particleId = (*hit)->getMcParticleId();
-
-        Int_t originPartId = (*hit)->getOriginMcParticleId();
-
-        idents::VolumeIdentifier volIdTds = (*hit)->volumeID();
-        VolumeIdentifier volIdRoot;
-        convertVolumeId(volIdTds, volIdRoot);
-
-        HepPoint3D entryTds = (*hit)->entryPoint();
-        TVector3 entryRoot(entryTds.x(), entryTds.y(), entryTds.z());
-
-        HepPoint3D exitTds = (*hit)->exitPoint();
-        TVector3 exitRoot(exitTds.x(), exitTds.y(), exitTds.z());
-
-        HepPoint3D globalEntryTds = (*hit)->globalEntryPoint();
-        TVector3 globalEntryRoot(globalEntryTds.x(), globalEntryTds.y(), globalEntryTds.z());
-
-        HepPoint3D globalExitTds = (*hit)->globalExitPoint();
-        TVector3 globalExitRoot(globalExitTds.x(), globalExitTds.y(), globalExitTds.z());
-        
-        Double_t edepRoot = (*hit)->depositedEnergy();
-        
-        HepLorentzVector part4momTds = (*hit)->particleFourMomentum();
-        TLorentzVector part4MomRoot(part4momTds.x(), part4momTds.y(), 
-            part4momTds.z(), part4momTds.t());
-        
-        //bool primaryOrigin = (*hit)->primaryOrigin();
-        //log << MSG::INFO << "primaryOrigin " << primaryOrigin << endreq;
-        
-        //bool caloShowerOrigin = (*hit)->caloShowerOrigin();
-        //log << MSG::INFO << "calShowerO " << caloShowerOrigin << endreq;
-        
-        //bool needDigi = (*hit)->needDigi();
-        //log << MSG::INFO << "need Digi " << needDigi << endreq;
-                
-        Double_t tofRoot = (*hit)->timeOfFlight();
               
+        McPositionHit *mcPosHit = new McPositionHit();
+        TRef ref = mcPosHit;
+        m_common.m_mcPosHitMap[(*hit)] = ref ;
+        RootPersistence::convert(**hit,*mcPosHit) ;  
+         
         const Event::McParticle *mcPartTds = (*hit)->mcParticle();
         McParticle *mcPartRoot = 0;
         if (mcPartTds != 0) {
@@ -431,6 +404,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
             ref = m_common.m_mcPartMap[mcPartTds];
             mcPartRoot = (McParticle*)ref.GetObject();
         }
+        mcPosHit->setMcParticle(mcPartRoot) ;
 
         const Event::McParticle *originTds = (*hit)->originMcParticle();
         McParticle *originRoot = 0;
@@ -439,18 +413,7 @@ StatusCode mcRootWriterAlg::writeMcPositionHits() {
             ref = m_common.m_mcPartMap[originTds];
             originRoot = (McParticle*)ref.GetObject();
         }
-
-        UInt_t flagsRoot = 0;
-
-        // Set up the ROOT McPositionHit
-        McPositionHit *mcPosHit = new McPositionHit();
-
-        TRef ref = mcPosHit;
-        m_common.m_mcPosHitMap[(*hit)] = ref;
-
-        mcPosHit->initialize(particleId, originPartId, edepRoot, volIdRoot, 
-            entryRoot, exitRoot, globalEntryRoot, globalExitRoot, 
-            mcPartRoot, originRoot, part4MomRoot, tofRoot, flagsRoot);
+        mcPosHit->setOriginMcParticle(originRoot) ;
 
         // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
         m_mcEvt->addMcPositionHit(mcPosHit);
@@ -487,7 +450,7 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
 
         const idents::VolumeIdentifier idTds = (*hit)->volumeID();
         VolumeIdentifier idRoot;
-        convertVolumeId(idTds, idRoot);
+        idRoot = RootPersistence::convert(idTds) ;
 
         Double_t e = (*hit)->totalEnergy();
         
@@ -530,22 +493,22 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
     return sc;
 }
 
-void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-                     VolumeIdentifier& rootVolId) 
-{
-    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
-    //     in the ROOT class.  Hence, we must convert the 64 bit representation
-    //     used in the idents::VolumeIdentifier class into two 32 bit UInt_t.
-    //     To perform the conversion, we iterate over all the ids in the TDS
-    //     version of the idents::VolumeIdentifier and append each to the ROOT
-    //     VolumeIdentifier
-    
-    int index;
-    rootVolId.Clear();
-    for (index = 0; index < tdsVolId.size(); index++) {
-        rootVolId.append(tdsVolId.operator [](index));
-    }
-}
+//void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
+//                     VolumeIdentifier& rootVolId) 
+//{
+//    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
+//    //     in the ROOT class.  Hence, we must convert the 64 bit representation
+//    //     used in the idents::VolumeIdentifier class into two 32 bit UInt_t.
+//    //     To perform the conversion, we iterate over all the ids in the TDS
+//    //     version of the idents::VolumeIdentifier and append each to the ROOT
+//    //     VolumeIdentifier
+//    
+//    int index;
+//    rootVolId.Clear();
+//    for (index = 0; index < tdsVolId.size(); index++) {
+//        rootVolId.append(tdsVolId.operator [](index));
+//    }
+//}
 
 
 void mcRootWriterAlg::writeEvent() 
