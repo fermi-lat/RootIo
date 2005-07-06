@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Jul  6 10:12:33 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootReaderAlg.cxx 
+Log Message:
+add return sc to readError method
+    *
+------------------------------------------------------------
 User: heather  Wed Jul  6 10:12:21 PDT 2005
 RootIo/cmt
 
