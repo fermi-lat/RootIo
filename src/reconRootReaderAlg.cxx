@@ -47,7 +47,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.52 2005/06/08 16:09:41 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.53 2005/06/10 13:05:52 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -664,6 +664,8 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::PREDICTED));
     if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::FILTERED));
+    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT)   = 
+               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT)); 
     if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::SMOOTHED));
     if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL) = 
