@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r0     08-Jul-2005 HMK merge error summary handling back into main branch
  v16r0p2   27-Jun-2005 HMK add author keyword
  v16r0p1   23-Jun-2005  TU grumble grumble fix explicit version numbers grumble grumble
  v16r0p0   23-Jun-2005  TU Initial tag with RootConverter and new CalRecon
