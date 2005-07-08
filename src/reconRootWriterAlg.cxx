@@ -15,6 +15,7 @@
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"   
 #include "Event/Recon/CalRecon/CalMipClasses.h"
+#include "Event/Recon/CalRecon/CalEventEnergy.h"
 
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 
@@ -46,7 +47,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.57 2005/06/10 13:05:52 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.58 2005/06/23 20:36:17 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -96,6 +97,8 @@ private:
     /// Retrieves the CalMipTrack collection from the TDS and fills the ROOT   
     /// collection   
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
+
+    void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
     
     StatusCode writeAcdRecon();
     
@@ -569,6 +572,9 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     // Retrieve the calMipTrack collection   
     SmartDataPtr<Event::CalMipTrackCol> calMipTrackColTds(eventSvc(), EventModel::CalRecon::CalMipTrackCol);   
     if (calMipTrackColTds) fillCalMipTrack(calRec, calMipTrackColTds);   
+
+    SmartDataPtr<Event::CalEventEnergyCol> calEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol);
+    if (calEventEnergyColTds) fillCalEventEnergy(calRec, calEventEnergyColTds);
     
     return sc;
 }
@@ -691,6 +697,24 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
     log << MSG::DEBUG << " SG : fillCalMipTrack - End" << endreq;
     return;
 }   
+
+
+void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol) {
+
+    // Purpose and Method:  Given the CalEventEnergy collection from the TDS, 
+   // we fill the ROOT CalEventEnergy collection.
+
+    unsigned int numEnergy = calEventEnergyCol->size();
+    unsigned int iEnergy;
+    for (iEnergy = 0; iEnergy < numClusters; iEnergy++)
+     {
+      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergy)[iEnergy] ;
+      CalEventEnergy* eventEnergyRoot = new CalEventEnergy;
+      RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
+      calRec->addCalEventEnergy(eventEnergyRoot) ;
+    }
+    return;
+}
 
 StatusCode reconRootWriterAlg::writeAcdRecon() 
 {
