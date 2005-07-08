@@ -13,6 +13,7 @@
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"  
+#include "Event/Recon/CalRecon/CalEventEnergy.h"  
 
 #include "LdfEvent/EventSummaryData.h"
 
@@ -47,7 +48,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.53 2005/06/10 13:05:52 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.54 2005/07/08 06:46:39 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -92,6 +93,9 @@ private:
     
     /// read CAL cluster data from ROOT and store on TDS
     StatusCode storeCalClusterCol(CalRecon *calRecRoot);
+
+    /// read CAL eventEnergy  data from ROOT and store on TDS
+    StatusCode storeCalEventEnergyCol(CalRecon *calRecRoot);
     
     /// Reads ACD recon data from ROOT and puts data on the TDS
     StatusCode readAcdRecon();
@@ -708,6 +712,16 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         return sc;
     }
     
+    SmartDataPtr<Event::CalEventEnergy> checkCalEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergy);
+    if (checkCalEventEnergyColTds) {
+        log << MSG::INFO << "CalEventEnergy data is already on the TDS" << endreq;
+     } else {
+         sc = storeCalEventEnergyCol(calRecRoot);
+     }
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to store CalEventEnergyCol on the TDS" << endreq;
+        return sc;
+    }
     
     SmartDataPtr<Event::CalClusterCol> checkCalClusterColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
     if (checkCalClusterColTds){
@@ -717,6 +731,7 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         sc = storeCalClusterCol(calRecRoot);
     }
     
+
     return sc;
 }
 
@@ -809,6 +824,27 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     return sc;
 }
 
+StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    const TObjArray *calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
+    TIter calEventEnergyIter(calEventEnergyColRoot);
+    CalEventEnergy *calEventEnergyRoot = 0;
+    
+    Event::CalEventEnergy *calEventEnergyColTds = new Event::CalEventEnergy();
+    
+    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+        Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
+        RootPersistence::convert(calEventEnergyRoot,calEventEnergyTds) ;
+        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyColTds);
+    
+    return sc;
+
+}
 
 
 StatusCode reconRootReaderAlg::readAcdRecon() {
