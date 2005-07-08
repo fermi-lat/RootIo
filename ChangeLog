@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jul  8 00:51:34 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+don't think I know what I'm doing with CalEventEnergy
+    *
+------------------------------------------------------------
 User: heather  Thu Jul  7 23:47:24 PDT 2005
 RootIo/cmt
 
