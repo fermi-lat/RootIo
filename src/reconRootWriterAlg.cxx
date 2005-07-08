@@ -40,6 +40,7 @@
 
 // low level converters
 #include "RootConvert/Recon/CalClusterConvert.h"
+#include "RootConvert/Recon/CalEventEnergyConvert.h"
 
 #include <cstdlib>
 
@@ -47,7 +48,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.58 2005/06/23 20:36:17 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.59 2005/07/08 07:51:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -75,9 +76,9 @@ private:
     StatusCode writeTkrRecon();
     
     /// These are the methods specific to filling the pieces of the TkrRecon stuff
-    void fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol* clusterColTds);
-    void       fillFitTracks(      TkrRecon* recon, Event::TkrTrackCol* tracksTds);
-    void       fillVertices(       TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
+    void fillTkrClusterCol( TkrRecon* recon, Event::TkrClusterCol* clusterColTds);
+    void fillFitTracks( TkrRecon* recon, Event::TkrTrackCol* tracksTds);
+    void fillVertices( TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
     
     TkrTrackHit*   convertTkrTrackHit(const Event::TkrTrackHit* trackHitTds);
     TkrTrackParams convertTkrTrackParams(const Event::TkrTrackParams& trackParamsTds);
@@ -98,7 +99,7 @@ private:
     /// collection   
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
 
-    void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
+    void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergy* calEventEnergy);
     
     StatusCode writeAcdRecon();
     
@@ -573,8 +574,9 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     SmartDataPtr<Event::CalMipTrackCol> calMipTrackColTds(eventSvc(), EventModel::CalRecon::CalMipTrackCol);   
     if (calMipTrackColTds) fillCalMipTrack(calRec, calMipTrackColTds);   
 
-    SmartDataPtr<Event::CalEventEnergyCol> calEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol);
-    if (calEventEnergyColTds) fillCalEventEnergy(calRec, calEventEnergyColTds);
+    // CalEventEnergy IS the collection
+    SmartDataPtr<Event::CalEventEnergy> calEventEnergyTds(eventSvc(), EventModel::CalRecon::CalEventEnergy) ;
+    if (calEventEnergyTds) fillCalEventEnergy(calRec, calEventEnergyTds);
     
     return sc;
 }
@@ -699,21 +701,25 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
 }   
 
 
-void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol) {
+void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergy* calEventEnergy) {
 
-    // Purpose and Method:  Given the CalEventEnergy collection from the TDS, 
-   // we fill the ROOT CalEventEnergy collection.
-
-    unsigned int numEnergy = calEventEnergyCol->size();
-    unsigned int iEnergy;
-    for (iEnergy = 0; iEnergy < numClusters; iEnergy++)
-     {
-      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergy)[iEnergy] ;
-      CalEventEnergy* eventEnergyRoot = new CalEventEnergy;
+    // David C. : currently, there is only one CalEventEnergy in the TDS,
+    // yet, I prefered to consider CalEventEnergy as a usual objet on
+    // the ROOT side, that is why in the root tree there is a collection
+    // of CalEventEnergy. This collection will always have a single element,
+    // until a change is made in the TDS.
+    
+//    unsigned int numEnergy = calEventEnergyCol->size();
+//    unsigned int iEnergy;
+//    for (iEnergy = 0; iEnergy < numClusters; iEnergy++)
+//     {
+//      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergy)[iEnergy] ;
+      Event::CalEventEnergy * eventEnergyTds = calEventEnergy ;
+      CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
       RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
       calRec->addCalEventEnergy(eventEnergyRoot) ;
-    }
-    return;
+//    }
+    return ;
 }
 
 StatusCode reconRootWriterAlg::writeAcdRecon() 
