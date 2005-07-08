@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul  7 23:46:26 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+merge in error summary stuff and REVFIT fix
+    *
+------------------------------------------------------------
 User: chamont  Wed Jul  6 11:34:04 PDT 2005
 RootIo/src
 
