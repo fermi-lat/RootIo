@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul  7 23:46:39 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+merge in error summary stuff and REVFIT fix
+    *
+------------------------------------------------------------
 User: heather  Thu Jul  7 23:46:26 PDT 2005
 RootIo/src
 
