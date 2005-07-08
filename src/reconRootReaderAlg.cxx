@@ -39,6 +39,7 @@
 
 // low level converters
 #include "RootConvert/Recon/CalClusterConvert.h"
+#include "RootConvert/Recon/CalEventEnergyConvert.h"
 
 #include <vector>
 #include <map>
@@ -48,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.54 2005/07/08 06:46:39 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.55 2005/07/08 07:51:34 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -95,7 +96,7 @@ private:
     StatusCode storeCalClusterCol(CalRecon *calRecRoot);
 
     /// read CAL eventEnergy  data from ROOT and store on TDS
-    StatusCode storeCalEventEnergyCol(CalRecon *calRecRoot);
+    StatusCode storeCalEventEnergy(CalRecon *calRecRoot);
     
     /// Reads ACD recon data from ROOT and puts data on the TDS
     StatusCode readAcdRecon();
@@ -712,14 +713,14 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         return sc;
     }
     
-    SmartDataPtr<Event::CalEventEnergy> checkCalEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergy);
-    if (checkCalEventEnergyColTds) {
+    SmartDataPtr<Event::CalEventEnergy> checkCalEventEnergyTds(eventSvc(), EventModel::CalRecon::CalEventEnergy);
+    if (checkCalEventEnergyTds) {
         log << MSG::INFO << "CalEventEnergy data is already on the TDS" << endreq;
      } else {
-         sc = storeCalEventEnergyCol(calRecRoot);
+         sc = storeCalEventEnergy(calRecRoot);
      }
     if (sc.isFailure()) {
-        log << MSG::INFO << "Failed to store CalEventEnergyCol on the TDS" << endreq;
+        log << MSG::INFO << "Failed to store CalEventEnergy on the TDS" << endreq;
         return sc;
     }
     
@@ -824,23 +825,39 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     return sc;
 }
 
-StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
+StatusCode reconRootReaderAlg::storeCalEventEnergy(CalRecon *calRecRoot) {
+
+    // David C. : currently, there is only one CalEventEnergy in the TDS,
+    // yet, I prefered to consider CalEventEnergy as a usual objet on
+    // the ROOT side, that is why in the root tree there is a collection
+    // of CalEventEnergy. This collection will always have a single element,
+    // until a change is made in the TDS.
+
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    const TObjArray *calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
-    TIter calEventEnergyIter(calEventEnergyColRoot);
-    CalEventEnergy *calEventEnergyRoot = 0;
+    const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
+    if (calEventEnergyColRoot->GetEntries()>1) {
+        // this should not happen !!
+        log<<MSG::ERROR ;
+        if (log.isActive()) log.stream()<<"Several CalEventEnergy in ROOT file" ;
+        log<<endreq ;
+        return StatusCode::FAILURE;
+    }
+        
     
-    Event::CalEventEnergy *calEventEnergyColTds = new Event::CalEventEnergy();
-    
-    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+//    Event::CalEventEnergy * calEventEnergyColTds = new Event::CalEventEnergy();
+    TIter calEventEnergyIter(calEventEnergyColRoot) ;
+    CalEventEnergy * calEventEnergyRoot = 0 ;
+//    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+    if ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
         Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
-        RootPersistence::convert(calEventEnergyRoot,calEventEnergyTds) ;
-        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+        RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
+//        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+        sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyTds);
     }
     
-    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyColTds);
+//    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyColTds);
     
     return sc;
 
