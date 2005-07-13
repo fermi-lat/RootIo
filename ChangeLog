@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Wed Jul 13 05:58:59 PDT 2005
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx 
+Log Message:
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r0, operation: add
 Package: RootIo
