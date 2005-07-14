@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: piron  Thu Jul 14 00:35:02 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+modified reconRootWriter for StdMipFindingTool
+
+    *
+------------------------------------------------------------
 User: chamont  Wed Jul 13 05:58:59 PDT 2005
 RootIo/src
 
