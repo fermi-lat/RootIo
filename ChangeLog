@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Jul 19 14:33:02 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+disable random tool, since not needed - patch tag
+    *
+------------------------------------------------------------
 User: burnett  Tue Jul 19 14:32:25 PDT 2005
 RootIo/src
 
