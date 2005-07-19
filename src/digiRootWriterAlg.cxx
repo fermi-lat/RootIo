@@ -44,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.51 2005/05/03 05:24:16 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.52 2005/07/08 06:46:26 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -387,24 +387,24 @@ StatusCode digiRootWriterAlg::writeGem() {
 
 
 StatusCode digiRootWriterAlg::writeError() { 
-       MsgStream log(msgSvc(), name()); 
-       StatusCode sc = StatusCode::SUCCESS; 
-    
-       SmartDataPtr<LdfEvent::ErrorData> errTds(eventSvc(), "/Event/Error"); 
-       if (!errTds) return sc; 
-    
-       const std::vector<LdfEvent::TowerErrorData> errorCol = errTds->errorCol(); 
-       std::vector<LdfEvent::TowerErrorData>::const_iterator errorColIt; 
-    
-       for (errorColIt = errorCol.begin(); errorColIt != errorCol.end(); errorColIt++) { 
-             Tem *temRoot = m_digiEvt->addTem(); 
-             ErrorData err(errorColIt->cal(), errorColIt->tkr(), 
-                           errorColIt->phs(), errorColIt->tmo()); 
-             temRoot->init(errorColIt->tower(), err); 
-         } 
-    
+    MsgStream log(msgSvc(), name()); 
+    StatusCode sc = StatusCode::SUCCESS; 
+
+    SmartDataPtr<LdfEvent::ErrorData> errTds(eventSvc(), "/Event/Error"); 
+    if (!errTds) return sc; 
+
+    const std::vector<LdfEvent::TowerErrorData> errorCol = errTds->errorCol(); 
+    std::vector<LdfEvent::TowerErrorData>::const_iterator errorColIt; 
+
+    for (errorColIt = errorCol.begin(); errorColIt != errorCol.end(); errorColIt++) { 
+        Tem *temRoot = m_digiEvt->addTem(); 
+        ErrorData err(errorColIt->cal(), errorColIt->tkr(), 
+            errorColIt->phs(), errorColIt->tmo()); 
+        temRoot->init(errorColIt->tower(), err); 
+    } 
+    return sc;    
 } 
-    
+
 
 
 StatusCode digiRootWriterAlg::writeDiagnostic() {
