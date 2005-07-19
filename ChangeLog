@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Jul 19 14:33:02 PDT 2005
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+disable random tool, since not needed - patch tag
+    *
+------------------------------------------------------------
+User: burnett  Tue Jul 19 14:33:02 PDT 2005
 RootIo/doc
 
 Modified Files:
