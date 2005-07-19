@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Jul 19 14:32:25 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+fix warning by returning success
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r1, operation: add
 Package: RootIo
