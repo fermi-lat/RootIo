@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.18 2005/05/27 23:39:23 burnett Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.18 2005/05/27 23:39:23 burnett Exp $
 */
 
 // includes
@@ -198,8 +198,9 @@ StatusCode RootIoSvc::initialize ()
         Long64_t maxTreeSize = m_treeSize * 1000000;
         TTree::SetMaxTreeSize(maxTreeSize);
     } else if (m_treeSize == 0) {
-        // 25 GB default
-        Long64_t maxTreeSize = 25000000000;
+        // 500 GB default
+        //Long64_t maxTreeSize = 25000000000;
+        Long64_t maxTreeSize = 500000000000;
         TTree::SetMaxTreeSize(maxTreeSize);
     }
 
