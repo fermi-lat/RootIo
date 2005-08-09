@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Aug  8 21:44:19 PDT 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	release.notes 
+Log Message:
+increase filesize limit to 500 GB
+    *
+------------------------------------------------------------
 User: heather  Mon Aug  8 21:43:53 PDT 2005
 RootIo/src
 
