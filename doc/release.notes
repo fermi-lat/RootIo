@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p1em4 08-Aug-2005 HMK Increase filesize limit to 500 GB
  v15r8p1em3 06-Jul-2005 HMK add return sc to end of digiRootReaderAlg::readError
             Zach reports that it hangs otherwise on windows
  v15r8p1em2 11-Jun-2005 HMK Fix reading error summary in digiRootReaderAlg
