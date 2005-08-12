@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Aug 12 13:05:11 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	mcRootWriterAlg.cxx RootIoSvc.cxx 
+Log Message:
+I get beer toocvs diff
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em5, operation: add
 Package: RootIo
