@@ -35,7 +35,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.37 2005/04/18 06:47:20 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.38 2005/05/03 05:24:16 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -206,8 +206,6 @@ StatusCode mcRootWriterAlg::execute()
         return StatusCode::FAILURE;
     }
 
-    Int_t ObjectNumber = TProcessID::GetObjectCount();
-
     m_common.m_mcPartMap.clear();
     m_common.m_mcPosHitMap.clear();
     m_common.m_mcIntHitMap.clear();
@@ -226,8 +224,6 @@ StatusCode mcRootWriterAlg::execute()
    
     writeEvent();
 
-    // reset object nr in order to avoid memleak
-    TProcessID::SetObjectCount(ObjectNumber);
 
     return sc;
 }

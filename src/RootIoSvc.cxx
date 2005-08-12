@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.1 2005/08/09 04:43:53 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.2 2005/08/12 18:33:54 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.1 2005/08/09 04:43:53 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.2 2005/08/12 18:33:54 heather Exp $
 */
 
 // includes
@@ -126,6 +126,7 @@ private:
     std::vector<TChain *> m_chainCol;
 
     commonData m_common;
+    UInt_t m_objectNumber;
     bool m_useIndex, m_useRunEventPair;
 
 };
@@ -295,6 +296,7 @@ void RootIoSvc::handle(const Incident &inc)
 
 void RootIoSvc::beginEvent() // should be called at the beginning of an event
 { 
+   m_objectNumber = TProcessID::GetObjectCount();
 }
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
@@ -306,6 +308,9 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
 
     // clear out the maps
     m_common.clear();
+
+    // reset object nr in order to avoid memleak
+    TProcessID::SetObjectCount(m_objectNumber);
 }
 
 StatusCode RootIoSvc::run(){
