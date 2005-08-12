@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p1em5 12-Aug-2005 HMK Put in fix to clear commonData maps in RootIoSvc
  v15r8p1em4 08-Aug-2005 HMK Increase filesize limit to 500 GB
  v15r8p1em3 06-Jul-2005 HMK add return sc to end of digiRootReaderAlg::readError
             Zach reports that it hangs otherwise on windows
