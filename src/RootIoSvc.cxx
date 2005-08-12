@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.1 2005/08/09 04:43:53 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -17,6 +17,8 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 
+#include "commonData.h"
+
 //#include "CLHEP/Random/Random.h"
 
 #include <vector>
@@ -28,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17 2005/04/08 21:05:17 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.17.2.1 2005/08/09 04:43:53 heather Exp $
 */
 
 // includes
@@ -123,6 +125,7 @@ private:
     std::pair<int, int> m_runEventPair;
     std::vector<TChain *> m_chainCol;
 
+    commonData m_common;
     bool m_useIndex, m_useRunEventPair;
 
 };
@@ -300,6 +303,9 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
     m_useRunEventPair = false;
 
     m_runEventPair = std::pair<int, int>(-1,-1);
+
+    // clear out the maps
+    m_common.clear();
 }
 
 StatusCode RootIoSvc::run(){
