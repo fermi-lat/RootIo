@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 24 15:47:14 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle ACD header parity
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 24 15:46:11 PDT 2005
 RootIo/cmt
 
