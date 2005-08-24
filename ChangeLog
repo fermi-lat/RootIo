@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 24 13:43:17 PDT 2005
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	requirements 
+Log Message:
+handle ACD header parity bits
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 24 13:43:06 PDT 2005
 RootIo/doc
 
