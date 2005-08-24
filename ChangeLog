@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 24 15:45:58 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+handle ACD header parity
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em7, operation: add
 Package: RootIo
