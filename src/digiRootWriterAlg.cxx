@@ -44,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.52 2005/07/08 06:46:26 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.53 2005/07/19 21:32:24 burnett Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -477,15 +477,22 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         VolumeIdentifier volIdRoot;
         convertVolumeId(volIdTds, volIdRoot);
 
-        AcdDigi *digi = m_digiEvt->addAcdDigi(idRoot, volIdRoot, energyRoot, phaRoot, 
-            vetoRoot, lowRoot, highRoot);
+        AcdDigi *digi = m_digiEvt->addAcdDigi(idRoot, volIdRoot, energyRoot, 
+                                   phaRoot, vetoRoot, lowRoot, highRoot);
         AcdDigi::Range range[2];
         range[0] = ( (*acdDigiTds)->getRange(Event::AcdDigi::A) == Event::AcdDigi::LOW) ? AcdDigi::LOW : AcdDigi::HIGH;
         range[1] = ( (*acdDigiTds)->getRange(Event::AcdDigi::B) == Event::AcdDigi::LOW) ? AcdDigi::LOW : AcdDigi::HIGH;
-        AcdDigi::ParityError err[2];
-        err[0] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
-        err[1] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
-        digi->initLdfParameters((*acdDigiTds)->getTileName(), (*acdDigiTds)->getTileNumber(), range, err);
+
+        AcdDigi::ParityError oddParity[2];
+        oddParity[0] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
+        oddParity[1] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
+
+        AcdDigi::ParityError headerParity[2];
+        headerParity[0] = ( (*acdDigiTds)->getHeaderParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;   
+         headerParity[1] = ( (*acdDigiTds)->getHeaderParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR; 
+
+        digi->initLdfParameters((*acdDigiTds)->getTileName(), (*acdDigiTds)->getTileNumber(), range, err, headerParity);
+
     }
 
     return sc;
