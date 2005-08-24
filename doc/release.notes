@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p1em7 24-Aug-2005 HMK Handle ACD header parity bit
  v15r8p1em6 12-Aug-2005 HMK Reset TProcessID ObjectNumber in RootIoSvc rather
             than in mcRootWriterAlg
  v15r8p1em5 12-Aug-2005 HMK Put in fix to clear commonData maps in RootIoSvc
