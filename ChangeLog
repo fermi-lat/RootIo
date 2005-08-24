@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 24 15:46:11 PDT 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+handle ACD header parity
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 24 15:45:58 PDT 2005
 RootIo/doc
 
