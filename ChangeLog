@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 24 13:43:06 PDT 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	release.notes 
+Log Message:
+handle ACD header parity bits
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r1p2, operation: add
 Package: RootIo
