@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r2p1   25-Aug-2005 HMK Remove typo in digiRootReaderAlg
  v17r2     24-Aug-2005 HMK Handle ACD header parity bits in AEM header
  v17r1p2   12-Aug-2005 HMK 2 fixes, clear the static maps in RootIoSvc and 
            reset TProcessID ObjectNumber there as well.
