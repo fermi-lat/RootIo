@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  1 23:45:35 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+fix typo
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r2p1, operation: add
 Package: RootIo
