@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Sep  6 23:21:20 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: EngineeringModel-v5r0608p6
+	mcRootWriterAlg.cxx digiRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+try to catch all exceptions associated with writing to ROOT
+    *
+------------------------------------------------------------
 TAG
 Tag name: EngineeringModel-v5r0608p6, operation: add
 Package: RootIo
