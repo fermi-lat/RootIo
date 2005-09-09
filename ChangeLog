@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  8 17:58:38 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v7r0p2
+	digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+exception handling for writing errors
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-v7r0p2, operation: add
 Package: RootIo
