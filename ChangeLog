@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Sep  9 13:25:50 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootWriterAlg.cxx 
+Log Message:
+set n/a for AcdId when necessary
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em8, operation: add
 Package: RootIo
