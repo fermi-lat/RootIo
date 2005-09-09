@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  8 17:59:55 PDT 2005
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastRelease-v7r0p2
+	requirements 
+Log Message:
+exception handling for writing errors
+    *
+------------------------------------------------------------
 User: heather  Thu Sep  8 17:59:39 PDT 2005
 RootIo/doc
 
