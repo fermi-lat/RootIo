@@ -40,7 +40,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.11 2004/11/24 14:16:31 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.12 2004/12/16 00:24:29 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -298,16 +298,24 @@ void relationRootWriterAlg::writeEvent()
     //    tree.  The m_common object is cleared for the next event.
 
     static int eventCounter = 0;
-    TDirectory *saveDir = gDirectory;
-    m_relTree->GetCurrentFile()->cd();
-    //m_relFile->cd();
-    m_relTree->Fill();
-    m_relTable->Clear();
-    m_common.clear();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_relTree->AutoSave();
-    saveDir->cd();
+    try {
+        TDirectory *saveDir = gDirectory;
+        m_relTree->GetCurrentFile()->cd();
+        m_relTree->Fill();
+        m_relTable->Clear();
+        m_common.clear();
+        ++eventCounter;
+        if (m_rootIoSvc)
+            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+                m_relTree->AutoSave();
+        saveDir->cd();
+    } catch(...) { 
+        std::cerr << "Failed to write the event to file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+    } 
+
 
     return;
 }
@@ -321,14 +329,21 @@ void relationRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_relTree->GetCurrentFile();
-    f->cd();
-    //m_relFile->cd();
-    m_relTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
+    try {
+        TDirectory *saveDir = gDirectory;
+        TFile *f = m_relTree->GetCurrentFile();
+        f->cd();
+        m_relTree->BuildIndex("m_runId", "m_eventId");
+        f->Write(0, TObject::kWriteDelete);
+        f->Close();
+        saveDir->cd();
+    } catch(...) { 
+        std::cerr << "Failed final write to RELATION file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+    } 
+
     return;
 }
 

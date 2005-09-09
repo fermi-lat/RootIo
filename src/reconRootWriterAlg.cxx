@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54 2005/05/03 05:24:16 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54.2.1 2005/06/01 08:17:43 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -677,16 +677,22 @@ void reconRootWriterAlg::writeEvent()
     //    tree.  The m_digiEvt object is cleared for the next event.
     
     static int eventCounter = 0;
-    TDirectory *saveDir = gDirectory;
-    m_reconTree->GetCurrentFile()->cd();
-    //m_reconFile->cd();
-    m_reconTree->Fill();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_reconTree->AutoSave();
-    saveDir->cd();
+    try {
+        TDirectory *saveDir = gDirectory;
+        m_reconTree->GetCurrentFile()->cd();
+        m_reconTree->Fill();
+        ++eventCounter;
+        if (m_rootIoSvc)
+            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+                m_reconTree->AutoSave();
+        saveDir->cd();
+     } catch(...) { 
+        std::cerr << "Failed to write the event to file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+     } 
 
-    saveDir->cd();
     return;
 }
 
@@ -699,14 +705,22 @@ void reconRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_reconTree->GetCurrentFile();
-    f->cd();
-    //m_reconFile->cd();
-    m_reconTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
+    try {
+        TDirectory *saveDir = gDirectory;
+        TFile *f = m_reconTree->GetCurrentFile();
+        f->cd();
+        m_reconTree->BuildIndex("m_runId", "m_eventId");
+        f->Write(0, TObject::kWriteDelete);
+        f->Close();
+        saveDir->cd();
+    } catch(...) { 
+        std::cerr << "Failed to final write to RECON file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+    } 
+    
+
     return;
 }
 
