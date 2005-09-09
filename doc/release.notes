@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r1p3   08-Sep-2005 HMK Exception handling for ROOT write errors to
+           pass back an acceptable error code to the pipeline
  v17r1p2   12-Aug-2005 HMK 2 fixes, clear the static maps in RootIoSvc and 
            reset TProcessID ObjectNumber there as well.
  v17r1p1   19-Jul-2005 THB disable random tool
