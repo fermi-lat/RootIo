@@ -44,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.52 2005/07/08 06:46:26 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.53 2005/07/19 21:32:24 burnett Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -587,16 +587,23 @@ void digiRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
     static int eventCounter = 0;
-    TDirectory *saveDir = gDirectory;
-    m_digiTree->GetCurrentFile()->cd();
-    //m_digiFile->cd();
-    m_digiTree->Fill();
-    //m_digiEvt->Clear();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) m_digiTree->AutoSave();
+    try {
+        TDirectory *saveDir = gDirectory;
+        m_digiTree->GetCurrentFile()->cd();
+        m_digiTree->Fill();
+        ++eventCounter;
+        if (m_rootIoSvc)
+            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+                m_digiTree->AutoSave();
 
-    saveDir->cd();
+        saveDir->cd();
+      } catch(...) { 
+          std::cerr << "Failed to write the event to file" << std::endl; 
+          std::cerr << "Exiting..." << std::endl; 
+          std::cerr.flush(); 
+          exit(1); 
+      } 
+
     return;
 }
 
@@ -609,14 +616,22 @@ void digiRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_digiTree->GetCurrentFile();
-    //m_digiFile->cd();
-    f->cd();
-    m_digiTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
+    try {
+        TDirectory *saveDir = gDirectory;
+        TFile *f = m_digiTree->GetCurrentFile();
+        f->cd();
+        m_digiTree->BuildIndex("m_runId", "m_eventId");
+        f->Write(0, TObject::kWriteDelete);
+        f->Close();
+        saveDir->cd();
+     } catch(...) { 
+        std::cerr << "Failed final write to DIGI file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+     } 
+
+
     return;
 }
 
