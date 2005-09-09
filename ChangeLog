@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Sep  9 13:26:21 PDT 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	release.notes 
+Log Message:
+set n/a for AcdId when necessary
+    *
+------------------------------------------------------------
 User: heather  Fri Sep  9 13:25:50 PDT 2005
 RootIo/src
 
