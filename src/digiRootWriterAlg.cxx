@@ -44,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.54 2005/08/24 22:47:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.55 2005/09/02 06:45:35 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -470,8 +470,10 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         AcdId idRoot;
         if (idTds.tile())
             idRoot.initialize(idTds.layer(), idTds.face(), idTds.row(), idTds.column());
-        else
+        else if (idTds.ribbon())
             idRoot.initialize(idTds.ribbonOrientation(), idTds.ribbonNum());
+        else 
+            idRoot.initialize(idTds.na(),0,0,0);
 
         const idents::VolumeIdentifier volIdTds = (*acdDigiTds)->getVolId();
         VolumeIdentifier volIdRoot;
