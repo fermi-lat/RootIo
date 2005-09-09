@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  8 23:38:26 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+add exception handling for main line EM
+    *
+------------------------------------------------------------
 User: heather  Thu Sep  8 23:37:38 PDT 2005
 RootIo/doc
 
