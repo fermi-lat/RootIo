@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Sep  9 13:39:09 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+handle N/A in AcdId
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em9, operation: add
 Package: RootIo
