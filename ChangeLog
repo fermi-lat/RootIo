@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 10:10:39 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+back off n/a for main branch for now
+    *
+------------------------------------------------------------
 User: heather  Mon Sep 12 10:10:26 PDT 2005
 RootIo/cmt
 
