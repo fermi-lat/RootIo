@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 13:40:43 PDT 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	release.notes 
+Log Message:
+store AcdId associated with ActiveDistance
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r2p3, operation: add
 Package: RootIo
