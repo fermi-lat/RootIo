@@ -43,7 +43,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.50 2005/05/23 20:35:47 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.50.2.1 2005/06/01 08:17:43 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -866,19 +866,26 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     }
     
     // create the TDS location for the AcdRecon
-    const AcdId acdIdRoot = acdRecRoot->getMinDocaId();
-    const idents::AcdId acdIdTds(acdIdRoot.getLayer(), acdIdRoot.getFace(), 
-        acdIdRoot.getRow(), acdIdRoot.getColumn());
+    const AcdId docaIdRoot = acdRecRoot->getMinDocaId();
+    const idents::AcdId docaIdTds(docaIdRoot.getLayer(), docaIdRoot.getFace(), 
+        docaIdRoot.getRow(), docaIdRoot.getColumn());
+    const AcdId actDistIdRoot = acdRecRoot->getMaxActDistId();
+    const idents::AcdId actDistIdTds(actDistIdRoot.getLayer(), 
+          actDistIdRoot.getFace(), actDistIdRoot.getRow(), 
+          actDistIdRoot.getColumn());
+
     std::vector<idents::AcdId> idColTds;
     std::vector<AcdId>::const_iterator idRootIt;
     for (idRootIt = acdRecRoot->getIdCol().begin(); idRootIt != acdRecRoot->getIdCol().end(); idRootIt++) {
-        idColTds.push_back(idents::AcdId(idRootIt->getLayer(), idRootIt->getFace(),
-            idRootIt->getRow(), idRootIt->getColumn()));
+        idColTds.push_back(idents::AcdId(idRootIt->getLayer(), 
+                 idRootIt->getFace(), idRootIt->getRow(), 
+                 idRootIt->getColumn()));
     }
     std::vector<double> energyColTds = acdRecRoot->getEnergyCol();
-    Event::AcdRecon *acdRecTds = new Event::AcdRecon(acdRecRoot->getEnergy(), acdRecRoot->getTileCount(),
-        acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), 
-        acdRecRoot->getActiveDist(), acdIdTds, 
+    Event::AcdRecon *acdRecTds = new Event::AcdRecon(acdRecRoot->getEnergy(), 
+        acdRecRoot->getTileCount(),
+        acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), docaIdTds,
+        acdRecRoot->getActiveDist(), actDistIdTds, 
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, energyColTds);
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
