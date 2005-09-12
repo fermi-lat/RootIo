@@ -41,7 +41,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54.2.1 2005/06/01 08:17:43 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.54.2.2 2005/09/09 06:38:26 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -655,16 +655,19 @@ StatusCode reconRootWriterAlg::writeAcdRecon() {
     if (!acdRec) return StatusCode::FAILURE;
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
-    idents::AcdId acdIdTds = acdRecTds->getMinDocaId();
+    idents::AcdId acdDocaIdTds = acdRecTds->getMinDocaId();
+    idents::AcdId acdActDistIdTds = acdRecTds->getMaxActDistId();
     std::vector<AcdId> idRootCol;
     std::vector<idents::AcdId>::const_iterator idTdsIt;
     for (idTdsIt = acdRecTds->getIdCol().begin(); idTdsIt != acdRecTds->getIdCol().end(); idTdsIt++) {
         idRootCol.push_back(AcdId(idTdsIt->layer(), idTdsIt->face(), 
             idTdsIt->row(), idTdsIt->column()));
     }
-    AcdId acdIdRoot(acdIdTds.layer(), acdIdTds.face(), acdIdTds.row(), acdIdTds.column());
+    AcdId acdDocaIdRoot(acdDocaIdTds.layer(), acdDocaIdTds.face(), acdDocaIdTds.row(), acdDocaIdTds.column());
+    AcdId acdActDistIdRoot(acdActDistIdTds.layer(), acdActDistIdTds.face(), acdActDistIdTds.row(), acdActDistIdTds.column());
     acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getTileCount(),
-        acdRecTds->getGammaDoca(), acdRecTds->getDoca(), acdRecTds->getActiveDist(), acdIdRoot, 
+        acdRecTds->getGammaDoca(), acdRecTds->getDoca(), acdDocaIdRoot,
+        acdRecTds->getActiveDist(), acdActDistIdRoot, 
         acdRecTds->getRowDocaCol(), acdRecTds->getRowActDistCol(),
         idRootCol, acdRecTds->getEnergyCol());
     

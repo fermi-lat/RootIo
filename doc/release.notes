@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v15r8p1em10 12-Sep-2005 HMK store AcdId associated with ActiveDistance
  v15r8p1em9 09-Sep-2005 HMK Set n/a for AcdId in digiwriting
  v15r8p1em8 09-Sep-2005 HMK Exception handling of root write errors, in order
             to pass back an error code the pipeline will recognize
