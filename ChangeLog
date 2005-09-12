@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 13:43:04 PDT 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v6r8
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+store AcdId associated with ActiveDistance
+    *
+------------------------------------------------------------
 User: heather  Mon Sep 12 13:40:54 PDT 2005
 RootIo/cmt
 
