@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 01:01:31 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx reconRootWriterAlg.cxx 
+	relationRootWriterAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+add exception handling for ROOT write errors
+    *
+------------------------------------------------------------
 User: heather  Mon Sep 12 01:01:01 PDT 2005
 RootIo/doc
 
