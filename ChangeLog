@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 01:01:01 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+add exception handling for ROOT write errors
+    *
+------------------------------------------------------------
 User: heather  Fri Sep  9 13:39:18 PDT 2005
 RootIo/src
 
