@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 23:22:18 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+new AcdId for ActiveDist
+    *
+------------------------------------------------------------
 TAG
 Tag name: v15r8p1em10, operation: add
 Package: RootIo
