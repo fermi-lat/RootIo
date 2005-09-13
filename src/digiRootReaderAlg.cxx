@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.61 2005/08/24 22:47:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59.2.5 2005/09/12 20:43:04 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -72,9 +72,9 @@ private:
     StatusCode readEventSummary();
 
     StatusCode readGem();
-
-    /// Reads in LDF Error data 
-    StatusCode readError(); 
+ 
+    /// Reads in LDF Error data
+    StatusCode readError();
 
     /// Reads in the EM Diagnostic trigger primitive data
     StatusCode readDiagnostic();
@@ -285,14 +285,12 @@ StatusCode digiRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to read in GEM" << endreq;
         return sc;
     }
-
-    sc = readError(); 
-    if (sc.isFailure()) { 
-        log << MSG::INFO << "Failed to read in error data" << endreq; 
-        // Do not return failure - error data may not be in all data 
-    } 
-
     
+    sc = readError();
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to read in error data" << endreq;
+        // Do not return failure - error data may not be in all data
+    }
 
     sc = readDiagnostic();
     if (sc.isFailure()) {
@@ -466,31 +464,29 @@ StatusCode digiRootReaderAlg::readGem() {
     return sc;
 }
 
+StatusCode digiRootReaderAlg::readError() {
 
-StatusCode digiRootReaderAlg::readError() { 
-    
-       MsgStream log(msgSvc(), name()); 
-       StatusCode sc = StatusCode::SUCCESS; 
-       LdfEvent::ErrorData *errCol = new LdfEvent::ErrorData(); 
-    
-       const TClonesArray *temRootCol = m_digiEvt->getTemCol(); 
-       TIter temRootIt(temRootCol); 
-       Tem* temCur = 0; 
-       while ((temCur = (Tem*)temRootIt.Next())) { 
-    
-           const ErrorData& errRoot = temCur->getError(); 
-           LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo()); 
-           errCol->addTowerError(err); 
-       } 
-    
-       sc = eventSvc()->registerObject("/Event/Error", errCol); 
-       if( sc.isFailure() ) { 
-           log << MSG::ERROR << "could not register " << "/Event/Error" << endreq; 
-           return sc; 
-       } 
-       return sc; 
-} 
-    
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    LdfEvent::ErrorData *errCol = new LdfEvent::ErrorData();
+
+    const TClonesArray *temRootCol = m_digiEvt->getTemCol();
+    TIter temRootIt(temRootCol);
+    Tem* temCur = 0;
+    while ((temCur = (Tem*)temRootIt.Next())) {
+
+        const ErrorData& errRoot = temCur->getError();
+        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        errCol->addTowerError(err);
+    }
+
+    sc = eventSvc()->registerObject("/Event/Error", errCol);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "could not register " << "/Event/Error" << endreq;
+        return sc;
+    }
+    return sc;
+}
 
 StatusCode digiRootReaderAlg::readDiagnostic() {
 
@@ -573,14 +569,13 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
         range[1] = (acdDigiRoot->getRange(AcdDigi::B) == AcdDigi::LOW) ? Event::AcdDigi::LOW : Event::AcdDigi::HIGH;
 
         Event::AcdDigi::ParityError err[4];
-        err[0] = (acdDigiRoot->getParityError(AcdDigi::A) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
-        err[1] = (acdDigiRoot->getParityError(AcdDigi::B) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
+        err[0] = (acdDigiRoot->getOddParityError(AcdDigi::A) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
+        err[1] = (acdDigiRoot->getOddParityError(AcdDigi::B) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
         err[2] = (acdDigiRoot->getHeaderParityError(AcdDigi::A) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
         err[3] = (acdDigiRoot->getHeaderParityError(AcdDigi::B) == AcdDigi::NOERROR) ? Event::AcdDigi::NOERROR : Event::AcdDigi::ERROR;
 
-
         acdDigiTds->initLdfParameters(acdDigiRoot->getTileName(), 
-                        acdDigiRoot->getTileNumber(), range, err);
+                             acdDigiRoot->getTileNumber(), range, err);
         acdDigiTdsCol->push_back(acdDigiTds);
     }
 
