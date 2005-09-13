@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 12 23:24:42 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+add N/A back in for AcdId
+    *
+------------------------------------------------------------
 User: heather  Mon Sep 12 23:23:58 PDT 2005
 RootIo/cmt
 
