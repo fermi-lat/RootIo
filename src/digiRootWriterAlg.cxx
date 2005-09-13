@@ -44,7 +44,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.57 2005/09/12 08:01:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.58 2005/09/12 17:10:39 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -493,14 +493,15 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
         range[1] = ( (*acdDigiTds)->getRange(Event::AcdDigi::B) == Event::AcdDigi::LOW) ? AcdDigi::LOW : AcdDigi::HIGH;
 
         AcdDigi::ParityError oddParity[2];
-        oddParity[0] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
-        oddParity[1] = ( (*acdDigiTds)->getParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
+        oddParity[0] = ( (*acdDigiTds)->getOddParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
+        oddParity[1] = ( (*acdDigiTds)->getOddParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;
 
         AcdDigi::ParityError headerParity[2];
         headerParity[0] = ( (*acdDigiTds)->getHeaderParityError(Event::AcdDigi::A) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR;   
          headerParity[1] = ( (*acdDigiTds)->getHeaderParityError(Event::AcdDigi::B) == Event::AcdDigi::NOERROR ) ? AcdDigi::NOERROR : AcdDigi::ERROR; 
 
-        digi->initLdfParameters((*acdDigiTds)->getTileName(), (*acdDigiTds)->getTileNumber(), range, oddParity, headerParity);
+        digi->initLdfParameters((*acdDigiTds)->getTileName(), 
+              (*acdDigiTds)->getTileNumber(), range, oddParity, headerParity);
 
     }
 
