@@ -4,6 +4,7 @@
 std::map<const Event::McParticle*, TRef>                 commonData::m_mcPartMap;
 std::map<const Event::McIntegratingHit*, TRef>           commonData::m_mcIntHitMap;
 std::map<const Event::McPositionHit*, TRef>              commonData::m_mcPosHitMap;
+std::map<const Event::McTrajectory*, TRef>               commonData::m_mcTrajectoryMap;
 std::map<const Event::TkrDigi*, TRef>                    commonData::m_tkrDigiMap;
 std::map<const Event::CalDigi*, TRef>                    commonData::m_calDigiMap;
 std::map<const Event::TkrCluster*, TRef>                 commonData::m_tkrClusterMap;
@@ -13,6 +14,7 @@ std::map<const Event::TkrVertex*, TRef>                  commonData::m_tkrVertex
 std::map<const TObject*, const Event::McParticle*>       commonData::m_rootMcPartMap;
 std::map<const TObject*, const Event::McIntegratingHit*> commonData::m_rootMcIntHitMap;
 std::map<const TObject*, const Event::McPositionHit*>    commonData::m_rootMcPosHitMap;
+std::map<const TObject*, const Event::McTrajectory*>     commonData::m_rootMcTrajectoryMap;
 std::map<const TObject*, const Event::TkrDigi*>          commonData::m_rootTkrDigiMap;
 std::map<const TObject*, const Event::CalDigi*>          commonData::m_rootCalDigiMap;
 std::map<const TObject*, const Event::TkrCluster*>       commonData::m_rootTkrClusterMap;
@@ -30,6 +32,7 @@ void commonData::clear() {
     m_mcPartMap.clear(); 
     m_mcIntHitMap.clear();
     m_mcPosHitMap.clear();
+    m_mcTrajectoryMap.clear();
     m_tkrDigiMap.clear();
     m_calDigiMap.clear(); 
     m_tkrClusterMap.clear();
@@ -39,6 +42,7 @@ void commonData::clear() {
     m_rootMcPartMap.clear(); 
     m_rootMcIntHitMap.clear();
     m_rootMcPosHitMap.clear();
+    m_rootMcTrajectoryMap.clear();
 
     m_rootTkrDigiMap.clear();
     m_rootCalDigiMap.clear();

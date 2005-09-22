@@ -15,6 +15,7 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/MonteCarlo/McTrajectory.h"
 
 #include "Event/TopLevel/DigiEvent.h"
 #include "Event/Digi/AcdDigi.h"
@@ -41,7 +42,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.4 2004/12/16 00:24:29 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.5 2005/03/30 04:47:36 cohen Exp $
 */
 
 class commonData 
@@ -57,6 +58,7 @@ public:
     static std::map<const Event::McParticle*, TRef> m_mcPartMap;
     static std::map<const Event::McIntegratingHit*, TRef> m_mcIntHitMap;
     static std::map<const Event::McPositionHit*, TRef> m_mcPosHitMap;
+    static std::map<const Event::McTrajectory*, TRef> m_mcTrajectoryMap;
     
     /// Create a set of maps between Digi data in the TDS and the TRefs in the ROOT file
     static std::map<const Event::TkrDigi*, TRef> m_tkrDigiMap;
@@ -72,6 +74,7 @@ public:
     static std::map<const TObject*, const Event::McParticle*>       m_rootMcPartMap;
     static std::map<const TObject*, const Event::McIntegratingHit*> m_rootMcIntHitMap;
     static std::map<const TObject*, const Event::McPositionHit*>    m_rootMcPosHitMap;
+    static std::map<const TObject*, const Event::McTrajectory*>     m_rootMcTrajectoryMap;
     
     /// Create a set of maps between ROOT Digi objects and TDS Digi data
     static std::map<const TObject*, const Event::TkrDigi*>          m_rootTkrDigiMap;

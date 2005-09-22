@@ -10,6 +10,7 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/MonteCarlo/McTrajectory.h"
 #include "Event/Utilities/TimeStamp.h"
 
 
@@ -32,6 +33,7 @@
 
 // low level converters
 #include <RootConvert/MonteCarlo/McPositionHitConvert.h>
+#include <RootConvert/MonteCarlo/McTrajectoryConvert.h>
 #include <RootConvert/Utilities/Toolkit.h>
 
 #include <map>
@@ -42,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.48 2005/05/26 21:06:12 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.49 2005/07/06 18:34:04 chamont Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -76,6 +78,9 @@ private:
     /// Retrieves McIntegratingHits from the ROOT file and stores them on the
     /// TDS
     StatusCode readMcIntegratingHits();
+    
+    /// Retrieves McTrajectorys from the ROOT file and stores them on the TDS
+    StatusCode readMcTrajectories();
 
 // TRANSFERED TO RootConvert
 //    /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
@@ -291,6 +296,9 @@ StatusCode mcRootReaderAlg::execute()
     if (sc.isFailure()) return sc;
     
     sc = readMcIntegratingHits();
+    if (sc.isFailure()) return sc;
+    
+    sc = readMcTrajectories();
     if (sc.isFailure()) return sc;
     
 	evtId = readInd+1;
@@ -587,6 +595,57 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
         pTdsCol->push_back(intHitTds);
     }
     
+    return sc;
+}
+
+StatusCode mcRootReaderAlg::readMcTrajectories() 
+{
+    // Purpose and Method:  Retrieve the McTrajectory collection from the ROOT
+    //	file and fill the TDS McTrajectory collection.
+    //  NOTE: This collection is usually NOT present
+    // Input:  ROOT McTrajectory collection
+    // TDS Output:  EventModel::MC::McTrajectoryCol
+    
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    const TObjArray *trajectories = m_mcEvt->getMcTrajectoryCol();
+    if (!trajectories) return sc;
+
+    // this test and alternate return needed to feed to G4Generator, which wants to register its own collection
+    if(  trajectories->GetLast() ==-1)  return sc;
+
+    TIter hitIter(trajectories);
+    
+    // create the TDS location for the McTrajectory Collection
+    Event::McTrajectoryCol* pTdsCol = new Event::McTrajectoryCol();  
+    eventSvc()->registerObject(EventModel::MC::McTrajectoryCol,pTdsCol);
+    if (sc.isFailure()) {
+        log << "Failed to register McTrajectory Collection" << endreq;
+        return sc;
+    }
+    
+    // Loop through the root trajectories and do the conversion
+    for(int rootIdx = 0; rootIdx < trajectories->GetEntries(); rootIdx++)
+    {
+        McTrajectory* trajectoryRoot = (McTrajectory*)trajectories->At(rootIdx);
+
+        Event::McTrajectory* trajectoryTds = new Event::McTrajectory();
+        
+        RootPersistence::convert(*trajectoryRoot,*trajectoryTds);
+        
+        const McParticle* mcPartRoot = trajectoryRoot->getMcParticle();
+        Event::McParticle *mcPartTds = 0;
+        if (mcPartRoot != 0) 
+        {
+            mcPartTds = m_particleMap[mcPartRoot->GetUniqueID()];
+            trajectoryTds->setMcParticle(mcPartTds);
+        }
+        
+        // add the McTrajectory to the TDS collection of McTrajectories
+        pTdsCol->push_back(trajectoryTds);
+    }
+
     return sc;
 }
 
