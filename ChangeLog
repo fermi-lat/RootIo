@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Thu Sep 22 12:29:46 PDT 2005
+RootIo/src
+
+Modified Files:
+	commonData.cxx commonData.h mcRootReaderAlg.cxx 
+	mcRootWriterAlg.cxx 
+Log Message:
+Modifications to include input/output of new McTrajectory class. These changes require updated version of mcRootData, RootConvert and Event.
+    *
+------------------------------------------------------------
 User: usher  Thu Sep 22 12:29:44 PDT 2005
 RootIo
 
