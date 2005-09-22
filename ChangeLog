@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Sep 22 12:29:44 PDT 2005
+RootIo
+
+Modified Files:
+	ChangeLog 
+Log Message:
+Modifications to include input/output of new McTrajectory class. These changes require updated version of mcRootData, RootConvert and Event.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r4p1, operation: add
 Package: RootIo
