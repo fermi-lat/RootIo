@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 22 01:27:44 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+handle new acd ribbon count and energy
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r3, operation: add
 Package: RootIo
