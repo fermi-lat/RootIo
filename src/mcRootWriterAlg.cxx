@@ -11,6 +11,7 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/MonteCarlo/McTrajectory.h"
 
 #include "facilities/Util.h"
 
@@ -31,6 +32,7 @@
 
 // low level converters
 #include <RootConvert/MonteCarlo/McPositionHitConvert.h>
+#include <RootConvert/MonteCarlo/McTrajectoryConvert.h>
 #include <RootConvert/Utilities/Toolkit.h>
 
 #include <map>
@@ -39,7 +41,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.42 2005/08/13 05:52:41 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.43 2005/09/12 08:01:31 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -73,6 +75,10 @@ private:
     /// writes McIntegratingHits to the ROOT file
     StatusCode writeMcIntegratingHits();
 
+    /// Retrieves McTrajectory's from the TDS and writes McTrajectory's 
+    /// to the ROOT file
+    StatusCode writeMcTrajectories();
+
 // Moved to RootConvert
 //    /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
 //    void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
@@ -100,6 +106,8 @@ private:
     int m_bufSize;
     /// Compression level for the ROOT file
     int m_compressionLevel;
+    /// Flag to write McTrajectory objects
+    bool m_saveTrajectories;
 
     /// Keep track of MC particles as we retrieve them from TDS
     /// Used only to aid in writing the ROOT file.
@@ -131,6 +139,8 @@ Algorithm(name, pSvcLocator)
     declareProperty("compressionLevel", m_compressionLevel=1);
     // ROOT TTree name
     declareProperty("treeName", m_treeName="Mc");
+    // Save McTrajectory's?
+    declareProperty("saveMcTrajectory", m_saveTrajectories=false);
 
     
     // ADDED FOR THE FILE HEADERS DEMO
@@ -139,6 +149,7 @@ Algorithm(name, pSvcLocator)
     m_common.m_mcPartMap.clear();
     m_common.m_mcPosHitMap.clear();
     m_common.m_mcIntHitMap.clear();
+    m_common.m_mcTrajectoryMap.clear();
 }
 
 StatusCode mcRootWriterAlg::initialize()
@@ -217,6 +228,7 @@ StatusCode mcRootWriterAlg::execute()
     m_common.m_mcPartMap.clear();
     m_common.m_mcPosHitMap.clear();
     m_common.m_mcIntHitMap.clear();
+    m_common.m_mcTrajectoryMap.clear();
 
     sc = writeMcEvent();
     if (sc.isFailure()) return sc;
@@ -229,6 +241,12 @@ StatusCode mcRootWriterAlg::execute()
 
     sc = writeMcIntegratingHits();
     if (sc.isFailure()) return sc;
+
+    if (m_saveTrajectories)
+    {
+        sc = writeMcTrajectories();
+        if (sc.isFailure()) return sc;
+    }
    
     writeEvent();
 
@@ -489,6 +507,56 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
         m_mcEvt->addMcIntegratingHit(mcIntHit);
     }
 
+    return sc;
+}
+
+StatusCode mcRootWriterAlg::writeMcTrajectories() 
+{
+    // Purpose and Method:  Retrieve the McTrajectory collection from the TDS 
+    //  and fill the ROOT McTrajectory collection.
+    // TDS Input:  EventModel::EVENT::McTrajectoryCol
+    // Output:  ROOT McTrajectory collection
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Get the McPositionHits Collection from the TDS
+    // Interestingly... there does not seem to be a string def for McTrajectoryCol! 
+    SmartDataPtr<Event::McTrajectoryCol> trajectories(eventSvc(), "/Event/MC/TrajectoryCol");
+
+    if (!trajectories) return sc;
+    
+    log << MSG::DEBUG;
+    if( log.isActive()) 
+        log.stream() << "Number of McTrajectory's in the event = " << trajectories->size();
+    log << endreq;
+
+    Event::McTrajectoryVector::const_iterator trajectory;
+    for (trajectory = trajectories->begin(); trajectory != trajectories->end(); trajectory++ ) 
+    {
+        log << MSG::DEBUG;
+        if( log.isActive()) (*trajectory)->fillStream(log.stream());
+        log << endreq;
+              
+        McTrajectory *mcTrajectory = new McTrajectory();
+        TRef ref = mcTrajectory;
+        m_common.m_mcTrajectoryMap[(*trajectory)] = ref ;
+        RootPersistence::convert(**trajectory,*mcTrajectory) ;  
+         
+        const Event::McParticle *mcPartTds = (*trajectory)->getMcParticle();
+        McParticle *mcPartRoot = 0;
+        if (mcPartTds != 0) 
+        {
+            TRef ref;
+            ref = m_common.m_mcPartMap[mcPartTds];
+            mcPartRoot = (McParticle*)ref.GetObject();
+            mcTrajectory->setMcParticle(mcPartRoot);
+        }
+
+        // Add the ROOT McPositionHit to the ROOT collection of McPositionHits
+        m_mcEvt->addMcTrajectory(mcTrajectory);
+    }
+    
     return sc;
 }
 
