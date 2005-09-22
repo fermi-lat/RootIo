@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r4p1   22-Sep-2005 LSR Fix up read and write of TkrIds when there is no cluster in hit
  v17r4     22-Sep-2005 HMK ACD ribbon count and energy
  v17r3     12-Sep-2005 HMK AcdId for ActiveDistance
                        HMK Update to set N/A in AcdId

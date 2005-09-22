@@ -48,7 +48,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.63 2005/09/13 06:22:18 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.64 2005/09/22 08:27:44 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -493,23 +493,33 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
 TkrTrackHit* reconRootWriterAlg::convertTkrTrackHit(const Event::TkrTrackHit* trackHitTds)
 {
     TkrTrackHit* trackHit = new TkrTrackHit();
+    idents::TkrId hitTdsId  = trackHitTds->getTkrId();
 
-    // Fill cluster and hit id only if they exist
+    // Fill cluster id only if it exists
     if (const Event::TkrCluster* clusTds   = trackHitTds->getClusterPtr())
     {
         TRef        clusRef  = m_common.m_tkrClusterMap[clusTds];
         TkrCluster* clusRoot = (TkrCluster*) clusRef.GetObject();
-
         trackHit->setClusterPtr(clusRoot);
+    }
+    if(hitTdsId.hasTowerX()&&hitTdsId.hasTowerY()&&hitTdsId.hasTray()&&hitTdsId.hasBotTop()) {
+        if(hitTdsId.hasView()) {
 
-        // Convert the TkrId
-        idents::TkrId         hitTdsId  = trackHitTds->getTkrId();
-        commonRootData::TkrId hitId(hitTdsId.getTowerX(), hitTdsId.getTowerY(),
-                                         hitTdsId.getTray(), hitTdsId.getBotTop(), 
-                                         hitTdsId.getView());
+            commonRootData::TkrId hitId(hitTdsId.getTowerX(), hitTdsId.getTowerY(),
+                hitTdsId.getTray(), hitTdsId.getBotTop(), hitTdsId.getView());
+            trackHit->setTkrID(hitId);
+
+        } else { // no view if no cluster
+
+            commonRootData::TkrId hitId(hitTdsId.getTowerX(), hitTdsId.getTowerY(),
+                hitTdsId.getTray(), hitTdsId.getBotTop());
+            trackHit->setTkrID(hitId);
+        }
+    } else {
+        commonRootData::TkrId hitId = commonRootData::TkrId();
         trackHit->setTkrID(hitId);
     }
-    
+     
     // Fill in the "easy" stuff first 
     trackHit->setStatusBit(trackHitTds->getStatusBits());
     trackHit->setZPlane(trackHitTds->getZPlane());
