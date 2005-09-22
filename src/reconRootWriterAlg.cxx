@@ -48,7 +48,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.62 2005/09/12 08:01:31 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.63 2005/09/13 06:22:18 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -748,7 +748,8 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
                     docaIdTds.row(), docaIdTds.column());
     AcdId actDistIdRoot(actDistIdTds.layer(), actDistIdTds.face(), 
                        actDistIdTds.row(), actDistIdTds.column());
-    acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getTileCount(),
+    acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getRibbonEnergy(),
+        acdRecTds->getTileCount(), acdRecTds->getRibbonCount(),
         acdRecTds->getGammaDoca(), acdRecTds->getDoca(), docaIdRoot, 
         acdRecTds->getActiveDist(), actDistIdRoot, 
         acdRecTds->getRowDocaCol(), acdRecTds->getRowActDistCol(),

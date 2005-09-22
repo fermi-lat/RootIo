@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r4     22-Sep-2005 HMK ACD ribbon count and energy
  v17r3     12-Sep-2005 HMK AcdId for ActiveDistance
                        HMK Update to set N/A in AcdId
  v17r2p3               HMK Add exception handling for ROOT write errors
