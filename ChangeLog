@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: lsrea  Thu Sep 22 12:13:16 PDT 2005
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Fix up reading and writing of TkrId's, preserving backward compatibility
+Prepare for tag
+
+    *
+------------------------------------------------------------
+User: lsrea  Thu Sep 22 12:13:16 PDT 2005
 RootIo/doc
 
 Modified Files:
