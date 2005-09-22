@@ -49,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.56 2005/07/08 13:16:03 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.57 2005/09/13 06:22:18 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -900,10 +900,12 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     }
     std::vector<double> energyColTds = acdRecRoot->getEnergyCol();
     Event::AcdRecon *acdRecTds = new Event::AcdRecon(acdRecRoot->getEnergy(), 
-                                 acdRecRoot->getTileCount(),
-         acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), docaIdTds,
+        acdRecRoot->getRibbonEnergy(), acdRecRoot->getTileCount(),
+        acdRecRoot->getRibbonCount(),
+        acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), docaIdTds,
         acdRecRoot->getActiveDist(), actDistIdTds, 
-        acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, energyColTds);
+        acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
+        energyColTds);
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
