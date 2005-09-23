@@ -41,6 +41,7 @@
 // low level converters
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
+#include "RootConvert/Recon/CalMipTrackConvert.h"
 
 #include <cstdlib>
 
@@ -48,7 +49,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.64 2005/09/22 08:27:44 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.65 2005/09/22 19:13:16 lsrea Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -672,40 +673,14 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
     MsgStream log(msgSvc(), name());
     log << MSG::DEBUG << " SG : fillCalMipTrack in reconRootWriterAlg.cxx" << endreq;
 
-    unsigned int numCalMipTracks = calMipTrackColTds->size();   
-    unsigned int iCalMipTrack;   
-    for (iCalMipTrack = 0; iCalMipTrack < numCalMipTracks; iCalMipTrack++) 
-    {   
+    // Loop over CalMipTracks in the TDS
+    for(Event::CalMipTrackColItr tdsMipIter = calMipTrackColTds->begin(); tdsMipIter != calMipTrackColTds->end(); tdsMipIter++)
+    {
         CalMipTrack* calMipTrackRoot = new CalMipTrack();
 
-        Event::CalMipTrack* calMipTrackTds = (*calMipTrackColTds)[iCalMipTrack];   
-
-        Point    pointTds = calMipTrackTds->getPoint();
-        Vector   dirTds   = calMipTrackTds->getDir();
-
-        TVector3 pointRoot(pointTds.x(), pointTds.y(), pointTds.z());
-        TVector3 dirRoot(dirTds.x(), dirTds.y(), dirTds.z());
-
-        calMipTrackRoot->setPoint(pointRoot);
-        calMipTrackRoot->setDir(dirRoot);
-
-        double   d2CTds     = calMipTrackTds->getD2C();
-        double   d2EdgeTds  = calMipTrackTds->getD2Edge();
-        int      calEdgeTds = calMipTrackTds->getCalEdge();
-        double   arcLenTds  = calMipTrackTds->getArcLen();
-        double   ecorTds    = calMipTrackTds->getEcor();
-        double   ecorRmsTds = calMipTrackTds->getEcorRms();
-        double   chi2Tds    = calMipTrackTds->getChi2();   
-        double   ermTds     = calMipTrackTds->getErm();   
-        
-        calMipTrackRoot->setD2C(d2CTds);    
-        calMipTrackRoot->setD2Edge(d2EdgeTds); 
-        calMipTrackRoot->setCalEdge(calEdgeTds);
-        calMipTrackRoot->setArcLen(arcLenTds); 
-        calMipTrackRoot->setEcor(ecorTds);   
-        calMipTrackRoot->setEcorRms(ecorRmsTds);
-        calMipTrackRoot->setChi2(chi2Tds);   
-        calMipTrackRoot->setErm(ermTds);   
+        Event::CalMipTrack* calMipTrackTds = *tdsMipIter;   
+      
+        RootPersistence::convert(*calMipTrackTds,*calMipTrackRoot) ;
 
         calRec->addCalMipTrack(calMipTrackRoot);
     }
