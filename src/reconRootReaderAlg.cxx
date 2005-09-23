@@ -40,6 +40,7 @@
 // low level converters
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
+#include "RootConvert/Recon/CalMipTrackConvert.h"
 
 #include <vector>
 #include <map>
@@ -49,7 +50,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.58 2005/09/22 08:27:44 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.59 2005/09/22 19:13:16 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -94,6 +95,9 @@ private:
     
     /// read CAL cluster data from ROOT and store on TDS
     StatusCode storeCalClusterCol(CalRecon *calRecRoot);
+    
+    /// read CAL cluster data from ROOT and store on TDS
+    StatusCode storeCalMipTrackCol(CalRecon *calRecRoot);
 
     /// read CAL eventEnergy  data from ROOT and store on TDS
     StatusCode storeCalEventEnergy(CalRecon *calRecRoot);
@@ -741,6 +745,14 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         sc = storeCalClusterCol(calRecRoot);
     }
     
+    SmartDataPtr<Event::CalMipTrackCol> checkCalMipTrackColTds(eventSvc(),EventModel::CalRecon::CalMipTrackCol);
+    if (checkCalMipTrackColTds){
+        log << MSG::INFO << "CalMipTrackCol data is already on the TDS" << endreq;
+        return sc;
+    } else {
+        sc = storeCalMipTrackCol(calRecRoot);
+    }
+    
 
     return sc;
 }
@@ -830,6 +842,29 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     }
     
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterCol, calClusterColTds);
+    
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeCalMipTrackCol(CalRecon *calRecRoot) 
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    const TObjArray *calMipTrackColRoot = calRecRoot->getCalMipTrackCol();
+    TIter calMipTrackIter(calMipTrackColRoot);
+    CalMipTrack *calMipTrackRoot = 0;
+    
+    Event::CalMipTrackCol *calMipTrackColTds = new Event::CalMipTrackCol();
+    
+    while ((calMipTrackRoot = (CalMipTrack*)calMipTrackIter.Next())!=0) 
+    {        
+        Event::CalMipTrack* calMipTrackTds = new Event::CalMipTrack() ;
+        RootPersistence::convert(*calMipTrackRoot,*calMipTrackTds) ;
+        calMipTrackColTds->push_back(calMipTrackTds) ;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalMipTrackCol, calMipTrackColTds);
     
     return sc;
 }
