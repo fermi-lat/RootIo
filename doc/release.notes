@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r6     25-Oct-2005 HMK Store ribbon values in AcdRecon
  v17r5     22-Sep-2005 TU  Introduce new McTrajectory collection
  v17r4p1   22-Sep-2005 LSR Fix up read and write of TkrIds when there is no cluster in hit
  v17r4     22-Sep-2005 HMK ACD ribbon count and energy
