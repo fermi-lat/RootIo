@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct 25 11:56:27 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+store ribbon values in AcdRecon
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r5, operation: add
 Package: RootIo
