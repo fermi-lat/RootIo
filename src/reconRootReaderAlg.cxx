@@ -50,7 +50,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.59 2005/09/22 19:13:16 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.60 2005/09/23 18:51:27 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -930,26 +930,39 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     // create the TDS location for the AcdRecon
     const AcdId docaIdRoot = acdRecRoot->getMinDocaId();
     const AcdId actDistIdRoot = acdRecRoot->getMaxActDistId();
+    const AcdId ribActDistIdRoot = acdRecRoot->getRibbonActDistId();
+
     const idents::AcdId docaIdTds(docaIdRoot.getLayer(), docaIdRoot.getFace(), 
         docaIdRoot.getRow(), docaIdRoot.getColumn());
+
     const idents::AcdId actDistIdTds(actDistIdRoot.getLayer(), 
                         actDistIdRoot.getFace(), actDistIdRoot.getRow(), 
                         actDistIdRoot.getColumn());
+
+    const idents::AcdId ribActDistIdTds(ribActDistIdRoot.getLayer(),
+                        ribActDistIdRoot.getFace(), ribActDistIdRoot.getRow(),
+                        ribActDistIdRoot.getColumn());
+
     std::vector<idents::AcdId> idColTds;
     std::vector<AcdId>::const_iterator idRootIt;
+
     for (idRootIt = acdRecRoot->getIdCol().begin(); idRootIt != acdRecRoot->getIdCol().end(); idRootIt++) {
         idColTds.push_back(idents::AcdId(idRootIt->getLayer(), 
                            idRootIt->getFace(), idRootIt->getRow(), 
                            idRootIt->getColumn()));
     }
     std::vector<double> energyColTds = acdRecRoot->getEnergyCol();
+    std::vector<double> rowActDist3DTds = acdRecRoot->getRowActDistCol();
+
+    // Note that ActDist stored in ROOT is only the new 3D Active Dist.
     Event::AcdRecon *acdRecTds = new Event::AcdRecon(acdRecRoot->getEnergy(), 
         acdRecRoot->getRibbonEnergy(), acdRecRoot->getTileCount(),
         acdRecRoot->getRibbonCount(),
         acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), docaIdTds,
         acdRecRoot->getActiveDist(), actDistIdTds, 
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
-        energyColTds);
+        energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
+        acdRecRoot->getActiveDist(), actDistIdTds, rowActDist3DTds);
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
