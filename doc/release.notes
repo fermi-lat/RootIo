@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r7     25-Oct-2005 HMK Check on fromMc to decide whether to write Gem to
+           TDS or not.  This takes care of the warnings about the trigger word
+           differing from what TriggerAlg calculates and RootIo reads in
  v17r6     25-Oct-2005 HMK Store ribbon values in AcdRecon
  v17r5     22-Sep-2005 TU  Introduce new McTrajectory collection
  v17r4p1   22-Sep-2005 LSR Fix up read and write of TkrIds when there is no cluster in hit
