@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct 25 12:45:23 PDT 2005
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+use from Mc to dictate whether to put GEM on TDS or not
+    *
+------------------------------------------------------------
 User: heather  Tue Oct 25 12:45:04 PDT 2005
 RootIo/cmt
 
