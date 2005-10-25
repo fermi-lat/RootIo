@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct 25 12:44:54 PDT 2005
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+use from Mc to dictate whether to put GEM on TDS or not
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r6, operation: add
 Package: RootIo
