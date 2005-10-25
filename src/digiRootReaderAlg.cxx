@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.59.2.5 2005/09/12 20:43:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.63 2005/09/13 06:22:18 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -433,6 +433,9 @@ StatusCode digiRootReaderAlg::readGem() {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+    // Skip GEM if this is simulated data
+    if (m_digiEvt->getFromMc()) return sc;
+
     const Gem &gemRoot = m_digiEvt->getGem();
     GemTileList tileListRoot = gemRoot.getTileList();
     LdfEvent::Gem *gemTds = new LdfEvent::Gem();
