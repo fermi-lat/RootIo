@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: echarles  Wed Nov  2 15:43:21 PST 2005
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-v7r2
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+
+AcdTrkIntersections.
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-v7r2, operation: add
 Package: RootIo
