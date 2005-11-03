@@ -15,6 +15,8 @@
 #include "Event/Recon/CalRecon/CalXtalRecData.h"  
 #include "Event/Recon/CalRecon/CalEventEnergy.h"  
 
+#include "CLHEP/Matrix/Matrix.h"
+
 #include "LdfEvent/EventSummaryData.h"
 
 #include "TROOT.h"
@@ -50,7 +52,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.60 2005/09/23 18:51:27 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.61 2005/10/25 18:56:47 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -451,7 +453,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             clusterRoot->getMips(),
             clusterRoot->getStatusWord(),
             clusterRoot->getNBad()
-            );
+	);
 
         clusterTdsCol->push_back(clusterTds);
         (*clusMap)[tkrId].push_back(clusterTds);
@@ -926,7 +928,34 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         log << MSG::INFO << "AcdRecon data already on TDS!" << endreq;
         return StatusCode::SUCCESS;
     }
-    
+
+    std::vector<Event::AcdTkrIntersection*> acdTkrIntersections;
+
+    Point globalPosition;
+    HepMatrix covMatrix(2,2);
+    double localPosition[2];
+
+    int nInter = acdRecRoot->nAcdIntersections();
+    for ( int iInter(0); iInter < nInter; iInter++ ) {
+      const AcdTkrIntersection* acdInterRoot = acdRecRoot->getAcdTkrIntersection(iInter);      
+
+      const TVector3& glbPos = acdInterRoot->getGlobalPosition();
+      globalPosition.set(glbPos.X(),glbPos.Y(),glbPos.Z());
+      localPosition[0] = acdInterRoot->getLocalX();
+      localPosition[1] = acdInterRoot->getLocalY();
+      covMatrix[0][0] = acdInterRoot->getLocalXXCov();
+      covMatrix[1][1] = acdInterRoot->getLocalYYCov();
+      covMatrix[0][1] = covMatrix[1][0] = acdInterRoot->getLocalXYCov();
+      Event::AcdTkrIntersection* acdInterTds = new
+	Event::AcdTkrIntersection( acdInterRoot->getTileId().getId(), acdInterRoot->getTrackIndex(),
+				   globalPosition,
+				   localPosition, covMatrix,
+				   acdInterRoot->getArcLengthToIntersection(),
+				   acdInterRoot->getPathLengthInTile(),
+				   acdInterRoot->tileHit());
+      acdTkrIntersections.push_back(acdInterTds);
+    }
+
     // create the TDS location for the AcdRecon
     const AcdId docaIdRoot = acdRecRoot->getMinDocaId();
     const AcdId actDistIdRoot = acdRecRoot->getMaxActDistId();
@@ -962,7 +991,8 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         acdRecRoot->getActiveDist(), actDistIdTds, 
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
         energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
-        acdRecRoot->getActiveDist(), actDistIdTds, rowActDist3DTds);
+        acdTkrIntersections,
+	acdRecRoot->getActiveDist(), actDistIdTds,acdRecRoot->getRowActDistCol());
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
