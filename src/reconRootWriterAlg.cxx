@@ -31,6 +31,7 @@
 #include "TTree.h"
 #include "TDirectory.h"
 #include "TVector3.h"
+#include "TMatrixD.h"
 
 #include "reconRootData/ReconEvent.h"
 #include "RootIo/IRootIoSvc.h"
@@ -49,7 +50,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.66 2005/09/23 18:51:27 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.67 2005/10/25 18:56:47 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -742,10 +743,37 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getRibbonEnergy(),
         acdRecTds->getTileCount(), acdRecTds->getRibbonCount(),
         acdRecTds->getGammaDoca(), acdRecTds->getDoca(), docaIdRoot, 
-        acdRecTds->getActiveDist3D(), actDistIdRoot, 
+	acdRecTds->getActiveDist3D(), actDistIdRoot, 
         acdRecTds->getRibbonActiveDist(), ribActDistIdRoot,
         acdRecTds->getRowDocaCol(), acdRecTds->getRowActDist3DCol(),
         idRootCol, acdRecTds->getEnergyCol());
+
+    const Event::AcdTkrIntersectionCol& acdTkrIntersectsTDS = acdRecTds->getAcdTkrIntersectionCol();
+
+    TVector3 globalPosition;
+    Double_t localPosition[2];
+    TMatrixD covMatrix(2,2);
+
+    for ( Event::AcdTkrIntersectionCol::const_iterator itr = acdTkrIntersectsTDS.begin();
+	  itr != acdTkrIntersectsTDS.end(); itr++ ) {
+      const Event::AcdTkrIntersection* acdIntersectTDS = *itr;
+      const Point& glbPos = acdIntersectTDS->getGlobalPosition();
+      globalPosition.SetXYZ(glbPos.x(),glbPos.y(),glbPos.z());
+      localPosition[0] = acdIntersectTDS->getLocalX();
+      localPosition[1] = acdIntersectTDS->getLocalY();
+      covMatrix[0][0] = acdIntersectTDS->getLocalXXCov();
+      covMatrix[1][1] = acdIntersectTDS->getLocalYYCov();
+      covMatrix[0][1] = acdIntersectTDS->getLocalXYCov();
+      covMatrix[1][0] = acdIntersectTDS->getLocalXYCov();
+      AcdId acdId( acdIntersectTDS->getTileId().id() );
+      AcdTkrIntersection acdInterRoot( acdId, acdIntersectTDS->getTrackIndex(),
+				       globalPosition, 
+				       localPosition, covMatrix, 
+				       acdIntersectTDS->getArcLengthToIntersection(),
+				       acdIntersectTDS->getPathLengthInTile(),
+				       acdIntersectTDS->tileHit());
+      acdRec->addAcdTkrIntersection(acdInterRoot);
+    }
     
     return sc;
 }
