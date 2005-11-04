@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Nov  3 17:56:55 PST 2005
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+prepare to tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: eac-051103, operation: add
 Package: RootIo
