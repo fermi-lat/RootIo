@@ -50,7 +50,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.67 2005/10/25 18:56:47 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.68 2005/11/03 19:43:22 echarles Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -746,7 +746,7 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
 	acdRecTds->getActiveDist3D(), actDistIdRoot, 
         acdRecTds->getRibbonActiveDist(), ribActDistIdRoot,
         acdRecTds->getRowDocaCol(), acdRecTds->getRowActDist3DCol(),
-        idRootCol, acdRecTds->getEnergyCol());
+        idRootCol, acdRecTds->getEnergyCol(), acdRecTds->getCornerDoca());
 
     const Event::AcdTkrIntersectionCol& acdTkrIntersectsTDS = acdRecTds->getAcdTkrIntersectionCol();
 

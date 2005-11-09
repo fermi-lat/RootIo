@@ -52,7 +52,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.61 2005/10/25 18:56:47 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.62 2005/11/03 19:43:22 echarles Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -992,7 +992,8 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
         energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
         acdTkrIntersections,
-	acdRecRoot->getActiveDist(), actDistIdTds,acdRecRoot->getRowActDistCol());
+	acdRecRoot->getActiveDist(), 
+        actDistIdTds,acdRecRoot->getRowActDistCol(), acdRecRoot->getCornerDoca());
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
