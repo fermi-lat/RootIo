@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r9p1   17-Nov-2005 HMK patch to use proper id method for ActiveDist
  v17r9     08-Nov-2005 HMK Add new AcdRecon CornerDoca
  v17r8     03-Nov-2005 HMK Prepare to tag Eric's new AcdTkrIntersectTool
  v17r7     25-Oct-2005 HMK Check on fromMc to decide whether to write Gem to
