@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Nov 17 13:12:57 PST 2005
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+minor patch to AcdRecon writing for id of ActiveDist
+    *
+------------------------------------------------------------
 User: heather  Thu Nov 17 13:12:44 PST 2005
 RootIo/cmt
 
