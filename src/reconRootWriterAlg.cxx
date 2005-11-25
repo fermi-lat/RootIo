@@ -50,7 +50,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.69 2005/11/09 01:26:51 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.70 2005/11/17 21:12:57 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -101,7 +101,7 @@ private:
     /// collection   
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
 
-    void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergy* calEventEnergy);
+    void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
     
     StatusCode writeAcdRecon();
     
@@ -586,9 +586,9 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     SmartDataPtr<Event::CalMipTrackCol> calMipTrackColTds(eventSvc(), EventModel::CalRecon::CalMipTrackCol);   
     if (calMipTrackColTds) fillCalMipTrack(calRec, calMipTrackColTds);   
 
-    // CalEventEnergy IS the collection
-    SmartDataPtr<Event::CalEventEnergy> calEventEnergyTds(eventSvc(), EventModel::CalRecon::CalEventEnergy) ;
-    if (calEventEnergyTds) fillCalEventEnergy(calRec, calEventEnergyTds);
+    // Retrieve the CalEventEnergy collection
+    SmartDataPtr<Event::CalEventEnergyCol> calEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol) ;
+    if (calEventEnergyColTds) fillCalEventEnergy(calRec, calEventEnergyColTds);
     
     return sc;
 }
@@ -691,24 +691,24 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
 }   
 
 
-void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergy* calEventEnergy) {
+void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol) {
 
-    // David C. : currently, there is only one CalEventEnergy in the TDS,
-    // yet, I prefered to consider CalEventEnergy as a usual objet on
-    // the ROOT side, that is why in the root tree there is a collection
-    // of CalEventEnergy. This collection will always have a single element,
-    // until a change is made in the TDS.
+//    // David C. : currently, there is only one CalEventEnergy in the TDS,
+//    // yet, I prefered to consider CalEventEnergy as a usual objet on
+//    // the ROOT side, that is why in the root tree there is a collection
+//    // of CalEventEnergy. This collection will always have a single element,
+//    // until a change is made in the TDS.
     
-//    unsigned int numEnergy = calEventEnergyCol->size();
-//    unsigned int iEnergy;
-//    for (iEnergy = 0; iEnergy < numClusters; iEnergy++)
-//     {
-//      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergy)[iEnergy] ;
-      Event::CalEventEnergy * eventEnergyTds = calEventEnergy ;
+    unsigned int numEnergy = calEventEnergyCol->size();
+    unsigned int iEnergy;
+    for (iEnergy = 0; iEnergy < numEnergy; iEnergy++)
+     {
+      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergyCol)[iEnergy] ;
+//      Event::CalEventEnergy * eventEnergyTds = calEventEnergy ;
       CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
       RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
       calRec->addCalEventEnergy(eventEnergyRoot) ;
-//    }
+    }
     return ;
 }
 
