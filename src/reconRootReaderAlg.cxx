@@ -52,7 +52,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.62 2005/11/03 19:43:22 echarles Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63 2005/11/09 01:26:51 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -102,7 +102,7 @@ private:
     StatusCode storeCalMipTrackCol(CalRecon *calRecRoot);
 
     /// read CAL eventEnergy  data from ROOT and store on TDS
-    StatusCode storeCalEventEnergy(CalRecon *calRecRoot);
+    StatusCode storeCalEventEnergyCol(CalRecon *calRecRoot);
     
     /// Reads ACD recon data from ROOT and puts data on the TDS
     StatusCode readAcdRecon();
@@ -728,11 +728,11 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         return sc;
     }
     
-    SmartDataPtr<Event::CalEventEnergy> checkCalEventEnergyTds(eventSvc(), EventModel::CalRecon::CalEventEnergy);
-    if (checkCalEventEnergyTds) {
+    SmartDataPtr<Event::CalEventEnergyCol> checkCalEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol);
+    if (checkCalEventEnergyColTds) {
         log << MSG::INFO << "CalEventEnergy data is already on the TDS" << endreq;
      } else {
-         sc = storeCalEventEnergy(calRecRoot);
+         sc = storeCalEventEnergyCol(calRecRoot);
      }
     if (sc.isFailure()) {
         log << MSG::INFO << "Failed to store CalEventEnergy on the TDS" << endreq;
@@ -871,7 +871,7 @@ StatusCode reconRootReaderAlg::storeCalMipTrackCol(CalRecon *calRecRoot)
     return sc;
 }
 
-StatusCode reconRootReaderAlg::storeCalEventEnergy(CalRecon *calRecRoot) {
+StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
 
     // David C. : currently, there is only one CalEventEnergy in the TDS,
     // yet, I prefered to consider CalEventEnergy as a usual objet on
@@ -883,27 +883,27 @@ StatusCode reconRootReaderAlg::storeCalEventEnergy(CalRecon *calRecRoot) {
     StatusCode sc = StatusCode::SUCCESS;
     
     const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
-    if (calEventEnergyColRoot->GetEntries()>1) {
-        // this should not happen !!
-        log<<MSG::ERROR ;
-        if (log.isActive()) log.stream()<<"Several CalEventEnergy in ROOT file" ;
-        log<<endreq ;
-        return StatusCode::FAILURE;
-    }
+//    if (calEventEnergyColRoot->GetEntries()>1) {
+//        // this should not happen !!
+//        log<<MSG::ERROR ;
+//        if (log.isActive()) log.stream()<<"Several CalEventEnergy in ROOT file" ;
+//        log<<endreq ;
+//        return StatusCode::FAILURE;
+//    }
         
     
-//    Event::CalEventEnergy * calEventEnergyColTds = new Event::CalEventEnergy();
+    Event::CalEventEnergyCol * calEventEnergyColTds = new Event::CalEventEnergyCol();
     TIter calEventEnergyIter(calEventEnergyColRoot) ;
     CalEventEnergy * calEventEnergyRoot = 0 ;
-//    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
-    if ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+//    if ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
         Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
         RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
-//        calEventEnergyColTds->push_back(calEventEnergyTds) ;
-        sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyTds);
+        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+//        sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyTds);
     }
     
-//    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyColTds);
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
     
     return sc;
 
@@ -992,7 +992,7 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
         energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
         acdTkrIntersections,
-	acdRecRoot->getActiveDist(), 
+        acdRecRoot->getActiveDist(), 
         actDistIdTds,acdRecRoot->getRowActDistCol(), acdRecRoot->getCornerDoca());
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
