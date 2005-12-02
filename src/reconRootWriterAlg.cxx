@@ -43,6 +43,7 @@
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
+#include "RootConvert/Recon/AcdReconConvert.h"
 
 #include <cstdlib>
 
@@ -50,7 +51,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.70 2005/11/17 21:12:57 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.71 2005/11/25 16:44:21 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -722,58 +723,8 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     if (!acdRec) return StatusCode::FAILURE;
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
-    idents::AcdId docaIdTds = acdRecTds->getMinDocaId();
-    idents::AcdId actDistIdTds = acdRecTds->getMaxActDist3DId();
-    idents::AcdId ribActDistIdTds = acdRecTds->getRibbonActiveDistId();
-    std::vector<AcdId> idRootCol;
-    std::vector<idents::AcdId>::const_iterator idTdsIt;
-    for (idTdsIt = acdRecTds->getIdCol().begin(); idTdsIt != acdRecTds->getIdCol().end(); idTdsIt++) {
-        idRootCol.push_back(AcdId(idTdsIt->layer(), idTdsIt->face(), 
-            idTdsIt->row(), idTdsIt->column()));
-    }
-    AcdId docaIdRoot(docaIdTds.layer(), docaIdTds.face(), 
-                    docaIdTds.row(), docaIdTds.column());
-    AcdId actDistIdRoot(actDistIdTds.layer(), actDistIdTds.face(), 
-                       actDistIdTds.row(), actDistIdTds.column());
-    AcdId ribActDistIdRoot(ribActDistIdTds.layer(), ribActDistIdTds.face(),
-                             ribActDistIdTds.row(), ribActDistIdTds.column());
-
-  
-    // Note that we're storing the new 3D ActiveDistance values
-    acdRec->initialize(acdRecTds->getEnergy(), acdRecTds->getRibbonEnergy(),
-        acdRecTds->getTileCount(), acdRecTds->getRibbonCount(),
-        acdRecTds->getGammaDoca(), acdRecTds->getDoca(), docaIdRoot, 
-	acdRecTds->getActiveDist3D(), actDistIdRoot, 
-        acdRecTds->getRibbonActiveDist(), ribActDistIdRoot,
-        acdRecTds->getRowDocaCol(), acdRecTds->getRowActDist3DCol(),
-        idRootCol, acdRecTds->getEnergyCol(), acdRecTds->getCornerDoca());
-
-    const Event::AcdTkrIntersectionCol& acdTkrIntersectsTDS = acdRecTds->getAcdTkrIntersectionCol();
-
-    TVector3 globalPosition;
-    Double_t localPosition[2];
-    TMatrixD covMatrix(2,2);
-
-    for ( Event::AcdTkrIntersectionCol::const_iterator itr = acdTkrIntersectsTDS.begin();
-	  itr != acdTkrIntersectsTDS.end(); itr++ ) {
-      const Event::AcdTkrIntersection* acdIntersectTDS = *itr;
-      const Point& glbPos = acdIntersectTDS->getGlobalPosition();
-      globalPosition.SetXYZ(glbPos.x(),glbPos.y(),glbPos.z());
-      localPosition[0] = acdIntersectTDS->getLocalX();
-      localPosition[1] = acdIntersectTDS->getLocalY();
-      covMatrix[0][0] = acdIntersectTDS->getLocalXXCov();
-      covMatrix[1][1] = acdIntersectTDS->getLocalYYCov();
-      covMatrix[0][1] = acdIntersectTDS->getLocalXYCov();
-      covMatrix[1][0] = acdIntersectTDS->getLocalXYCov();
-      AcdId acdId( acdIntersectTDS->getTileId().id() );
-      AcdTkrIntersection acdInterRoot( acdId, acdIntersectTDS->getTrackIndex(),
-				       globalPosition, 
-				       localPosition, covMatrix, 
-				       acdIntersectTDS->getArcLengthToIntersection(),
-				       acdIntersectTDS->getPathLengthInTile(),
-				       acdIntersectTDS->tileHit());
-      acdRec->addAcdTkrIntersection(acdInterRoot);
-    }
+    
+    RootPersistence::convert(*acdRecTds,*acdRec) ;
     
     return sc;
 }

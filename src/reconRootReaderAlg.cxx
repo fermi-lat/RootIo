@@ -43,6 +43,7 @@
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
+#include "RootConvert/Recon/AcdReconConvert.h"
 
 #include <vector>
 #include <map>
@@ -52,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63 2005/11/09 01:26:51 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.64 2005/11/25 16:44:21 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -929,71 +930,9 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         return StatusCode::SUCCESS;
     }
 
-    std::vector<Event::AcdTkrIntersection*> acdTkrIntersections;
-
-    Point globalPosition;
-    HepMatrix covMatrix(2,2);
-    double localPosition[2];
-
-    int nInter = acdRecRoot->nAcdIntersections();
-    for ( int iInter(0); iInter < nInter; iInter++ ) {
-      const AcdTkrIntersection* acdInterRoot = acdRecRoot->getAcdTkrIntersection(iInter);      
-
-      const TVector3& glbPos = acdInterRoot->getGlobalPosition();
-      globalPosition.set(glbPos.X(),glbPos.Y(),glbPos.Z());
-      localPosition[0] = acdInterRoot->getLocalX();
-      localPosition[1] = acdInterRoot->getLocalY();
-      covMatrix[0][0] = acdInterRoot->getLocalXXCov();
-      covMatrix[1][1] = acdInterRoot->getLocalYYCov();
-      covMatrix[0][1] = covMatrix[1][0] = acdInterRoot->getLocalXYCov();
-      Event::AcdTkrIntersection* acdInterTds = new
-	Event::AcdTkrIntersection( acdInterRoot->getTileId().getId(), acdInterRoot->getTrackIndex(),
-				   globalPosition,
-				   localPosition, covMatrix,
-				   acdInterRoot->getArcLengthToIntersection(),
-				   acdInterRoot->getPathLengthInTile(),
-				   acdInterRoot->tileHit());
-      acdTkrIntersections.push_back(acdInterTds);
-    }
-
-    // create the TDS location for the AcdRecon
-    const AcdId docaIdRoot = acdRecRoot->getMinDocaId();
-    const AcdId actDistIdRoot = acdRecRoot->getMaxActDistId();
-    const AcdId ribActDistIdRoot = acdRecRoot->getRibbonActDistId();
-
-    const idents::AcdId docaIdTds(docaIdRoot.getLayer(), docaIdRoot.getFace(), 
-        docaIdRoot.getRow(), docaIdRoot.getColumn());
-
-    const idents::AcdId actDistIdTds(actDistIdRoot.getLayer(), 
-                        actDistIdRoot.getFace(), actDistIdRoot.getRow(), 
-                        actDistIdRoot.getColumn());
-
-    const idents::AcdId ribActDistIdTds(ribActDistIdRoot.getLayer(),
-                        ribActDistIdRoot.getFace(), ribActDistIdRoot.getRow(),
-                        ribActDistIdRoot.getColumn());
-
-    std::vector<idents::AcdId> idColTds;
-    std::vector<AcdId>::const_iterator idRootIt;
-
-    for (idRootIt = acdRecRoot->getIdCol().begin(); idRootIt != acdRecRoot->getIdCol().end(); idRootIt++) {
-        idColTds.push_back(idents::AcdId(idRootIt->getLayer(), 
-                           idRootIt->getFace(), idRootIt->getRow(), 
-                           idRootIt->getColumn()));
-    }
-    std::vector<double> energyColTds = acdRecRoot->getEnergyCol();
-    std::vector<double> rowActDist3DTds = acdRecRoot->getRowActDistCol();
-
-    // Note that ActDist stored in ROOT is only the new 3D Active Dist.
-    Event::AcdRecon *acdRecTds = new Event::AcdRecon(acdRecRoot->getEnergy(), 
-        acdRecRoot->getRibbonEnergy(), acdRecRoot->getTileCount(),
-        acdRecRoot->getRibbonCount(),
-        acdRecRoot->getGammaDoca(), acdRecRoot->getDoca(), docaIdTds,
-        acdRecRoot->getActiveDist(), actDistIdTds, 
-        acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
-        energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
-        acdTkrIntersections,
-        acdRecRoot->getActiveDist(), 
-        actDistIdTds,acdRecRoot->getRowActDistCol(), acdRecRoot->getCornerDoca());
+    Event::AcdRecon * acdRecTds = new Event::AcdRecon();
+    
+    RootPersistence::convert(*acdRecRoot,*acdRecTds) ;
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
