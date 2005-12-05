@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.49 2005/07/06 18:34:04 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50 2005/09/22 19:29:46 usher Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -439,6 +439,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         }
         
         
+/* Daughters are handled in McParticle::init
         // Process the list of daughters
         const TRefArray daughterArr = pRoot->getDaughterList();
         const McParticle *daughterPartRoot;
@@ -465,6 +466,8 @@ StatusCode mcRootReaderAlg::readMcParticles() {
             }
             
         }
+
+*/
         
 
         // Add the TDS McParticle to the TDS collection of McParticles
