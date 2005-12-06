@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Dec  6 09:48:20 PST 2005
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+patch to mcRootReader for counting daughters properly
+    *
+------------------------------------------------------------
 TAG
 Tag name: GRv7r3p1, operation: add
 Package: RootIo
