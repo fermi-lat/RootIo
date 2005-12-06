@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Dec  6 09:48:27 PST 2005
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+patch to mcRootReader for counting daughters properly
+    *
+------------------------------------------------------------
 User: heather  Tue Dec  6 09:48:20 PST 2005
 RootIo/doc
 
