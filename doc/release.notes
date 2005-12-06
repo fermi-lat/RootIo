@@ -3,8 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
- v17r9p1   06-Dec-2005 HMK Patch to mcRootReader to count daughters of
-           McParticles just once..not twice.
+ v17r9gr0  06-Dec-2005 HMK Patch to mcRootReader to count daughters of
+           McParticles just once..not twice.  Fix AcdRecon MaxActiveDist Id
+           writing
  v17r9     08-Nov-2005 HMK Add new AcdRecon CornerDoca
  v17r8     03-Nov-2005 HMK Prepare to tag Eric's new AcdTkrIntersectTool
  v17r7     25-Oct-2005 HMK Check on fromMc to decide whether to write Gem to
