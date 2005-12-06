@@ -27,7 +27,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.11 2004/12/16 18:09:09 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.12 2005/06/28 18:57:17 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -128,6 +128,7 @@ StatusCode testReadAlg::readMcData() {
             log << MSG::DEBUG;
             (*p)->fillStream(log.stream());
             log << endreq;
+            log << MSG::DEBUG << "Number of daughters " << (*p)->daughterList().size() << endreq;
         }
 
     }
