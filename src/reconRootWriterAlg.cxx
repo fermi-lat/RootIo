@@ -50,7 +50,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.68 2005/11/03 19:43:22 echarles Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.69 2005/11/09 01:26:51 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -723,7 +723,7 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
     idents::AcdId docaIdTds = acdRecTds->getMinDocaId();
-    idents::AcdId actDistIdTds = acdRecTds->getMaxActDistId();
+    idents::AcdId actDistIdTds = acdRecTds->getMaxActDist3DId();
     idents::AcdId ribActDistIdTds = acdRecTds->getRibbonActiveDistId();
     std::vector<AcdId> idRootCol;
     std::vector<idents::AcdId>::const_iterator idTdsIt;
