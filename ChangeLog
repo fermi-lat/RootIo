@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: echarles  Mon Jan  9 15:01:09 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Branch of reconRootReader and reconRootWriter to deal with new Acd data
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr0, operation: add
 Package: RootIo
