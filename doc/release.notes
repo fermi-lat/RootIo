@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r9gr1  12-Jan-2006 EAC Handle new AcdHit and AcdPoca, and use new 
+                       RootConvert converter
  v17r9gr0  06-Dec-2005 HMK Patch to mcRootReader to count daughters of
            McParticles just once..not twice.  Fix AcdRecon MaxActiveDist Id
            writing
