@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: chamont  Wed Jan 18 18:59:02 PST 2006
+RootIo/src/test
+
+Modified Files:
+	jobOptions.txt readHeaders.ref validate_headers 
+	writeHeaders.ref 
+Added Files:
+	jobOptions.ref test_RootIo.sh 
+Log Message:
+Export CalXtalRecData conversion code into RootConvert.
+    *
+------------------------------------------------------------
 User: chamont  Wed Jan 18 18:59:01 PST 2006
 RootIo/src
 
