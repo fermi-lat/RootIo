@@ -43,6 +43,7 @@
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
+#include "RootConvert/Recon/CalXtalRecDataConvert.h"
 #include "RootConvert/Recon/AcdReconConvert.h"
 
 #include <vector>
@@ -53,7 +54,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.64 2005/11/25 16:44:21 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.65 2005/12/02 16:14:18 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -773,44 +774,23 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     TIter calXtalIter(calXtalRecColRoot);
     const CalXtalRecData *calXtalRecRoot = 0;
     while ((calXtalRecRoot = (CalXtalRecData*)calXtalIter.Next())!=0) {
-        CalXtalId idRoot = calXtalRecRoot->getPackedId();
-        idents::CalXtalId idTds(idRoot.getTower(), idRoot.getLayer(), idRoot.getColumn());
-        // create new object to store crystal reconstructed data 
-        Event::CalXtalRecData* calXtalRecDataTds = 0;
+        
         if (calXtalRecRoot->getMode() == CalXtalId::ALLRANGE) {
-            calXtalRecDataTds = new Event::CalXtalRecData(idents::CalXtalId::ALLRANGE, idTds);
-            unsigned int range;
-            for (range = idents::CalXtalId::LEX8; range < idents::CalXtalId::HEX1; range++) {    
-                const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(range);
-                if (!xtalRangeRoot) {
+            unsigned int range ;
+            for ( range = idents::CalXtalId::LEX8 ;
+                  range < idents::CalXtalId::HEX1 ;
+                  ++range ) {    
+                if (!calXtalRecRoot->getRangeRecData(range)) {
                     log << MSG::DEBUG;
                     if( log.isActive()) log.stream() << "Readout for Range " << range << " does not exist";
                     log << endreq;
-                    continue;
-                 }
-                TVector3 posRoot = xtalRangeRoot->getPosition();
-                Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
-                Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
-                    new Event::CalXtalRecData::CalRangeRecData(
-                    xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
-                    xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
-                xtalRangeTds->setPosition(posTds);
-                calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
+                }
             }
-        } else if (calXtalRecRoot->getMode() == CalXtalId::BESTRANGE) {
-            
-            calXtalRecDataTds = new Event::CalXtalRecData(idents::CalXtalId::BESTRANGE, idTds);
-            const CalRangeRecData *xtalRangeRoot = calXtalRecRoot->getRangeRecData(0);   
-            TVector3 posRoot = xtalRangeRoot->getPosition();
-            Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
-            
-            Event::CalXtalRecData::CalRangeRecData *xtalRangeTds = 
-                new Event::CalXtalRecData::CalRangeRecData(
-                xtalRangeRoot->getRange(CalXtalId::POS), xtalRangeRoot->getEnergy(CalXtalId::POS),
-                xtalRangeRoot->getRange(CalXtalId::NEG), xtalRangeRoot->getEnergy(CalXtalId::NEG));
-            xtalRangeTds->setPosition(posTds);
-            calXtalRecDataTds->addRangeRecData(*xtalRangeTds);
         }
+        
+        Event::CalXtalRecData * calXtalRecDataTds
+          = new Event::CalXtalRecData ;
+        RootPersistence::convert(*calXtalRecRoot,*calXtalRecDataTds) ;
         
         calXtalRecColTds->push_back(calXtalRecDataTds);
     }

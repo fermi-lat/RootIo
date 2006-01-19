@@ -1,7 +1,7 @@
-FhDemoGetAlg         INFO Mc SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
-FhDemoGetAlg         INFO Mc CmtUses.Event: v9r13p1
+FhDemoGetAlg         INFO Mc SystemEnv.RootIoShr: $CMTPATH
+FhDemoGetAlg         INFO Mc CmtUses.Event: v11r9
 FhDemoGetAlg         INFO Mc CmtMacros.package: RootIo
-FhDemoGetAlg         INFO Mc CmtMacros.ROOTIOVERSION: v12r10
+FhDemoGetAlg         INFO Mc CmtMacros.ROOTIOVERSION: v17r999
 FhDemoGetAlg         INFO Mc JobOptions.ApplicationMgr.DLLs: {"RootIo","GlastSvc","GaudiAud"}
 FhDemoGetAlg         INFO Mc JobOptions.ApplicationMgr.EvtMax: 10
 FhDemoGetAlg         INFO Mc JobOptions.ApplicationMgr.ExtSvc: {"GlastEventSelector/EventSelector","EventCnvSvc","ChronoStatSvc"}
@@ -30,10 +30,10 @@ FhDemoGetAlg         INFO Mc ChronoStatTable.createFakeTdsDa...
 FhDemoGetAlg         INFO Mc ChronoStatTable.digiRootWriterA...
 FhDemoGetAlg         INFO Mc ChronoStatTable.mcRootWriterAlg...
 FhDemoGetAlg         INFO Mc ChronoStatTable.reconRootWriter...
-FhDemoGetAlg         INFO Digi SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
-FhDemoGetAlg         INFO Digi CmtUses.Event: v9r13p1
+FhDemoGetAlg         INFO Digi SystemEnv.RootIoShr: $CMTPATH
+FhDemoGetAlg         INFO Digi CmtUses.Event: v11r9
 FhDemoGetAlg         INFO Digi CmtMacros.package: RootIo
-FhDemoGetAlg         INFO Digi CmtMacros.ROOTIOVERSION: v12r10
+FhDemoGetAlg         INFO Digi CmtMacros.ROOTIOVERSION: v17r999
 FhDemoGetAlg         INFO Digi JobOptions.ApplicationMgr.DLLs: {"RootIo","GlastSvc","GaudiAud"}
 FhDemoGetAlg         INFO Digi JobOptions.ApplicationMgr.EvtMax: 10
 FhDemoGetAlg         INFO Digi JobOptions.ApplicationMgr.ExtSvc: {"GlastEventSelector/EventSelector","EventCnvSvc","ChronoStatSvc"}
@@ -62,10 +62,10 @@ FhDemoGetAlg         INFO Digi ChronoStatTable.createFakeTdsDa...
 FhDemoGetAlg         INFO Digi ChronoStatTable.digiRootWriterA...
 FhDemoGetAlg         INFO Digi ChronoStatTable.mcRootWriterAlg...
 FhDemoGetAlg         INFO Digi ChronoStatTable.reconRootWriter...
-FhDemoGetAlg         INFO Recon SystemEnv.RootIoShr: $CMTPATH/RootIo/v12r10/rh9_gcc32/libRootIo
-FhDemoGetAlg         INFO Recon CmtUses.Event: v9r13p1
+FhDemoGetAlg         INFO Recon SystemEnv.RootIoShr: $CMTPATH
+FhDemoGetAlg         INFO Recon CmtUses.Event: v11r9
 FhDemoGetAlg         INFO Recon CmtMacros.package: RootIo
-FhDemoGetAlg         INFO Recon CmtMacros.ROOTIOVERSION: v12r10
+FhDemoGetAlg         INFO Recon CmtMacros.ROOTIOVERSION: v17r999
 FhDemoGetAlg         INFO Recon JobOptions.ApplicationMgr.DLLs: {"RootIo","GlastSvc","GaudiAud"}
 FhDemoGetAlg         INFO Recon JobOptions.ApplicationMgr.EvtMax: 10
 FhDemoGetAlg         INFO Recon JobOptions.ApplicationMgr.ExtSvc: {"GlastEventSelector/EventSelector","EventCnvSvc","ChronoStatSvc"}
