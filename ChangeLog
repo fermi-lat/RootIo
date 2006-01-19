@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Wed Jan 18 18:58:59 PST 2006
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+Export CalXtalRecData conversion code into RootConvert.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr1, operation: add
 Package: RootIo
