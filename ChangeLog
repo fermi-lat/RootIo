@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Wed Jan 18 18:59:01 PST 2006
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Export CalXtalRecData conversion code into RootConvert.
+    *
+------------------------------------------------------------
 User: chamont  Wed Jan 18 18:58:59 PST 2006
 RootIo/doc
 
