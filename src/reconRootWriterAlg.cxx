@@ -12,12 +12,12 @@
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 //#include "Event/Recon/TkrRecon/TkrDiagnostics.h"  // This future expansion coming soon
 
-#include "Event/Recon/CalRecon/CalCluster.h"   
-#include "Event/Recon/CalRecon/CalXtalRecData.h"   
-#include "Event/Recon/CalRecon/CalMipClasses.h"
-#include "Event/Recon/CalRecon/CalEventEnergy.h"
+//#include "Event/Recon/CalRecon/CalCluster.h"   
+//#include "Event/Recon/CalRecon/CalXtalRecData.h"   
+//#include "Event/Recon/CalRecon/CalMipClasses.h"
+//#include "Event/Recon/CalRecon/CalEventEnergy.h"
 
-#include "Event/Recon/AcdRecon/AcdRecon.h"
+//#include "Event/Recon/AcdRecon/AcdRecon.h"
 
 #include "LdfEvent/EventSummaryData.h"
 
@@ -41,6 +41,7 @@
 
 // low level converters
 #include "RootConvert/Recon/CalClusterConvert.h"
+#include "RootConvert/Recon/CalXtalRecDataConvert.h"   
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
 #include "RootConvert/Recon/AcdReconConvert.h"
@@ -51,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.71 2005/11/25 16:44:21 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.72 2005/12/02 16:14:18 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -90,18 +91,10 @@ private:
     /// ROOT object
     StatusCode writeCalRecon();
     
-    /// Retrieves the CalCluster collection from the TDS and fills the ROOT    
-    /// collection   
+    /// These are the methods specific to filling the pieces of the CalRecon stuff
     void fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds);   
-    
-    /// Retrieves the CalXtalRecData collection from the TDS and fills the ROOT   
-    /// xtal collection   
     void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds); 
-  
-    /// Retrieves the CalMipTrack collection from the TDS and fills the ROOT   
-    /// collection   
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
-
     void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
     
     StatusCode writeAcdRecon();
@@ -618,50 +611,27 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
     MsgStream log(msgSvc(), name());
     Event::CalXtalRecCol::const_iterator xtalTds;   
     
-    for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {   
-        CalXtalRecData *xtalRoot = new CalXtalRecData();   
-        idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode();   
-        idents::CalXtalId idTds = (*xtalTds)->getPackedId();   
-        CalXtalId idRoot;   
-        idRoot.init(idTds.getTower(), idTds.getLayer(), idTds.getColumn());   
-        if (modeTds == idents::CalXtalId::BESTRANGE) {   
-            xtalRoot->initialize(CalXtalId::BESTRANGE, idRoot);   
-            Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
-                (*xtalTds)->getRangeRecData(0);   
-            CalRangeRecData recRoot(   
-                xtalRangeTds->getRange(idents::CalXtalId::POS),    
-                xtalRangeTds->getEnergy(idents::CalXtalId::POS),    
-                xtalRangeTds->getRange(idents::CalXtalId::NEG),   
-                xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );   
-            Point posTds = xtalRangeTds->getPosition();   
-            TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
-            recRoot.initialize(posRoot);   
-            xtalRoot->addRangeRecData(recRoot);   
-        } else {   
-            xtalRoot->initialize(CalXtalId::ALLRANGE, idRoot);   
-            int range;   
-            for (range = idents::CalXtalId::LEX8; range <= idents::CalXtalId::HEX1; range++) {   
-                Event::CalXtalRecData::CalRangeRecData *xtalRangeTds =    
-                    (*xtalTds)->getRangeRecData(range);   
-                if (!xtalRangeTds) {
-                  log << MSG::DEBUG;
-                  if( log.isActive()) log.stream() << "xtal for range " << range << " does not exist.";
-                  log << endreq;
-                  continue;
-                }
-                CalRangeRecData recRoot(   
-                    xtalRangeTds->getRange(idents::CalXtalId::POS),    
-                    xtalRangeTds->getEnergy(idents::CalXtalId::POS),    
-                    xtalRangeTds->getRange(idents::CalXtalId::NEG),   
-                    xtalRangeTds->getEnergy(idents::CalXtalId::NEG) );   
-                Point posTds = xtalRangeTds->getPosition();   
-                TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());   
-                recRoot.initialize(posRoot);   
-                xtalRoot->addRangeRecData(recRoot);   
-            }   
-        }   
+    for (xtalTds = xtalColTds->begin(); xtalTds != xtalColTds->end(); xtalTds++) {
+ 
         
-        calRec->addXtalRecData(xtalRoot);   
+        idents::CalXtalId::CalTrigMode modeTds = (*xtalTds)->getMode() ;   
+        if (modeTds!=idents::CalXtalId::BESTRANGE) {   
+            int range;   
+            for ( range = idents::CalXtalId::LEX8 ;
+                  range <= idents::CalXtalId::HEX1 ;
+                  ++range) {   
+                if (!(*xtalTds)->getRangeRecData(range)) {
+                    log<<MSG::DEBUG ;
+                    if (log.isActive())
+                      log.stream()<<"xtal for range "<<range<<" does not exist." ;
+                    log<<endreq ;
+                }
+            }
+        }
+
+        CalXtalRecData * xtalRoot = new CalXtalRecData() ;
+        RootPersistence::convert(**xtalTds,*xtalRoot) ;        
+        calRec->addXtalRecData(xtalRoot) ;   
     }   
     
     return;   
@@ -679,11 +649,8 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
     for(Event::CalMipTrackColItr tdsMipIter = calMipTrackColTds->begin(); tdsMipIter != calMipTrackColTds->end(); tdsMipIter++)
     {
         CalMipTrack* calMipTrackRoot = new CalMipTrack();
-
         Event::CalMipTrack* calMipTrackTds = *tdsMipIter;   
-      
         RootPersistence::convert(*calMipTrackTds,*calMipTrackRoot) ;
-
         calRec->addCalMipTrack(calMipTrackRoot);
     }
 
@@ -705,7 +672,6 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
     for (iEnergy = 0; iEnergy < numEnergy; iEnergy++)
      {
       Event::CalEventEnergy *eventEnergyTds = (*calEventEnergyCol)[iEnergy] ;
-//      Event::CalEventEnergy * eventEnergyTds = calEventEnergy ;
       CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
       RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
       calRec->addCalEventEnergy(eventEnergyRoot) ;
@@ -715,18 +681,12 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
 
 StatusCode reconRootWriterAlg::writeAcdRecon() 
 {
-    MsgStream log(msgSvc(), name());
-    StatusCode sc = StatusCode::SUCCESS;
-    
-    // Get pointer to AcdRecon part of ReconEvent   
     AcdRecon* acdRec = m_reconEvt->getAcdRecon();   
     if (!acdRec) return StatusCode::FAILURE;
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
-    
     RootPersistence::convert(*acdRecTds,*acdRec) ;
-    
-    return sc;
+    return StatusCode::SUCCESS;
 }
 
 void reconRootWriterAlg::writeEvent() 
@@ -734,22 +694,24 @@ void reconRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
     
-    static int eventCounter = 0;
-try {
-    TDirectory *saveDir = gDirectory;
-    m_reconTree->GetCurrentFile()->cd();
-    m_reconTree->Fill();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-           m_reconTree->AutoSave();
-    saveDir->cd();
- } catch(...) { 
-    std::cerr << "Failed to write the event to file" << std::endl; 
-    std::cerr << "Exiting..." << std::endl; 
-    std::cerr.flush(); 
-    exit(1); 
- } 
+    static int eventCounter = 0 ;
+    
+    try {
+        TDirectory *saveDir = gDirectory;
+        m_reconTree->GetCurrentFile()->cd();
+        m_reconTree->Fill();
+        ++eventCounter;
+        if (m_rootIoSvc)
+            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+               m_reconTree->AutoSave();
+        saveDir->cd();
+    }
+    catch(...) { 
+        std::cerr << "Failed to write the event to file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+    } 
 
     return;
 }
@@ -763,20 +725,21 @@ void reconRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-try {
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_reconTree->GetCurrentFile();
-    f->cd();
-    m_reconTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
- } catch(...) { 
-    std::cerr << "Failed to final write to RECON file" << std::endl; 
-    std::cerr << "Exiting..." << std::endl; 
-    std::cerr.flush(); 
-    exit(1); 
-  } 
+    try {
+        TDirectory *saveDir = gDirectory;
+        TFile *f = m_reconTree->GetCurrentFile();
+        f->cd();
+        m_reconTree->BuildIndex("m_runId", "m_eventId");
+        f->Write(0, TObject::kWriteDelete);
+        f->Close();
+        saveDir->cd();
+    }
+    catch(...) { 
+        std::cerr << "Failed to final write to RECON file" << std::endl; 
+        std::cerr << "Exiting..." << std::endl; 
+        std::cerr.flush(); 
+        exit(1); 
+    } 
 
     return;
 }
