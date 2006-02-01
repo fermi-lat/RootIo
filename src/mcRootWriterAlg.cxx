@@ -41,7 +41,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.43 2005/09/12 08:01:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.44 2005/09/22 19:29:46 usher Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -329,11 +329,11 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         HepPoint3D finalPosTds = (*p)->finalPosition();
         TVector3 finalPosRoot(finalPosTds.x(), finalPosTds.y(), finalPosTds.z());
         
-        HepLorentzVector initMomTds = (*p)->initialFourMomentum();
+        CLHEP::HepLorentzVector initMomTds = (*p)->initialFourMomentum();
         TLorentzVector initMomRoot(initMomTds.x(), initMomTds.y(), 
             initMomTds.z(), initMomTds.t());
         
-        HepLorentzVector finalMomTds = (*p)->finalFourMomentum();
+        CLHEP::HepLorentzVector finalMomTds = (*p)->finalFourMomentum();
         TLorentzVector finalMomRoot(finalMomTds.x(), finalMomTds.y(), 
             finalMomTds.z(), finalMomTds.t());
 

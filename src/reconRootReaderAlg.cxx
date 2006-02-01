@@ -52,11 +52,11 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.62 2005/11/03 19:43:22 echarles Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63 2005/11/09 01:26:51 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
-{	
+{   
 public:
     
     reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator);
@@ -189,14 +189,14 @@ StatusCode reconRootReaderAlg::initialize()
 
     std::string emptyStr("");
     if (m_fileName.compare(emptyStr) != 0) {
-	  TFile f(m_fileName.c_str());
+      TFile f(m_fileName.c_str());
       if (!f.IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
       }
-	  f.Close();
-	  m_reconTree->Add(m_fileName.c_str());
+      f.Close();
+      m_reconTree->Add(m_fileName.c_str());
           log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
@@ -204,7 +204,7 @@ StatusCode reconRootReaderAlg::initialize()
       std::vector<std::string>::const_iterator itend = fileList.end( );
       for (it = fileList.begin(); it != itend; it++) {
         std::string theFile = (*it);
-	    TFile f(theFile.c_str());
+        TFile f(theFile.c_str());
         if (!f.IsOpen()) {
           log << MSG::ERROR << "ROOT file " << theFile.c_str()
               << " could not be opened for reading." << endreq;
@@ -272,7 +272,7 @@ StatusCode reconRootReaderAlg::execute()
     }
 
     if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
-	
+    
     // ADDED FOR THE FILE HEADERS DEMO
     m_reconTree->LoadTree(readInd);
     m_headersTool->readConstReconHeader(m_reconTree->GetFile()) ;
@@ -309,7 +309,7 @@ StatusCode reconRootReaderAlg::execute()
     }
     
     //m_reconEvt->Clear();
-	evtId = readInd+1;
+    evtId = readInd+1;
     
     return sc;
 }
@@ -453,7 +453,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             clusterRoot->getMips(),
             clusterRoot->getStatusWord(),
             clusterRoot->getNBad()
-	);
+    );
 
         clusterTdsCol->push_back(clusterTds);
         (*clusMap)[tkrId].push_back(clusterTds);
@@ -932,7 +932,7 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     std::vector<Event::AcdTkrIntersection*> acdTkrIntersections;
 
     Point globalPosition;
-    HepMatrix covMatrix(2,2);
+    CLHEP::HepMatrix covMatrix(2,2);
     double localPosition[2];
 
     int nInter = acdRecRoot->nAcdIntersections();
@@ -947,12 +947,12 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
       covMatrix[1][1] = acdInterRoot->getLocalYYCov();
       covMatrix[0][1] = covMatrix[1][0] = acdInterRoot->getLocalXYCov();
       Event::AcdTkrIntersection* acdInterTds = new
-	Event::AcdTkrIntersection( acdInterRoot->getTileId().getId(), acdInterRoot->getTrackIndex(),
-				   globalPosition,
-				   localPosition, covMatrix,
-				   acdInterRoot->getArcLengthToIntersection(),
-				   acdInterRoot->getPathLengthInTile(),
-				   acdInterRoot->tileHit());
+      Event::AcdTkrIntersection( acdInterRoot->getTileId().getId(), acdInterRoot->getTrackIndex(),
+                   globalPosition,
+                   localPosition, covMatrix,
+                   acdInterRoot->getArcLengthToIntersection(),
+                   acdInterRoot->getPathLengthInTile(),
+                   acdInterRoot->tileHit());
       acdTkrIntersections.push_back(acdInterTds);
     }
 
@@ -992,7 +992,7 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         acdRecRoot->getRowDocaCol(), acdRecRoot->getRowActDistCol(), idColTds, 
         energyColTds, acdRecRoot->getRibbonActiveDist(), ribActDistIdTds, 
         acdTkrIntersections,
-	acdRecRoot->getActiveDist(), 
+    acdRecRoot->getActiveDist(), 
         actDistIdTds,acdRecRoot->getRowActDistCol(), acdRecRoot->getCornerDoca());
     
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
