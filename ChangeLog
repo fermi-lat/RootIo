@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Tue Jan 31 17:31:57 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: GR-v7r3p20-newext
+	commonData.h mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	reconRootReaderAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 User: usher  Tue Jan 31 17:31:52 PST 2006
 RootIo/doc
 
