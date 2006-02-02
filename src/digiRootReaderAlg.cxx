@@ -20,6 +20,7 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
+#include "LdfEvent/LsfMetaEvent.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -35,6 +36,8 @@
 
 #include "commonData.h"
 
+#include "RootConvert/Digi/LsfDigiConvert.h"
+
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
@@ -45,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.63 2005/09/13 06:22:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64 2005/10/25 19:45:23 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -87,6 +90,9 @@ private:
 
     /// Reads TKR digi data from ROOT and puts it on the TDS
     StatusCode readTkrDigi();
+
+    /// Reads the Meta Event from ROOT and puts it on the TDS
+    StatusCode readMetaEvent();
 
     /// Closes the ROOT file
     void close();
@@ -316,6 +322,14 @@ StatusCode digiRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to load TkrDigi" << endreq;
         return sc;
     }
+
+    sc = readMetaEvent();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to load MetaEvent" << endreq;
+        return sc;
+    }
+
+    
 
 	evtId = readInd+1;
     
@@ -683,6 +697,25 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
         tkrDigiTdsCol->push_back(tkrDigiTds);
     }
 
+    return sc;
+}
+
+
+StatusCode digiRootReaderAlg::readMetaEvent() {
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+    const MetaEvent& metaEventRoot = m_digiEvt->getMetaEvent();
+
+    // create the TDS location for the CalDigi Collection
+    LsfEvent::MetaEvent* metaEventTds = new LsfEvent::MetaEvent;
+    sc = eventSvc()->registerObject("Event/MetaEvent", metaEventTds);
+    if (sc.isFailure()) {
+        log << "Failed to register MetaEvent" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    RootPersistence::convert(metaEventRoot,*metaEventTds);
     return sc;
 }
 
