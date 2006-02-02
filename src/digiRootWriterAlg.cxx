@@ -17,6 +17,7 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
+#include "LdfEvent/LsfMetaEvent.h"
 
 #include "Trigger/TriRowBits.h"
 
@@ -34,6 +35,8 @@
 
 #include "commonData.h"
 
+#include "RootConvert/Digi/LsfDigiConvert.h"
+
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
@@ -44,7 +47,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.59 2005/09/13 06:22:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60 2005/09/13 06:24:42 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -90,6 +93,10 @@ private:
     /// Retrieves TKR digitization data from the TDS and fills the TkrDigi
     /// ROOT collection
     StatusCode writeTkrDigi();
+
+    /// Retrieves MetaEvent data from the TDS and fills the MetaEvent
+    /// ROOT object
+    StatusCode writeMetaEvent();
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
@@ -588,6 +595,24 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
         }
         m_digiEvt->addTkrDigi(tkrDigiRoot);
     }
+
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeMetaEvent() {
+    // Purpose and Method:  Retrieve the TkrDigi collection from the TDS and set the
+    //    TkrDigi ROOT collection
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    SmartDataPtr<LsfEvent::MetaEvent> metaEventTds(eventSvc(), "Event/MetaEvent");
+    if (!metaEventTds) return sc;
+
+    MetaEvent metaEventRoot;
+    RootPersistence::convert(*metaEventTds,metaEventRoot);
+
+    m_digiEvt->setMetaEvent(metaEventRoot);
 
     return sc;
 }
