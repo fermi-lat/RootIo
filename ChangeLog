@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: echarles  Wed Feb  1 17:08:48 PST 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+01-Feb-2006 EAC Added MetaEvent conversion
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9cl0, operation: add
 Package: RootIo
