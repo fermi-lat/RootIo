@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.4 2005/01/25 19:12:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.5 2005/02/23 19:14:01 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -10,9 +10,10 @@
 // includes
 #include "GaudiKernel/IInterface.h"
 #include <TChain.h>
+#include <string>
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
-static const InterfaceID IID_IRootIoSvc("RootIoSvc", 2 , 0); 
+static const InterfaceID IID_IRootIoSvc("RootIoSvc", 3 , 0); 
 
 /** 
 * \class IRootIoSvc
@@ -20,10 +21,17 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 2 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.4 2005/01/25 19:12:16 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.5 2005/02/23 19:14:01 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
+
+    virtual bool setRootFile(const char *mc, const char *digi, 
+                             const char *rec) = 0;
+    virtual std::string getMcFile() const = 0;
+    virtual std::string getDigiFile() const = 0;
+    virtual std::string getReconFile() const = 0;
+    virtual bool fileChange() const = 0;
     
     virtual Long64_t getEvtMax() = 0;
     virtual void setRootEvtMax(Long64_t max) = 0;

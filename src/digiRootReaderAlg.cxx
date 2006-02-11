@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.63 2005/09/13 06:22:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64 2005/10/25 19:45:23 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -229,8 +229,8 @@ StatusCode digiRootReaderAlg::execute()
     //   data on the TDS.
 
     MsgStream log(msgSvc(), name());
-
     StatusCode sc = StatusCode::SUCCESS;
+    TDirectory *saveDir = gDirectory;
     
     if (m_digiEvt) m_digiEvt->Clear();
 
@@ -238,6 +238,39 @@ StatusCode digiRootReaderAlg::execute()
     Long64_t readInd;
     int numBytes;
     std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+
+    // Check to see if the input Digi file has changed
+    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
+        // reset evtId to zero for new file
+        evtId = 0;
+        if (m_digiTree) {
+            delete m_digiTree;
+            m_digiTree = 0;
+        }
+        std::string fileName = m_rootIoSvc->getDigiFile();
+        facilities::Util::expandEnvVar(&m_fileName);
+        TFile f(fileName.c_str());
+        if (f.IsOpen()) {
+            f.Close();
+            m_digiTree = new TChain(m_treeName.c_str());
+            m_digiTree->Add(fileName.c_str());
+            m_numEvents = m_digiTree->GetEntries();
+            m_rootIoSvc->setRootEvtMax(m_numEvents);
+            if (!m_digiTree->GetTreeIndex()) {
+                log << MSG::INFO << "Input file does not contain new style index
+, rebuilding" << endreq;
+                m_digiTree->BuildIndex("m_runId", "m_eventId");
+            }
+            m_rootIoSvc->registerRootTree(m_digiTree);
+       }
+    }
+
+    if (!m_digiTree) {
+        log << MSG::INFO << "Digi Data Unavailable" << endreq;
+        return sc;
+    }
+    
+    if (evtId == 0) m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
 	
     if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
         readInd = m_rootIoSvc->index();
@@ -317,7 +350,9 @@ StatusCode digiRootReaderAlg::execute()
         return sc;
     }
 
-	evtId = readInd+1;
+    evtId = readInd+1;
+
+    saveDir->cd();
     
     return sc;
 }
