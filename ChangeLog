@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Sat Feb 11 00:07:42 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: DC2
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx 
+Log Message:
+branch for setting root files during run
+    *
+------------------------------------------------------------
 User: heather  Sat Feb 11 00:07:17 PST 2006
 RootIo/cmt
 
