@@ -52,7 +52,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.62 2005/11/03 19:43:22 echarles Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63 2005/11/09 01:26:51 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -246,6 +246,7 @@ StatusCode reconRootReaderAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+    TDirectory *saveDir = gDirectory;
         
     if (m_reconEvt) m_reconEvt->Clear();
 
@@ -253,6 +254,38 @@ StatusCode reconRootReaderAlg::execute()
     Long64_t readInd;
     int numBytes;
     std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+
+
+    // Check to see if the input Digi file has changed
+    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
+        // reset evtId to zero for new file
+        evtId = 0;
+        if (m_reconTree) {
+            delete m_reconTree;
+            m_reconTree = 0;
+        }
+        std::string fileName = m_rootIoSvc->getReconFile();
+        facilities::Util::expandEnvVar(&m_fileName);
+        TFile f(fileName.c_str());
+        if (f.IsOpen()) {
+            f.Close();
+            m_reconTree = new TChain(m_treeName.c_str());
+            m_reconTree->Add(fileName.c_str());
+            m_numEvents = m_reconTree->GetEntries();
+            m_rootIoSvc->setRootEvtMax(m_numEvents);
+            if (!m_reconTree->GetTreeIndex()) {
+                log << MSG::INFO << "Input file does not contain new style index
+, rebuilding" << endreq;
+                m_reconTree->BuildIndex("m_runId", "m_eventId");
+            }
+            m_rootIoSvc->registerRootTree(m_reconTree);
+       }
+    }
+
+    if (!m_reconTree) {
+        log << MSG::INFO << "Recon Data Unavailable" << endreq;
+        return sc;
+    }
 
     if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
 
@@ -308,8 +341,9 @@ StatusCode reconRootReaderAlg::execute()
         return sc;
     }
     
-    //m_reconEvt->Clear();
-	evtId = readInd+1;
+    evtId = readInd+1;
+
+    saveDir->cd();
     
     return sc;
 }

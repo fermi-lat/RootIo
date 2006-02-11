@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.3 2004/06/10 18:37:51 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.4 2004/07/06 21:55:28 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -74,7 +74,24 @@ StatusCode testRootIoSvcAlg::execute()
             m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,48));
             log << MSG::INFO << "Requesting run/event (10,48) randomly" << endreq;
          }
-        //m_rootIoSvc->setIndex(flag);
+
+        if (flag == 3) {
+            bool retVal = m_rootIoSvc->setRootFile("","noFile.root","");
+            if (retVal == false) {
+                log << MSG::INFO << "Passed ROOT file open test "
+                    << "failed to open non-existant file" 
+                    << endreq;
+            }
+            retVal = m_rootIoSvc->setRootFile(
+                 "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/mc.root",
+                 "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/digi.root", 
+                 "$(ROOTTESTDATAROOT)/data//vertical_surface_muons/recon.root");
+            if (retVal)
+                log << MSG::INFO << "Passed ROOT file open test "
+                    << "Succeeded in opening new files" << endreq;
+            else
+                return StatusCode::FAILURE;
+        }
 
 	flag++;
 
