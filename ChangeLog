@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Mon Feb 13 14:34:36 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: GR-v7r3p20-newext
+	RootIoSvc.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9dc0, operation: add
 Package: RootIo
