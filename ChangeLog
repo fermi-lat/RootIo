@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Feb 16 10:11:51 PST 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-v7r3p20-newext
+	requirements 
+Log Message:
+use any ROOT
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9dc3, operation: add
 Package: RootIo
