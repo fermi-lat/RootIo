@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Feb 15 22:45:13 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: DC2
+	RootIoSvc.cxx 
+Log Message:
+open up files, when setting run event pairs - if run before read algs have run
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9cl1, operation: add
 Package: RootIo
