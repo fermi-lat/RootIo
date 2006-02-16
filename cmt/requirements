@@ -3,12 +3,12 @@ version v17r9
 
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.162 2005/11/04 01:56:55 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.163 2005/11/09 01:26:51 heather Exp $
 
 branches src doc
 
 use Event v*
-use ROOT v3r* IExternal
+use ROOT v* IExternal
 use RootConvert v*
 
 apply_pattern packageShr
