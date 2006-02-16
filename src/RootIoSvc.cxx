@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.1 2006/02/11 08:08:34 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.1 2006/02/11 08:08:34 heather Exp $
 */
 
 // includes
@@ -322,14 +322,64 @@ bool RootIoSvc::setIndex(Long64_t i) {
 
 
 bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
+    // If we just changed ROOT files, we may not have run the reader algs
+    // yet, so the TTrees are not set to read, so we temporarily load the
+    // the TTrees so we can check to see if the requested run/event pair
+    // exists.  
+    TFile *mc=0, *digi=0, *rec=0;
+    if ((m_fileChange) && (m_chainCol.size() == 0)) {
+        if (!m_mcFile.empty()) {
+           mc = new TFile(m_mcFile.c_str(), "READ");
+           if (!mc->IsOpen()) return false;
+           TChain *mcChain = (TChain*)mc->Get("Mc");
+           if (!mcChain) return false;
+           if (!mcChain->GetTreeIndex()) 
+               mcChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(mcChain);
+        }
+        if (!m_digiFile.empty()) {
+           digi = new TFile(m_digiFile.c_str(), "READ");
+           if (!digi->IsOpen()) return false;
+           TChain *digiChain = (TChain*)digi->Get("Digi");
+           if (!digiChain) return false;
+           if (!digiChain->GetTreeIndex()) 
+               digiChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(digiChain);
+        }
+        if (!m_reconFile.empty()) {
+           rec = new TFile(m_reconFile.c_str(), "READ");
+           if (!rec->IsOpen()) return false;
+           TChain *recChain = (TChain*)rec->Get("Digi");
+           if (!recChain) return false;
+           if (!recChain->GetTreeIndex()) 
+               recChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(recChain);
+        }
+
+    }
+
     std::vector<TChain*>::iterator it;
     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
         Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
-        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) return false;
+        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) {
+          if (m_fileChange) {
+              m_chainCol.clear();
+              if (mc) delete mc;
+              if (digi) delete digi;
+              if (rec) delete rec;
+          }
+          return false;
+        }
     }
     m_runEventPair = ids;
     m_useIndex = false;
     m_useRunEventPair = true;
+    if (m_fileChange) {
+        m_chainCol.clear();
+        if (mc) delete mc;
+        if (digi) delete digi;
+        if (rec) delete rec;
+    }
     return true;
 }
 
