@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.1 2006/02/11 08:08:34 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.2 2006/02/16 06:45:13 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.1 2006/02/11 08:08:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.2 2006/02/16 06:45:13 heather Exp $
 */
 
 // includes
@@ -327,11 +327,13 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
     // the TTrees so we can check to see if the requested run/event pair
     // exists.  
     TFile *mc=0, *digi=0, *rec=0;
+    TChain *mcChain, *digiChain, *recChain;
+
     if ((m_fileChange) && (m_chainCol.size() == 0)) {
         if (!m_mcFile.empty()) {
            mc = new TFile(m_mcFile.c_str(), "READ");
            if (!mc->IsOpen()) return false;
-           TChain *mcChain = (TChain*)mc->Get("Mc");
+           mcChain = (TChain*)mc->Get("Mc");
            if (!mcChain) return false;
            if (!mcChain->GetTreeIndex()) 
                mcChain->BuildIndex("m_runId", "m_eventId");
@@ -340,7 +342,7 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
         if (!m_digiFile.empty()) {
            digi = new TFile(m_digiFile.c_str(), "READ");
            if (!digi->IsOpen()) return false;
-           TChain *digiChain = (TChain*)digi->Get("Digi");
+           digiChain = (TChain*)digi->Get("Digi");
            if (!digiChain) return false;
            if (!digiChain->GetTreeIndex()) 
                digiChain->BuildIndex("m_runId", "m_eventId");
@@ -349,7 +351,7 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
         if (!m_reconFile.empty()) {
            rec = new TFile(m_reconFile.c_str(), "READ");
            if (!rec->IsOpen()) return false;
-           TChain *recChain = (TChain*)rec->Get("Digi");
+           recChain = (TChain*)rec->Get("Recon");
            if (!recChain) return false;
            if (!recChain->GetTreeIndex()) 
                recChain->BuildIndex("m_runId", "m_eventId");
