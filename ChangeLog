@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Mon Feb 20 22:44:54 PST 2006
+RootIo/src/test
+
+Modified Files:
+      Tag: DC2
+	readOptions.txt testRootIoSvcAlg.cxx 
+Added Files:
+      Tag: DC2
+	checkTds.cxx 
+Log Message:
+fix up unit test
+    *
+------------------------------------------------------------
 User: heather  Mon Feb 20 22:44:00 PST 2006
 RootIo/src
 
