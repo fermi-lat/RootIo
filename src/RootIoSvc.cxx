@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.2 2006/02/16 06:45:13 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.3 2006/02/16 22:59:30 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.2 2006/02/16 06:45:13 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.3 2006/02/16 22:59:30 heather Exp $
 */
 
 // includes
@@ -140,6 +140,7 @@ private:
 
     std::string m_mcFile, m_digiFile, m_reconFile;
     bool m_fileChange;
+    int m_updated; // counter to check that algs have updated input root file
 };
 
 // declare the service factories for the RootIoSvc
@@ -174,6 +175,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_useIndex = false;
     m_useRunEventPair = false;
     m_fileChange = false;
+    m_updated = 0;
 }
 
 
@@ -305,6 +307,7 @@ void RootIoSvc::setRootTimeMax(unsigned int max) {
 
 void RootIoSvc::registerRootTree(TChain *ch) {
     m_chainCol.push_back(ch);
+    ++m_updated;
 }
 
 bool RootIoSvc::setIndex(Long64_t i) {
@@ -412,7 +415,10 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
     TProcessID::SetObjectCount(m_objectNumber);
 
     // assuming all algs have gotten the new files by now
-    m_fileChange = false;
+    if (m_updated > 0) {
+        m_fileChange = false;
+        m_updated = 0;
+    }
 }
 
 StatusCode RootIoSvc::run(){
