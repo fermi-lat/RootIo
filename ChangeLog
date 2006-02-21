@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Feb 21 01:13:41 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: DC2
+	mcRootReaderAlg.cxx 
+Log Message:
+debug statements
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9dc5, operation: add
 Package: RootIo
