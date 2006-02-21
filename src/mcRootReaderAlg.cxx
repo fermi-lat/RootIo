@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50 2005/09/22 19:29:46 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50.8.1 2006/02/11 08:07:42 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -240,6 +240,7 @@ StatusCode mcRootReaderAlg::execute()
     // Check to see if the input MC file has changed
     if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
         // reset evtId to zero for new file
+        log <<MSG::INFO << "file change" << endreq;
         evtId = 0;
         if (m_mcTree) {
             delete m_mcTree;
