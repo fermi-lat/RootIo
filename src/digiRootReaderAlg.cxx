@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64 2005/10/25 19:45:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.6.1 2006/02/11 08:07:42 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -210,7 +210,9 @@ StatusCode digiRootReaderAlg::initialize()
     if (m_rootIoSvc) {
       m_rootIoSvc->setRootEvtMax(m_numEvents);
       if (!m_digiTree->GetTreeIndex()) {
-          log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+          log << MSG::INFO 
+              << "Input file does not contain new style index, rebuilding" 
+              << endreq;
           m_digiTree->BuildIndex("m_runId", "m_eventId");
       }
       m_rootIoSvc->registerRootTree(m_digiTree);
