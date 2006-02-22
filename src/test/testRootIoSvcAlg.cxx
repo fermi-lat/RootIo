@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.4.20.1 2006/02/11 08:07:57 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.4.20.2 2006/02/21 06:44:53 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -91,6 +91,9 @@ StatusCode testRootIoSvcAlg::execute()
         if (retVal)
              log << MSG::INFO << "Passed ROOT file open test "
                  << "Succeeded in opening new files" << endreq;
+             bool good = m_rootIoSvc->setRunEventPair(std::pair<int,int>(10,1));
+             if (good) 
+                 log << MSG::INFO << "Requesting event 10,1 in new files" << endreq;
         else
              return StatusCode::FAILURE;
     }
