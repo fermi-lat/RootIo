@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Feb 23 13:19:20 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: DC2
+	mcRootReaderAlg.cxx digiRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx 
+Log Message:
+fix up error messages if ROOT file doesn't exist
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9dc7, operation: add
 Package: RootIo
