@@ -45,7 +45,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.6.1 2006/02/11 08:07:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.6.2 2006/02/22 00:35:56 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -250,7 +250,8 @@ StatusCode digiRootReaderAlg::execute()
             m_digiTree = 0;
         }
         std::string fileName = m_rootIoSvc->getDigiFile();
-        facilities::Util::expandEnvVar(&m_fileName);
+        facilities::Util::expandEnvVar(&fileName);
+        if (fileName.empty()) return sc; // No Digi To be Opened
         TFile f(fileName.c_str());
         if (f.IsOpen()) {
             f.Close();

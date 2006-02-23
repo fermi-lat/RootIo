@@ -52,7 +52,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63.6.1 2006/02/11 08:07:42 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.63.6.2 2006/02/22 00:35:57 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -267,7 +267,8 @@ StatusCode reconRootReaderAlg::execute()
             m_reconTree = 0;
         }
         std::string fileName = m_rootIoSvc->getReconFile();
-        facilities::Util::expandEnvVar(&m_fileName);
+        facilities::Util::expandEnvVar(&fileName);
+        if (fileName.empty()) return sc; // No Recon to be opened
         TFile f(fileName.c_str());
         if (f.IsOpen()) {
             f.Close();

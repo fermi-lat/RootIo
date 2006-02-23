@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50.8.1 2006/02/11 08:07:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50.8.2 2006/02/21 09:13:41 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -240,14 +240,14 @@ StatusCode mcRootReaderAlg::execute()
     // Check to see if the input MC file has changed
     if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
         // reset evtId to zero for new file
-        log <<MSG::INFO << "file change" << endreq;
         evtId = 0;
         if (m_mcTree) {
             delete m_mcTree;
             m_mcTree = 0;
         }
         std::string fileName = m_rootIoSvc->getMcFile();
-        facilities::Util::expandEnvVar(&m_fileName);
+        facilities::Util::expandEnvVar(&fileName);
+        if (fileName.empty()) return sc; // no MC file to be opened
         TFile f(fileName.c_str());
         if (f.IsOpen()) {
             f.Close();
