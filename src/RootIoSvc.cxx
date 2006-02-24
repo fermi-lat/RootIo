@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.3 2006/02/16 22:59:30 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.4 2006/02/21 06:43:59 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.3 2006/02/16 22:59:30 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.4 2006/02/21 06:43:59 heather Exp $
 */
 
 // includes
@@ -111,6 +111,7 @@ protected:
     
 private:
 
+
     void beginEvent();
     void endEvent();
     void loopStatus(int eventNumber, double currentTime, MsgStream& log);	
@@ -184,7 +185,6 @@ RootIoSvc::~RootIoSvc()
 {
     m_chainCol.clear();
 }
-
 
 StatusCode RootIoSvc::initialize () 
 {   
@@ -261,6 +261,10 @@ bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec) {
      facilities::Util::expandEnvVar(&mcFile);
      facilities::Util::expandEnvVar(&digiFile);
      facilities::Util::expandEnvVar(&reconFile);
+
+    // at least one string must be non-null
+    if (mcFile.empty() && digiFile.empty() && reconFile.empty())
+        return false;
 
     // Check that these files exist
     // blank, skip - since that means we just won't read from that type of file
