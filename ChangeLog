@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sat Feb 25 00:24:48 PST 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+do not return failure if metaEvent is not found
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9dc9, operation: add
 Package: RootIo
