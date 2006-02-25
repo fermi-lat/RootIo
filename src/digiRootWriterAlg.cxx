@@ -47,7 +47,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60 2005/09/13 06:24:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.1 2006/02/02 01:08:51 echarles Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -600,8 +600,8 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
 }
 
 StatusCode digiRootWriterAlg::writeMetaEvent() {
-    // Purpose and Method:  Retrieve the TkrDigi collection from the TDS and set the
-    //    TkrDigi ROOT collection
+    // Purpose and Method:  Retrieve the MetaEvent from the TDS and set in 
+    //    ROOT 
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
