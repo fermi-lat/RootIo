@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Feb 27 09:58:40 PST 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+patch to allow no MetaEvent on TDS
+    *
+------------------------------------------------------------
 User: heather  Mon Feb 27 09:58:15 PST 2006
 RootIo/cmt
 
