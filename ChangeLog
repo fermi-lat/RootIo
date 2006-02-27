@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Feb 27 09:58:15 PST 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+patch to allow no MetaEvent on TDS
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr2, operation: add
 Package: RootIo
