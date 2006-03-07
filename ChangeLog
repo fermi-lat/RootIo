@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Mon Mar  6 23:27:51 PST 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+fix up MetaEvent retrieval string
+    *
+------------------------------------------------------------
+User: heather  Mon Mar  6 23:27:51 PST 2006
 RootIo/cmt
 
 Modified Files:
