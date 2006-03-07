@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r9gr4  06-Mar-2006 HMK Fix up /Event/MetaEvent string 
  v17r9gr3  27-Feb-2006 HMK Allow no MetaEvent when reading from digi
  v17r9gr2  25-Feb-2006 HMK Don't return failure if MetaEvent not found
  eac-060201 01-Feb-2006 EAC Added MetaEvent conversion

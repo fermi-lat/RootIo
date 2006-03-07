@@ -47,7 +47,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.1 2006/02/02 01:08:51 echarles Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.2 2006/02/25 08:25:15 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -229,6 +229,12 @@ StatusCode digiRootWriterAlg::execute()
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write DigiEvent" << endreq;
         return sc;
+    }
+
+    sc = writeMetaEvent();
+    if (sc.isFailure()) {
+      log << MSG::DEBUG << "No Meta Event" << endreq;
+      sc = StatusCode::SUCCESS;
     }
 
     sc = writeAcdDigi();
@@ -606,12 +612,14 @@ StatusCode digiRootWriterAlg::writeMetaEvent() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    SmartDataPtr<LsfEvent::MetaEvent> metaEventTds(eventSvc(), "Event/MetaEvent");
-    if (!metaEventTds) return sc;
+    SmartDataPtr<LsfEvent::MetaEvent> metaEventTds(eventSvc(), "/Event/MetaEvent");
+    if (!metaEventTds) {
+        log << MSG::DEBUG << "No MetaEvent" << endreq;
+        return sc;
+     }
 
     MetaEvent metaEventRoot;
     RootPersistence::convert(*metaEventTds,metaEventRoot);
-
     m_digiEvt->setMetaEvent(metaEventRoot);
 
     return sc;
