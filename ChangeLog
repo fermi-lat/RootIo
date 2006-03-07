@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Mar  6 22:31:24 PST 2006
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx mainpage.h 
+Log Message:
+jobOptions for Clear option
+    *
+------------------------------------------------------------
 User: heather  Mon Mar  6 22:30:39 PST 2006
 RootIo/cmt
 
