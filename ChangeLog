@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Mar  6 23:27:51 PST 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+fix up MetaEvent retrieval string
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r13, operation: add
 Package: RootIo
