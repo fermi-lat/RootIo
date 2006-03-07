@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r13    06-Mar-2006 HMK Add option to mcRootReader and Writer to specify
+           Clear level for McEvent
  v17r12    19-Jan-2006 DC  Export CalXtalRecData conversion code into RootConvert.
  v17r11    05-Dec-2005 DC  Export AcdRecon conversion code into RootConvert.
  v17r10    25-Nov-2005 DC  Upgrade for new Event v11r9 (changes in CalRecon)

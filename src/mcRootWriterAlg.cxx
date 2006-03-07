@@ -41,7 +41,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.43 2005/09/12 08:01:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.44 2005/09/22 19:29:46 usher Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -115,6 +115,8 @@ private:
 
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
+    /// Option string which will be passed to McEvent::Clear
+    std::string m_clearOption;
 
     // ADDED FOR THE FILE HEADERS DEMO
     IFhTool * m_headersTool ;
@@ -141,6 +143,7 @@ Algorithm(name, pSvcLocator)
     declareProperty("treeName", m_treeName="Mc");
     // Save McTrajectory's?
     declareProperty("saveMcTrajectory", m_saveTrajectories=false);
+    declareProperty("clearOption", m_clearOption="");
 
     
     // ADDED FOR THE FILE HEADERS DEMO
@@ -266,7 +269,7 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     SmartDataPtr<Event::EventHeader> evt(eventSvc(), EventModel::EventHeader);
     
     if (!evt) return sc;
-    m_mcEvt->Clear();
+    m_mcEvt->Clear(m_clearOption.c_str());
     
     UInt_t evtId = evt->event();
     UInt_t runId = evt->run();
