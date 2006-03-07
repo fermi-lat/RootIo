@@ -39,8 +39,12 @@
 *  Specifies the split level when writing the TTree, default 1
 * @param mcRootWriterAlg.bufferSize
 * @param mcRootWriterAlg.compressionLevel
+* @param mcRootWriterAlg.clearOption
+*  Default is "", set to "ALL" to clear full McEvent with each iteration - this will impact performance
 * @param mcRootReaderAlg.mcRootFileList
 *  List of input MC ROOT file(s)
+* @param mcRootReaderAlg.clearOption
+*  Default is "", set to "ALL" to clear full McEvent with each iteration - this will impact performance
 * @param digiRootWriterAlg.digiRootFile
 *  Name of the output Digi ROOT file, default digi.root
 * @param digiRootWriter.splitMode
