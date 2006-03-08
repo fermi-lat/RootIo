@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Mar  8 13:34:06 PST 2006
+RootIo/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	digiRootReaderAlg.cxx 
+Log Message:
+set MetaEvent message to debug when reading
+    *
+------------------------------------------------------------
 User: heather  Wed Mar  8 13:34:00 PST 2006
 RootIo/doc
 
