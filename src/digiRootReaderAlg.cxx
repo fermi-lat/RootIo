@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.2 2006/02/25 08:25:15 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.3 2006/02/27 17:58:50 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -327,7 +327,7 @@ StatusCode digiRootReaderAlg::execute()
     // do not terminate job due to missing MetaEvent in ROOT file
     // MC events and older runs will not have this branch filled.
     if (sc.isFailure()) {
-        log << MSG::INFO << "Failed to load MetaEvent" << endreq;
+        log << MSG::DEBUG << "Failed to load MetaEvent" << endreq;
         // reset status code to success so we don't propagate the error
         sc = StatusCode::SUCCESS;
     }
