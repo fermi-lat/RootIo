@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Mar  8 13:34:00 PST 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+set MetaEvent message to debug when reading
+    *
+------------------------------------------------------------
 User: heather  Wed Mar  8 13:33:55 PST 2006
 RootIo/cmt
 
