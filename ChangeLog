@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Mar  8 13:33:55 PST 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+set MetaEvent message to debug when reading
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr4, operation: add
 Package: RootIo
