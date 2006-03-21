@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.51 2005/12/05 19:12:48 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.52 2006/03/07 06:31:24 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -386,11 +386,11 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         
         TLorentzVector initialMomRoot = pRoot->getInitialFourMomentum();
         
-        HepLorentzVector initialMomTds(initialMomRoot.X(), initialMomRoot.Y(),
+        CLHEP::HepLorentzVector initialMomTds(initialMomRoot.X(), initialMomRoot.Y(),
             initialMomRoot.Z(), initialMomRoot.T());
         
         TLorentzVector finalMomRoot = pRoot->getFinalFourMomentum();
-        HepLorentzVector finalMomTds(finalMomRoot.X(), finalMomRoot.Y(), 
+        CLHEP::HepLorentzVector finalMomTds(finalMomRoot.X(), finalMomRoot.Y(), 
             finalMomRoot.Z(), finalMomRoot.T());
         
         TVector3 initPosRoot = pRoot->getInitialPosition();

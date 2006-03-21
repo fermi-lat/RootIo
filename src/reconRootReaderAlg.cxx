@@ -54,11 +54,11 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.65 2005/12/02 16:14:18 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.66 2006/01/19 02:59:01 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
-{	
+{   
 public:
     
     reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator);
@@ -191,14 +191,14 @@ StatusCode reconRootReaderAlg::initialize()
 
     std::string emptyStr("");
     if (m_fileName.compare(emptyStr) != 0) {
-	  TFile f(m_fileName.c_str());
+      TFile f(m_fileName.c_str());
       if (!f.IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
       }
-	  f.Close();
-	  m_reconTree->Add(m_fileName.c_str());
+      f.Close();
+      m_reconTree->Add(m_fileName.c_str());
           log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
@@ -206,7 +206,7 @@ StatusCode reconRootReaderAlg::initialize()
       std::vector<std::string>::const_iterator itend = fileList.end( );
       for (it = fileList.begin(); it != itend; it++) {
         std::string theFile = (*it);
-	    TFile f(theFile.c_str());
+        TFile f(theFile.c_str());
         if (!f.IsOpen()) {
           log << MSG::ERROR << "ROOT file " << theFile.c_str()
               << " could not be opened for reading." << endreq;
@@ -274,7 +274,7 @@ StatusCode reconRootReaderAlg::execute()
     }
 
     if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
-	
+    
     // ADDED FOR THE FILE HEADERS DEMO
     m_reconTree->LoadTree(readInd);
     m_headersTool->readConstReconHeader(m_reconTree->GetFile()) ;
@@ -311,7 +311,7 @@ StatusCode reconRootReaderAlg::execute()
     }
     
     //m_reconEvt->Clear();
-	evtId = readInd+1;
+    evtId = readInd+1;
     
     return sc;
 }
@@ -455,7 +455,7 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             clusterRoot->getMips(),
             clusterRoot->getStatusWord(),
             clusterRoot->getNBad()
-	);
+    );
 
         clusterTdsCol->push_back(clusterTds);
         (*clusMap)[tkrId].push_back(clusterTds);
