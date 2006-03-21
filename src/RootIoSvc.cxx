@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.19 2005/08/09 04:45:59 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,7 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.19 2005/08/09 04:45:59 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
 */
 
 // includes
@@ -67,7 +67,7 @@ public:
     virtual StatusCode finalize ();
     
     /// Query interface
-    virtual StatusCode queryInterface( const IID& riid, void** ppvUnknown );
+    virtual StatusCode queryInterface( const InterfaceID& riid, void** ppvUnknown );
 
     /// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
@@ -225,7 +225,7 @@ StatusCode RootIoSvc::finalize ()
 }
 
 /// Query interface
-StatusCode RootIoSvc::queryInterface(const IID& riid, void** ppvInterface)  {
+StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterface)  {
     if ( IID_IRootIoSvc.versionMatch(riid) )  {
         *ppvInterface = (IRootIoSvc*)this;
     }else if (IID_IRunable.versionMatch(riid) ) {

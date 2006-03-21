@@ -2,15 +2,15 @@
 #define ROOTIO_COMMONDATA_H 1
 
 
+//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
+#include "Event/TopLevel/Event.h"
+#include "Event/TopLevel/EventModel.h"
+
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
-
-//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
-#include "Event/TopLevel/Event.h"
-#include "Event/TopLevel/EventModel.h"
 
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
@@ -42,7 +42,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.5 2005/03/30 04:47:36 cohen Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.6 2005/09/22 19:29:46 usher Exp $
 */
 
 class commonData 
