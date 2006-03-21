@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Mon Mar 20 17:21:46 PST 2006
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx commonData.h mcRootReaderAlg.cxx 
+	mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 User: usher  Mon Mar 20 17:21:45 PST 2006
 RootIo/cmt
 
