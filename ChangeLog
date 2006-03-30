@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Thu Mar 30 12:50:45 PST 2006
+RootIo/src/test
+
+Modified Files:
+	readOptions.txt testRootIoSvcAlg.cxx 
+Added Files:
+	checkTds.cxx 
+Log Message:
+merge DC2 branch
+    *
+------------------------------------------------------------
 User: heather  Thu Mar 30 12:50:11 PST 2006
 RootIo/RootIo
 
