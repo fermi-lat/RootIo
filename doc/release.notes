@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r15    27-Mar-2006 HMK Merge DC2 branch providing HepRepSvc the ability
+           to open new ROOT files on the fly
  v17r14    24-Mar-2006 HMK Updates for new CLHEP 1.9.2.2 and Gaudi
  v17r13    06-Mar-2006 HMK Add option to mcRootReader and Writer to specify
            Clear level for McEvent

@@ -44,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.52 2006/03/07 06:31:24 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.50.8.3 2006/02/23 21:19:20 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -178,30 +178,30 @@ StatusCode mcRootReaderAlg::initialize()
 
     std::string emptyStr("");
     if (m_fileName.compare(emptyStr) != 0) {
-	  TFile f(m_fileName.c_str());
+      TFile f(m_fileName.c_str());
       if (!f.IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName.c_str() 
             << " could not be opened for reading." << endreq;
         return StatusCode::FAILURE;
       }
-	  f.Close();
-	  m_mcTree->Add(m_fileName.c_str());
-          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
+      f.Close();
+      m_mcTree->Add(m_fileName.c_str());
+      log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
     } else {
       const std::vector<std::string> fileList = m_fileList.value( );
       std::vector<std::string>::const_iterator it;
       std::vector<std::string>::const_iterator itend = fileList.end( );
       for (it = fileList.begin(); it != itend; it++) {
-        std::string theFile = (*it);
-		TFile f(theFile.c_str());
-        if (!f.IsOpen()) {
-          log << MSG::ERROR << "ROOT file " << theFile.c_str() 
-              << " could not be opened for reading." << endreq;
-          return StatusCode::FAILURE;
-        }
-		f.Close();
-		m_mcTree->Add(theFile.c_str());
-                log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
+          std::string theFile = (*it);
+          TFile f(theFile.c_str());
+          if (!f.IsOpen()) {
+              log << MSG::ERROR << "ROOT file " << theFile.c_str() 
+                  << " could not be opened for reading." << endreq;
+              return StatusCode::FAILURE;
+           }
+           f.Close();
+           m_mcTree->Add(theFile.c_str());
+           log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
       }
     }
     
@@ -233,39 +233,66 @@ StatusCode mcRootReaderAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+
+    TDirectory *saveDir = gDirectory;
     
     if (m_mcEvt) m_mcEvt->Clear(m_clearOption.c_str());
-   
+    static Long64_t evtId = 0;
+    Long64_t readInd;
+
+    // Check to see if the input MC file has changed
+    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
+        // reset evtId to zero for new file
+        evtId = 0;
+        if (m_mcTree) {
+            delete m_mcTree;
+            m_mcTree = 0;
+        }
+        std::string fileName = m_rootIoSvc->getMcFile();
+        facilities::Util::expandEnvVar(&fileName);
+        if (fileName.empty()) return sc; // no MC file to be opened
+        TFile f(fileName.c_str());
+        if (f.IsOpen()) {
+            f.Close();
+            m_mcTree = new TChain(m_treeName.c_str());
+            m_mcTree->Add(fileName.c_str());
+            m_numEvents = m_mcTree->GetEntries();
+            m_rootIoSvc->setRootEvtMax(m_numEvents);
+            if (!m_mcTree->GetTreeIndex()) {
+                log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+                m_mcTree->BuildIndex("m_runId", "m_eventId");
+            }
+            m_rootIoSvc->registerRootTree(m_mcTree);
+        }
+    }
+
     if (!m_mcTree) {
-      log << MSG::WARNING << "MC Root unreadable" << endreq;
+      log << MSG::INFO << "MC Root unavailable" << endreq;
       return sc;
     }
 
-	static Long64_t evtId = 0;
-	Long64_t readInd;
-        int numBytes;
-	if (evtId==0) m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
-	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+    int numBytes;
+    if (evtId==0) m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
+    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
 
-	if ((m_rootIoSvc) &&  (m_rootIoSvc->useIndex())) {
-		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
-		int run = runEventPair.first;
-		int evt = runEventPair.second;
-		readInd = m_mcTree->GetEntryNumberWithIndex(run, evt);
-	} else {
-		readInd = evtId;
-	}
+    if ((m_rootIoSvc) &&  (m_rootIoSvc->useIndex())) {
+        readInd = m_rootIoSvc->index();
+    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
+        int run = runEventPair.first;
+        int evt = runEventPair.second;
+        readInd = m_mcTree->GetEntryNumberWithIndex(run, evt);
+    } else {
+        readInd = evtId;
+    }
 
-	if (readInd >= m_numEvents) {
-            log << MSG::WARNING << "Requested index is out of bounds - no MC data loaded" << endreq;
-            return StatusCode::SUCCESS;
-	}
-	else {
-            log << MSG::INFO << "Requested index: " << readInd << endreq;
-	}
+    if (readInd >= m_numEvents) {
+        log << MSG::WARNING << "Requested index is out of bounds - no MC data loaded" << endreq;
+        return StatusCode::SUCCESS;
+    } else {
+        log << MSG::INFO << "Requested index: " << readInd << endreq;
+    }
 
-        if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
+    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
 
     // ADDED FOR THE FILE HEADERS DEMO
     m_mcTree->LoadTree(readInd);
@@ -304,8 +331,9 @@ StatusCode mcRootReaderAlg::execute()
     sc = readMcTrajectories();
     if (sc.isFailure()) return sc;
     
-	evtId = readInd+1;
+    evtId = readInd+1;
      
+    saveDir->cd();
     return sc;
 }
 
