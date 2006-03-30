@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20.10.5 2006/02/24 08:37:00 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -17,8 +17,6 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 
-//#include "CLHEP/Random/Random.h"
-
 #include "commonData.h"
 
 #include <vector>
@@ -30,7 +28,6 @@
 * \brief Service that implements the IRunable interface, to control the event loop.
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.20 2005/08/13 05:52:41 heather Exp $
 */
 
 // includes
@@ -39,6 +36,8 @@
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
 #include "TSystem.h"
+#include "TFile.h"
+#include "facilities/Util.h"
 
 //forward declarations
 template <class TYPE> class SvcFactory;
@@ -72,6 +71,12 @@ public:
     /// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
 	
+    virtual bool setRootFile(const char* mc, const char* digi, const char* rec);
+    virtual std::string getMcFile() const { return m_mcFile; };
+    virtual std::string getDigiFile() const { return m_digiFile; };
+    virtual std::string getReconFile() const { return m_reconFile; };
+    virtual bool fileChange() const { return m_fileChange; };
+
     virtual Long64_t getEvtMax() { return m_evtMax; };
 
     virtual void setRootEvtMax(Long64_t max);
@@ -103,6 +108,7 @@ protected:
     
 private:
 
+
     void beginEvent();
     void endEvent();
     void loopStatus(int eventNumber, double currentTime, MsgStream& log);	
@@ -130,6 +136,9 @@ private:
 
     bool m_useIndex, m_useRunEventPair;
 
+    std::string m_mcFile, m_digiFile, m_reconFile;
+    bool m_fileChange;
+    int m_updated; // counter to check that algs have updated input root file
 };
 
 // declare the service factories for the RootIoSvc
@@ -163,6 +172,8 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_chainCol.clear();
     m_useIndex = false;
     m_useRunEventPair = false;
+    m_fileChange = false;
+    m_updated = 0;
 }
 
 
@@ -171,7 +182,6 @@ RootIoSvc::~RootIoSvc()
 {
     m_chainCol.clear();
 }
-
 
 StatusCode RootIoSvc::initialize () 
 {   
@@ -241,6 +251,44 @@ StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterfac
 }
 
 
+bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec) {
+     std::string mcFile = mc;
+     std::string digiFile = digi;
+     std::string reconFile = rec;
+     facilities::Util::expandEnvVar(&mcFile);
+     facilities::Util::expandEnvVar(&digiFile);
+     facilities::Util::expandEnvVar(&reconFile);
+
+    // at least one string must be non-null
+    if (mcFile.empty() && digiFile.empty() && reconFile.empty())
+        return false;
+
+    // Check that these files exist
+    // blank, skip - since that means we just won't read from that type of file
+    if (!mcFile.empty()) {
+        TFile f(mc);
+        if (!f.IsOpen()) return false;
+        f.Close();
+    }
+    if (!digiFile.empty()) {
+       TFile f(digi);
+        if (!f.IsOpen()) return false;
+        f.Close();
+    }
+    if (!reconFile.empty()) {
+        TFile f(rec);
+        if (!f.IsOpen()) return false;
+        f.Close();
+    }
+
+    m_chainCol.clear(); // clear out TTrees from old files
+    m_mcFile = mc;
+    m_digiFile = digi;
+    m_reconFile = rec;
+    m_fileChange = true;
+    return true;
+}
+
 void RootIoSvc::setRootEvtMax(Long64_t max) {
     // Purpose and Method:  Allow users of the RootIoSvc to specify the number
     //  of events found in their ROOT files
@@ -257,8 +305,10 @@ void RootIoSvc::setRootTimeMax(unsigned int max) {
     return;
 }
 
+
 void RootIoSvc::registerRootTree(TChain *ch) {
     m_chainCol.push_back(ch);
+    ++m_updated;
 }
 
 bool RootIoSvc::setIndex(Long64_t i) {
@@ -276,14 +326,66 @@ bool RootIoSvc::setIndex(Long64_t i) {
 
 
 bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
+    // If we just changed ROOT files, we may not have run the reader algs
+    // yet, so the TTrees are not set to read, so we temporarily load the
+    // the TTrees so we can check to see if the requested run/event pair
+    // exists.  
+    TFile *mc=0, *digi=0, *rec=0;
+    TChain *mcChain, *digiChain, *recChain;
+
+    if ((m_fileChange) && (m_chainCol.size() == 0)) {
+        if (!m_mcFile.empty()) {
+           mc = new TFile(m_mcFile.c_str(), "READ");
+           if (!mc->IsOpen()) return false;
+           mcChain = (TChain*)mc->Get("Mc");
+           if (!mcChain) return false;
+           if (!mcChain->GetTreeIndex()) 
+               mcChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(mcChain);
+        }
+        if (!m_digiFile.empty()) {
+           digi = new TFile(m_digiFile.c_str(), "READ");
+           if (!digi->IsOpen()) return false;
+           digiChain = (TChain*)digi->Get("Digi");
+           if (!digiChain) return false;
+           if (!digiChain->GetTreeIndex()) 
+               digiChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(digiChain);
+        }
+        if (!m_reconFile.empty()) {
+           rec = new TFile(m_reconFile.c_str(), "READ");
+           if (!rec->IsOpen()) return false;
+           recChain = (TChain*)rec->Get("Recon");
+           if (!recChain) return false;
+           if (!recChain->GetTreeIndex()) 
+               recChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(recChain);
+        }
+
+    }
+
     std::vector<TChain*>::iterator it;
     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
         Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
-        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) return false;
+        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) {
+          if (m_fileChange) {
+              m_chainCol.clear();
+              if (mc) delete mc;
+              if (digi) delete digi;
+              if (rec) delete rec;
+          }
+          return false;
+        }
     }
     m_runEventPair = ids;
     m_useIndex = false;
     m_useRunEventPair = true;
+    if (m_fileChange) {
+        m_chainCol.clear();
+        if (mc) delete mc;
+        if (digi) delete digi;
+        if (rec) delete rec;
+    }
     return true;
 }
 
@@ -312,6 +414,12 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
 
     // reset object in order to avoid memleak
     TProcessID::SetObjectCount(m_objectNumber);
+
+    // assuming all algs have gotten the new files by now
+    if (m_updated > 0) {
+        m_fileChange = false;
+        m_updated = 0;
+    }
 }
 
 StatusCode RootIoSvc::run(){
