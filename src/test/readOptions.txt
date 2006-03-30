@@ -6,7 +6,7 @@
 ApplicationMgr.DLLs   = { "GlastSvc"};
 
 ApplicationMgr.ExtSvc = { 
-    "GlastEventSelector/EventSelector" , 
+//    "GlastEventSelector/EventSelector" , 
     "EventCnvSvc", 
     "GlastDetSvc" 
     };
