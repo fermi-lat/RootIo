@@ -18,6 +18,7 @@
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
 #include "LdfEvent/LsfMetaEvent.h"
+#include "LdfEvent/LsfCcsds.h"
 
 #include "Trigger/TriRowBits.h"
 
@@ -47,7 +48,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.2 2006/02/25 08:25:15 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.3 2006/03/07 07:27:52 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -97,6 +98,9 @@ private:
     /// Retrieves MetaEvent data from the TDS and fills the MetaEvent
     /// ROOT object
     StatusCode writeMetaEvent();
+
+    /// Retrieves CCSDS data from TDS and fills Ccsds ROOT object 
+    StatusCode writeCcsds();
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
@@ -234,6 +238,12 @@ StatusCode digiRootWriterAlg::execute()
     sc = writeMetaEvent();
     if (sc.isFailure()) {
       log << MSG::DEBUG << "No Meta Event" << endreq;
+      sc = StatusCode::SUCCESS;
+    }
+
+    sc = writeCcsds();
+    if (sc.isFailure()) {
+      log << MSG::DEBUG << "No Ccsds" << endreq;
       sc = StatusCode::SUCCESS;
     }
 
@@ -623,6 +633,26 @@ StatusCode digiRootWriterAlg::writeMetaEvent() {
     m_digiEvt->setMetaEvent(metaEventRoot);
 
     return sc;
+}
+
+StatusCode digiRootWriterAlg::writeCcsds() {
+    // Purpose and Method:  Retrieve the Ccsds from the TDS and set in ROOT 
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    SmartDataPtr<LsfEvent::LsfCcsds> ccsdsTds(eventSvc(), "/Event/Ccsds");
+    if (!ccsdsTds) {
+        log << MSG::DEBUG << "No CCSDS" << endreq;
+        return sc;
+     }
+
+    Ccsds ccsdsRoot;
+    RootPersistence::convert(*ccsdsTds,ccsdsRoot);
+    m_digiEvt->setCcsds(ccsdsRoot);
+
+    return sc;
+
 }
 
 void digiRootWriterAlg::writeEvent() 
