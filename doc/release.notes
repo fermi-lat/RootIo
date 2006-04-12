@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r15p1  11-Apr-2006 HMK Patch for windows - broke string across lines
  v17r15    27-Mar-2006 HMK Merge DC2 branch providing HepRepSvc the ability
            to open new ROOT files on the fly
  v17r14    24-Mar-2006 HMK Updates for new CLHEP 1.9.2.2 and Gaudi
