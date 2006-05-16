@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue May 16 16:23:27 PDT 2006
+RootIo/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+TKR fifo errors
+    *
+------------------------------------------------------------
 User: heather  Tue May 16 16:23:24 PDT 2006
 RootIo/doc
 
