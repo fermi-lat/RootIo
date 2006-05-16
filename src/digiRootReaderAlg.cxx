@@ -49,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.4 2006/03/08 21:34:06 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.5 2006/04/12 21:50:18 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -509,7 +509,12 @@ StatusCode digiRootReaderAlg::readError() {
     while ((temCur = (Tem*)temRootIt.Next())) {
 
         const ErrorData& errRoot = temCur->getError();
-        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), 
+                   errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        UChar_t *tkrFifoCol = errRoot.getTkrFifoFullCol();
+        unsigned int igtcc;
+        for (igtcc=0;igtcc<enums::numGtcc;igtcc++)
+            err.setTkrFifoFull(igtcc,tkrFifoCol[igtcc]);
         errCol->addTowerError(err);
     }
 

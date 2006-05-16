@@ -48,7 +48,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.3 2006/03/07 07:27:52 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.4 2006/04/12 21:50:18 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -423,6 +423,10 @@ StatusCode digiRootWriterAlg::writeError() {
         Tem *temRoot = m_digiEvt->addTem(); 
         ErrorData err(errorColIt->cal(), errorColIt->tkr(), 
             errorColIt->phs(), errorColIt->tmo()); 
+        const unsigned char* tkrFifoCol = errorColIt->tkrFifoFullCol();
+        unsigned int igtcc;
+        for(igtcc=0;igtcc<enums::numGtcc;igtcc++)
+            err.setTkrFifoFull(igtcc,tkrFifoCol[igtcc]);
         temRoot->init(errorColIt->tower(), err); 
     } 
     return sc;    
