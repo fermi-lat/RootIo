@@ -20,6 +20,8 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
+#include "LdfEvent/LsfMetaEvent.h"
+#include "LdfEvent/LsfCcsds.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -35,6 +37,8 @@
 
 #include "commonData.h"
 
+#include "RootConvert/Digi/LsfDigiConvert.h"
+
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
@@ -45,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.6.3 2006/02/23 21:19:20 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.65 2006/03/30 20:51:10 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -87,6 +91,12 @@ private:
 
     /// Reads TKR digi data from ROOT and puts it on the TDS
     StatusCode readTkrDigi();
+
+    /// Reads the Meta Event from ROOT and puts it on the TDS
+    StatusCode readMetaEvent();
+
+    /// Reads CCSDS froM ROOT and puts it on the TDS
+    StatusCode readCcsds();
 
     /// Closes the ROOT file
     void close();
@@ -356,6 +366,29 @@ StatusCode digiRootReaderAlg::execute()
     evtId = readInd+1;
 
     saveDir->cd();
+
+    sc = readMetaEvent();
+    // do not terminate job due to missing MetaEvent in ROOT file
+    // MC events and older runs will not have this branch filled.
+    if (sc.isFailure()) {
+        log << MSG::DEBUG << "Failed to load MetaEvent" << endreq;
+        // reset status code to success so we don't propagate the error
+        sc = StatusCode::SUCCESS;
+    }
+
+    sc = readCcsds();
+    // do not terminate job due to missing CCSDS in ROOT file
+    // MC events and older runs will not have this branch filled.
+    if (sc.isFailure()) {
+        log << MSG::DEBUG << "Failed to load CCSDS" << endreq;
+        // reset status code to success so we don't propagate the error
+        sc = StatusCode::SUCCESS;
+    }
+
+    
+
+    evtId = readInd+1;
+    saveDir->cd();
     
     return sc;
 }
@@ -517,7 +550,12 @@ StatusCode digiRootReaderAlg::readError() {
     while ((temCur = (Tem*)temRootIt.Next())) {
 
         const ErrorData& errRoot = temCur->getError();
-        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        LdfEvent::TowerErrorData err(temCur->getTowerId(), errRoot.getCal(), 
+                   errRoot.getTkr(), errRoot.getPhs(), errRoot.getTmo());
+        UChar_t *tkrFifoCol = errRoot.getTkrFifoFullCol();
+        unsigned int igtcc;
+        for (igtcc=0;igtcc<enums::numGtcc;igtcc++)
+            err.setTkrFifoFull(igtcc,tkrFifoCol[igtcc]);
         errCol->addTowerError(err);
     }
 
@@ -721,6 +759,43 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
         tkrDigiTdsCol->push_back(tkrDigiTds);
     }
 
+    return sc;
+}
+
+
+StatusCode digiRootReaderAlg::readMetaEvent() {
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+    const MetaEvent& metaEventRoot = m_digiEvt->getMetaEvent();
+
+    // create the TDS location for the MetaEvent Collection
+    LsfEvent::MetaEvent* metaEventTds = new LsfEvent::MetaEvent;
+    sc = eventSvc()->registerObject("/Event/MetaEvent", metaEventTds);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register MetaEvent" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    RootPersistence::convert(metaEventRoot,*metaEventTds);
+    return sc;
+}
+
+StatusCode digiRootReaderAlg::readCcsds() {
+    MsgStream log(msgSvc(), name());
+
+    StatusCode sc = StatusCode::SUCCESS;
+    const Ccsds& ccsdsRoot = m_digiEvt->getCcsds();
+
+    // create the TDS location for the CCSDS data 
+    LsfEvent::LsfCcsds* ccsdsTds = new LsfEvent::LsfCcsds;
+    sc = eventSvc()->registerObject("/Event/Ccsds", ccsdsTds);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register CCSDS" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    RootPersistence::convert(ccsdsRoot,*ccsdsTds);
     return sc;
 }
 
