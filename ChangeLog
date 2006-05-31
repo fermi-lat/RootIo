@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: heather  Wed May 31 13:36:34 PDT 2006
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+merge in all LSF handling
+    *
+------------------------------------------------------------
+User: heather  Wed May 31 13:36:34 PDT 2006
 RootIo/doc
 
 Modified Files:
