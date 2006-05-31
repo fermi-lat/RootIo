@@ -54,7 +54,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.68 2006/03/30 20:51:10 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.69 2006/04/12 06:31:18 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -938,17 +938,10 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         log << endreq;
         return StatusCode::SUCCESS;
     }
-    
-    SmartDataPtr<Event::AcdRecon> checkAcdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
-    if (checkAcdRecTds) {
-        log << MSG::INFO << "AcdRecon data already on TDS!" << endreq;
-        return StatusCode::SUCCESS;
-    }
 
-    Event::AcdRecon * acdRecTds = new Event::AcdRecon();
-    
+    Event::AcdRecon * acdRecTds = new Event::AcdRecon();    
     RootPersistence::convert(*acdRecRoot,*acdRecTds) ;
-    
+
     sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
     if (sc.isFailure()) {
         

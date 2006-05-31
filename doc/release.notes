@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r16    31-May-2006 HMK Merge in modification from GRv7r3p1 branch
  v17r15p1  11-Apr-2006 HMK Patch for windows - broke string across lines
  v17r15    27-Mar-2006 HMK Merge DC2 branch providing HepRepSvc the ability
            to open new ROOT files on the fly
@@ -13,6 +14,20 @@
  v17r11    05-Dec-2005 DC  Export AcdRecon conversion code into RootConvert.
  v17r10    25-Nov-2005 DC  Upgrade for new Event v11r9 (changes in CalRecon)
  v17r9p1   17-Nov-2005 HMK patch to use proper id method for ActiveDist
+end GRv7r3p1 Branch
+ v17r9gr7  16-May-2006 HMK TKR FIFO errors from LDF
+ v17r9gr6  12-Apr-2006 HMK Add converters for CCSDS
+ v17r9gr5  08-Mar-2006 HMK set debug message if no MetaEvent when reading
+ v17r9gr4  06-Mar-2006 HMK Fix up /Event/MetaEvent string 
+ v17r9gr3  27-Feb-2006 HMK Allow no MetaEvent when reading from digi
+ v17r9gr2  25-Feb-2006 HMK Don't return failure if MetaEvent not found
+ eac-060201 01-Feb-2006 EAC Added MetaEvent conversion
+ v17r9gr1  12-Jan-2006 EAC Handle new AcdHit and AcdPoca, and use new 
+                       RootConvert converter
+ v17r9gr0  06-Dec-2005 HMK Patch to mcRootReader to count daughters of
+           McParticles just once..not twice.  Fix AcdRecon MaxActiveDist Id
+           writing
+start GRv7r3p1 Branch
  v17r9     08-Nov-2005 HMK Add new AcdRecon CornerDoca
  v17r8     03-Nov-2005 HMK Prepare to tag Eric's new AcdTkrIntersectTool
  v17r7     25-Oct-2005 HMK Check on fromMc to decide whether to write Gem to

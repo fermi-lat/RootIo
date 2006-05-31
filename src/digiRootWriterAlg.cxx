@@ -17,6 +17,8 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
+#include "LdfEvent/LsfMetaEvent.h"
+#include "LdfEvent/LsfCcsds.h"
 
 #include "Trigger/TriRowBits.h"
 
@@ -34,6 +36,8 @@
 
 #include "commonData.h"
 
+#include "RootConvert/Digi/LsfDigiConvert.h"
+
 #include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
@@ -44,7 +48,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60 2005/09/13 06:24:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.61 2005/11/25 16:44:21 chamont Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -90,6 +94,13 @@ private:
     /// Retrieves TKR digitization data from the TDS and fills the TkrDigi
     /// ROOT collection
     StatusCode writeTkrDigi();
+
+    /// Retrieves MetaEvent data from the TDS and fills the MetaEvent
+    /// ROOT object
+    StatusCode writeMetaEvent();
+
+    /// Retrieves CCSDS data from TDS and fills Ccsds ROOT object 
+    StatusCode writeCcsds();
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
@@ -222,6 +233,18 @@ StatusCode digiRootWriterAlg::execute()
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write DigiEvent" << endreq;
         return sc;
+    }
+
+    sc = writeMetaEvent();
+    if (sc.isFailure()) {
+      log << MSG::DEBUG << "No Meta Event" << endreq;
+      sc = StatusCode::SUCCESS;
+    }
+
+    sc = writeCcsds();
+    if (sc.isFailure()) {
+      log << MSG::DEBUG << "No Ccsds" << endreq;
+      sc = StatusCode::SUCCESS;
     }
 
     sc = writeAcdDigi();
@@ -400,6 +423,10 @@ StatusCode digiRootWriterAlg::writeError() {
         Tem *temRoot = m_digiEvt->addTem(); 
         ErrorData err(errorColIt->cal(), errorColIt->tkr(), 
             errorColIt->phs(), errorColIt->tmo()); 
+        const unsigned char* tkrFifoCol = errorColIt->tkrFifoFullCol();
+        unsigned int igtcc;
+        for(igtcc=0;igtcc<enums::numGtcc;igtcc++)
+            err.setTkrFifoFull(igtcc,tkrFifoCol[igtcc]);
         temRoot->init(errorColIt->tower(), err); 
     } 
     return sc;    
@@ -590,6 +617,46 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
     }
 
     return sc;
+}
+
+StatusCode digiRootWriterAlg::writeMetaEvent() {
+    // Purpose and Method:  Retrieve the MetaEvent from the TDS and set in 
+    //    ROOT 
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    SmartDataPtr<LsfEvent::MetaEvent> metaEventTds(eventSvc(), "/Event/MetaEvent");
+    if (!metaEventTds) {
+        log << MSG::DEBUG << "No MetaEvent" << endreq;
+        return sc;
+     }
+
+    MetaEvent metaEventRoot;
+    RootPersistence::convert(*metaEventTds,metaEventRoot);
+    m_digiEvt->setMetaEvent(metaEventRoot);
+
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeCcsds() {
+    // Purpose and Method:  Retrieve the Ccsds from the TDS and set in ROOT 
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    SmartDataPtr<LsfEvent::LsfCcsds> ccsdsTds(eventSvc(), "/Event/Ccsds");
+    if (!ccsdsTds) {
+        log << MSG::DEBUG << "No CCSDS" << endreq;
+        return sc;
+     }
+
+    Ccsds ccsdsRoot;
+    RootPersistence::convert(*ccsdsTds,ccsdsRoot);
+    m_digiEvt->setCcsds(ccsdsRoot);
+
+    return sc;
+
 }
 
 void digiRootWriterAlg::writeEvent() 

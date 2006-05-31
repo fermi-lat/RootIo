@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.72 2005/12/02 16:14:18 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.73 2006/01/19 02:59:01 chamont Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -641,7 +641,7 @@ void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol
 {   
     // Purpose and Method:  Given the CalMipTrack collection from the TDS, we fill the ROOT   
     //  CalMiptrack collection.   
-    StatusCode sc = StatusCode::SUCCESS;
+    //StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
     log << MSG::DEBUG << " SG : fillCalMipTrack in reconRootWriterAlg.cxx" << endreq;
 
