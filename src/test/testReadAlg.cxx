@@ -29,7 +29,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.12.6.2 2006/04/12 21:50:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.13 2006/05/31 20:36:34 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -135,6 +135,8 @@ StatusCode testReadAlg::readLsfData() {
         ccsdsTds->fillStream(log.stream());
         log << endreq;
      }
+
+	return StatusCode::SUCCESS;
 }
 
 StatusCode testReadAlg::readMcData() {
