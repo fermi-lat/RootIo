@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Jun  9 14:44:51 PDT 2006
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+OBF reading and writing
+    *
+------------------------------------------------------------
+User: heather  Fri Jun  9 14:44:51 PDT 2006
 RootIo/doc
 
 Modified Files:
