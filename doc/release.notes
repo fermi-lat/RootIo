@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r16p2  09-Jun-2006 HMK Patch merge, bug could have impacted reading digis
+           such that some events were skipped
  v17r16p1  01-Jun-2006 HMK Patch for windows
  v17r16    31-May-2006 HMK Merge in modification from GRv7r3p1 branch
  v17r15p1  11-Apr-2006 HMK Patch for windows - broke string across lines

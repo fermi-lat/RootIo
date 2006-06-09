@@ -49,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.66 2006/05/31 20:36:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.67 2006/06/01 17:08:23 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -362,10 +362,6 @@ StatusCode digiRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to load TkrDigi" << endreq;
         return sc;
     }
-
-    evtId = readInd+1;
-
-    saveDir->cd();
 
     sc = readMetaEvent();
     // do not terminate job due to missing MetaEvent in ROOT file
