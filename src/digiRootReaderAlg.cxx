@@ -15,6 +15,8 @@
 
 #include "Trigger/TriRowBits.h"
 
+#include "OnboardFilter/FilterStatus.h"
+
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/LdfTime.h"
@@ -38,6 +40,7 @@
 #include "commonData.h"
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
+#include "RootConvert/Digi/OnboardFilterConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -49,7 +52,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.67 2006/06/01 17:08:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.68 2006/06/09 15:53:22 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -91,6 +94,9 @@ private:
 
     /// Reads TKR digi data from ROOT and puts it on the TDS
     StatusCode readTkrDigi();
+
+    /// Reads OBF FilterStatus from ROOT and puts it on the TDS
+    StatusCode readFilterStatus();
 
     /// Reads the Meta Event from ROOT and puts it on the TDS
     StatusCode readMetaEvent();
@@ -362,6 +368,16 @@ StatusCode digiRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to load TkrDigi" << endreq;
         return sc;
     }
+
+    sc = readFilterStatus();
+    // do not terminate job due to missing FilterStatus in ROOT file
+    // older runs will not have this branch filled.
+    if (sc.isFailure()) {
+        log << MSG::DEBUG << "Failed to load FilterStatus" << endreq;
+        // reset status code to success so we don't propagate the error
+        sc = StatusCode::SUCCESS;
+    }
+
 
     sc = readMetaEvent();
     // do not terminate job due to missing MetaEvent in ROOT file
@@ -758,6 +774,34 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
     return sc;
 }
 
+
+StatusCode digiRootReaderAlg::readFilterStatus() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    const FilterStatus& filterStatusRoot = m_digiEvt->getFilterStatus();
+
+
+    // create TDS location
+    DataObject *pObj = new DataObject();
+    sc = eventSvc()->registerObject("/Event/Filter", pObj);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register /Event/Filter" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    OnboardFilterTds::FilterStatus *obfTds = new OnboardFilterTds::FilterStatus;
+
+    sc = eventSvc()->registerObject("/Event/Filter/FilterStatus", obfTds);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register FilterStatus" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    RootPersistence::convert(filterStatusRoot, obfTds);
+    return sc;
+
+}
 
 StatusCode digiRootReaderAlg::readMetaEvent() {
     MsgStream log(msgSvc(), name());

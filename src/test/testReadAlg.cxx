@@ -23,13 +23,15 @@
 #include "LdfEvent/LsfMetaEvent.h"
 #include "LdfEvent/LsfCcsds.h"
 
+#include "OnboardFilter/FilterStatus.h"
+
 #include <map>
 
 /** @class testReadAlg
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.13 2006/05/31 20:36:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.14 2006/06/01 17:09:03 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -56,6 +58,7 @@ private:
 
     StatusCode readReconData();
     
+    StatusCode readOnboardFilter();
 };
 
 static const AlgFactory<testReadAlg>  Factory;
@@ -93,6 +96,8 @@ StatusCode testReadAlg::execute()
     sc = readGemData();
 
     sc = readReconData();
+
+    sc = readOnboardFilter();
 
     return sc;
 }
@@ -278,6 +283,34 @@ StatusCode testReadAlg::readReconData() {
     return sc;
 }
 
+
+StatusCode testReadAlg::readOnboardFilter() {
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<OnboardFilterTds::FilterStatus> obfTds(eventSvc(), "/Event/Filter/FilterStatus"); 
+
+    if (!obfTds) {
+        log << MSG::INFO << "No OBF on TDS" << endreq;
+        return StatusCode::SUCCESS;
+    }
+
+    log << MSG::DEBUG << "OnboardFilter: " << endreq;
+    log << MSG::DEBUG << "Status: " << obfTds->get() << " StageEnergy: "
+        << obfTds->getStageEnergy() << " TCIDS: " 
+        << obfTds->getTcids() << endreq;
+  
+    log << MSG::DEBUG << "  GEM: " << endreq;
+    log << " ThrTkr: " << obfTds->getGemThrTkr() << " CalHiLo: " 
+        << obfTds->getGemCalHiLo() << " Condsumcno: " 
+        << obfTds->getGemCondsumCno() << endreq;
+
+    log << MSG::DEBUG << "Separation: " << obfTds->getSeparation() << endreq;
+
+    return sc;
+
+}
 
 StatusCode testReadAlg::finalize()
 {    

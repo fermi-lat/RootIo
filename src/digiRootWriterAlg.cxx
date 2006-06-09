@@ -22,6 +22,8 @@
 
 #include "Trigger/TriRowBits.h"
 
+#include "OnboardFilter/FilterStatus.h"
+
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
@@ -37,6 +39,7 @@
 #include "commonData.h"
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
+#include "RootConvert/Digi/OnboardFilterConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -48,7 +51,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.61 2005/11/25 16:44:21 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.62 2006/05/31 20:36:34 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -94,6 +97,9 @@ private:
     /// Retrieves TKR digitization data from the TDS and fills the TkrDigi
     /// ROOT collection
     StatusCode writeTkrDigi();
+
+    /// Retrieves OBF data from TDs and fills FilterStatus in ROOT
+    StatusCode writeFilterStatus();
 
     /// Retrieves MetaEvent data from the TDS and fills the MetaEvent
     /// ROOT object
@@ -233,6 +239,12 @@ StatusCode digiRootWriterAlg::execute()
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write DigiEvent" << endreq;
         return sc;
+    }
+
+    sc = writeFilterStatus();
+    if (sc.isFailure()) {
+      log << MSG::DEBUG << "OBF Filter Status writing Failed" << endreq;
+      sc = StatusCode::SUCCESS;
     }
 
     sc = writeMetaEvent();
@@ -615,6 +627,26 @@ StatusCode digiRootWriterAlg::writeTkrDigi() {
         }
         m_digiEvt->addTkrDigi(tkrDigiRoot);
     }
+
+    return sc;
+}
+
+StatusCode digiRootWriterAlg::writeFilterStatus() {
+    // Purpose and Method:  Retrieve the FilterStatus from the TDS and set in 
+    //    ROOT 
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    SmartDataPtr<OnboardFilterTds::FilterStatus> obfTds(eventSvc(), "/Event/Filter/FilterStatus");
+    if (!obfTds) {
+        log << MSG::DEBUG << "No OBF FilterStatus" << endreq;
+        return sc;
+     }
+
+    FilterStatus obfRoot;
+    RootPersistence::convert(*obfTds,obfRoot);
+    m_digiEvt->setFilterStatus(obfRoot);
 
     return sc;
 }
