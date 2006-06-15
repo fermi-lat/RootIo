@@ -22,6 +22,10 @@
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
 
+#ifdef WIN32
+#include "TSystem.h" // To get TreePlayer loaded
+#endif
+
 #include "mcRootData/McEvent.h"
 
 #include "facilities/Util.h"
@@ -44,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.54 2006/03/30 20:51:10 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.55 2006/05/31 20:36:34 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -171,7 +175,11 @@ StatusCode mcRootReaderAlg::initialize()
     }   
 
     facilities::Util::expandEnvVar(&m_fileName);
-    
+  
+#ifdef WIN32
+	gSystem->Load("libTreePlayer.dll");
+#endif  
+
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;	
     m_mcTree = new TChain(m_treeName.c_str());
@@ -205,11 +213,14 @@ StatusCode mcRootReaderAlg::initialize()
       }
     }
     
+
     m_mcEvt = 0;
     m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
     m_common.m_mcEvt = m_mcEvt;
     
     m_numEvents = m_mcTree->GetEntries();
+
+
 
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
@@ -714,7 +725,10 @@ void mcRootReaderAlg::close()
     //m_mcFile->cd();
     //m_mcFile->Close();
     //saveDir->cd();
-    if (m_mcTree) delete m_mcTree;
+	if (m_mcTree) {
+		delete m_mcTree;
+		m_mcTree = 0;
+	}
 }
 
 StatusCode mcRootReaderAlg::finalize()
