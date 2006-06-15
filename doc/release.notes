@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r17p1  15-Jun-2006 HMK Windows patch to fix end of run exception related to failing to
+           load TreePlayer library
  v17r17    09-Jun-2006 HMK OBF reading and writing
  v17r16p2  09-Jun-2006 HMK Patch merge, bug could have impacted reading digis
            such that some events were skipped
