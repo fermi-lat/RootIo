@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 15 08:21:48 PDT 2006
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+fix up end of run exception on Windows by explicitly loading TreePlayer lib
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r17, operation: add
 Package: RootIo
