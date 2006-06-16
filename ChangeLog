@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Jun 16 12:16:02 PDT 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+continue writing/reading even if ALLRANGE is missing readouts
+    *
+------------------------------------------------------------
 User: heather  Fri Jun 16 12:16:00 PDT 2006
 RootIo/cmt
 
