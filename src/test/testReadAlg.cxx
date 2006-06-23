@@ -23,7 +23,7 @@
 #include "LdfEvent/LsfMetaEvent.h"
 #include "LdfEvent/LsfCcsds.h"
 
-#include "OnboardFilter/FilterStatus.h"
+//#include "OnboardFilter/FilterStatus.h"
 
 #include <map>
 
@@ -31,7 +31,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.14 2006/06/01 17:09:03 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.15 2006/06/09 21:44:51 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -289,6 +289,7 @@ StatusCode testReadAlg::readOnboardFilter() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
+/*
     SmartDataPtr<OnboardFilterTds::FilterStatus> obfTds(eventSvc(), "/Event/Filter/FilterStatus"); 
 
     if (!obfTds) {
@@ -307,6 +308,7 @@ StatusCode testReadAlg::readOnboardFilter() {
         << obfTds->getGemCondsumCno() << endreq;
 
     log << MSG::DEBUG << "Separation: " << obfTds->getSeparation() << endreq;
+*/
 
     return sc;
 

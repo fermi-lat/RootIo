@@ -22,7 +22,7 @@
 
 #include "Trigger/TriRowBits.h"
 
-#include "OnboardFilter/FilterStatus.h"
+//#include "OnboardFilter/FilterStatus.h"
 
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
@@ -39,7 +39,7 @@
 #include "commonData.h"
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
-#include "RootConvert/Digi/OnboardFilterConvert.h"
+//#include "RootConvert/Digi/OnboardFilterConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -51,7 +51,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.62 2006/05/31 20:36:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.63 2006/06/09 21:44:51 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -637,7 +637,7 @@ StatusCode digiRootWriterAlg::writeFilterStatus() {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
+/*
     SmartDataPtr<OnboardFilterTds::FilterStatus> obfTds(eventSvc(), "/Event/Filter/FilterStatus");
     if (!obfTds) {
         log << MSG::DEBUG << "No OBF FilterStatus" << endreq;
@@ -647,7 +647,7 @@ StatusCode digiRootWriterAlg::writeFilterStatus() {
     FilterStatus obfRoot;
     RootPersistence::convert(*obfTds,obfRoot);
     m_digiEvt->setFilterStatus(obfRoot);
-
+*/
     return sc;
 }
 
