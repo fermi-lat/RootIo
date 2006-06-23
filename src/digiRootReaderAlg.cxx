@@ -15,7 +15,7 @@
 
 #include "Trigger/TriRowBits.h"
 
-#include "OnboardFilter/FilterStatus.h"
+//#include "OnboardFilter/FilterStatus.h"
 
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
@@ -43,7 +43,7 @@
 #include "commonData.h"
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
-#include "RootConvert/Digi/OnboardFilterConvert.h"
+//#include "RootConvert/Digi/OnboardFilterConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -55,7 +55,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.69 2006/06/09 21:44:51 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.70 2006/06/15 15:21:48 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -786,6 +786,7 @@ StatusCode digiRootReaderAlg::readFilterStatus() {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+/*
     const FilterStatus& filterStatusRoot = m_digiEvt->getFilterStatus();
 
 
@@ -806,6 +807,7 @@ StatusCode digiRootReaderAlg::readFilterStatus() {
     }
 
     RootPersistence::convert(filterStatusRoot, obfTds);
+*/
     return sc;
 
 }
