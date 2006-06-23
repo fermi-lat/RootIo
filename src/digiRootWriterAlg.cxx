@@ -19,6 +19,7 @@
 #include "LdfEvent/ErrorData.h"
 #include "LdfEvent/LsfMetaEvent.h"
 #include "LdfEvent/LsfCcsds.h"
+#include "AncillaryDataEvent/Digi.h"
 
 #include "Trigger/TriRowBits.h"
 
@@ -40,6 +41,7 @@
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
 //#include "RootConvert/Digi/OnboardFilterConvert.h"
+#include "RootConvert/Digi/AdfDigiConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -51,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.63 2006/06/09 21:44:51 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.64 2006/06/23 07:17:33 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -107,6 +109,9 @@ private:
 
     /// Retrieves CCSDS data from TDS and fills Ccsds ROOT object 
     StatusCode writeCcsds();
+
+	/// Retrieves AncillaryDataEvent/Digi data from TDS and fille AdfDigi ROOT object
+	StatusCode writeAdf();
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
@@ -301,6 +306,12 @@ StatusCode digiRootWriterAlg::execute()
         log << MSG::ERROR << "Failed to write GEM data" << endreq;
         return sc;
     }
+
+	sc = writeAdf();
+	if (sc.isFailure()) {
+		log << MSG::ERROR << "Failed to write ADF data" << endreq;
+		return sc;
+	}
 
     writeEvent();
     return sc;
@@ -689,6 +700,19 @@ StatusCode digiRootWriterAlg::writeCcsds() {
 
     return sc;
 
+}
+
+StatusCode digiRootWriterAlg::writeAdf() {
+
+	MsgStream log(msgSvc(), name());
+	StatusCode sc = StatusCode::SUCCESS;
+	SmartDataPtr<AncillaryData::Digi> adfTds(eventSvc(), "/Event/AncillaryEvent/Digi");
+	if (!adfTds) return StatusCode::SUCCESS;
+
+	AdfDigi& adfRoot = m_digiEvt->getAdfDigi();
+	RootPersistence::convert(*adfTds, adfRoot);
+
+	return sc;
 }
 
 void digiRootWriterAlg::writeEvent() 

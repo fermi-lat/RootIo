@@ -25,6 +25,8 @@
 #include "LdfEvent/LsfMetaEvent.h"
 #include "LdfEvent/LsfCcsds.h"
 
+#include "AncillaryDataEvent/Digi.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -44,6 +46,7 @@
 
 #include "RootConvert/Digi/LsfDigiConvert.h"
 //#include "RootConvert/Digi/OnboardFilterConvert.h"
+#include "RootConvert/Digi/AdfDigiConvert.h"
 
 #include "RootIo/IRootIoSvc.h"
 
@@ -55,7 +58,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.70 2006/06/15 15:21:48 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.71 2006/06/23 07:17:33 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -106,6 +109,9 @@ private:
 
     /// Reads CCSDS froM ROOT and puts it on the TDS
     StatusCode readCcsds();
+
+	/// Reads Ancillary Beamtest Digi data and puts it on the TDS
+	StatusCode readAdf();
 
     /// Closes the ROOT file
     void close();
@@ -846,6 +852,29 @@ StatusCode digiRootReaderAlg::readCcsds() {
 
     RootPersistence::convert(ccsdsRoot,*ccsdsTds);
     return sc;
+}
+
+StatusCode digiRootReaderAlg::readAdf() {
+	MsgStream log(msgSvc(), name());
+	StatusCode sc = StatusCode::SUCCESS;
+
+	const AdfDigi& adfRoot = m_digiEvt->getAdfDigi();
+    // create TDS location
+    DataObject *pObj = new DataObject();
+    sc = eventSvc()->registerObject("/Event/AncillaryEvent", pObj);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register /Event/AncillaryEvent" << endreq;
+        return StatusCode::FAILURE;
+    }
+
+	AncillaryData::Digi* adfTds = new AncillaryData::Digi;
+	sc = eventSvc()->registerObject("/Event/AncillaryEvent/Digi", adfTds);
+	if (sc.isFailure()) {
+		log << MSG::INFO << "Failed to register Adf" << endreq;
+		return StatusCode::FAILURE;
+	}
+	RootPersistence::convert(adfRoot, *adfTds);
+	return sc;
 }
 
 void digiRootReaderAlg::close() 
