@@ -21,6 +21,8 @@
 
 #include "LdfEvent/EventSummaryData.h"
 
+#include "AncillaryDataEvent/Recon.h"
+
 #include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
@@ -44,6 +46,7 @@
 #include "RootConvert/Recon/CalXtalRecDataConvert.h"   
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
+#include "RootConvert/Recon/AdfReconConvert.h"
 #include "RootConvert/Recon/AcdReconConvert.h"
 
 #include <cstdlib>
@@ -52,7 +55,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.73 2006/01/19 02:59:01 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.74 2006/05/31 20:36:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -98,6 +101,8 @@ private:
     void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
     
     StatusCode writeAcdRecon();
+
+    StatusCode writeAdfRecon();
     
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -242,6 +247,13 @@ StatusCode reconRootWriterAlg::execute()
         log << MSG::ERROR << "Failed to write Acd Recon Data" << endreq;
         return sc;
     }
+
+    sc = writeAdfRecon();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write Adf Recon Data" << endreq;
+        return sc;
+    }
+
     
     writeEvent();
     return sc;
@@ -687,6 +699,17 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     if (!acdRecTds) return StatusCode::SUCCESS;
     RootPersistence::convert(*acdRecTds,*acdRec) ;
     return StatusCode::SUCCESS;
+}
+
+StatusCode reconRootWriterAlg::writeAdfRecon()
+{
+    SmartDataPtr<AncillaryData::Recon> adfTds(eventSvc(), "/Event/AncillaryEvent/Recon");
+    if (!adfTds) return StatusCode::SUCCESS;
+    m_reconEvt->initAdf(new reconRootData::AdfRecon);
+    reconRootData::AdfRecon *adfRoot = m_reconEvt->getAdfRecon();
+    RootPersistence::convert(*adfTds, *adfRoot);
+    return StatusCode::SUCCESS;
+
 }
 
 void reconRootWriterAlg::writeEvent() 
