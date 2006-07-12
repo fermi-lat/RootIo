@@ -19,6 +19,8 @@
 
 #include "LdfEvent/EventSummaryData.h"
 
+#include "AncillaryDataEvent/Recon.h"
+
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -48,6 +50,7 @@
 #include "RootConvert/Recon/CalMipTrackConvert.h"
 #include "RootConvert/Recon/CalXtalRecDataConvert.h"
 #include "RootConvert/Recon/AcdReconConvert.h"
+#include "RootConvert/Recon/AdfReconConvert.h"
 
 #include <vector>
 #include <map>
@@ -57,7 +60,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.70 2006/05/31 20:36:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.71 2006/06/15 15:21:48 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -111,6 +114,8 @@ private:
     
     /// Reads ACD recon data from ROOT and puts data on the TDS
     StatusCode readAcdRecon();
+
+    StatusCode readAdfRecon();
     
     /// Closes the ROOT file
     void close();
@@ -349,6 +354,12 @@ StatusCode reconRootReaderAlg::execute()
     sc = readAcdRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load Acd Recon" << endreq;
+        return sc;
+    }
+
+    sc = readAdfRecon();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to load Adf Recon" << endreq;
         return sc;
     }
     
@@ -955,6 +966,28 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register AcdRecon";
         log << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    return sc;    
+}
+
+StatusCode reconRootReaderAlg::readAdfRecon()
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    const reconRootData::AdfRecon *adfRecRoot = m_reconEvt->getAdfRecon();
+    if (!adfRecRoot) 
+        return StatusCode::SUCCESS;
+
+    AncillaryData::Recon *adfRecTds = new AncillaryData::Recon();
+    RootPersistence::convert(*adfRecRoot, *adfRecTds);
+
+    sc = eventSvc()->registerObject("/Event/AncillaryEvent/Recon", adfRecTds);
+
+    if (sc.isFailure()) {
+        
+        log << MSG::ERROR << "Failed to register AdfRecon" << endreq;
         return StatusCode::FAILURE;
     }
     
