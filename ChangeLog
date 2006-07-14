@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Jul 14 11:34:38 PDT 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+chck kWriteError bit
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r20, operation: add
 Package: RootIo
