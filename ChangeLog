@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Fri Jul 14 11:34:39 PDT 2006
+RootIo/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+chck kWriteError bit
+    *
+------------------------------------------------------------
 User: heather  Fri Jul 14 11:34:38 PDT 2006
 RootIo/doc
 
