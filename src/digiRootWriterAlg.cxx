@@ -48,7 +48,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.5 2006/05/16 23:23:27 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.60.4.6 2006/06/16 19:16:03 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -668,6 +668,8 @@ void digiRootWriterAlg::writeEvent()
 try {
     TDirectory *saveDir = gDirectory;
     m_digiTree->GetCurrentFile()->cd();
+    if (TFile::kWriteError)
+        throw;
     m_digiTree->Fill();
     ++eventCounter;
     if (m_rootIoSvc)
