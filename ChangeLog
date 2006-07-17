@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 17 12:12:31 PDT 2006
+RootIo/doc
+
+Modified Files:
+      Tag: GRv7r3p1
+	release.notes 
+Log Message:
+fix up testing of kWriteBit
+    *
+------------------------------------------------------------
 User: heather  Mon Jul 17 12:12:30 PDT 2006
 RootIo/cmt
 
