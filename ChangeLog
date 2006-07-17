@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 17 12:12:30 PDT 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+fix up testing of kWriteBit
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr9, operation: add
 Package: RootIo
