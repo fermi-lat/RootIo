@@ -51,7 +51,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.69.2.2 2006/01/09 23:01:09 echarles Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.69.2.3 2006/07/14 18:34:39 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -739,13 +739,14 @@ void reconRootWriterAlg::writeEvent()
 try {
     TDirectory *saveDir = gDirectory;
     m_reconTree->GetCurrentFile()->cd();
-    if (TFile::kWriteError)
+    if (m_reconTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
         throw;
+    }
     m_reconTree->Fill();
     ++eventCounter;
     if (m_rootIoSvc)
         if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-           m_reconTree->AutoSave();
+           if (m_reconTree->AutoSave() == 0) throw;
     saveDir->cd();
  } catch(...) { 
     std::cerr << "Failed to write the event to file" << std::endl; 

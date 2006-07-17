@@ -41,7 +41,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.44 2005/09/22 19:29:46 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.44.4.1 2006/07/14 18:34:39 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -587,13 +587,14 @@ void mcRootWriterAlg::writeEvent()
 try {
     TDirectory *saveDir = gDirectory;
     m_mcTree->GetCurrentFile()->cd();
-    if (TFile::kWriteError)
+    if (m_mcTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
         throw;
+    }
     m_mcTree->Fill();
     ++eventCounter;
     if (m_rootIoSvc)
         if (eventCounter % m_rootIoSvc->getAutoSaveInterval()== 0) 
-            m_mcTree->AutoSave();
+            if (m_mcTree->AutoSave() == 0) throw;
     saveDir->cd();
  } catch(...) { 
     std::cerr << "Failed to write the event to file" << std::endl; 
