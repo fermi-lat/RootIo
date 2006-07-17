@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 17 14:33:01 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+update error handling
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r9gr10, operation: add
 Package: RootIo
