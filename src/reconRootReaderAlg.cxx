@@ -25,6 +25,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TChainIndex.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -60,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.71 2006/06/15 15:21:48 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.72 2006/07/12 17:37:19 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -241,10 +242,15 @@ StatusCode reconRootReaderAlg::initialize()
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
         if(!m_reconTree->GetTreeIndex()) {
-            log << MSG::INFO 
-                << "Input file does not contain new style index, rebuilding" 
-                << endreq;
-            m_reconTree->BuildIndex("m_runId", "m_eventId");
+         //   log << MSG::INFO 
+         //       << "Input file does not contain new style index, rebuilding" 
+         //       << endreq;
+         //   m_reconTree->BuildIndex("m_runId", "m_eventId");
+
+            TChainIndex *chInd = new TChainIndex(m_reconTree, "m_runId", "m_eventId");
+            // could return zombie if files in chain are not in runId order
+            if (!chInd->IsZombie())
+                m_reconTree->SetTreeIndex(chInd);
         }
         m_rootIoSvc->registerRootTree(m_reconTree);
     }
@@ -315,7 +321,7 @@ StatusCode reconRootReaderAlg::execute()
         readInd = evtId;
     }
 
-    if (readInd >= m_numEvents) {
+    if ((readInd >= m_numEvents) || (readInd < 0)) {
         log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
         return StatusCode::SUCCESS;
     }
@@ -1003,14 +1009,11 @@ void reconRootReaderAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    //TDirectory *saveDir = gDirectory;
-    //m_reconFile->cd();
-    //m_reconFile->Close();
-    //saveDir->cd();
-	if (m_reconTree) {
-		delete m_reconTree;
-		m_reconTree = 0;
-	}
+    // skip deletion of chain due to seg fault with TChainIndex
+    //if (m_reconTree) {
+    //    delete m_reconTree;
+    //    m_reconTree = 0;
+    //}
 }
 
 StatusCode reconRootReaderAlg::finalize()

@@ -18,6 +18,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TChainIndex.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -48,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.55 2006/05/31 20:36:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.56 2006/06/15 15:21:48 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -225,8 +226,14 @@ StatusCode mcRootReaderAlg::initialize()
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
         if (!m_mcTree->GetTreeIndex()) {
-            log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
-            m_mcTree->BuildIndex("m_runId", "m_eventId");
+        //    log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+        //    m_mcTree->BuildIndex("m_runId", "m_eventId");
+
+            TChainIndex *chInd = new TChainIndex(m_mcTree, "m_runId", "m_eventId");
+            // HMK Possible to return zombie if files in chain are not in 
+            // runId order - see TChainIndex documentation
+            if (!chInd->IsZombie()) 
+                m_mcTree->SetTreeIndex(chInd);
         }
         m_rootIoSvc->registerRootTree(m_mcTree);
     }
@@ -291,12 +298,13 @@ StatusCode mcRootReaderAlg::execute()
     } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
         int run = runEventPair.first;
         int evt = runEventPair.second;
+        // returns -1 if index does not exist
         readInd = m_mcTree->GetEntryNumberWithIndex(run, evt);
     } else {
         readInd = evtId;
     }
 
-    if (readInd >= m_numEvents) {
+    if ((readInd >= m_numEvents) || (readInd < 0)) {
         log << MSG::WARNING << "Requested index is out of bounds - no MC data loaded" << endreq;
         return StatusCode::SUCCESS;
     } else {
@@ -725,10 +733,12 @@ void mcRootReaderAlg::close()
     //m_mcFile->cd();
     //m_mcFile->Close();
     //saveDir->cd();
-	if (m_mcTree) {
-		delete m_mcTree;
-		m_mcTree = 0;
-	}
+
+    // HMK skip deleting TChain due to seg fault with TChainIndex
+   // if (m_mcTree) {
+   //     delete m_mcTree;
+   //     m_mcTree = 0;
+   // }
 }
 
 StatusCode mcRootReaderAlg::finalize()
