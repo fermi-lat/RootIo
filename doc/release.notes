@@ -3,7 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
- v17r21    17-Jul-2006 HMK Update error handling
+ v17r21    17-Jul-2006 HMK Update error handling and chainIndex deletion
  v17r20    12-Jul-2006 HMK Ancillary beatest recon data handling
  v17r19    23-Jun-2006 HMK add in Ancillary beamtest digi data handling
  v17r18    23-Jun-2006 HMK turn off OBF handling for now
