@@ -21,6 +21,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TChainIndex.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -43,7 +44,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.20 2005/05/23 20:35:47 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.21 2006/06/15 15:21:48 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -204,8 +205,12 @@ StatusCode relationRootReaderAlg::initialize()
     if (m_rootIoSvc) {
         m_rootIoSvc->setRootEvtMax(m_numEvents);
         if(!m_relTree->GetTreeIndex()) {
-            log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
-            m_relTree->BuildIndex("m_runId", "m_eventId");
+          //  log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+          //  m_relTree->BuildIndex("m_runId", "m_eventId");
+          TChainIndex *chInd = new TChainIndex(m_relTree, "m_runId", "m_eventId");
+          // could be zombie if files in chain are not in runId order
+          if (!chInd->IsZombie())
+              m_relTree->SetTreeIndex(chInd);
         }
         m_rootIoSvc->registerRootTree(m_relTree);
     }
@@ -235,12 +240,13 @@ StatusCode relationRootReaderAlg::execute()
 	} else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
 		int run = runEventPair.first;
 		int evt = runEventPair.second;
+                // returns -1 if index does not exist
 		readInd = m_relTree->GetEntryNumberWithIndex(run, evt);
 	} else {
 		readInd = evtId;
 	}
 
-    if (readInd >= m_numEvents) {
+    if ((readInd >= m_numEvents) || (readInd < 0)) {
         log << MSG::WARNING << "Requested index is out of bounds - no relation data retrieved" << endreq;
         return StatusCode::SUCCESS;
     }
@@ -470,14 +476,11 @@ void relationRootReaderAlg::close()
 {
     // Purpose and Method:  Closes the ROOT file at the end of the run.
 
-    //TDirectory *saveDir = gDirectory;
-    //m_relFile->cd();
-    //m_relFile->Close();
-    //saveDir->cd();
-	if (m_relTree) {
-		delete m_relTree;
-		m_relTree = 0;
-	}
+   // HMK skip deleting chain due to seg fault with TChainIndex
+   // if (m_relTree) {
+   //     delete m_relTree;
+   //     m_relTree = 0;
+   // }
 }
 
 StatusCode relationRootReaderAlg::finalize()

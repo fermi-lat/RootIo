@@ -31,6 +31,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TChainIndex.h"
 #include "TDirectory.h"
 #include "TObjArray.h"
 #include "TCollection.h"  // Declares TIter
@@ -58,7 +59,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.71 2006/06/23 07:17:33 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.72 2006/06/23 08:18:41 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -239,10 +240,15 @@ StatusCode digiRootReaderAlg::initialize()
     if (m_rootIoSvc) {
       m_rootIoSvc->setRootEvtMax(m_numEvents);
       if (!m_digiTree->GetTreeIndex()) {
-          log << MSG::INFO 
-              << "Input file does not contain new style index, rebuilding" 
-              << endreq;
-          m_digiTree->BuildIndex("m_runId", "m_eventId");
+          //log << MSG::INFO 
+          //    << "Input file does not contain new style index, rebuilding" 
+          //    << endreq;
+          //m_digiTree->BuildIndex("m_runId", "m_eventId");
+          TChainIndex *chIndex = new TChainIndex(m_digiTree, "m_runId", "m_eventId");
+          // HMK Could return zombie, if files in index are not in run number
+          // order - go check TChainIndex documentation
+          if (!chIndex->IsZombie())
+              m_digiTree->SetTreeIndex(chIndex);
       }
       m_rootIoSvc->registerRootTree(m_digiTree);
     }
@@ -314,7 +320,7 @@ StatusCode digiRootReaderAlg::execute()
         readInd = evtId;
     }
 
-    if (readInd >= m_numEvents) {
+    if ((readInd >= m_numEvents) || (readInd < 0)) {
         log << MSG::WARNING << "Requested index is out of bounds - no digi data loaded" << endreq;
         return StatusCode::SUCCESS;
     }
@@ -885,14 +891,13 @@ void digiRootReaderAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    //TDirectory *saveDir = gDirectory;
-    //m_digiFile->cd();
-    //m_digiFile->Close();
-    //saveDir->cd();
-    if (m_digiTree) {
-        delete m_digiTree ;
-        m_digiTree = 0 ;
-    }
+
+    // HMK Skipping deletion of TChain, due to segmentation fault with 
+    // TChainIndex
+//    if (m_digiTree) {
+//        delete m_digiTree ;
+//        m_digiTree = 0 ;
+//    }
 }
 
 StatusCode digiRootReaderAlg::finalize()
