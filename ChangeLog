@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: kuss  Fri Jul 28 05:59:05 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+digiRootReader should read also anc data, preparing tag v17r21p0
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r21, operation: add
 Package: RootIo
