@@ -59,7 +59,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.72 2006/06/23 08:18:41 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.73 2006/07/19 18:16:26 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -111,8 +111,8 @@ private:
     /// Reads CCSDS froM ROOT and puts it on the TDS
     StatusCode readCcsds();
 
-	/// Reads Ancillary Beamtest Digi data and puts it on the TDS
-	StatusCode readAdf();
+    /// Reads Ancillary Beamtest Digi data and puts it on the TDS
+    StatusCode readAdf();
 
     /// Closes the ROOT file
     void close();
@@ -415,6 +415,17 @@ StatusCode digiRootReaderAlg::execute()
         // reset status code to success so we don't propagate the error
         sc = StatusCode::SUCCESS;
     }
+
+    sc = readAdf();
+    // do not terminate job due to missing ancillary data in ROOT file
+    // MC events and older runs will not have this branch filled.
+    if (sc.isFailure()) {
+        log << MSG::DEBUG << "Failed to load ancillary data" << endreq;
+        // reset status code to success so we don't propagate the error
+        sc = StatusCode::SUCCESS;
+    }
+    else
+        log << MSG::VERBOSE << "loaded ancillary data" << endreq;
 
     
 
@@ -861,10 +872,10 @@ StatusCode digiRootReaderAlg::readCcsds() {
 }
 
 StatusCode digiRootReaderAlg::readAdf() {
-	MsgStream log(msgSvc(), name());
-	StatusCode sc = StatusCode::SUCCESS;
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
 
-	const AdfDigi& adfRoot = m_digiEvt->getAdfDigi();
+    const AdfDigi& adfRoot = m_digiEvt->getAdfDigi();
     // create TDS location
     DataObject *pObj = new DataObject();
     sc = eventSvc()->registerObject("/Event/AncillaryEvent", pObj);
@@ -873,14 +884,14 @@ StatusCode digiRootReaderAlg::readAdf() {
         return StatusCode::FAILURE;
     }
 
-	AncillaryData::Digi* adfTds = new AncillaryData::Digi;
-	sc = eventSvc()->registerObject("/Event/AncillaryEvent/Digi", adfTds);
-	if (sc.isFailure()) {
-		log << MSG::INFO << "Failed to register Adf" << endreq;
-		return StatusCode::FAILURE;
-	}
-	RootPersistence::convert(adfRoot, *adfTds);
-	return sc;
+    AncillaryData::Digi* adfTds = new AncillaryData::Digi;
+    sc = eventSvc()->registerObject("/Event/AncillaryEvent/Digi", adfTds);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register Adf" << endreq;
+        return StatusCode::FAILURE;
+    }
+    RootPersistence::convert(adfRoot, *adfTds);
+    return sc;
 }
 
 void digiRootReaderAlg::close() 
