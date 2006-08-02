@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.73 2006/01/19 02:59:01 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.74 2006/05/31 20:36:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -473,9 +473,25 @@ void reconRootWriterAlg::fillVertices(TkrRecon* recon, Event::TkrVertexCol* vert
             // over the track pointers in the track list looking for the match. Assign 
             // the id according to the loop variable value.
             // This ALWAYS succeeds (and I'm also selling valuable swampland in Florida!)
-            SmartRef<Event::TkrTrack> trackTds  = *vtxTrkIter++;
-            TRef                      trackRef  = m_common.m_tkrTrackMap[trackTds];
-            TkrTrack*                 trackRoot = (TkrTrack*) trackRef.GetObject();
+            //SmartRef<Event::TkrTrack> trackTds  = *vtxTrkIter++;
+            //TRef                      trackRef  = m_common.m_tkrTrackMap[trackTds];
+            SmartRef<Event::TkrTrack> trackTdsRef = *vtxTrkIter++;
+            Event::TkrTrack*          trackTds    = trackTdsRef.data();
+
+            // Use this to find the root TkrTrack in the map
+            std::map<const Event::TkrTrack*, TRef>::iterator trackMapItr = m_common.m_tkrTrackMap.find(trackTds);
+
+            // Can it happen that there is no match? I would not think so, this will print message if it does
+            if (trackMapItr == m_common.m_tkrTrackMap.end())
+            {
+                MsgStream log(msgSvc(), name());
+                log << MSG::WARNING << "Failed to find root TkrTrack associated to TkrVertex!! " << endreq;
+                continue;
+            }
+
+            // All is well, get the rot TkrTrack...
+            TRef      trackRef  = trackMapItr->second;
+            TkrTrack* trackRoot = (TkrTrack*) trackRef.GetObject();
             
             vtx->addTrack(trackRoot);
         }
