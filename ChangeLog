@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Wed Aug  2 12:32:30 PDT 2006
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev9r9
+	reconRootWriterAlg.cxx 
+Log Message:
+Modify TkrTrack association in vertex filling routine, hope to remove possibility of "bad" tracks
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r21p0, operation: add
 Package: RootIo
