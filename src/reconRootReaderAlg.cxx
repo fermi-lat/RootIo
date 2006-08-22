@@ -61,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.72 2006/07/12 17:37:19 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.73 2006/07/19 18:16:26 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -297,7 +297,8 @@ StatusCode reconRootReaderAlg::execute()
             m_numEvents = m_reconTree->GetEntries();
             m_rootIoSvc->setRootEvtMax(m_numEvents);
             if (!m_reconTree->GetTreeIndex()) {
-                log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
+                log << MSG::INFO << "Input file does not contain new style "
+                    << "index, rebuilding" << endreq;
                 m_reconTree->BuildIndex("m_runId", "m_eventId");
             }
             m_rootIoSvc->registerRootTree(m_reconTree);
@@ -398,6 +399,9 @@ StatusCode reconRootReaderAlg::readReconEvent() {
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
+
+    log << MSG::DEBUG << "Reading Event (run, event): (" << runIdRoot
+        << ", " << eventIdRoot << ")" << endreq;
     
     // Only update the eventflags on the TDS if the /Event/EventSummary
     // does not yet exist (digiRootReader may fill this for us)
@@ -440,7 +444,8 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
     // If not, store cluster collection on the TDS.
     SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
     if (clusterColTds) {
-        log << MSG::INFO << "Tkr Cluster Collection is already on the TDS" << endreq;
+        log << MSG::INFO << "Tkr Cluster Collection is already on the TDS" 
+            << endreq;
     } else {
         sc = storeTkrClusterCol(tkrRecRoot);
         if (sc.isFailure()) {
