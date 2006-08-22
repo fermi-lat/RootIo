@@ -49,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.6 2006/05/16 23:23:27 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.7 2006/06/16 19:16:03 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -371,6 +371,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     unsigned int eventIdRoot = m_digiEvt->getEventId();
     unsigned int runIdRoot = m_digiEvt->getRunId();
+
+    log << MSG::DEBUG << "Reading Event (run, event): (" << runIdRoot
+        << ", " << eventIdRoot << ")" << endreq;
 
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);

@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r9gr11 22-Aug-2006 HMK Insert debugging statement
  v17r9gr10 17-Jul-2006 HMK fix up check of kWriteError bit
  v17r9gr9  14-Jul-2006 HMK Check kWriteError bit and report error if necessary
  v17r9gr8  16-Jun-2006 HMK write out CAL ALLRANGE even if missing readouts
