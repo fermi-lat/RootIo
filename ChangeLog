@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 24 15:08:10 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+the miracle of OBF handling has returned to RootIo
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r21p2, operation: add
 Package: RootIo
