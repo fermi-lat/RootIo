@@ -61,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.73 2006/07/19 18:16:26 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.74 2006/08/22 16:23:57 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -782,7 +782,7 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         }
     }
     
-    SmartDataPtr<Event::CalXtalRecCol> xtalRecColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
+    SmartDataPtr<Event::CalXtalRecCol> xtalRecColTds(eventSvc(),EventModel::CalRecon::CalXtalRecCol);
     if (xtalRecColTds){
         log << MSG::INFO << "XtalRecCol data is already on the TDS" << endreq;
     } else {
