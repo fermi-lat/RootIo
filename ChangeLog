@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 24 13:24:11 PDT 2006
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+patch CalXtalRecCol check when reading - thanks Claudia
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 24 13:24:10 PDT 2006
 RootIo/doc
 
