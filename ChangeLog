@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 24 13:24:10 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch CalXtalRecCol check when reading - thanks Claudia
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r21p1, operation: add
 Package: RootIo
