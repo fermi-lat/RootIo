@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 15 16:56:58 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+make OnboardFilterTds use public
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r22p1, operation: add
 Package: RootIo
