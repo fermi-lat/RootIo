@@ -40,7 +40,7 @@
 #include "commonData.h"
 
 #include "RootIo/IRootIoSvc.h"
-
+#include "RootConvert/Utilities/RootReaderUtil.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
@@ -61,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.74 2006/08/22 16:23:57 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.75 2006/08/24 20:24:10 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -202,33 +202,10 @@ StatusCode reconRootReaderAlg::initialize()
     TDirectory *saveDir = gDirectory;   
     m_reconTree = new TChain(m_treeName.c_str());
 
-    std::string emptyStr("");
-    if (m_fileName.compare(emptyStr) != 0) {
-      TFile f(m_fileName.c_str());
-      if (!f.IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName.c_str()
-            << " could not be opened for reading." << endreq;
-        return StatusCode::FAILURE;
-      }
-      f.Close();
-      m_reconTree->Add(m_fileName.c_str());
-          log << MSG::INFO << "Opened file: " << m_fileName.c_str() << endreq;
-    } else {
-      const std::vector<std::string> fileList = m_fileList.value( );
-      std::vector<std::string>::const_iterator it;
-      std::vector<std::string>::const_iterator itend = fileList.end( );
-      for (it = fileList.begin(); it != itend; it++) {
-        std::string theFile = (*it);
-        TFile f(theFile.c_str());
-        if (!f.IsOpen()) {
-          log << MSG::ERROR << "ROOT file " << theFile.c_str()
-              << " could not be opened for reading." << endreq;
-          return StatusCode::FAILURE;
-        }
-        f.Close();
-        m_reconTree->Add(theFile.c_str());
-        log << MSG::INFO << "Opened file: " << theFile.c_str() << endreq;
-      }
+    // add root files to TChain and check if files exist
+    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log);
+    if (openSc.isFailure()) {
+      return  openSc;
     }
 
 
