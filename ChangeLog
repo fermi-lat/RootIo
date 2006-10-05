@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Oct  5 11:42:15 PDT 2006
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev9r13
+	requirements 
+Log Message:
+merge the rest of the EM branch onto this GR branch to get EM using GR v9r13
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r23p1, operation: add
 Package: RootIo
