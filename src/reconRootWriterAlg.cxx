@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.73 2006/01/19 02:59:01 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.69.2.4 2006/07/17 19:12:31 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -694,24 +694,25 @@ void reconRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
     
-    static int eventCounter = 0 ;
-    
-    try {
-        TDirectory *saveDir = gDirectory;
-        m_reconTree->GetCurrentFile()->cd();
-        m_reconTree->Fill();
-        ++eventCounter;
-        if (m_rootIoSvc)
-            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-               m_reconTree->AutoSave();
-        saveDir->cd();
+    static int eventCounter = 0;
+try {
+    TDirectory *saveDir = gDirectory;
+    m_reconTree->GetCurrentFile()->cd();
+    if (m_reconTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
+        throw;
     }
-    catch(...) { 
-        std::cerr << "Failed to write the event to file" << std::endl; 
-        std::cerr << "Exiting..." << std::endl; 
-        std::cerr.flush(); 
-        exit(1); 
-    } 
+    m_reconTree->Fill();
+    ++eventCounter;
+    if (m_rootIoSvc)
+        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+           if (m_reconTree->AutoSave() == 0) throw;
+    saveDir->cd();
+ } catch(...) { 
+    std::cerr << "Failed to write the event to file" << std::endl; 
+    std::cerr << "Exiting..." << std::endl; 
+    std::cerr.flush(); 
+    exit(1); 
+ } 
 
     return;
 }

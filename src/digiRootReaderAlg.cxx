@@ -58,7 +58,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.71 2006/06/23 07:17:33 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.64.2.8 2006/08/22 15:11:18 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -438,6 +438,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     unsigned int eventIdRoot = m_digiEvt->getEventId();
     unsigned int runIdRoot = m_digiEvt->getRunId();
 
+    log << MSG::DEBUG << "Reading Event (run, event): (" << runIdRoot
+        << ", " << eventIdRoot << ")" << endreq;
+
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
@@ -726,6 +729,7 @@ StatusCode digiRootReaderAlg::readCalDigi() {
             int range;
             for (range = CalXtalId::LEX8; range <= CalXtalId::HEX1; range++) {
                 const CalXtalReadout *readoutRoot = calDigiRoot->getXtalReadout(range);
+                if (!readoutRoot) continue;
                 Char_t rangePlusRoot = readoutRoot->getRange(CalXtalId::POS);
                 UInt_t adcPlusRoot = readoutRoot->getAdc(CalXtalId::POS);
                 Char_t rangeMinRoot = readoutRoot->getRange(CalXtalId::NEG);

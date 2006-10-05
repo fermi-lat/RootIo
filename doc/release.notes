@@ -23,6 +23,10 @@
  v17r10    25-Nov-2005 DC  Upgrade for new Event v11r9 (changes in CalRecon)
  v17r9p1   17-Nov-2005 HMK patch to use proper id method for ActiveDist
 end GRv7r3p1 Branch
+ v17r9gr11 22-Aug-2006 HMK Insert debugging statement
+ v17r9gr10 17-Jul-2006 HMK fix up check of kWriteError bit
+ v17r9gr9  14-Jul-2006 HMK Check kWriteError bit and report error if necessary
+ v17r9gr8  16-Jun-2006 HMK write out CAL ALLRANGE even if missing readouts
  v17r9gr7  16-May-2006 HMK TKR FIFO errors from LDF
  v17r9gr6  12-Apr-2006 HMK Add converters for CCSDS
  v17r9gr5  08-Mar-2006 HMK set debug message if no MetaEvent when reading
