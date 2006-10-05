@@ -22,10 +22,10 @@
 #include "LdfEvent/LdfTime.h"
 #include "LdfEvent/Gem.h"
 #include "LdfEvent/ErrorData.h"
-#include "LdfEvent/LsfMetaEvent.h"
-#include "LdfEvent/LsfCcsds.h"
 
 #include "AncillaryDataEvent/Digi.h"
+#include "LdfEvent/LsfMetaEvent.h"
+#include "LdfEvent/LsfCcsds.h"
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -60,7 +60,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.76 2006/08/24 22:08:10 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.77 2006/09/25 20:05:01 wilko Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -433,6 +433,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     unsigned int eventIdRoot = m_digiEvt->getEventId();
     unsigned int runIdRoot = m_digiEvt->getRunId();
 
+    log << MSG::DEBUG << "Reading Event (run, event): (" << runIdRoot
+        << ", " << eventIdRoot << ")" << endreq;
+
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
@@ -724,6 +727,7 @@ StatusCode digiRootReaderAlg::readCalDigi() {
             int range;
             for (range = CalXtalId::LEX8; range <= CalXtalId::HEX1; range++) {
                 const CalXtalReadout *readoutRoot = calDigiRoot->getXtalReadout(range);
+                if (!readoutRoot) continue;
                 Char_t rangePlusRoot = readoutRoot->getRange(CalXtalId::POS);
                 UInt_t adcPlusRoot = readoutRoot->getAdc(CalXtalId::POS);
                 Char_t rangeMinRoot = readoutRoot->getRange(CalXtalId::NEG);
