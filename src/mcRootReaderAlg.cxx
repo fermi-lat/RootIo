@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.55 2006/05/31 20:36:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.56 2006/06/15 15:21:48 heather Exp $
  */
 
 class mcRootReaderAlg : public Algorithm
@@ -510,7 +510,6 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         }
 
 */
-        
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
         
