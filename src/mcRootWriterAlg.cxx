@@ -20,6 +20,7 @@
 #include "TTree.h"
 #include "TDirectory.h"
 #include "TProcessID.h"
+#include "TString.h"
 
 #include "mcRootData/McEvent.h"
 
@@ -41,7 +42,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.46 2006/03/21 01:21:46 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.47 2006/07/17 21:33:01 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -278,12 +279,14 @@ StatusCode mcRootWriterAlg::writeMcEvent() {
     Int_t sourceId = mcEvt->getSourceId();
     UInt_t sequence = mcEvt->getSequence();
     Double_t timestamp = mcEvt->time();  /// note: converting from timestamp to double
+
+    TString sourceName = mcEvt->getSourceName();
     
     log << MSG::DEBUG;
     if( log.isActive()) evt->fillStream(log.stream());
     log << endreq;
     
-    m_mcEvt->initialize(evtId, runId, sourceId, sequence, timestamp);
+    m_mcEvt->initialize(evtId, runId, sourceId, sequence, timestamp, sourceName);
     
     return sc;
 }
