@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r25    27-Oct-2006 HMK Handle McEvent sourceName
  v17r24    05-Oct-2006 HMK complete merge of GRv7r3p1 branch
  v17r23p1  02-Oct-2006 HMK Move RootConvert back to public use..duh
  v17r23    26-Sep-2006 WK  Modifications to file opening to allow xrootd testing

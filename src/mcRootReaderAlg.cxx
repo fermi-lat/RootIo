@@ -50,7 +50,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.58 2006/08/22 16:23:57 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.59 2006/09/25 20:05:01 wilko Exp $
  */
 
 
@@ -357,7 +357,7 @@ StatusCode mcRootReaderAlg::readMcEvent() {
     unsigned int runIdRoot = m_mcEvt->getRunId();
     int sourceIdRoot = m_mcEvt->getSourceId();
     unsigned int sequenceRoot = m_mcEvt->getSequence();
-	TimeStamp timeTds(m_mcEvt->getTimeStamp());
+    TimeStamp timeTds(m_mcEvt->getTimeStamp());
     
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
@@ -369,6 +369,8 @@ StatusCode mcRootReaderAlg::readMcEvent() {
     SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
     if (!mcEvt) return sc;
     mcEvt->initialize(runIdRoot, sourceIdRoot, sequenceRoot, timeTds);
+
+    mcEvt->setSourceName(m_mcEvt->getSourceName());
     
     return sc;
 }
