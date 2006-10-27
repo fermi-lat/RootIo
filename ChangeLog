@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Oct 27 15:21:11 PDT 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+handle McEvent source name
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r24, operation: add
 Package: RootIo
