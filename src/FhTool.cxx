@@ -15,10 +15,12 @@ FhTool::FhTool( const std::string & type,
     m_mcHeader = 0 ;
     m_digiHeader = 0 ;
     m_reconHeader = 0 ;
+    m_gcrHeader = 0 ;
    
     m_constMcHeader = 0 ;
     m_constDigiHeader = 0 ;
     m_constReconHeader = 0 ;
+    m_constGcrHeader = 0 ;
    
 }
 
@@ -27,10 +29,12 @@ FhTool::~FhTool() {
     delete m_mcHeader ;
     delete m_digiHeader ;
     delete m_reconHeader ;
+    delete m_gcrHeader ;
    
     delete m_constMcHeader ;
     delete m_constDigiHeader ;
     delete m_constReconHeader ;
+    delete m_constGcrHeader ;
    
 }
 
@@ -46,6 +50,10 @@ FileHeader * FhTool::reconHeader() {
 	return m_reconHeader ;
 }
 
+FileHeader * FhTool::gcrHeader() {
+	return m_gcrHeader ;
+}
+
 const FileHeader * FhTool::constMcHeader() {
 	return m_constMcHeader ;
 }
@@ -56,6 +64,10 @@ const FileHeader * FhTool::constDigiHeader() {
 
 const FileHeader * FhTool::constReconHeader() {
 	return m_constReconHeader ;
+}
+
+const FileHeader * FhTool::constGcrHeader() {
+	return m_constGcrHeader ;
 }
 
 StatusCode FhTool::newMcHeader() {
@@ -91,6 +103,18 @@ StatusCode FhTool::newReconHeader() {
 	return StatusCode::SUCCESS ;
 }
 
+StatusCode FhTool::newGcrHeader() {
+    if (m_gcrHeader) {
+        MsgStream log(msgSvc(),name()) ;
+	    log<<MSG::WARNING<<"Gcr FileHeader already existing"<<endreq ;
+    }
+    else {
+        m_gcrHeader = new FileHeader ;
+    }
+	return StatusCode::SUCCESS ;
+}
+
+
 StatusCode FhTool::writeMcHeader( TFile * file ) {
 	return writeHeader(file,m_mcHeader) ;
 }
@@ -103,6 +127,10 @@ StatusCode FhTool::writeReconHeader( TFile * file ) {
 	return writeHeader(file,m_reconHeader) ;
 }
 
+StatusCode FhTool::writeGcrHeader( TFile * file ) {
+	return writeHeader(file,m_gcrHeader) ;
+}
+
 StatusCode FhTool::readConstMcHeader( TFile * file ) {
 	return readHeader(file,m_constMcHeader) ;
 }
@@ -113,6 +141,10 @@ StatusCode FhTool::readConstDigiHeader( TFile * file ) {
 
 StatusCode FhTool::readConstReconHeader( TFile * file ) {
 	return readHeader(file,m_constReconHeader) ;
+}
+
+StatusCode FhTool::readConstGcrHeader( TFile * file ) {
+	return readHeader(file,m_constGcrHeader) ;
 }
 
 StatusCode FhTool::writeHeader( TFile * file,

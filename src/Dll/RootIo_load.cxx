@@ -3,7 +3,7 @@
 * @brief This is needed for forcing the linker to load all components
 * of the library.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.12 2004/11/25 13:37:11 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.13 2005/07/19 21:33:02 burnett Exp $
 */
 
 #include "GaudiKernel/DeclareFactoryEntries.h"
@@ -20,6 +20,7 @@ DECLARE_FACTORY_ENTRIES(RootIo) {
     DECLARE_ALGORITHM( reconRootReaderAlg );
     DECLARE_ALGORITHM( relationRootWriterAlg );
     DECLARE_ALGORITHM( relationRootReaderAlg );
+    DECLARE_ALGORITHM( gcrSelectRootWriterAlg );
     DECLARE_TOOL( FhTool );
 #if 0 //THB: not needed if no use of random numbers
     DECLARE_TOOL( RootIoRandom );

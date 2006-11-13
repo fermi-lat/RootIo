@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.22 2006/03/30 20:51:10 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.23 2006/09/25 20:05:00 wilko Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -76,10 +76,11 @@ public:
     /// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
 	
-    virtual bool setRootFile(const char* mc, const char* digi, const char* rec);
+    virtual bool setRootFile(const char* mc, const char* digi, const char* rec, const char* gcr);
     virtual std::string getMcFile() const { return m_mcFile; };
     virtual std::string getDigiFile() const { return m_digiFile; };
     virtual std::string getReconFile() const { return m_reconFile; };
+    virtual std::string getGcrFile() const { return m_gcrFile; };
     virtual bool fileChange() const { return m_fileChange; };
 
     virtual Long64_t getEvtMax() { return m_evtMax; };
@@ -141,7 +142,7 @@ private:
 
     bool m_useIndex, m_useRunEventPair;
 
-    std::string m_mcFile, m_digiFile, m_reconFile;
+    std::string m_mcFile, m_digiFile, m_reconFile, m_gcrFile;
     bool m_fileChange;
     int m_updated; // counter to check that algs have updated input root file
 };
@@ -256,16 +257,18 @@ StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterfac
 }
 
 
-bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec) {
+bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec, const char *gcr) {
      std::string mcFile = mc;
      std::string digiFile = digi;
      std::string reconFile = rec;
+     std::string gcrFile = gcr;
      facilities::Util::expandEnvVar(&mcFile);
      facilities::Util::expandEnvVar(&digiFile);
      facilities::Util::expandEnvVar(&reconFile);
+     facilities::Util::expandEnvVar(&gcrFile);
 
     // at least one string must be non-null
-    if (mcFile.empty() && digiFile.empty() && reconFile.empty())
+    if (mcFile.empty() && digiFile.empty() && reconFile.empty() && gcrFile.empty())
         return false;
 
     // Check that these files exist
@@ -280,10 +283,17 @@ bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec) {
         if (!RootPersistence::fileExists(reconFile)) return false;
     }
 
+    if (!gcrFile.empty()) {
+        TFile f(gcr);
+        if (!f.IsOpen()) return false;
+        f.Close();
+    }
+
     m_chainCol.clear(); // clear out TTrees from old files
     m_mcFile = mc;
     m_digiFile = digi;
     m_reconFile = rec;
+    m_gcrFile = gcr;
     m_fileChange = true;
     return true;
 }
@@ -329,8 +339,8 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
     // yet, so the TTrees are not set to read, so we temporarily load the
     // the TTrees so we can check to see if the requested run/event pair
     // exists.  
-    TFile *mc=0, *digi=0, *rec=0;
-    TChain *mcChain, *digiChain, *recChain;
+    TFile *mc=0, *digi=0, *rec=0, *gcr=0;
+    TChain *mcChain, *digiChain, *recChain, *gcrChain;
 
     if ((m_fileChange) && (m_chainCol.size() == 0)) {
         if (!m_mcFile.empty()) {
@@ -361,6 +371,17 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
            registerRootTree(recChain);
         }
 
+	if (!m_gcrFile.empty()) {
+           gcr = new TFile(m_gcrFile.c_str(), "READ");
+           if (!rec->IsOpen()) return false;
+           gcrChain = (TChain*)gcr->Get("GcrSelect");
+           if (!gcrChain) return false;
+           if (!gcrChain->GetTreeIndex()) 
+               gcrChain->BuildIndex("m_runId", "m_eventId");
+           registerRootTree(gcrChain);
+        }
+
+
     }
 
     std::vector<TChain*>::iterator it;
@@ -372,6 +393,7 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
               if (mc) delete mc;
               if (digi) delete digi;
               if (rec) delete rec;
+              if (gcr) delete gcr;
           }
           return false;
         }
@@ -384,6 +406,7 @@ bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
         if (mc) delete mc;
         if (digi) delete digi;
         if (rec) delete rec;
+        if (gcr) delete gcr;
     }
     return true;
 }

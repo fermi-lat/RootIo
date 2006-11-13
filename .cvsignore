@@ -5,3 +5,7 @@ i386_linux*
 setup.*
 *.mak*
 *.root
+Linux-i686*
+VC8*
+Visual
+rh*

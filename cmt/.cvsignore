@@ -3,3 +3,5 @@ setup.*
 NMake
 Makefile
 *.bat
+cleanup.*
+*.mak*

@@ -49,13 +49,17 @@
 #include "RootConvert/Recon/AdfReconConvert.h"
 #include "RootConvert/Recon/AcdReconConvert.h"
 
+#include "RootConvert/Recon/GcrXtalConvert.h"
+//#include "RootConvert/Recon/GcrSelectedXtalConvert.h"
+#include "RootConvert/Recon/GcrTrackConvert.h"
+
 #include <cstdlib>
 
 /** @class reconRootWriterAlg
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.75 2006/07/12 17:37:19 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.76 2006/07/17 21:33:01 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -100,6 +104,11 @@ private:
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
     void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
     
+    //CL: 08/22/06:
+    void fillGcrXtal(CalRecon *calRec, Event::GcrXtalCol* gcrXtalColTds); 
+    //void fillGcrSelectedXtal(CalRecon *calRec, Event::GcrSelectedXtalsCol* gcrSelectedXtalColTds); 
+    void fillGcrTrack(CalRecon *calRec, Event::GcrTrack* gcrTrackTds); 
+
     StatusCode writeAcdRecon();
 
     StatusCode writeAdfRecon();
@@ -595,6 +604,18 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     // Retrieve the CalEventEnergy collection
     SmartDataPtr<Event::CalEventEnergyCol> calEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol) ;
     if (calEventEnergyColTds) fillCalEventEnergy(calRec, calEventEnergyColTds);
+
+    //C.L: 08/22/06: Retrieve GcrXtal collection 
+    SmartDataPtr<Event::GcrXtalCol> gcrXtalColTds(eventSvc(), EventModel::CalRecon::GcrXtalCol);       
+    if (gcrXtalColTds) 
+      fillGcrXtal(calRec, gcrXtalColTds); 
+
+    //C.L: 08/22/06: Retrieve GcrTrack  
+    SmartDataPtr<Event::GcrTrack> gcrTrackTds(eventSvc(), EventModel::CalRecon::GcrTrack);       
+    if (gcrTrackTds) 
+      fillGcrTrack(calRec, gcrTrackTds); 
+
+
     
     return sc;
 }
@@ -648,6 +669,67 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
     
     return;   
 } 
+
+//CL: 08/22/06    @@@@@@@@@@@@@@@@@@@@@
+
+
+void reconRootWriterAlg::fillGcrXtal(CalRecon *calRec, Event::GcrXtalCol* gcrXtalColTds) {   
+    // Purpose and Method:  Given the GcrXtal collection from the TDS,   
+    //   this method fills the ROOT CalXtalRecData collection.   
+    
+    MsgStream log(msgSvc(), name());
+    Event::GcrXtalCol::const_iterator gcrXtalColIterTds;
+    
+    //log << MSG::INFO << "reconRootWriterAlg::fillGcrXtal BEGIN, gcrXtalColTds->size()=" << gcrXtalColTds->size()<< endreq;   
+    
+    for (gcrXtalColIterTds = gcrXtalColTds->begin(); gcrXtalColIterTds != gcrXtalColTds->end(); gcrXtalColIterTds++) {
+	
+	GcrXtal* gcrXtalRoot = new GcrXtal();
+	RootPersistence::convert(**gcrXtalColIterTds,*gcrXtalRoot) ; 
+	
+   /** log << MSG::INFO << "gcrXtalRoot->getXtal()->getPackedId()= " << gcrXtalRoot->getXtal()->getPackedId().getTower()
+    << "/" << gcrXtalRoot->getXtal()->getPackedId().getLayer() << "/" << gcrXtalRoot->getXtal()->getPackedId().getColumn()<< endreq;   
+   */	
+	
+        calRec->addGcrXtal(gcrXtalRoot) ;   
+    }   
+    
+        //log << MSG::INFO << "reconRootWriterAlg::fillGcrXtal END" << endreq;   
+
+    
+    return;   
+}
+
+
+void reconRootWriterAlg::fillGcrTrack(CalRecon *calRec, Event::GcrTrack* gcrTrackTds) {   
+    // Purpose and Method:  Given the GcrXtal collection from the TDS,   
+    //   this method fills the ROOT CalXtalRecData collection.   
+    
+    MsgStream log(msgSvc(), name());
+    
+   //log << MSG::INFO << "reconRootWriterAlg::fillGcrTrack BEGIN" << endreq;   
+    
+    
+    GcrTrack* gcrTrackRoot = new GcrTrack();
+    
+    RootPersistence::convert(*gcrTrackTds,*gcrTrackRoot);
+    
+    calRec->addGcrTrack(gcrTrackRoot);
+    
+    TObject* toto = calRec->getGcrTrack();
+    GcrTrack* totoCaste= (GcrTrack*)toto;
+    
+ 
+   //log << MSG::INFO << "reconRootWriterAlg::fillGcrTrack END" << endreq;   
+    
+    return;   
+}
+
+
+
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+
 
 void reconRootWriterAlg::fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds) 
 {   
