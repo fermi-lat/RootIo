@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.5.14.1 2006/02/11 08:08:48 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.6 2006/03/30 20:50:11 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -21,16 +21,20 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 3 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.5.14.1 2006/02/11 08:08:48 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.6 2006/03/30 20:50:11 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
 
+    //virtual bool setRootFile(const char *mc, const char *digi, const char *rec) = 0;
+
     virtual bool setRootFile(const char *mc, const char *digi, 
-                             const char *rec) = 0;
+                             const char *rec, const char *gcr) = 0;
+			     
     virtual std::string getMcFile() const = 0;
     virtual std::string getDigiFile() const = 0;
     virtual std::string getReconFile() const = 0;
+    virtual std::string getGcrFile() const = 0;
     virtual bool fileChange() const = 0;
     
     virtual Long64_t getEvtMax() = 0;
