@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: claval  Mon Nov 13 02:38:55 PST 2006
+RootIo
+
+Modified Files:
+	.cvsignore 
+Log Message:
+2 algorithms added (new GCRCalib ROOT outputs)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r25, operation: add
 Package: RootIo
