@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: claval  Mon Nov 13 02:38:56 PST 2006
+RootIo/src
+
+Modified Files:
+	FhTool.cxx RootIoSvc.cxx reconRootWriterAlg.cxx 
+Added Files:
+	gcrSelectRootWriterAlg.cxx writeGcrSelectRootOptions.txt 
+Log Message:
+2 algorithms added (new GCRCalib ROOT outputs)
+
+    *
+------------------------------------------------------------
+User: claval  Mon Nov 13 02:38:56 PST 2006
 RootIo/cmt
 
 Modified Files:
