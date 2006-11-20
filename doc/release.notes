@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r26    20-Nov-2006 CL  Updates for GCR
  v17r25    27-Oct-2006 HMK Handle McEvent sourceName
  v17r24    05-Oct-2006 HMK complete merge of GRv7r3p1 branch
  v17r23p1  02-Oct-2006 HMK Move RootConvert back to public use..duh
