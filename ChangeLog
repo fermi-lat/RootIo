@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Nov 22 10:12:18 PST 2006
+RootIo/src/test
+
+Modified Files:
+	testRootIoSvcAlg.cxx 
+Log Message:
+patches for test routine
+    *
+------------------------------------------------------------
+User: heather  Wed Nov 22 10:12:18 PST 2006
 RootIo/doc
 
 Modified Files:
