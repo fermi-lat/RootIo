@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 22 20:08:32 PST 2006
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+avoid interface change by providing default
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r26p1, operation: add
 Package: RootIo
