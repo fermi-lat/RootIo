@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.23 2006/09/25 20:05:00 wilko Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.24 2006/11/13 10:38:56 claval Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -76,7 +76,7 @@ public:
     /// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
 	
-    virtual bool setRootFile(const char* mc, const char* digi, const char* rec, const char* gcr);
+    virtual bool setRootFile(const char* mc, const char* digi, const char* rec, const char* gcr="");
     virtual std::string getMcFile() const { return m_mcFile; };
     virtual std::string getDigiFile() const { return m_digiFile; };
     virtual std::string getReconFile() const { return m_reconFile; };

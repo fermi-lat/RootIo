@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r26p2  22-Nov-2006 HMK patch to provide default for gcr file in setRootFile
+           method, to avoid interface change
  v17r26p1  21-Nov-2006 HMK patch test routing for updates for GCR
  v17r26    20-Nov-2006 CL  Updates for GCR
  v17r25    27-Oct-2006 HMK Handle McEvent sourceName
