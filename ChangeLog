@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Nov 22 20:08:33 PST 2006
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+avoid interface change by providing default
+    *
+------------------------------------------------------------
+User: heather  Wed Nov 22 20:08:33 PST 2006
 RootIo/doc
 
 Modified Files:
