@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Dec  3 05:46:29 PST 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use TClonesArray for GcrXtal
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r26p2, operation: add
 Package: RootIo
