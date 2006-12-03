@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Sun Dec  3 05:46:30 PST 2006
+RootIo/src/test
+
+Modified Files:
+	jobOptions.txt writeOptions.txt 
+Log Message:
+use TClonesArray for GcrXtal
+    *
+------------------------------------------------------------
+User: heather  Sun Dec  3 05:46:30 PST 2006
 RootIo/src
 
 Modified Files:
