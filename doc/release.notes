@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r27    03-Dec-2006 HMK Use TClonesArray for GcrXtal
  v17r26p2  22-Nov-2006 HMK patch to provide default for gcr file in setRootFile
            method, to avoid interface change
  v17r26p1  21-Nov-2006 HMK patch test routing for updates for GCR
