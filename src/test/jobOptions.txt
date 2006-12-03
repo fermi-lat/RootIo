@@ -3,8 +3,8 @@
 // Job options file for RootIo test
 //
 
-//#include "$ROOTIOROOT/src/test/writeOptions.txt"
-#include "$ROOTIOROOT/src/test/readOptions.txt"
+#include "$ROOTIOROOT/src/test/writeOptions.txt"
+//#include "$ROOTIOROOT/src/test/readOptions.txt"
 
 ApplicationMgr.TopAlg +=  { "testReadAlg"};
 

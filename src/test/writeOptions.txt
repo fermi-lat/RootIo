@@ -8,7 +8,7 @@ ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg", "FhSetAlg",
               "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
 
 ApplicationMgr.ExtSvc = { 
-    "GlastEventSelector/EventSelector" , 
+//    "EventSelector/EventSelector" , 
     "EventCnvSvc"
     };
 
