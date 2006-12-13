@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Dec 13 07:16:20 PST 2006
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+move to use TClonesArray for GcrSelectedXtalCol
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r27, operation: add
 Package: RootIo
