@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Dec 13 07:16:21 PST 2006
+RootIo/src
+
+Modified Files:
+	gcrSelectRootWriterAlg.cxx 
+Log Message:
+move to use TClonesArray for GcrSelectedXtalCol
+    *
+------------------------------------------------------------
 User: heather  Wed Dec 13 07:16:20 PST 2006
 RootIo/doc
 
