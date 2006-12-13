@@ -7,21 +7,7 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 
-//#include "Event/Recon/TkrRecon/TkrCluster.h"
-//#include "Event/Recon/TkrRecon/TkrTrack.h"
-//#include "Event/Recon/TkrRecon/TkrVertex.h"
-//#include "Event/Recon/TkrRecon/TkrDiagnostics.h"  // This future expansion coming soon
-
-//#include "Event/Recon/CalRecon/CalCluster.h"   
-//#include "Event/Recon/CalRecon/CalXtalRecData.h"   
-//#include "Event/Recon/CalRecon/CalMipClasses.h"
-//#include "Event/Recon/CalRecon/CalEventEnergy.h"
-
-//#include "Event/Recon/AcdRecon/AcdRecon.h"
-
 #include "LdfEvent/EventSummaryData.h"
-
-//#include "idents/CalXtalId.h"
 
 #include "facilities/Util.h"
 #include "commonData.h"
@@ -33,7 +19,6 @@
 #include "TVector3.h"
 #include "TMatrixD.h"
 
-//#include "reconRootData/ReconEvent.h"
 #include "gcrSelectRootData/GcrSelectEvent.h"
 #include "RootIo/IRootIoSvc.h"
 
@@ -42,7 +27,6 @@
 
 // low level converters
 
-//#include "RootConvert/Recon/GcrXtalConvert.h"
 #include "RootConvert/GcrSelect/GcrSelectedXtalConvert.h"
 #include "RootConvert/GcrSelect/GcrSelectValsConvert.h"
 
@@ -52,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.73 2006/01/19 02:59:01 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.1 2006/11/13 10:38:56 claval Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -73,10 +57,6 @@ public:
 private:
     
     
-    /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
-    /// ROOT object
-        /// Retrieves event Id and run Id from TDS and fills the Recon ROOT object
-    
     StatusCode writeGcrSelectEvent();
 
     StatusCode writeGcrSelect();
@@ -85,8 +65,6 @@ private:
     //CL: 08/22/06:
     void fillGcrSelectedXtal(GcrSelect *gcrSelect, Event::GcrSelectedXtalsCol* gcrSelectedXtalColTds); 
     void fillGcrSelectVals(GcrSelect *gcrSelect, Event::GcrSelectVals* gcrSelectValsTds); 
-    
-    //StatusCode writeAcdRecon();
     
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
@@ -211,19 +189,17 @@ StatusCode gcrSelectRootWriterAlg::execute()
 
     sc = writeGcrSelectEvent();
     if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to write ReconEvent" << endreq;
+        log << MSG::ERROR << "Failed to write GcrSelectEvent" << endreq;
         return sc;
     }
     
     sc = writeGcrSelect();
     if (sc.isFailure()) {
-        log << MSG::ERROR << "Failed to write Cal Recon Data" << endreq;
+        log << MSG::ERROR << "Failed to write GcrSelect" << endreq;
         return sc;
     }
        
     writeEvent();
-    
-    //log << MSG::INFO << "gcrSelectRootWriterAlg::execute END" << endreq;
 
     return sc;
 }
@@ -300,29 +276,17 @@ void gcrSelectRootWriterAlg::fillGcrSelectedXtal(GcrSelect *gcrSelect, Event::Gc
     //   this method fills the ROOT CalXtalRecData collection.   
     
     MsgStream log(msgSvc(), name());
-    bool debugging=false;
     Event::GcrSelectedXtalsCol::const_iterator gcrSelXtalColIterTds;
     
-    if(debugging)
-	log << MSG::INFO << "gcrSelectRootWriterAlg::fillGcrSelectedXtal BEGIN, gcrSelectedXtalColTds->size()=" << gcrSelectedXtalColTds->size()<< endreq;   
+	log << MSG::DEBUG << "gcrSelectRootWriterAlg::fillGcrSelectedXtal BEGIN, gcrSelectedXtalColTds->size()=" << gcrSelectedXtalColTds->size()<< endreq;   
     
     for (gcrSelXtalColIterTds = gcrSelectedXtalColTds->begin(); gcrSelXtalColIterTds != gcrSelectedXtalColTds->end(); gcrSelXtalColIterTds++) {
 	
-	GcrSelectedXtal* gcrSelectedXtalRoot = new GcrSelectedXtal();
+	GcrSelectedXtal* gcrSelectedXtalRoot = gcrSelect->addGcrSelectedXtal();
 	Event::GcrSelectedXtal* gcrSelXtalTds = *gcrSelXtalColIterTds;
-	/**log << MSG::INFO << "TDS@@@@@ \n gcrSelXtalTds->getXtalId()=" 	
-	<< ", rowEnergy=" << gcrSelXtalTds-> getRowEnergy()
-	<< ", corrEnergy=" << gcrSelXtalTds-> getCorrEnergy()
-	<< ", crossedFaces=" << gcrSelXtalTds-> getCrossedFaces()
-	<< "\n" <<endreq;
-	*/
 	RootPersistence::convert(**gcrSelXtalColIterTds,*gcrSelectedXtalRoot) ; 
 	
-   /** log << MSG::INFO << "gcrXtalRoot->getXtal()->getPackedId()= " << gcrXtalRoot->getXtal()->getPackedId().getTower()
-    << "/" << gcrXtalRoot->getXtal()->getPackedId().getLayer() << "/" << gcrXtalRoot->getXtal()->getPackedId().getColumn()<< endreq;   
-   */	
-   if(debugging){
-	log << MSG::INFO << "ROOT@@@@@ \n gcrSelectedXtalRoot->getXtalId()=" 	
+	log << MSG::DEBUG << "ROOT@@@@@ \n gcrSelectedXtalRoot->getXtalId()=" 	
 	<< ", rowEnergy=" << gcrSelectedXtalRoot-> getRawEnergy()
 	<< ", pathLength=" << gcrSelectedXtalRoot-> getPathLength()
 	<< ", corrEnergy=" << gcrSelectedXtalRoot-> getCorrEnergy()
@@ -330,11 +294,7 @@ void gcrSelectRootWriterAlg::fillGcrSelectedXtal(GcrSelect *gcrSelect, Event::Gc
 	<< "\n" << endreq;
 	}
 	
-        gcrSelect->addGcrSelectedXtal(gcrSelectedXtalRoot) ;   
-    }   
-    
-       if(debugging)
-	   log << MSG::INFO << "gcrSelectRootWriterAlg::fillGcrSelectedXtal END" << endreq;   
+    log << MSG::DEBUG << "gcrSelectRootWriterAlg::fillGcrSelectedXtal END" << endreq;   
 
     
     return;   

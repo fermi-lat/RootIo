@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r28    13-Dec-2006 HMK Use TCLonesArray for GcrSelectedXtal
  v17r27    03-Dec-2006 HMK Use TClonesArray for GcrXtal
  v17r26p2  22-Nov-2006 HMK patch to provide default for gcr file in setRootFile
            method, to avoid interface change
