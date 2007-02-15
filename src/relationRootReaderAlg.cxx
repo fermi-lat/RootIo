@@ -7,7 +7,11 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/DigiEvent.h"
+#include "Event/MonteCarlo/McParticle.h"
+#include "Event/MonteCarlo/McTrajectory.h"
 #include "Event/MonteCarlo/McPositionHit.h"
+#include "Event/MonteCarlo/McIntegratingHit.h"
+#include "Event/MonteCarlo/McRelTableDefs.h"
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/TkrDigi.h"
@@ -45,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.22 2006/07/19 18:16:26 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.23 2006/09/25 20:05:01 wilko Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -80,6 +84,10 @@ private:
     StatusCode readTkrTrackRelations(Relation*);
     /// Handles converting vertex relations back to TDS
     StatusCode readTkrVertexRelations(Relation*);
+    /// Handles converting McParticle <--> McTrajectory relations back to TDS
+    StatusCode readMcParticleRelations(Relation*);
+    /// Handles converting McTrajectoryPoint to hit relations back to TDS
+    StatusCode readMcTrajectoryPointRelations(Relation*);
 
     //StatusCode readTkrDigiRelations();  
     //StatusCode readCalDigiRelations();
@@ -116,6 +124,14 @@ private:
     /// Internal pointer to tDS CalDigi table
     CalDigiRelTab*            m_calDigiRelTab;
 
+    /// Internal pointer to McParticle object list
+    Event::McPartToTrajectoryTabList* m_mcPartToTrajList;
+
+    /// Internal pointer to McTrajectoryPoint to Pos hit list
+    Event::McPointToPosHitTabList*    m_mcPointToPosHitList;
+
+    /// Internal pointer to McTrajectoryPoint to Pos hit list
+    Event::McPointToIntHitTabList*    m_mcPointToIntHitList;
 };
 
 static const AlgFactory<relationRootReaderAlg>  Factory;
@@ -137,6 +153,9 @@ Algorithm(name, pSvcLocator)
     // Input TTree name
     declareProperty("treeName", m_treeName="Relations");
 
+    m_mcPartToTrajList    = 0;
+    m_mcPointToPosHitList = 0;
+    m_mcPointToIntHitList = 0;
 }
 
 StatusCode relationRootReaderAlg::initialize()
@@ -187,6 +206,7 @@ StatusCode relationRootReaderAlg::initialize()
           //  log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
           //  m_relTree->BuildIndex("m_runId", "m_eventId");
           TChainIndex *chInd = new TChainIndex(m_relTree, "m_runId", "m_eventId");
+          
           // could be zombie if files in chain are not in runId order
           if (!chInd->IsZombie())
               m_relTree->SetTreeIndex(chInd);
@@ -256,6 +276,9 @@ StatusCode relationRootReaderAlg::execute()
     /// Register our relational tables in the TDS (and turn over ownership)
     sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab, m_tkrDigiRelTab->getAllRelations() );
     sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab, m_calDigiRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject("/Event/MC/McPartToTrajectory",  m_mcPartToTrajList );
+    sc = eventSvc()->registerObject("/Event/MC/McPointToPosHit",     m_mcPointToPosHitList );
+    sc = eventSvc()->registerObject("/Event/MC/McPointToIntHit",     m_mcPointToIntHitList );
 
     m_relTab->Clear();
 
@@ -277,6 +300,10 @@ StatusCode relationRootReaderAlg::createTDSTables()
 
     m_calDigiRelTab = new CalDigiRelTab();
     m_calDigiRelTab->init();
+
+    m_mcPartToTrajList    = new Event::McPartToTrajectoryTabList();
+    m_mcPointToPosHitList = new Event::McPointToPosHitTabList();
+    m_mcPointToIntHitList = new Event::McPointToIntHitTabList();
 
     return sc;
 }
@@ -300,9 +327,11 @@ StatusCode relationRootReaderAlg::readRelations() {
         const TObject* key = relation->getKey();
 
         // Dynamic cast the key back to its original object and decide how to read the relation
-        if      (const TkrDigi*      digi = dynamic_cast<const TkrDigi*>(key))      readTkrDigiRelations(relation);
-        else if (const CalDigi*      digi = dynamic_cast<const CalDigi*>(key))      readCalDigiRelations(relation);
-        else if (const TkrVertex*    vert = dynamic_cast<const TkrVertex*>(key))    readTkrVertexRelations(relation);
+        if      (const TkrDigi*           digi    = dynamic_cast<const TkrDigi*>(key))           readTkrDigiRelations(relation);
+        else if (const CalDigi*           digi    = dynamic_cast<const CalDigi*>(key))           readCalDigiRelations(relation);
+        else if (const TkrVertex*         vert    = dynamic_cast<const TkrVertex*>(key))         readTkrVertexRelations(relation);
+        else if (const McParticle*        mcPart  = dynamic_cast<const McParticle*>(key))        readMcParticleRelations(relation);
+        else if (const McTrajectoryPoint* mcPoint = dynamic_cast<const McTrajectoryPoint*>(key)) readMcTrajectoryPointRelations(relation);
         else
         {
             log << MSG::WARNING << "Unrecognized Relation key" << endreq;
@@ -449,6 +478,80 @@ StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation)
     return sc;
 }
 
+
+StatusCode relationRootReaderAlg::readMcParticleRelations(Relation* relation) 
+{
+    // Purpose and Method:  Converts a root McParticle <--> McTrajectory relation to TDS version
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const McParticle*    mcPartRoot = dynamic_cast<const McParticle*>(relation->getKey());
+    TObject*             mcTrajRoot = relation->getValueCol().At(0);
+
+    Event::McParticle*   mcPartTds  = 0;
+    Event::McTrajectory* mcTrajTds  = 0;
+
+    // Look up TDS to root relation for McParticles
+    if (m_common.m_rootMcPartMap.find(mcPartRoot) != m_common.m_rootMcPartMap.end()) {
+        mcPartTds = const_cast<Event::McParticle*>(m_common.m_rootMcPartMap[mcPartRoot]);
+    } else {
+        log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
+    }
+
+    // Look up TDS to root relation for position hits
+    if (m_common.m_rootMcTrajectoryMap.find(mcTrajRoot) != m_common.m_rootMcTrajectoryMap.end()) {
+        mcTrajTds = const_cast<Event::McTrajectory*>(m_common.m_rootMcTrajectoryMap[mcTrajRoot]);
+    } else {
+        log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
+    }
+
+    // Make the event relation here
+    Event::McPartToTrajectoryRel* rel = new Event::McPartToTrajectoryRel(mcPartTds, mcTrajTds);
+    m_mcPartToTrajList->push_back(rel);
+
+    return sc;
+}
+
+StatusCode relationRootReaderAlg::readMcTrajectoryPointRelations(Relation* relation) 
+{
+    // Purpose and Method:  Converts a root TkrDigi/McPositionHit relation to TDS version
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const McTrajectoryPoint*  mcPointRoot  = dynamic_cast<const McTrajectoryPoint*>(relation->getKey());
+    TObject*                  mcHitRoot = relation->getValueCol().At(0);
+
+    Event::McTrajectoryPoint* mcPointTds   = 0;
+    
+    Event::McPositionHit* mcHitTds  = 0;
+
+    // Look up TDS to root relation for digis
+    if (m_common.m_rootMcTrajectoryPointMap.find(mcPointRoot) != m_common.m_rootMcTrajectoryPointMap.end()) {
+        mcPointTds = const_cast<Event::McTrajectoryPoint*>(m_common.m_rootMcTrajectoryPointMap[mcPointRoot]);
+    } else {
+        log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
+    }
+
+    // Look up TDS to root relation for position hits
+    if (m_common.m_rootMcPosHitMap.find(mcHitRoot) != m_common.m_rootMcPosHitMap.end()) 
+    {
+        Event::McPositionHit* mcHitTds = const_cast<Event::McPositionHit*>(m_common.m_rootMcPosHitMap[mcHitRoot]);
+        Event::McPointToPosHitRel* rel = new Event::McPointToPosHitRel(mcPointTds, mcHitTds);
+        m_mcPointToPosHitList->push_back(rel);
+    }
+    else if (m_common.m_rootMcIntHitMap.find(mcHitRoot) != m_common.m_rootMcIntHitMap.end())
+    {
+        Event::McIntegratingHit* mcHitTds = const_cast<Event::McIntegratingHit*>(m_common.m_rootMcIntHitMap[mcHitRoot]);
+        Event::McPointToIntHitRel* rel = new Event::McPointToIntHitRel(mcPointTds, mcHitTds);
+        m_mcPointToIntHitList->push_back(rel);
+    } 
+    else 
+    {
+        log << MSG::WARNING << "Could not located McPositionHit/McIntegrating TDS/ROOT pair" << endreq;
+    }
+
+    return sc;
+}
 
 
 void relationRootReaderAlg::close() 
