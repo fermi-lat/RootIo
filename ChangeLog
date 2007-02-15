@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Thu Feb 15 11:30:06 PST 2007
+RootIo/src
+
+Modified Files:
+	commonData.cxx commonData.h digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	relationRootReaderAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+Changes aimed primarily at outputting McTrajectories as "standard", also updates for the output of relational tables (which I think may not have been working correctly).
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r28, operation: add
 Package: RootIo
