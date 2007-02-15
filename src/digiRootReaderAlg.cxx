@@ -60,7 +60,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.77 2006/09/25 20:05:01 wilko Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.78 2006/10/05 19:28:14 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -316,6 +316,9 @@ StatusCode digiRootReaderAlg::execute()
             return StatusCode::SUCCESS;
 	}
 
+    // Clear the digi common maps
+    m_common.m_rootTkrDigiMap.clear();
+    m_common.m_rootCalDigiMap.clear();
 
     sc = readDigiEvent();
     if (sc.isFailure()) {
@@ -739,6 +742,8 @@ StatusCode digiRootReaderAlg::readCalDigi() {
         }
 
         calDigiTdsCol->push_back(calDigiTds);
+
+        m_common.m_rootCalDigiMap[calDigiRoot] = calDigiTds;
     }
  
     return sc;
@@ -784,6 +789,8 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
         }
 
         tkrDigiTdsCol->push_back(tkrDigiTds);
+
+        m_common.m_rootTkrDigiMap[tkrDigiRoot] = tkrDigiTds;
     }
 
     return sc;
