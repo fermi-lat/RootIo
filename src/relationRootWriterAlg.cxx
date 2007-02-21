@@ -43,7 +43,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.14 2006/07/17 21:33:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.15 2007/02/15 19:30:06 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -467,6 +467,7 @@ void relationRootWriterAlg::writeEvent()
         throw;
     }
     m_relTree->Fill();
+    const_cast<TObjArray*>(m_relTable->getRelationTable())->SetOwner(true);
     m_relTable->Clear();
     m_common.clear();
     ++eventCounter;
