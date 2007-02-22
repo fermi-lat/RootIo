@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Feb 22 07:53:04 PST 2007
+RootIo/src
+
+Modified Files:
+	mcRootWriterAlg.cxx 
+Log Message:
+Add option to output McTkrStrip to root output
+    *
+------------------------------------------------------------
 User: usher  Tue Feb 20 17:57:32 PST 2007
 RootIo/src
 
