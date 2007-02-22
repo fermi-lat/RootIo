@@ -12,6 +12,7 @@
 #include "Event/MonteCarlo/McIntegratingHit.h"
 #include "Event/MonteCarlo/McPositionHit.h"
 #include "Event/MonteCarlo/McTrajectory.h"
+#include "Event/MonteCarlo/McTkrStrip.h"
 
 #include "facilities/Util.h"
 
@@ -34,6 +35,7 @@
 // low level converters
 #include <RootConvert/MonteCarlo/McPositionHitConvert.h>
 #include <RootConvert/MonteCarlo/McTrajectoryConvert.h>
+#include <RootConvert/MonteCarlo/McTkrStripConvert.h>
 #include <RootConvert/Utilities/Toolkit.h>
 
 #include <map>
@@ -42,7 +44,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.48 2006/10/27 22:21:11 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.49 2007/02/15 19:30:06 usher Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -80,6 +82,10 @@ private:
     /// to the ROOT file
     StatusCode writeMcTrajectories();
 
+    /// Retrieves McTkrStrip's from the TDS and writes McTkrStrip's
+    /// to the ROOT file
+    StatusCode writeMcTkrStrips();
+
 // Moved to RootConvert
 //    /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
 //    void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
@@ -109,6 +115,8 @@ private:
     int m_compressionLevel;
     /// Flag to write McTrajectory objects
     bool m_saveTrajectories;
+    /// Flag to write McTkrStrips
+    bool m_saveMcTkrStrips;
 
     /// Keep track of MC particles as we retrieve them from TDS
     /// Used only to aid in writing the ROOT file.
@@ -144,6 +152,7 @@ Algorithm(name, pSvcLocator)
     declareProperty("treeName", m_treeName="Mc");
     // Save McTrajectory's?
     declareProperty("saveMcTrajectory", m_saveTrajectories=false);
+    declareProperty("saveMcTkrStrips", m_saveMcTkrStrips=false);
     declareProperty("clearOption", m_clearOption="");
 
     
@@ -250,6 +259,12 @@ StatusCode mcRootWriterAlg::execute()
     if (m_saveTrajectories)
     {
         sc = writeMcTrajectories();
+        if (sc.isFailure()) return sc;
+    }
+
+    if (m_saveMcTkrStrips)
+    {
+        sc = writeMcTkrStrips();
         if (sc.isFailure()) return sc;
     }
    
@@ -572,6 +587,60 @@ StatusCode mcRootWriterAlg::writeMcTrajectories()
         }
     }
     
+    return sc;
+}
+
+StatusCode mcRootWriterAlg::writeMcTkrStrips() 
+{
+    // Purpose and Method:  Retrieve the McTrajectory collection from the TDS 
+    //  and fill the ROOT McTrajectory collection.
+    // TDS Input:  EventModel::EVENT::McTrajectoryCol
+    // Output:  ROOT McTrajectory collection
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Get the McPositionHits Collection from the TDS
+    // Interestingly... there does not seem to be a string def for McTrajectoryCol! 
+    SmartDataPtr<Event::McTkrStripCol> stripCol(eventSvc(), "/Event/MC/StripCol");
+
+    if (!stripCol) return sc;
+    
+    log << MSG::DEBUG;
+    if( log.isActive()) 
+        log.stream() << "Number of McTkrStrip's in the event = " << stripCol->size();
+    log << endreq;
+
+    ObjectVector<Event::McTkrStrip>::const_iterator stripIter;
+    Event::McTrajectoryVector::const_iterator trajectory;
+    for (stripIter = stripCol->begin(); stripIter != stripCol->end(); stripIter++ ) 
+    {
+        log << MSG::DEBUG;
+        if( log.isActive()) (*stripIter)->fillStream(log.stream());
+        log << endreq;
+
+        const Event::McTkrStrip* stripTds  = *stripIter;
+        McTkrStrip*              stripRoot = new McTkrStrip();
+
+        RootPersistence::convert(*stripTds, *stripRoot);
+
+        const Event::McTkrStrip::hitList& posHitListTds = stripTds->getHits();
+        for(Event::McTkrStrip::hitList::const_iterator tdsIter = posHitListTds.begin();
+            tdsIter != posHitListTds.end(); tdsIter++)
+        {
+            const Event::McPositionHit *mcPosHitTds = *tdsIter;
+            McPositionHit *mcPosHitRoot = 0;
+            if (mcPosHitTds != 0) {
+                TRef ref;
+                ref = m_common.m_mcPosHitMap[mcPosHitTds];
+                mcPosHitRoot = (McPositionHit*)ref.GetObject();
+            }
+            stripRoot->addHit(mcPosHitRoot) ;
+        }
+
+        m_mcEvt->addMcTkrStrip(stripRoot);
+    }
+
     return sc;
 }
 
