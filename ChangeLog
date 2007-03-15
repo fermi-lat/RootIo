@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Mar 14 19:38:13 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx reconRootReaderAlg.cxx 
+Log Message:
+prepare to upgrade to v5.14.00d
+    *
+------------------------------------------------------------
+User: heather  Wed Mar 14 19:38:13 PDT 2007
 RootIo/doc
 
 Modified Files:
