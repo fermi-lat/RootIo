@@ -61,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.75 2006/08/24 20:24:10 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.76 2006/09/25 20:05:01 wilko Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -203,7 +203,7 @@ StatusCode reconRootReaderAlg::initialize()
     m_reconTree = new TChain(m_treeName.c_str());
 
     // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log);
+    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log, true);
     if (openSc.isFailure()) {
       return  openSc;
     }
