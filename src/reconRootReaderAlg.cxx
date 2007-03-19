@@ -61,7 +61,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.76 2006/09/25 20:05:01 wilko Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.77 2007/03/15 02:38:13 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -140,6 +140,8 @@ private:
 
     IRootIoSvc*   m_rootIoSvc;
 
+    bool FixAcdStreamerDone;
+
 
     // ADDED FOR THE FILE HEADERS DEMO
     IFhTool * m_headersTool ;
@@ -189,7 +191,6 @@ StatusCode reconRootReaderAlg::initialize()
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::DEBUG << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
-        //return StatusCode::FAILURE;
     }
 
     facilities::Util::expandEnvVar(&m_fileName);
@@ -202,8 +203,26 @@ StatusCode reconRootReaderAlg::initialize()
     TDirectory *saveDir = gDirectory;   
     m_reconTree = new TChain(m_treeName.c_str());
 
+    FixAcdStreamerDone = false;
+    if ((m_fileName.compare("") != 0) && ( RootPersistence::fileExists(m_fileName)) ) {
+        TFile f(m_fileName.c_str());
+        if (f.IsOpen()) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
+    } else {
+        const std::vector<std::string> fList = m_fileList.value( );
+        std::vector<std::string>::const_iterator it;
+        std::vector<std::string>::const_iterator itend = fList.end( );
+        for (it = fList.begin(); it != itend; it++) {
+            std::string theFile = (*it);
+            if ( (theFile.compare("") != 0) && (RootPersistence::fileExists(theFile)) ) {
+                TFile f(theFile.c_str());
+                if (f.IsOpen()) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
+            }
+            if (FixAcdStreamerDone) break;
+        }
+    }
+
     // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log, true);
+    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log);
     if (openSc.isFailure()) {
       return  openSc;
     }
@@ -268,6 +287,7 @@ StatusCode reconRootReaderAlg::execute()
         if (fileName.empty()) return sc; // No Recon to be opened
         TFile f(fileName.c_str());
         if (f.IsOpen()) {
+            if (!FixAcdStreamerDone) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
             f.Close();
             m_reconTree = new TChain(m_treeName.c_str());
             m_reconTree->Add(fileName.c_str());

@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.25 2006/11/23 04:08:33 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.26 2007/03/15 02:38:13 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -280,7 +280,12 @@ bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec, c
         if (!RootPersistence::fileExists(digiFile)) return false;
     }
     if (!reconFile.empty()) {
-        if (!RootPersistence::fileExists(reconFile, true)) return false;
+        if (!RootPersistence::fileExists(reconFile)) {
+            return false;
+        } else {
+            TFile f(reconFile.c_str());
+            if (f.IsOpen()) AcdRecon::fixAcdStreamer(f.GetVersion());
+        }
     }
 
     if (!gcrFile.empty()) {
