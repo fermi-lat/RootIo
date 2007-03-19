@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Mar 18 18:14:35 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx reconRootReaderAlg.cxx 
+Log Message:
+move burden of root patch to AcdRecon
+    *
+------------------------------------------------------------
 User: heather  Wed Mar 14 19:38:13 PDT 2007
 RootIo/src
 
