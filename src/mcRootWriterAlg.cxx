@@ -44,7 +44,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.49 2007/02/15 19:30:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.50 2007/02/22 15:53:04 usher Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -151,7 +151,7 @@ Algorithm(name, pSvcLocator)
     // ROOT TTree name
     declareProperty("treeName", m_treeName="Mc");
     // Save McTrajectory's?
-    declareProperty("saveMcTrajectory", m_saveTrajectories=false);
+    declareProperty("saveMcTrajectory", m_saveTrajectories=true);
     declareProperty("saveMcTkrStrips", m_saveMcTkrStrips=false);
     declareProperty("clearOption", m_clearOption="");
 

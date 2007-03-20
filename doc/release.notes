@@ -4,7 +4,8 @@
  @verbatim
 
  v17r30    14-Mar-2007 HMK Prepare to use patch when using ROOT v5.14.00d
-           for reading AcdRecon with vector<Double32_t> 
+           for reading AcdRecon with vector<Double32_t> and set McTrajectory
+           writing as default
  v17r29    12-Mar-2007 TU  Mods to allow I/O of McTkrStrips and McTrajectory's
  v17r28    13-Dec-2006 HMK Use TCLonesArray for GcrSelectedXtal
  v17r27    03-Dec-2006 HMK Use TClonesArray for GcrXtal
