@@ -49,7 +49,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.23 2006/09/25 20:05:01 wilko Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.24 2007/02/15 19:30:06 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -301,9 +301,9 @@ StatusCode relationRootReaderAlg::createTDSTables()
     m_calDigiRelTab = new CalDigiRelTab();
     m_calDigiRelTab->init();
 
-    m_mcPartToTrajList    = new Event::McPartToTrajectoryTabList();
-    m_mcPointToPosHitList = new Event::McPointToPosHitTabList();
-    m_mcPointToIntHitList = new Event::McPointToIntHitTabList();
+    m_mcPartToTrajList    = new Event::RelationList<Event::McParticle,Event::McTrajectory>;
+    m_mcPointToPosHitList = new Event::RelationList<Event::McTrajectoryPoint,Event::McPositionHit>;
+    m_mcPointToIntHitList = new Event::RelationList<Event::McTrajectoryPoint,Event::McIntegratingHit>;
 
     return sc;
 }
