@@ -1,31 +1,4 @@
 ------------------------------------------------------------
-User: usher  Mon Apr  2 19:44:21 PDT 2007
-RootIo/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-preparing to tag v17r30p1
-    *
-------------------------------------------------------------
-User: usher  Mon Apr  2 19:44:21 PDT 2007
-RootIo/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-preparing to tag v17r30p1
-    *
-------------------------------------------------------------
-User: usher  Mon Apr  2 19:41:36 PDT 2007
-RootIo/src
-
-Modified Files:
-	relationRootReaderAlg.cxx 
-Log Message:
-Mod so that read back relation lists will cast correctly when making a table
-    *
-------------------------------------------------------------
 TAG
 Tag name: v17r30, operation: add
 Package: RootIo
