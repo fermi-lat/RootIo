@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Wed May  9 14:32:39 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx mcRootReaderAlg.cxx 
+Added Files:
+	RootInputDesc.cxx RootInputDesc.h 
+Log Message:
+First attempt at centralizing Root input into a central class (RootInputDesc) and cleaning up one of the reader algs
+    *
+------------------------------------------------------------
 User: usher  Wed May  9 14:32:38 PDT 2007
 RootIo/RootIo
 
