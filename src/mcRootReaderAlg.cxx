@@ -13,26 +13,12 @@
 #include "Event/MonteCarlo/McTrajectory.h"
 #include "Event/Utilities/TimeStamp.h"
 
-
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TChain.h"
-#include "TChainIndex.h"
-#include "TDirectory.h"
-#include "TObjArray.h"
-#include "TCollection.h"  // Declares TIter
-
-#ifdef WIN32
-#include "TSystem.h" // To get TreePlayer loaded
-#endif
-
 #include "mcRootData/McEvent.h"
 
 #include "facilities/Util.h"
 #include "commonData.h"
-#include "RootIo/IRootIoSvc.h"
 #include "RootConvert/Utilities/RootReaderUtil.h"
+#include "RootIo/IRootIoSvc.h"
 
 // ADDED FOR THE FILE HEADERS DEMO
 #include "RootIo/FhTool.h"
@@ -50,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.60 2006/10/27 22:21:11 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.61 2007/02/15 19:30:06 usher Exp $
  */
 
 
@@ -69,8 +55,7 @@ public:
     
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
-    
-    
+
 private:
     
     /// Retrieves event and run Id from the ROOT file and stores them on the TDS
@@ -89,18 +74,6 @@ private:
     /// Retrieves McTrajectorys from the ROOT file and stores them on the TDS
     StatusCode readMcTrajectories();
 
-// TRANSFERED TO RootConvert
-//    /// Converts from ROOT's VolumeIdentifier to idents::VolumeIdentifier 
-//    void convertVolumeId(VolumeIdentifier rootVolId, 
-//        idents::VolumeIdentifier &tdsVolId);
-    
-    /// Closes the ROOT file
-    void close();
-    
-    /// ROOT file pointer
-    TFile *m_mcFile;
-    /// ROOT chain
-    TChain *m_mcTree;
     /// Top-level Monte Carlo ROOT object
     McEvent *m_mcEvt;
     /// name of the input ROOT file
@@ -109,6 +82,7 @@ private:
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
+    std::string m_branchName;
     /// Number of Events in the input ROOT TTree
     Long64_t m_numEvents;
     /// Option string which will be passed to McEvent::Clear
@@ -121,10 +95,6 @@ private:
     std::map<UInt_t, Event::McParticle*> m_particleMap;
 
     IRootIoSvc*   m_rootIoSvc;
-  
-
-    // ADDED FOR THE FILE HEADERS DEMO
-    IFhTool * m_headersTool ;
 };
 
 static const AlgFactory<mcRootReaderAlg>  Factory;
@@ -133,7 +103,7 @@ const IAlgFactory& mcRootReaderAlgFactory = Factory;
 
 mcRootReaderAlg::mcRootReaderAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) 
-                                 : Algorithm(name, pSvcLocator)
+                                 : Algorithm(name, pSvcLocator), m_mcEvt(0), m_branchName("McEvent")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -159,12 +129,6 @@ StatusCode mcRootReaderAlg::initialize()
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
     
-    // ADDED FOR THE FILE HEADERS DEMO
-    StatusCode headersSc = toolSvc()->retrieveTool("FhTool",m_headersTool) ;
-    if (headersSc.isFailure()) {
-        log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
-    }
-    
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
@@ -178,47 +142,14 @@ StatusCode mcRootReaderAlg::initialize()
     }   
 
     facilities::Util::expandEnvVar(&m_fileName);
-  
-#ifdef WIN32
-	gSystem->Load("libTreePlayer.dll");
-#endif  
-
-    // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;	
-    m_mcTree = new TChain(m_treeName.c_str());
-
-
-    // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_mcTree, m_fileName, m_fileList, log);
-    if (openSc.isFailure()) {
-      return  openSc;
-    }
-    
     
     m_mcEvt = 0;
-    m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
     m_common.m_mcEvt = m_mcEvt;
-    
-    m_numEvents = m_mcTree->GetEntries();
 
-
-
-    if (m_rootIoSvc) {
-        m_rootIoSvc->setRootEvtMax(m_numEvents);
-        if (!m_mcTree->GetTreeIndex()) {
-        //    log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
-        //    m_mcTree->BuildIndex("m_runId", "m_eventId");
-
-            TChainIndex *chInd = new TChainIndex(m_mcTree, "m_runId", "m_eventId");
-            // HMK Possible to return zombie if files in chain are not in 
-            // runId order - see TChainIndex documentation
-            if (!chInd->IsZombie()) 
-                m_mcTree->SetTreeIndex(chInd);
-        }
-        m_rootIoSvc->registerRootTree(m_mcTree);
-    }
+    // Set up new school system...
+    std::string type = "MC";
+    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
      
-    saveDir->cd();
     return sc;
     
 }
@@ -231,77 +162,15 @@ StatusCode mcRootReaderAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
-    TDirectory *saveDir = gDirectory;
     
     if (m_mcEvt) m_mcEvt->Clear(m_clearOption.c_str());
-    static Long64_t evtId = 0;
-    Long64_t readInd;
+    m_mcEvt = 0;
 
-    // Check to see if the input MC file has changed
-    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
-        // reset evtId to zero for new file
-        evtId = 0;
-        if (m_mcTree) {
-            delete m_mcTree;
-            m_mcTree = 0;
-        }
-        std::string fileName = m_rootIoSvc->getMcFile();
-        facilities::Util::expandEnvVar(&fileName);
-        if (fileName.empty()) return sc; // no MC file to be opened
-        TFile f(fileName.c_str());
-        if (f.IsOpen()) {
-            f.Close();
-            m_mcTree = new TChain(m_treeName.c_str());
-            m_mcTree->Add(fileName.c_str());
-            m_numEvents = m_mcTree->GetEntries();
-            m_rootIoSvc->setRootEvtMax(m_numEvents);
-            if (!m_mcTree->GetTreeIndex()) {
-                log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
-                m_mcTree->BuildIndex("m_runId", "m_eventId");
-            }
-            m_rootIoSvc->registerRootTree(m_mcTree);
-        }
-    }
+    // Try reading the event this way... 
+    std::string type = "MC";
+    m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent(type));
 
-    if (!m_mcTree) {
-      log << MSG::INFO << "MC Root unavailable" << endreq;
-      return sc;
-    }
-
-    int numBytes;
-    if (evtId==0) m_mcTree->SetBranchAddress("McEvent", &m_mcEvt);
-    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
-
-    if ((m_rootIoSvc) &&  (m_rootIoSvc->useIndex())) {
-        readInd = m_rootIoSvc->index();
-    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
-        int run = runEventPair.first;
-        int evt = runEventPair.second;
-        // returns -1 if index does not exist
-        readInd = m_mcTree->GetEntryNumberWithIndex(run, evt);
-    } else {
-        readInd = evtId;
-    }
-
-    if ((readInd >= m_numEvents) || (readInd < 0)) {
-        log << MSG::WARNING << "Requested index is out of bounds - no MC data loaded" << endreq;
-        return StatusCode::SUCCESS;
-    } else {
-        log << MSG::INFO << "Requested index: " << readInd << endreq;
-    }
-
-    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
-
-    // ADDED FOR THE FILE HEADERS DEMO
-    m_mcTree->LoadTree(readInd);
-    m_headersTool->readConstMcHeader(m_mcTree->GetFile()) ;
-    
-    numBytes = m_mcTree->GetEntry(readInd); 
-    if ((numBytes <= 0) || (!m_mcEvt)) {
-        log << MSG::WARNING << "Failed to Load Mc Event" << endreq;
-        return StatusCode::SUCCESS;
-    }
+    if (!m_mcEvt) return StatusCode::FAILURE;
 
     sc = readMcEvent();
     if (sc.isFailure()) {
@@ -336,10 +205,7 @@ StatusCode mcRootReaderAlg::execute()
     
     sc = readMcTrajectories();
     if (sc.isFailure()) return sc;
-    
-    evtId = readInd+1;
-     
-    saveDir->cd();
+
     return sc;
 }
 
@@ -471,46 +337,8 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         pTds->init(momTds, idTds, statusBitsTds, initialMomTds, 
                     finalMomTds, initPosTds, finalPosTds, processTdsStr );
         
-        // Check version < ROOT 3.04.02, and do not attempt to read in daughters
-        static bool warn = false;
-        int ver = m_mcTree->GetCurrentFile()->GetVersion();
-       //// if (!warn) {
-        if (ver < 30402) {
-            log << MSG::WARNING << "Cannot read in TRef with ROOT 3.02.07"
-                " McParticle daughter list is unavailable" << endreq;
-            warn = true;
-        }
-        
-        
-/* HMK No need to handle daughters Event::McParticle::init does it
-        // Process the list of daughters
-        const TRefArray daughterArr = pRoot->getDaughterList();
-        const McParticle *daughterPartRoot;
-        int iPart;
-        for (iPart = 0; iPart < daughterArr.GetEntries(); iPart++) {
-			// Retrieving the daughter directly - rather than through my copy of TRefArray
-            //daughterPartRoot = (McParticle*)daughterArr.At(iPart);
-            daughterPartRoot = pRoot->getDaughter(iPart);
-            if (!daughterPartRoot) {
-                static bool warn = false;
-                if (!warn) {
-                    log << MSG::WARNING << "Cannot read in TRef "
-                        " McParticle daughter list is unavailable" << endreq;
-                    warn = true;
-                }
-            } else {
-                if (m_particleMap.find(daughterPartRoot->GetUniqueID()) != m_particleMap.end()) {
-                    Event::McParticle* partTds = m_particleMap[daughterPartRoot->GetUniqueID()];
-                    pTds->addDaughter(partTds);
-                } else {
-                    log << MSG::WARNING << "failed to find McParticle daughter in the"
-                        << " map!" << endreq;
-                }
-            }
-            
-        }
-
-*/
+        // Removed here some code to check root versions and prevent reading of 
+        // daughter particles for versions older than root 3.04.02
         
         // Add the TDS McParticle to the TDS collection of McParticles
         pTdsCol->push_back(pTds);
@@ -731,30 +559,8 @@ StatusCode mcRootReaderAlg::readMcTrajectories()
 //}
 
 
-void mcRootReaderAlg::close() 
-{
-    // Purpose and Method:  Writes the ROOT file at the end of the run.
-    //	  The TObject::kOverWrite parameter is used in the Write method
-    //	  since ROOT will periodically write to the ROOT file when the bufSize
-    //	  is filled.  Writing would create 2 copies of the same tree to be
-    //	  stored in the ROOT file, if we did not specify kOverwrite.
-    
-    //TDirectory *saveDir = gDirectory;
-    //m_mcFile->cd();
-    //m_mcFile->Close();
-    //saveDir->cd();
-
-    // HMK skip deleting TChain due to seg fault with TChainIndex
-   // if (m_mcTree) {
-   //     delete m_mcTree;
-   //     m_mcTree = 0;
-   // }
-}
-
 StatusCode mcRootReaderAlg::finalize()
 {
-    close();
-    
     StatusCode sc = StatusCode::SUCCESS;
     setFinalized();
     return sc;

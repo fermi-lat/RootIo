@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.7 2006/11/13 10:38:55 claval Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.8 2006/11/23 04:08:32 heather Exp $
 */
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
@@ -21,7 +21,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 3 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.7 2006/11/13 10:38:55 claval Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.8 2006/11/23 04:08:32 heather Exp $
 */
 class  IRootIoSvc : virtual public IInterface {
 public:
@@ -36,6 +36,15 @@ public:
     virtual std::string getReconFile() const = 0;
     virtual std::string getGcrFile() const = 0;
     virtual bool fileChange() const = 0;
+
+    virtual bool setFiles(const std::string& type, const StringArrayProperty& fileName) = 0;
+    virtual StringArrayProperty getFileNameList(const std::string& type) const = 0;
+    virtual StatusCode registerIoAlgorithm(const std::string& type, 
+                                           const std::string& tree, 
+                                           const std::string& branch,
+                                           const StringArrayProperty& fileList) = 0;
+    
+    virtual TObject* getNextEvent(const std::string& type) = 0;
     
     virtual Long64_t getEvtMax() = 0;
     virtual void setRootEvtMax(Long64_t max) = 0;
