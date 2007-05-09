@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.61 2007/02/15 19:30:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.62 2007/05/09 21:32:39 usher Exp $
  */
 
 
@@ -82,9 +82,8 @@ private:
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
+    /// Branch name for events
     std::string m_branchName;
-    /// Number of Events in the input ROOT TTree
-    Long64_t m_numEvents;
     /// Option string which will be passed to McEvent::Clear
     std::string m_clearOption;
 
