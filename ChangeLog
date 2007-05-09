@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed May  9 15:36:16 PDT 2007
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+Log Message:
+Clean up mcRootReaderAlg a bit, modify reconRootReaderAlg to check on ease of converting algorithms
+    *
+------------------------------------------------------------
 User: usher  Wed May  9 14:32:39 PDT 2007
 RootIo/src
 
