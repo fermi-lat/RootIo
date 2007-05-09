@@ -2,7 +2,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.26 2007/03/15 02:38:13 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.27 2007/03/19 01:14:35 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -40,9 +40,9 @@
 #include "TFile.h"
 #include "facilities/Util.h"
 
-
 #include "RootConvert/Utilities/RootReaderUtil.h"
 
+#include "RootInputDesc.h"
 
 //forward declarations
 template <class TYPE> class SvcFactory;
@@ -76,12 +76,23 @@ public:
     /// Handles incidents, implementing IIncidentListener interface
     virtual void handle(const Incident& inc);    
 	
+    // Old way, to be deleted
     virtual bool setRootFile(const char* mc, const char* digi, const char* rec, const char* gcr="");
     virtual std::string getMcFile() const { return m_mcFile; };
     virtual std::string getDigiFile() const { return m_digiFile; };
     virtual std::string getReconFile() const { return m_reconFile; };
     virtual std::string getGcrFile() const { return m_gcrFile; };
     virtual bool fileChange() const { return m_fileChange; };
+
+    // New way
+    virtual bool setFiles(const std::string& type, const StringArrayProperty& fileName);
+    virtual StringArrayProperty getFileNameList(const std::string& type) const;
+    virtual StatusCode registerIoAlgorithm(const std::string& type, 
+                                           const std::string& tree, 
+                                           const std::string& branch,
+                                           const StringArrayProperty& fileList);
+    
+    virtual TObject* getNextEvent(const std::string& type);
 
     virtual Long64_t getEvtMax() { return m_evtMax; };
 
@@ -114,6 +125,9 @@ protected:
     
 private:
 
+    bool                 fileChange(const std::string& type)    const;
+    const RootInputDesc* getRootInputDesc(const std::string& type) const;
+    RootInputDesc*       getRootInputDesc(const std::string& type); 
 
     void beginEvent();
     void endEvent();
@@ -145,6 +159,8 @@ private:
     std::string m_mcFile, m_digiFile, m_reconFile, m_gcrFile;
     bool m_fileChange;
     int m_updated; // counter to check that algs have updated input root file
+
+    std::map<std::string, RootInputDesc*> m_rootIoMap;
 };
 
 // declare the service factories for the RootIoSvc
@@ -180,6 +196,8 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_useRunEventPair = false;
     m_fileChange = false;
     m_updated = 0;
+
+    m_rootIoMap.clear();
 }
 
 
@@ -227,9 +245,118 @@ StatusCode RootIoSvc::initialize ()
 
 
     m_index = m_startIndex;
-    if (m_startIndex > 0) m_useIndex = true;
+    if (m_startIndex >= 0) m_useIndex = true;
 
     return StatusCode::SUCCESS;
+}
+
+RootInputDesc*  RootIoSvc::getRootInputDesc(const std::string& type)
+{
+    RootInputDesc* rootIo = 0;
+
+    // Look up this type in the map
+    std::map<std::string, RootInputDesc*>::iterator typeItr = m_rootIoMap.find(type);
+
+    // If one exists then get the pointer to the object
+    if (typeItr != m_rootIoMap.end()) rootIo = typeItr->second;
+
+    return rootIo;
+}
+
+const RootInputDesc* RootIoSvc::getRootInputDesc(const std::string& type) const
+{
+    const RootInputDesc* rootIo = 0;
+
+    // Look up this type in the map
+    std::map<std::string, RootInputDesc*>::const_iterator typeItr = m_rootIoMap.find(type);
+
+    // If one exists then get the pointer to the object
+    if (typeItr != m_rootIoMap.end()) rootIo = typeItr->second;
+
+    return rootIo;
+}
+
+bool RootIoSvc::setFiles(const std::string& type, const StringArrayProperty& fileName)
+{
+    bool fileSet = false;
+
+    RootInputDesc* rootIo = getRootInputDesc(type);
+
+    if (rootIo)
+    {
+        rootIo->setFileList(fileName);
+
+        fileSet = true;
+    }
+    else
+    {
+        // unregistered type so is an error
+        fileSet = false;
+    }
+
+    return fileSet;
+}
+
+StringArrayProperty RootIoSvc::getFileNameList(const std::string& type) const
+{
+    StringArrayProperty result;
+
+    const RootInputDesc* rootIo = getRootInputDesc(type);
+
+    if (rootIo) result = rootIo->getFileList();
+
+    return result;
+}
+
+StatusCode RootIoSvc::registerIoAlgorithm(const std::string& type, 
+                                          const std::string& tree, 
+                                          const std::string& branch,
+                                          const StringArrayProperty& fileList)
+{
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Create a new RootInputDesc object for this algorithm
+    RootInputDesc* rootIo = new RootInputDesc(fileList, tree, branch);
+
+    // Store the pointer to this in our map
+    m_rootIoMap[type] = rootIo;
+
+    // Register with RootIoSvc
+    setRootEvtMax(rootIo->getNumEvents());
+    registerRootTree(rootIo->getTChain());
+
+    return sc;
+}
+
+TObject* RootIoSvc::getNextEvent(const std::string& type)
+{
+    MsgStream log( msgSvc(), name() );
+
+    RootInputDesc* rootIo = getRootInputDesc(type);
+    TObject*    pData  = 0;
+
+    if (rootIo)
+    {
+        // Clear the event first
+        //rootIo->clearEvent();
+
+        // Read the event depending upon the mode
+        if (useIndex())
+        {
+            pData = rootIo->getEvent(index());
+        }
+        // Otherwise we get by run/event number
+        else
+        {
+            std::pair<int,int> runEvtPair = runEventPair();
+            int                runNum     = runEvtPair.first;
+            int                evtNum     = runEvtPair.second;
+
+            pData = rootIo->getEvent(runNum, evtNum);
+        }
+    }
+
+    return pData;
 }
 
 
@@ -257,50 +384,74 @@ StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterfac
 }
 
 
-bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec, const char *gcr) {
-     std::string mcFile = mc;
-     std::string digiFile = digi;
-     std::string reconFile = rec;
-     std::string gcrFile = gcr;
-     facilities::Util::expandEnvVar(&mcFile);
-     facilities::Util::expandEnvVar(&digiFile);
-     facilities::Util::expandEnvVar(&reconFile);
-     facilities::Util::expandEnvVar(&gcrFile);
+bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec, const char *gcr) 
+{
+    bool success = false;
+
+    // Make local copies of the requested strings
+    std::string mcFile    = mc;
+    std::string digiFile  = digi;
+    std::string reconFile = rec;
+    std::string gcrFile   = gcr;
+
+    // Expand to get rid of any environment variables
+    facilities::Util::expandEnvVar(&mcFile);
+    facilities::Util::expandEnvVar(&digiFile);
+    facilities::Util::expandEnvVar(&reconFile);
+    facilities::Util::expandEnvVar(&gcrFile);
 
     // at least one string must be non-null
     if (mcFile.empty() && digiFile.empty() && reconFile.empty() && gcrFile.empty())
-        return false;
+        return success;
 
     // Check that these files exist
     // blank, skip - since that means we just won't read from that type of file
-    if (!mcFile.empty()) {
-        if (!RootPersistence::fileExists(mcFile)) return false;
+    if (!mcFile.empty()) 
+    {
+        if (!RootPersistence::fileExists(mcFile)) return success;
+
+        // Change files in our RootInputDesc
+        StringArrayProperty fileList;
+        std::vector<std::string> fileVec;
+        std::string type = "MC";
+        fileVec.push_back("mc.root");
+        fileList.setValue(fileVec);
+
+        RootInputDesc* rootIo = getRootInputDesc(type);
+
+        rootIo->setFileList(fileList);
     }
-    if (!digiFile.empty()) {
-        if (!RootPersistence::fileExists(digiFile)) return false;
+
+    if (!digiFile.empty()) 
+    {
+        if (!RootPersistence::fileExists(digiFile)) return success;
     }
-    if (!reconFile.empty()) {
-        if (!RootPersistence::fileExists(reconFile)) {
-            return false;
-        } else {
+
+    if (!reconFile.empty()) 
+    {
+        if (!RootPersistence::fileExists(reconFile)) return success;
+        else 
+        {
             TFile f(reconFile.c_str());
             if (f.IsOpen()) AcdRecon::fixAcdStreamer(f.GetVersion());
         }
     }
 
-    if (!gcrFile.empty()) {
-        TFile f(gcr);
-        if (!f.IsOpen()) return false;
-        f.Close();
+    if (!gcrFile.empty()) 
+    {
+        if (!RootPersistence::fileExists(gcrFile)) return success;
     }
 
     m_chainCol.clear(); // clear out TTrees from old files
-    m_mcFile = mc;
-    m_digiFile = digi;
-    m_reconFile = rec;
-    m_gcrFile = gcr;
+
+    m_mcFile     = mc;
+    m_digiFile   = digi;
+    m_reconFile  = rec;
+    m_gcrFile    = gcr;
     m_fileChange = true;
-    return true;
+
+    success = true;
+    return success;
 }
 
 void RootIoSvc::setRootEvtMax(Long64_t max) {
@@ -433,6 +584,10 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
 {        
     m_useIndex = false;
     m_useRunEventPair = false;
+
+    //temp
+    m_useIndex = true;
+    m_index++;
 
     m_runEventPair = std::pair<int, int>(-1,-1);
 
