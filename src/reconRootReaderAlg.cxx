@@ -21,18 +21,6 @@
 
 #include "AncillaryDataEvent/Recon.h"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TChain.h"
-#include "TChainIndex.h"
-#include "TDirectory.h"
-#include "TObjArray.h"
-#include "TCollection.h"  // Declares TIter
-#ifdef WIN32
-#include "TSystem.h" // To get TreePlayer loaded
-#endif
-
 #include "reconRootData/ReconEvent.h"
 
 #include "facilities/Util.h"
@@ -61,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.77 2007/03/15 02:38:13 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.78 2007/03/19 01:14:35 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -121,10 +109,6 @@ private:
     /// Closes the ROOT file
     void close();
     
-    /// ROOT file pointer
-    TFile *m_reconFile;
-    /// ROOT tree pointer
-    TChain *m_reconTree;
     /// Top-level Monte Carlo ROOT object
     ReconEvent *m_reconEvt;
     /// name of the output ROOT file
@@ -133,15 +117,15 @@ private:
     StringArrayProperty m_fileList;
     /// name of the Recon TTree stored in the ROOT file
     std::string m_treeName;
-    /// Number of events in the input ROOT TTree
-    Long64_t m_numEvents;
+    std::string m_branchName;
+    /// Option string which will be passed to McEvent::Clear
+    std::string m_clearOption;
 
     commonData m_common;
 
     IRootIoSvc*   m_rootIoSvc;
 
     bool FixAcdStreamerDone;
-
 
     // ADDED FOR THE FILE HEADERS DEMO
     IFhTool * m_headersTool ;
@@ -152,7 +136,7 @@ const IAlgFactory& reconRootReaderAlgFactory = Factory;
 
 
 reconRootReaderAlg::reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
-Algorithm(name, pSvcLocator)
+Algorithm(name, pSvcLocator), m_reconEvt(0), m_branchName("ReconEvent")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -165,6 +149,7 @@ Algorithm(name, pSvcLocator)
     initVec.clear();
     // Input TTree name
     declareProperty("reconTreeName", m_treeName="Recon");
+    declareProperty("clearOption", m_clearOption="");
     
 }
 
@@ -194,64 +179,11 @@ StatusCode reconRootReaderAlg::initialize()
     }
 
     facilities::Util::expandEnvVar(&m_fileName);
- 
-#ifdef WIN32
-	gSystem->Load("libTreePlayer.dll");
-#endif  
-   
-    // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
-    m_reconTree = new TChain(m_treeName.c_str());
 
-    FixAcdStreamerDone = false;
-    if ((m_fileName.compare("") != 0) && ( RootPersistence::fileExists(m_fileName)) ) {
-        TFile f(m_fileName.c_str());
-        if (f.IsOpen()) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
-    } else {
-        const std::vector<std::string> fList = m_fileList.value( );
-        std::vector<std::string>::const_iterator it;
-        std::vector<std::string>::const_iterator itend = fList.end( );
-        for (it = fList.begin(); it != itend; it++) {
-            std::string theFile = (*it);
-            if ( (theFile.compare("") != 0) && (RootPersistence::fileExists(theFile)) ) {
-                TFile f(theFile.c_str());
-                if (f.IsOpen()) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
-            }
-            if (FixAcdStreamerDone) break;
-        }
-    }
+    // Set up new school system...
+    std::string type = "RECON";
+    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
 
-    // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_reconTree, m_fileName, m_fileList, log);
-    if (openSc.isFailure()) {
-      return  openSc;
-    }
-
-
-    m_reconEvt = 0;
-    m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
-    
-    m_common.m_reconEvt = m_reconEvt;
-
-    m_numEvents = m_reconTree->GetEntries();
-      
-    if (m_rootIoSvc) {
-        m_rootIoSvc->setRootEvtMax(m_numEvents);
-        if(!m_reconTree->GetTreeIndex()) {
-         //   log << MSG::INFO 
-         //       << "Input file does not contain new style index, rebuilding" 
-         //       << endreq;
-         //   m_reconTree->BuildIndex("m_runId", "m_eventId");
-
-            TChainIndex *chInd = new TChainIndex(m_reconTree, "m_runId", "m_eventId");
-            // could return zombie if files in chain are not in runId order
-            if (!chInd->IsZombie())
-                m_reconTree->SetTreeIndex(chInd);
-        }
-        m_rootIoSvc->registerRootTree(m_reconTree);
-    }
-
-    saveDir->cd();
     return sc;
     
 }
@@ -264,79 +196,16 @@ StatusCode reconRootReaderAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    TDirectory *saveDir = gDirectory;
-        
-    if (m_reconEvt) m_reconEvt->Clear();
-
-    static Long64_t evtId = 0;
-    Long64_t readInd;
-    int numBytes;
-    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
-
-
-    // Check to see if the input Digi file has changed
-    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
-        // reset evtId to zero for new file
-        evtId = 0;
-        if (m_reconTree) {
-            delete m_reconTree;
-            m_reconTree = 0;
-        }
-        std::string fileName = m_rootIoSvc->getReconFile();
-        facilities::Util::expandEnvVar(&fileName);
-        if (fileName.empty()) return sc; // No Recon to be opened
-        TFile f(fileName.c_str());
-        if (f.IsOpen()) {
-            if (!FixAcdStreamerDone) FixAcdStreamerDone = AcdRecon::fixAcdStreamer(f.GetVersion());
-            f.Close();
-            m_reconTree = new TChain(m_treeName.c_str());
-            m_reconTree->Add(fileName.c_str());
-            m_numEvents = m_reconTree->GetEntries();
-            m_rootIoSvc->setRootEvtMax(m_numEvents);
-            if (!m_reconTree->GetTreeIndex()) {
-                log << MSG::INFO << "Input file does not contain new style "
-                    << "index, rebuilding" << endreq;
-                m_reconTree->BuildIndex("m_runId", "m_eventId");
-            }
-            m_rootIoSvc->registerRootTree(m_reconTree);
-       }
-    }
-
-    if (!m_reconTree) {
-        log << MSG::INFO << "Recon Data Unavailable" << endreq;
-        return sc;
-    }
-
-    if (evtId == 0) m_reconTree->SetBranchAddress("ReconEvent", &m_reconEvt);
-
-    if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
-        readInd = m_rootIoSvc->index();
-    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
-        int run = runEventPair.first;
-        int evt = runEventPair.second;
-        readInd = m_reconTree->GetEntryNumberWithIndex(run, evt);
-    } else {
-        readInd = evtId;
-    }
-
-    if ((readInd >= m_numEvents) || (readInd < 0)) {
-        log << MSG::WARNING << "Requested index is out of bounds - no recon data loaded" << endreq;
-        return StatusCode::SUCCESS;
-    }
-
-    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
     
-    // ADDED FOR THE FILE HEADERS DEMO
-    m_reconTree->LoadTree(readInd);
-    m_headersTool->readConstReconHeader(m_reconTree->GetFile()) ;
-    
-    numBytes = m_reconTree->GetEvent(readInd);
+    if (m_reconEvt) m_reconEvt->Clear(m_clearOption.c_str());
+    m_reconEvt = 0;
 
-    if ((numBytes <= 0) || (!m_reconEvt)) {
-        log << MSG::WARNING << "Failed to Load Recon Event" << endreq;
-        return StatusCode::SUCCESS;
-    }
-    
+    // Try reading the event this way... 
+    std::string type = "RECON";
+    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(type));
+
+    if (!m_reconEvt) return StatusCode::FAILURE;
+
     sc = readReconEvent();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to read top level ReconEvent" << endreq;
@@ -367,8 +236,8 @@ StatusCode reconRootReaderAlg::execute()
         return sc;
     }
     
-    evtId = readInd+1;
-    saveDir->cd();
+//    evtId = readInd+1;
+//    saveDir->cd();
     
     return sc;
 }
