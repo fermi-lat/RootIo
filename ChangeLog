@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed May  9 14:32:38 PDT 2007
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+First attempt at centralizing Root input into a central class (RootInputDesc) and cleaning up one of the reader algs
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r30p1, operation: add
 Package: RootIo
