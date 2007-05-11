@@ -21,18 +21,6 @@
 #include "idents/CalXtalId.h"
 #include "idents/TowerId.h"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TChain.h"
-#include "TChainIndex.h"
-#include "TDirectory.h"
-#include "TObjArray.h"
-#include "TCollection.h"  // Declares TIter
-#ifdef WIN32
-#include "TSystem.h" // To get TreePlayer loaded
-#endif
-
 #include "mcRootData/McEvent.h"
 #include "digiRootData/DigiEvent.h"
 #include "reconRootData/ReconEvent.h"
@@ -49,7 +37,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.24 2007/02/15 19:30:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.25 2007/04/03 02:41:36 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -95,10 +83,6 @@ private:
     /// Closes the ROOT file
     void close();
    
-    /// ROOT file pointer
-    TFile *m_relFile;
-    /// ROOT tree pointer
-    TChain *m_relTree;
     /// Top-level Monte Carlo ROOT object
     RelTable *m_relTab;
     /// name of the output ROOT file
@@ -108,6 +92,11 @@ private:
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Stores number of events available in the input ROOT TTree
+    /// Branch name for events
+    std::string m_branchName;
+    /// Option string which will be passed to McEvent::Clear
+    std::string m_clearOption;
+
     Long64_t m_numEvents;
 
     commonData m_common;
@@ -139,7 +128,7 @@ const IAlgFactory& relationRootReaderAlgFactory = Factory;
 
 
 relationRootReaderAlg::relationRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
-Algorithm(name, pSvcLocator)
+Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -152,6 +141,7 @@ Algorithm(name, pSvcLocator)
     initVec.clear();
     // Input TTree name
     declareProperty("treeName", m_treeName="Relations");
+    declareProperty("clearOption", m_clearOption="");
 
     m_mcPartToTrajList    = 0;
     m_mcPointToPosHitList = 0;
@@ -180,41 +170,10 @@ StatusCode relationRootReaderAlg::initialize()
 
     facilities::Util::expandEnvVar(&m_fileName);
 
-#ifdef WIN32
-	gSystem->Load("libTreePlayer.dll");
-#endif  
-   
-    // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
-    m_relTree = new TChain(m_treeName.c_str());
+    // Set up new school system...
+    std::string type = "RELTAB";
+    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
 
-    
-    // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_relTree, m_fileName, m_fileList, log);
-    if (openSc.isFailure()) {
-      return  openSc;
-    }
-    
-
-    m_relTab = 0;
-    m_relTree->SetBranchAddress("RelTable", &m_relTab);
-
-    m_numEvents = m_relTree->GetEntries();
-    if (m_rootIoSvc) {
-        m_rootIoSvc->setRootEvtMax(m_numEvents);
-        if(!m_relTree->GetTreeIndex()) {
-          //  log << MSG::INFO << "Input file does not contain new style index, rebuilding" << endreq;
-          //  m_relTree->BuildIndex("m_runId", "m_eventId");
-          TChainIndex *chInd = new TChainIndex(m_relTree, "m_runId", "m_eventId");
-          
-          // could be zombie if files in chain are not in runId order
-          if (!chInd->IsZombie())
-              m_relTree->SetTreeIndex(chInd);
-        }
-        m_rootIoSvc->registerRootTree(m_relTree);
-    }
-
-    saveDir->cd();
     return sc;
     
 }
@@ -227,38 +186,16 @@ StatusCode relationRootReaderAlg::execute()
 
     MsgStream log(msgSvc(), name());
 
-    StatusCode sc = StatusCode::SUCCESS;
+    StatusCode sc = StatusCode::SUCCESS; 
     
-    static Long64_t evtId = 0;
-    Long64_t readInd;
-    int numBytes;
-	std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
-	
-	if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
-		readInd = m_rootIoSvc->index();
-	} else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
-		int run = runEventPair.first;
-		int evt = runEventPair.second;
-                // returns -1 if index does not exist
-		readInd = m_relTree->GetEntryNumberWithIndex(run, evt);
-	} else {
-		readInd = evtId;
-	}
+    if (m_relTab) m_relTab->Clear(m_clearOption.c_str());
+    m_relTab = 0;
 
-    if ((readInd >= m_numEvents) || (readInd < 0)) {
-        log << MSG::WARNING << "Requested index is out of bounds - no relation data retrieved" << endreq;
-        return StatusCode::SUCCESS;
-    }
+    // Try reading the event this way... 
+    std::string type = "RELTAB";
+    m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent(type));
 
-    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
-
-    numBytes = m_relTree->GetEvent(readInd);
-	
-    if ((numBytes <= 0) || (!m_relTab)) {
-        log << MSG::WARNING << "Failed to Relational Table" << endreq;
-        return StatusCode::SUCCESS;
-    }
-
+    if (!m_relTab) return StatusCode::FAILURE;
 
     sc = createTDSTables();
     if (sc.isFailure()) {
@@ -281,8 +218,6 @@ StatusCode relationRootReaderAlg::execute()
     sc = eventSvc()->registerObject("/Event/MC/McPointToIntHit",     m_mcPointToIntHitList );
 
     m_relTab->Clear();
-
-	evtId = readInd+1;
 
     m_common.clear();
     

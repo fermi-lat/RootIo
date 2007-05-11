@@ -2,16 +2,12 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.27 2007/03/19 01:14:35 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.1 2007/05/09 21:32:39 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
 #include "RootInputDesc.h"
 #include "TROOT.h"
-
-#ifdef WIN32
-#include "TSystem.h" // To get TreePlayer loaded
-#endif
 
 RootInputDesc::RootInputDesc(const StringArrayProperty& fileList, 
                        const std::string&         tree, 
@@ -20,11 +16,6 @@ RootInputDesc::RootInputDesc(const StringArrayProperty& fileList,
 {
     // Set up the input file list
     m_numEvents = setFileList(fileList);
-  
-#ifdef WIN32
-	gSystem->Load("libTreePlayer.dll");
-#endif  
- 
 }
     
 RootInputDesc::~RootInputDesc() 

@@ -27,18 +27,6 @@
 #include "LdfEvent/LsfMetaEvent.h"
 #include "LdfEvent/LsfCcsds.h"
 
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TChain.h"
-#include "TChainIndex.h"
-#include "TDirectory.h"
-#include "TObjArray.h"
-#include "TCollection.h"  // Declares TIter
-#ifdef WIN32
-#include "TSystem.h" // To get TreePlayer loaded
-#endif
-
 #include "digiRootData/DigiEvent.h"
 
 #include "facilities/Util.h"
@@ -60,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.78 2006/10/05 19:28:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.79 2007/02/15 19:30:06 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -122,10 +110,6 @@ private:
     void convertVolumeId(VolumeIdentifier rootVolId, 
         idents::VolumeIdentifier &tdsVolId);
    
-    /// ROOT file pointer
-    TFile *m_digiFile;
-    /// ROOT tree pointer
-    TChain *m_digiTree;
     /// Top-level Monte Carlo ROOT object
     DigiEvent *m_digiEvt;
     /// name of the input ROOT file
@@ -135,6 +119,11 @@ private:
     /// name of the Monte Carlo TTree stored in the ROOT file
     std::string m_treeName;
     /// Stores number of events available in the input ROOT TTree
+    /// Branch name for events
+    std::string m_branchName;
+    /// Option string which will be passed to McEvent::Clear
+    std::string m_clearOption;
+
     Long64_t m_numEvents;
   
     commonData m_common;
@@ -149,7 +138,7 @@ const IAlgFactory& digiRootReaderAlgFactory = Factory;
 
 
 digiRootReaderAlg::digiRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
-Algorithm(name, pSvcLocator)
+Algorithm(name, pSvcLocator), m_digiEvt(0), m_branchName("DigiEvent")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -162,7 +151,7 @@ Algorithm(name, pSvcLocator)
     // Input TTree name
     initVec.clear();
     declareProperty("digiTreeName", m_treeName="Digi");
-
+    declareProperty("clearOption", m_clearOption="");
 }
 
 StatusCode digiRootReaderAlg::initialize()
@@ -193,46 +182,10 @@ StatusCode digiRootReaderAlg::initialize()
 
     facilities::Util::expandEnvVar(&m_fileName);
 
-#ifdef WIN32
-	gSystem->Load("libTreePlayer.dll");
-#endif  
+    // Set up new school system...
+    std::string type = "DIGI";
+    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
 
-    // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
-
-    m_digiTree = new TChain(m_treeName.c_str());
-
-
-    // add root files to TChain and check if files exist
-    StatusCode openSc= RootPersistence::addFilesToChain(m_digiTree, m_fileName, m_fileList, log);
-    if (openSc.isFailure()) {
-      return  openSc;
-    }
-    
-    m_digiEvt = 0;
-    m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
-    m_common.m_digiEvt = m_digiEvt;
-
-    m_numEvents = m_digiTree->GetEntries();
-    
-    if (m_rootIoSvc) {
-      m_rootIoSvc->setRootEvtMax(m_numEvents);
-      if (!m_digiTree->GetTreeIndex()) {
-          //log << MSG::INFO 
-          //    << "Input file does not contain new style index, rebuilding" 
-          //    << endreq;
-          //m_digiTree->BuildIndex("m_runId", "m_eventId");
-          TChainIndex *chIndex = new TChainIndex(m_digiTree, "m_runId", "m_eventId");
-          // HMK Could return zombie, if files in index are not in run number
-          // order - go check TChainIndex documentation
-          if (!chIndex->IsZombie())
-              m_digiTree->SetTreeIndex(chIndex);
-      }
-      m_rootIoSvc->registerRootTree(m_digiTree);
-    }
-
-
-    saveDir->cd();
     return sc;
     
 }
@@ -245,76 +198,15 @@ StatusCode digiRootReaderAlg::execute()
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    TDirectory *saveDir = gDirectory;
-    
-    if (m_digiEvt) m_digiEvt->Clear();
 
-    static Long64_t evtId = 0;
-    Long64_t readInd;
-    int numBytes;
-    std::pair<int,int> runEventPair = (m_rootIoSvc) ? m_rootIoSvc->runEventPair() : std::pair<int,int>(-1,-1);
+    if (m_digiEvt) m_digiEvt->Clear(m_clearOption.c_str());
+    m_digiEvt = 0;
 
-    // Check to see if the input Digi file has changed
-    if ( (m_rootIoSvc) && (m_rootIoSvc->fileChange()) ) {
-        // reset evtId to zero for new file
-        evtId = 0;
-        if (m_digiTree) {
-            delete m_digiTree;
-            m_digiTree = 0;
-        }
-        std::string fileName = m_rootIoSvc->getDigiFile();
-        facilities::Util::expandEnvVar(&fileName);
-        if (fileName.empty()) return sc; // No Digi To be Opened
-        TFile f(fileName.c_str());
-        if (f.IsOpen()) {
-            f.Close();
-            m_digiTree = new TChain(m_treeName.c_str());
-            m_digiTree->Add(fileName.c_str());
-            m_numEvents = m_digiTree->GetEntries();
-            m_rootIoSvc->setRootEvtMax(m_numEvents);
-            if (!m_digiTree->GetTreeIndex()) {
-                log << MSG::INFO << "Input file does not contain new style "
-                    << "index , rebuilding" << endreq;
-                m_digiTree->BuildIndex("m_runId", "m_eventId");
-            }
-            m_rootIoSvc->registerRootTree(m_digiTree);
-       }
-    }
+    // Try reading the event this way... 
+    std::string type = "DIGI";
+    m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent(type));
 
-    if (!m_digiTree) {
-        log << MSG::INFO << "Digi Data Unavailable" << endreq;
-        return sc;
-    }
-    
-    if (evtId == 0) m_digiTree->SetBranchAddress("DigiEvent", &m_digiEvt);
-	
-    if ((m_rootIoSvc) && (m_rootIoSvc->useIndex())) {
-        readInd = m_rootIoSvc->index();
-    } else if ((m_rootIoSvc) && (m_rootIoSvc->useRunEventPair())) {
-        int run = runEventPair.first;
-        int evt = runEventPair.second;
-        readInd = m_digiTree->GetEntryNumberWithIndex(run, evt);
-    } else {
-        readInd = evtId;
-    }
-
-    if ((readInd >= m_numEvents) || (readInd < 0)) {
-        log << MSG::WARNING << "Requested index is out of bounds - no digi data loaded" << endreq;
-        return StatusCode::SUCCESS;
-    }
-
-    if (m_rootIoSvc) m_rootIoSvc->setActualIndex(readInd);
-
-    // ADDED FOR THE FILE HEADERS DEMO
-    m_digiTree->LoadTree(readInd);
-    m_headersTool->readConstDigiHeader(m_digiTree->GetFile()) ;
-    
-    numBytes = m_digiTree->GetEvent(readInd);
-	
-    if ((numBytes <= 0) || (!m_digiEvt)) {
-            log << MSG::WARNING << "Failed to load digi event" << endreq;
-            return StatusCode::SUCCESS;
-	}
+    if (!m_digiEvt) return StatusCode::FAILURE;
 
     // Clear the digi common maps
     m_common.m_rootTkrDigiMap.clear();
@@ -408,10 +300,6 @@ StatusCode digiRootReaderAlg::execute()
     else
         log << MSG::VERBOSE << "loaded ancillary data" << endreq;
 
-    
-
-    evtId = readInd+1;
-    saveDir->cd();
     
     return sc;
 }
