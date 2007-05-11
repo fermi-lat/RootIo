@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Fri May 11 11:09:01 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx digiRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx 
+Log Message:
+Modify remaining reader algs for "new" scheme (which will continue to evolve for a while)
+    *
+------------------------------------------------------------
 User: usher  Wed May  9 15:36:16 PDT 2007
 RootIo/src
 
