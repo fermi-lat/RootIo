@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.79 2007/02/15 19:30:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.80 2007/05/11 18:09:00 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -138,7 +138,7 @@ const IAlgFactory& digiRootReaderAlgFactory = Factory;
 
 
 digiRootReaderAlg::digiRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
-Algorithm(name, pSvcLocator), m_digiEvt(0), m_branchName("DigiEvent")
+Algorithm(name, pSvcLocator), m_digiEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -151,6 +151,7 @@ Algorithm(name, pSvcLocator), m_digiEvt(0), m_branchName("DigiEvent")
     // Input TTree name
     initVec.clear();
     declareProperty("digiTreeName", m_treeName="Digi");
+    declareProperty("digiBranchName", m_branchName="DigiEvent");
     declareProperty("clearOption", m_clearOption="");
 }
 
