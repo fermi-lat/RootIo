@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.62 2007/05/09 21:32:39 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.63 2007/05/09 22:36:16 usher Exp $
  */
 
 
@@ -102,7 +102,7 @@ const IAlgFactory& mcRootReaderAlgFactory = Factory;
 
 mcRootReaderAlg::mcRootReaderAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) 
-                                 : Algorithm(name, pSvcLocator), m_mcEvt(0), m_branchName("McEvent")
+                                 : Algorithm(name, pSvcLocator), m_mcEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
@@ -114,6 +114,7 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
     declareProperty("mcRootFileList", m_fileList=initList);
     // ROOT TTree name
     declareProperty("mcTreeName", m_treeName="Mc");
+    declareProperty("mcBranchName", m_branchName="McEvent");
     declareProperty("clearOption", m_clearOption="");
     
     initVec.clear();
