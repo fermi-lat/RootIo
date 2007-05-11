@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Fri May 11 16:00:11 PDT 2007
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+Small update to make Branch Name a jo parameter for completeness
+    *
+------------------------------------------------------------
 User: usher  Fri May 11 11:09:01 PDT 2007
 RootIo/src
 
