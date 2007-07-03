@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue Jul  3 08:42:49 PDT 2007
+RootIo/src
+
+Modified Files:
+	relationRootWriterAlg.cxx 
+Log Message:
+Fix ordering of run and event in the RelTable object written to the output file (it was found to be backwards by the data catalogue people)
+    *
+------------------------------------------------------------
 User: usher  Fri May 11 16:00:11 PDT 2007
 RootIo/src
 
