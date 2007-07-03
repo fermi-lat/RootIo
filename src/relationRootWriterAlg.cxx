@@ -43,7 +43,7 @@
  * @brief Writes relational table TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.15 2007/02/15 19:30:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.16 2007/02/21 01:57:32 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -185,7 +185,7 @@ StatusCode relationRootWriterAlg::execute()
     UInt_t evtId = evt->event();
     UInt_t runId = evt->run();
 
-    m_relTable->initialize(runId, evtId);
+    m_relTable->initialize(evtId, runId);
 
 
     sc = writeTkrDigiRelations();
