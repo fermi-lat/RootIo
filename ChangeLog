@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: chamont  Wed Jul  4 08:19:27 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+	gcrSelectRootWriterAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+new RootIoSvc managing all the trees
+    *
+------------------------------------------------------------
+User: chamont  Wed Jul  4 08:19:27 PDT 2007
 RootIo/RootIo
 
 Modified Files:
