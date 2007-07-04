@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.1 2006/11/13 10:38:56 claval Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.2 2006/12/13 15:16:21 heather Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -151,7 +151,7 @@ StatusCode gcrSelectRootWriterAlg::initialize()
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
-    m_gcrSelectFile = new TFile(m_fileName.c_str(), "RECREATE");
+    m_gcrSelectFile = TFile::Open(m_fileName.c_str(), "RECREATE");
     if (!m_gcrSelectFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for writing." << endreq;

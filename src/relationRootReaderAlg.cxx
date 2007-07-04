@@ -37,7 +37,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.26 2007/05/11 18:09:01 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.27 2007/05/11 23:00:02 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -85,8 +85,8 @@ private:
    
     /// Top-level Monte Carlo ROOT object
     RelTable *m_relTab;
-    /// name of the output ROOT file
-    std::string m_fileName;
+//    /// name of the input ROOT file
+//    std::string m_fileName;
     /// List of files
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
@@ -132,7 +132,7 @@ Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("rootFile",m_fileName="");
+//    declareProperty("rootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
     initVec.push_back("relation.root");
@@ -169,11 +169,9 @@ StatusCode relationRootReaderAlg::initialize()
         //return StatusCode::FAILURE;
     }
 
-    facilities::Util::expandEnvVar(&m_fileName);
-
     // Set up new school system...
     std::string type = "RELTAB";
-    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
 
     return sc;
     

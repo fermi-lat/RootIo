@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.80 2007/05/11 18:09:00 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.81 2007/05/11 23:00:01 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -112,8 +112,8 @@ private:
    
     /// Top-level Monte Carlo ROOT object
     DigiEvent *m_digiEvt;
-    /// name of the input ROOT file
-    std::string m_fileName;
+//    /// name of the input ROOT file
+//    std::string m_fileName;
     /// Array of input file names
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
@@ -142,7 +142,7 @@ Algorithm(name, pSvcLocator), m_digiEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("digiRootFile",m_fileName="");
+//    declareProperty("digiRootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
     initVec.push_back("digi.root");
@@ -181,11 +181,9 @@ StatusCode digiRootReaderAlg::initialize()
         //return StatusCode::FAILURE;
     } 
 
-    facilities::Util::expandEnvVar(&m_fileName);
-
     // Set up new school system...
     std::string type = "DIGI";
-    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
 
     return sc;
     

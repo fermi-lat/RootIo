@@ -2,9 +2,11 @@
 //
 // Job options file for RootIo test
 //
-ApplicationMgr.DLLs +=    { "RootIo", "GlastSvc" };
+ApplicationMgr.DLLs +=    { "RootIo", "GaudiAlg", "GlastSvc" };
 
-ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg", "FhSetAlg", 
+ApplicationMgr.TopAlg = { "Sequencer/Top" } ;
+
+Top.Members = { "createFakeTdsDataAlg", "FhSetAlg", 
               "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
 
 ApplicationMgr.ExtSvc = { 

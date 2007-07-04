@@ -4,71 +4,55 @@ testReadAlg         DEBUG 0 TKR vertices on TDS
 testReadAlg         DEBUG 0 CAL recon xtals on TDS
 testReadAlg         DEBUG 0 CAL clusters on TDS
 testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 0 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 CAL clusters on TDS
+testReadAlg         DEBUG Retrieved McParticles from the TDS
 testReadAlg         DEBUG Retrieved McPositionHits from the TDS
-        Deposited Energy      =         0.88
-        Deposited Energy      =          0.9
-        Deposited Energy      =         0.13
-        Deposited Energy      =        0.095
-        Deposited Energy      =        0.093
-        Deposited Energy      =         0.25
-        Deposited Energy      =          0.1
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.09
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.11
-        Deposited Energy      =          0.1
-        Deposited Energy      =        0.044
-        Deposited Energy      =        0.062
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.15
-        Deposited Energy      =       0.0037
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.22
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.11
+        Deposited Energy      =          1.9
         Deposited Energy      =         0.16
-        Deposited Energy      =        0.038
-        Deposited Energy      =        0.082
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.18
-        Deposited Energy      =        0.096
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.14
-        Deposited Energy      =         0.11
         Deposited Energy      =         0.16
-        Deposited Energy      =         0.29
-        Deposited Energy      =         0.14
-        Deposited Energy      =        0.047
-        Deposited Energy      =         0.25
-        Deposited Energy      =          1.4
-        Deposited Energy      =          1.3
-        Deposited Energy      =         0.47
+        Deposited Energy      =         0.12
+        Deposited Energy      =         0.12
 testReadAlg         DEBUG Retrieved McIntegratingHits from the TDS
-    Deposited Energy        =         0.12
-    Deposited Energy        =           12
+    Deposited Energy        =          1.7
+    Deposited Energy        =          8.9
+    Deposited Energy        =          9.4
+    Deposited Energy        =          2.1
+    Deposited Energy        =           10
     Deposited Energy        =           13
+    Deposited Energy        =           10
+    Deposited Energy        =         0.34
     Deposited Energy        =           12
-    Deposited Energy        =           12
-    Deposited Energy        =           11
-    Deposited Energy        =           11
-    Deposited Energy        =           12
-    Deposited Energy        =           12
-testReadAlg         DEBUG 1 tracks in TDS
-testReadAlg         DEBUG 1 TKR vertices on TDS
-testReadAlg         DEBUG 8 CAL recon xtals on TDS
+testReadAlg         DEBUG 0 tracks in TDS
+testReadAlg         DEBUG 0 TKR vertices on TDS
+testReadAlg         DEBUG 6 CAL recon xtals on TDS
 testReadAlg         DEBUG 1 CAL clusters on TDS
 testReadAlg         DEBUG Retrieved McParticles from the TDS
 testReadAlg         DEBUG 0 tracks in TDS
@@ -77,148 +61,52 @@ testReadAlg         DEBUG 0 CAL recon xtals on TDS
 testReadAlg         DEBUG 0 CAL clusters on TDS
 testReadAlg         DEBUG Retrieved McParticles from the TDS
 testReadAlg         DEBUG Retrieved McPositionHits from the TDS
-        Deposited Energy      =          1.6
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.14
-        Deposited Energy      =         0.16
+        Deposited Energy      =         0.52
+        Deposited Energy      =            1
         Deposited Energy      =         0.11
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.16
-        Deposited Energy      =         0.15
         Deposited Energy      =         0.12
-        Deposited Energy      =         0.14
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.18
-        Deposited Energy      =        0.055
-        Deposited Energy      =         0.07
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.17
-        Deposited Energy      =         0.23
-        Deposited Energy      =         0.15
-        Deposited Energy      =        0.037
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.19
-        Deposited Energy      =         0.16
-        Deposited Energy      =          0.2
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.13
-        Deposited Energy      =          0.2
-        Deposited Energy      =         0.19
-        Deposited Energy      =         0.13
         Deposited Energy      =          0.1
-        Deposited Energy      =         0.18
+        Deposited Energy      =         0.12
+        Deposited Energy      =        0.097
+        Deposited Energy      =         0.13
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.17
+        Deposited Energy      =        0.099
+        Deposited Energy      =          0.1
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.13
         Deposited Energy      =         0.11
         Deposited Energy      =         0.15
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.16
-        Deposited Energy      =         0.17
+        Deposited Energy      =         0.15
         Deposited Energy      =         0.14
-testReadAlg         DEBUG Retrieved McIntegratingHits from the TDS
-    Deposited Energy        =           12
-    Deposited Energy        =            5
-    Deposited Energy        =          6.2
-    Deposited Energy        =           16
-    Deposited Energy        =           11
-    Deposited Energy        =          2.3
-    Deposited Energy        =         0.22
-    Deposited Energy        =           11
-    Deposited Energy        =        0.072
-    Deposited Energy        =           11
-    Deposited Energy        =           13
-    Deposited Energy        =           12
-testReadAlg         DEBUG 1 tracks in TDS
-testReadAlg         DEBUG 1 TKR vertices on TDS
-testReadAlg         DEBUG 8 CAL recon xtals on TDS
-testReadAlg         DEBUG 1 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG 0 tracks in TDS
-testReadAlg         DEBUG 0 TKR vertices on TDS
-testReadAlg         DEBUG 0 CAL recon xtals on TDS
-testReadAlg         DEBUG 0 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG Retrieved McPositionHits from the TDS
-        Deposited Energy      =         0.82
-        Deposited Energy      =         0.76
-        Deposited Energy      =         0.14
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.11
-        Deposited Energy      =         0.19
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.14
-        Deposited Energy      =         0.14
-        Deposited Energy      =        0.094
-        Deposited Energy      =         0.17
-        Deposited Energy      =          0.2
-        Deposited Energy      =         0.11
-        Deposited Energy      =          0.1
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.13
-        Deposited Energy      =         0.13
-        Deposited Energy      =       0.0041
-        Deposited Energy      =         0.11
         Deposited Energy      =         0.12
+        Deposited Energy      =         0.18
         Deposited Energy      =         0.16
+        Deposited Energy      =         0.15
+        Deposited Energy      =          0.1
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.13
         Deposited Energy      =         0.13
         Deposited Energy      =         0.24
-        Deposited Energy      =         0.11
-        Deposited Energy      =        0.021
-        Deposited Energy      =        0.098
-        Deposited Energy      =        0.056
-        Deposited Energy      =        0.068
-        Deposited Energy      =         0.15
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.12
-        Deposited Energy      =          0.1
+        Deposited Energy      =         0.13
         Deposited Energy      =         0.14
-        Deposited Energy      =         0.25
         Deposited Energy      =         0.11
-        Deposited Energy      =         0.16
-        Deposited Energy      =         0.16
-        Deposited Energy      =         0.12
-        Deposited Energy      =         0.19
-        Deposited Energy      =         0.22
-        Deposited Energy      =         0.45
-        Deposited Energy      =         0.34
-        Deposited Energy      =         0.52
-testReadAlg         DEBUG Retrieved McIntegratingHits from the TDS
-    Deposited Energy        =           12
-    Deposited Energy        =         0.23
-    Deposited Energy        =           16
-    Deposited Energy        =           15
-    Deposited Energy        =           14
-    Deposited Energy        =         0.51
-    Deposited Energy        =           12
-    Deposited Energy        =           11
-    Deposited Energy        =           11
-    Deposited Energy        =           11
+        Deposited Energy      =         0.14
+        Deposited Energy      =         0.14
+        Deposited Energy      =          0.1
+        Deposited Energy      =          0.1
+        Deposited Energy      =         0.13
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.11
+        Deposited Energy      =         0.14
+        Deposited Energy      =         0.11
+        Deposited Energy      =        0.047
+        Deposited Energy      =          0.2
+        Deposited Energy      =        0.051
+        Deposited Energy      =         0.15
+        Deposited Energy      =         0.29
 testReadAlg         DEBUG 1 tracks in TDS
 testReadAlg         DEBUG 1 TKR vertices on TDS
-testReadAlg         DEBUG 8 CAL recon xtals on TDS
-testReadAlg         DEBUG 1 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG 0 tracks in TDS
-testReadAlg         DEBUG 0 TKR vertices on TDS
-testReadAlg         DEBUG 0 CAL recon xtals on TDS
-testReadAlg         DEBUG 0 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG 0 tracks in TDS
-testReadAlg         DEBUG 0 TKR vertices on TDS
-testReadAlg         DEBUG 0 CAL recon xtals on TDS
-testReadAlg         DEBUG 0 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG 0 tracks in TDS
-testReadAlg         DEBUG 0 TKR vertices on TDS
-testReadAlg         DEBUG 0 CAL recon xtals on TDS
-testReadAlg         DEBUG 0 CAL clusters on TDS
-testReadAlg         DEBUG Retrieved McParticles from the TDS
-testReadAlg         DEBUG 0 tracks in TDS
-testReadAlg         DEBUG 0 TKR vertices on TDS
 testReadAlg         DEBUG 0 CAL recon xtals on TDS
 testReadAlg         DEBUG 0 CAL clusters on TDS

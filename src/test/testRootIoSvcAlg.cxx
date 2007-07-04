@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.5 2006/03/30 20:50:45 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.6 2006/11/22 18:12:18 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -56,10 +56,8 @@ StatusCode testRootIoSvcAlg::initialize()
 
 StatusCode testRootIoSvcAlg::execute()
 {
-
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-
 
     static int flag = 0;
 	
