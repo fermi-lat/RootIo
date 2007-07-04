@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Wed Jul  4 08:19:27 PDT 2007
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+new RootIoSvc managing all the trees
+    *
+------------------------------------------------------------
 User: usher  Tue Jul  3 08:42:49 PDT 2007
 RootIo/src
 
