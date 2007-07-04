@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: chamont  Wed Jul  4 08:19:27 PDT 2007
+RootIo/src/test
+
+Modified Files:
+	jobOptions.ref jobOptions.txt readHeadersOptions.txt 
+	readOptions.txt testReadAlg.cxx testRootIoSvcAlg.cxx 
+	writeOptions.txt 
+Log Message:
+new RootIoSvc managing all the trees
+    *
+------------------------------------------------------------
+User: chamont  Wed Jul  4 08:19:27 PDT 2007
 RootIo/src
 
 Modified Files:
