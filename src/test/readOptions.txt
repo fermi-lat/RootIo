@@ -3,10 +3,10 @@
 // Job options file for RootIo test
 //
 
-ApplicationMgr.DLLs   = { "GlastSvc"};
+ApplicationMgr.DLLs   = { "GlastSvc", "GaudiAlg" } ;
 
 ApplicationMgr.ExtSvc = { 
-//    "GlastEventSelector/EventSelector" , 
+    "EventSelector/EventSelector" , 
     "EventCnvSvc", 
     "GlastDetSvc" 
     };
@@ -15,21 +15,21 @@ EventPersistencySvc.CnvServices = {"EventCnvSvc"};
 EventSelector.Input = "NONE";
 
 // Stuff for detModel
+ApplicationMgr.ExtSvc += { "GlastDetSvc" } ;
 GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
-// select one of the following for a top volume 
-GlastDetSvc.topVolume="LAT";         // the whole schebang 
+GlastDetSvc.topVolume="LAT" ; // the whole schebang 
 
-
-ApplicationMgr.DLLs +=    { "RootIo" };
-ApplicationMgr.ExtSvc += { "RootIoSvc" };
+// RootIO
+ApplicationMgr.DLLs += { "RootIo" } ;
+ApplicationMgr.ExtSvc += { "RootIoSvc" } ;
 // controls the event loop
 ApplicationMgr.Runable= "RootIoSvc";
-
-ApplicationMgr.TopAlg +=  { "testRootIoSvcAlg", "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg", "checkTds"};
-mcRootReaderAlg.mcRootFile = "$(ROOTTESTDATAROOT)/data/default/mc.root";
-digiRootReaderAlg.digiRootFile = "$(ROOTTESTDATAROOT)/data/default/digi.root";
-reconRootReaderAlg.reconRootFile = "$(ROOTTESTDATAROOT)/data/default/recon.root";
-
+// algos
+ApplicationMgr.TopAlg = { "Sequencer/Top" } ;
+Top.Members = { "testRootIoSvcAlg", "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg", "checkTds"};
+mcRootReaderAlg.mcRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/mc.root" } ;
+digiRootReaderAlg.digiRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/digi.root" } ;
+reconRootReaderAlg.reconRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/recon.root" } ;
 
 
 //==============================================================

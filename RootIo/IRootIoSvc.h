@@ -2,10 +2,37 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.8 2006/11/23 04:08:32 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.9 2007/05/09 21:32:38 usher Exp $
 */
+
 #ifndef _H_IRootIoSvc
 #define _H_IRootIoSvc
+
+//
+// The IRootIoSvc was originally created to provide a "Runable" interface for Gaudi,
+// so to control the event loop when we are reading in data from root files.
+// There are three "clients" we know about : HepRepSvc, the classes xxReaderRootAlg
+// (which we will call the "readers"), the classes xxWriterRootAlg (which we will
+// call the "writers").
+//
+// HepRepSvc is our interface to the event display, so that users can do the following:
+// * set the run/event or index to specify what event to read in next
+// * reset at any time the input ROOT files (mc, digi, recon, gcr)
+//
+// The readers:
+// * register the number of events in their respective TTree with RootIoSvc
+// * register the TTree * with RootIoSvc
+//   ( used to check validity of requested run/event pairs
+//     or indices from HepRepSvc )
+// * retrieve a run/event pair that may have be set via HepRepSvc
+// * retrieve an index that may be requested via HepRepSvc
+// * check to see if a new input file has been requested,
+//   such as from HepRepSvc if a new input file is to be opened,
+//   the reader gets the filename from RootIoSvc via the getXXFile() call
+//
+// The writers retrieve the AutoSaveInterval that can be set via JO for
+// RootIoSvc, to specify that we save every N events to file.
+//
 
 // includes
 #include "GaudiKernel/IInterface.h"
@@ -13,7 +40,7 @@
 #include <string>
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
-static const InterfaceID IID_IRootIoSvc("RootIoSvc", 3 , 0); 
+static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ; 
 
 /** 
 * \class IRootIoSvc
@@ -21,52 +48,68 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc", 3 , 0);
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.8 2006/11/23 04:08:32 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.9 2007/05/09 21:32:38 usher Exp $
 */
-class  IRootIoSvc : virtual public IInterface {
-public:
 
-    //virtual bool setRootFile(const char *mc, const char *digi, const char *rec) = 0;
+class  IRootIoSvc : virtual public IInterface
+ {
+  public:
 
-    virtual bool setRootFile(const char *mc, const char *digi, 
-                             const char *rec, const char *gcr="") = 0;
-			     
-    virtual std::string getMcFile() const = 0;
-    virtual std::string getDigiFile() const = 0;
-    virtual std::string getReconFile() const = 0;
-    virtual std::string getGcrFile() const = 0;
-    virtual bool fileChange() const = 0;
-
-    virtual bool setFiles(const std::string& type, const StringArrayProperty& fileName) = 0;
-    virtual StringArrayProperty getFileNameList(const std::string& type) const = 0;
-    virtual StatusCode registerIoAlgorithm(const std::string& type, 
-                                           const std::string& tree, 
-                                           const std::string& branch,
-                                           const StringArrayProperty& fileList) = 0;
+    //====================
+    // For HepRepSvc
+    //====================
     
-    virtual TObject* getNextEvent(const std::string& type) = 0;
+    virtual bool setRootFile
+     ( const char * mc, const char * digi, 
+       const char * rec, const char * gcr="" ) = 0 ;
+       
+    virtual bool setIndex( Long64_t ) = 0 ;
+    virtual Long64_t index() = 0 ;
     
-    virtual Long64_t getEvtMax() = 0;
-    virtual void setRootEvtMax(Long64_t max) = 0;
-    virtual void setRootTimeMax(unsigned int max) = 0;
-
-    virtual Long64_t index() = 0;
-    virtual bool setIndex(Long64_t i) = 0;
-    virtual void setActualIndex(Long64_t i) = 0;
-
-    virtual void registerRootTree(TChain *ch) = 0;
-    virtual bool setRunEventPair(std::pair<int,int> ids) = 0;
-    virtual std::pair<int,int> runEventPair() = 0;
-
-    virtual bool useIndex() = 0;
-    virtual bool useRunEventPair() = 0;
-
-    virtual int getAutoSaveInterval() = 0;
-
-    /// Retrieve interface ID
-    static const InterfaceID& interfaceID() { return IID_IRootIoSvc; }
+    virtual bool setRunEventPair( std::pair<int,int> ) = 0 ;
+    virtual std::pair<int,int> runEventPair() = 0 ;
   
+  
+    //====================
+    // For readers
+    //====================
+    
+    // file list
+    virtual bool setFileList( const std::string & type, const StringArrayProperty & fileList ) = 0 ;
+    virtual StringArrayProperty getFileList( const std::string & type) const = 0 ;
 
-};
+    virtual StatusCode prepareRootInput
+     ( const std::string & type, 
+       const std::string & tree, const std::string & branch,
+       const StringArrayProperty & fileList) = 0 ;
+       
+    virtual TObject * getNextEvent( const std::string & type ) = 0 ;
+    
+    // the number of events we want to read
+    // based on ApplicationMgr.EvtMax and number available in files
+    virtual Long64_t getEvtMax() = 0 ;
+    virtual void setEvtMax( Long64_t max ) = 0 ;
+
+    //virtual void setActualIndex(Long64_t i) = 0 ;
+
+
+    //====================
+    // For writers
+    //====================
+    
+    virtual int getAutoSaveInterval() = 0 ;
+
+
+    //====================
+    // Gaudi machinery
+    //====================
+
+    static const InterfaceID& interfaceID()
+     { return IID_IRootIoSvc ; }
+  
+ } ;
+
 
 #endif  // _H_IRootIoSvc
+
+

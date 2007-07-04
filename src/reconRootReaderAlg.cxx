@@ -49,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.79 2007/05/09 22:36:16 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.80 2007/05/11 23:00:02 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -111,8 +111,8 @@ private:
     
     /// Top-level Monte Carlo ROOT object
     ReconEvent *m_reconEvt;
-    /// name of the output ROOT file
-    std::string m_fileName;
+//    /// name of the input ROOT file
+//    std::string m_fileName;
     /// List of input files
     StringArrayProperty m_fileList;
     /// name of the Recon TTree stored in the ROOT file
@@ -140,7 +140,7 @@ Algorithm(name, pSvcLocator), m_reconEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-    declareProperty("reconRootFile",m_fileName="");
+//    declareProperty("reconRootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
     initVec.push_back("recon.root");
@@ -179,11 +179,9 @@ StatusCode reconRootReaderAlg::initialize()
         m_rootIoSvc = 0;
     }
 
-    facilities::Util::expandEnvVar(&m_fileName);
-
     // Set up new school system...
     std::string type = "RECON";
-    m_rootIoSvc->registerIoAlgorithm(type, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
 
     return sc;
     
@@ -198,12 +196,15 @@ StatusCode reconRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    if (m_reconEvt) m_reconEvt->Clear(m_clearOption.c_str());
-    m_reconEvt = 0;
+    if (m_reconEvt)
+     {
+      m_reconEvt->Clear(m_clearOption.c_str()) ; 
+      m_reconEvt = 0 ;
+     }
 
     // Try reading the event this way... 
     std::string type = "RECON";
-    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(type));
+    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(type)) ;
 
     if (!m_reconEvt) return StatusCode::FAILURE;
 

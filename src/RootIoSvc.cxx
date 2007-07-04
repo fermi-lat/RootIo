@@ -1,10 +1,16 @@
+
 /** 
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.27 2007/03/19 01:14:35 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.28 2007/05/09 21:32:39 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
+
+#include "commonData.h"
+#include "RootInputDesc.h"
+
+#include "RootConvert/Utilities/RootReaderUtil.h"
 
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/MsgStream.h"
@@ -16,160 +22,170 @@
 #include "GaudiKernel/IAppMgrUI.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
-
-#include "commonData.h"
-
-
-#include <vector>
-#include <algorithm>
-
-/** 
-* \class RootIoSvc
-*
-* \brief Service that implements the IRunable interface, to control the event loop.
-* \author Heather Kelly heather@lheapop.gsfc.nasa.gov
-* 
-*/
-
-// includes
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
+
 #include "TSystem.h"
 #include "TFile.h"
 #include "facilities/Util.h"
 
-#include "RootConvert/Utilities/RootReaderUtil.h"
-
-#include "RootInputDesc.h"
+#include <vector>
+#include <algorithm>
 
 //forward declarations
 template <class TYPE> class SvcFactory;
 class IAppMgrUI;
 
 
+
+//==============================================================================
+/**
+* \class RootIoSvc
+*
+* \brief Service that implements the IRunable interface, to control the event loop.
+* \author Heather Kelly heather@lheapop.gsfc.nasa.gov
+*/
+//==============================================================================
+
+
 class RootIoSvc : 
-    virtual public Service, 
-    virtual public IIncidentListener,
-    virtual public IRootIoSvc,
-    virtual public IRunable
-{  
-public:
-    
+  virtual public Service, 
+  virtual public IIncidentListener,
+  virtual public IRootIoSvc,
+  virtual public IRunable
+ {  
+  public:  
+
+    //====================
+    // Gaudi machinery
+    //====================
 
     /// for the IRunnable interfce
-    virtual StatusCode run();
+    virtual StatusCode run() ;
 
-    //------------------------------------------------------------------
+    //------------------------------
     //  stuff required by a Service
+    //------------------------------
     
     /// perform initializations for this service. 
-    virtual StatusCode initialize ();
+    virtual StatusCode initialize() ;
     
     /// perform the finalization, as required for a service.
-    virtual StatusCode finalize ();
+    virtual StatusCode finalize() ;
     
     /// Query interface
-    virtual StatusCode queryInterface( const InterfaceID& riid, void** ppvUnknown );
+    virtual StatusCode queryInterface( const InterfaceID & riid, void** ppvUnknown ) ;
 
     /// Handles incidents, implementing IIncidentListener interface
-    virtual void handle(const Incident& inc);    
+    virtual void handle( const Incident & ) ;    
 	
-    // Old way, to be deleted
-    virtual bool setRootFile(const char* mc, const char* digi, const char* rec, const char* gcr="");
-    virtual std::string getMcFile() const { return m_mcFile; };
-    virtual std::string getDigiFile() const { return m_digiFile; };
-    virtual std::string getReconFile() const { return m_reconFile; };
-    virtual std::string getGcrFile() const { return m_gcrFile; };
-    virtual bool fileChange() const { return m_fileChange; };
-
-    // New way
-    virtual bool setFiles(const std::string& type, const StringArrayProperty& fileName);
-    virtual StringArrayProperty getFileNameList(const std::string& type) const;
-    virtual StatusCode registerIoAlgorithm(const std::string& type, 
-                                           const std::string& tree, 
-                                           const std::string& branch,
-                                           const StringArrayProperty& fileList);
     
-    virtual TObject* getNextEvent(const std::string& type);
-
-    virtual Long64_t getEvtMax() { return m_evtMax; };
-
-    virtual void setRootEvtMax(Long64_t max);
-
-    virtual void setRootTimeMax(unsigned int max);
-
-    virtual void registerRootTree(TChain *ch);
-
-    virtual bool setIndex(Long64_t i);
-    virtual void setActualIndex(Long64_t i) { m_index = i; };
-    virtual Long64_t index() { return m_index; };
-
-    virtual bool setRunEventPair(std::pair<int,int> ids);
-    virtual std::pair<int,int> runEventPair() { return m_runEventPair; };
-
-    virtual bool useIndex() { return m_useIndex; };
-    virtual bool useRunEventPair() { return m_useRunEventPair; };
-
-    virtual int getAutoSaveInterval() { return m_autoSaveInterval; };
-
-
-protected: 
+    //====================
+    // For HepRepSvc
+    //====================
     
-    /// Standard Constructor
-    RootIoSvc ( const std::string& name, ISvcLocator* al );
-    
-    /// destructor
-    virtual ~RootIoSvc();
-    
-private:
+    virtual bool setRootFile
+     ( const char * mc, const char * digi, 
+       const char * rec, const char * gcr ) ;
 
-    bool                 fileChange(const std::string& type)    const;
-    const RootInputDesc* getRootInputDesc(const std::string& type) const;
-    RootInputDesc*       getRootInputDesc(const std::string& type); 
+    virtual bool setIndex( Long64_t i ) ;
+    virtual Long64_t index() { return m_index ; }
 
-    void beginEvent();
-    void endEvent();
-    void loopStatus(int eventNumber, double currentTime, MsgStream& log);	
+    virtual bool setRunEventPair(std::pair<int,int> ids) ;
+    virtual std::pair<int,int> runEventPair() { return m_runEventPair ; }
+
+    
+    //====================
+    // For readers
+    //====================
+    
+    // file list
+    virtual bool setFileList( const std::string & type, const StringArrayProperty & fileList ) ;
+    virtual StringArrayProperty getFileList( const std::string & type) const ;
+
+    virtual StatusCode prepareRootInput
+     ( const std::string & type, 
+       const std::string & tree,
+       const std::string & branch,
+       const StringArrayProperty & fileList ) ;
+       
+    virtual TObject * getNextEvent( const std::string & type) ;
+
+    virtual Long64_t getEvtMax() { return m_evtMax ; }
+    virtual void setEvtMax(Long64_t max) ;
+
+    //virtual void setActualIndex(Long64_t i) { m_index = i ; }
+
+
+    //====================
+    // For writers
+    //====================
+    
+    virtual int getAutoSaveInterval() { return m_autoSaveInterval ; }
+
+
+  protected : 
+    
+    RootIoSvc ( const std::string & name, ISvcLocator* al ) ;
+    virtual ~RootIoSvc() ;
+    
+    
+  private :
+
+    const RootInputDesc * getRootInputDesc( const std::string & type ) const ;
+    RootInputDesc * getRootInputDesc( const std::string & type ) ; 
+    unsigned setSingleFile( const std::string & type, const char * fileName ) ;
+    void registerRootTree( TChain * ch) ;
+
+    void beginEvent() ;
+    void endEvent() ;
+    void loopStatus( int eventNumber, double currentTime, MsgStream & log) ;	
     /// Allow SvcFactory to instantiate the service.
-    friend class SvcFactory<RootIoSvc>;
+    friend class SvcFactory<RootIoSvc> ;
    
     /// Reference to application manager UI
-    IAppMgrUI*    m_appMgrUI;
-    IntegerProperty m_evtMax;
-    IntegerProperty m_autoSaveInterval;
-    UnsignedLongProperty m_treeSize;
+    IAppMgrUI * m_appMgrUI ;
+    IntegerProperty m_evtMax ;
+    IntegerProperty m_autoSaveInterval ;
+    UnsignedLongProperty m_treeSize ;
 
     // starting and ending times for orbital simulation
-    DoubleProperty m_startTime;
-    DoubleProperty m_endTime;
+    DoubleProperty m_startTime ;
+    DoubleProperty m_endTime ;
 
-    unsigned int m_rootEvtMax;
-    Long64_t m_index;
-    UnsignedLongProperty m_startIndex;
-    std::pair<int, int> m_runEventPair;
-    std::vector<TChain *> m_chainCol;
+    unsigned int m_rootEvtMax ;
+    Long64_t m_index ;
+    UnsignedLongProperty m_startIndex ;
+    std::pair< int, int > m_runEventPair ;
+    
+    commonData m_common ;
+    UInt_t m_objectNumber ;
 
-    commonData m_common;
-    UInt_t m_objectNumber;
+    bool m_useIndex ;
 
-    bool m_useIndex, m_useRunEventPair;
+    //std::vector< TChain * > m_chainCol ;
+    //bool m_fileChange ;
+    //int m_updated ; // counter to check that algs have updated input root file
 
-    std::string m_mcFile, m_digiFile, m_reconFile, m_gcrFile;
-    bool m_fileChange;
-    int m_updated; // counter to check that algs have updated input root file
+    std::map< std::string, RootInputDesc * > m_rootIoMap ;
+    
+ } ;
 
-    std::map<std::string, RootInputDesc*> m_rootIoMap;
-};
+
+
+//==============================================================================
+//
+// RootIoSvc definition
+//
+//==============================================================================
+
 
 // declare the service factories for the RootIoSvc
-static SvcFactory<RootIoSvc> a_factory;
-const ISvcFactory& RootIoSvcFactory = a_factory;
+static SvcFactory<RootIoSvc> a_factory ;
+const ISvcFactory& RootIoSvcFactory = a_factory ;
 
-// ------------------------------------------------
-// Implementation of the RootIoSvc class
-// ------------------------------------------------
 /// Standard Constructor
 RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 : Service(name,svc)
@@ -191,21 +207,19 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_index = 0;
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
-    m_chainCol.clear();
     m_useIndex = false;
-    m_useRunEventPair = false;
-    m_fileChange = false;
-    m_updated = 0;
+    //m_fileChange = false;
+    //m_updated = 0;
 
-    m_rootIoMap.clear();
 }
 
 
 /// Standard Destructor
 RootIoSvc::~RootIoSvc()  
-{
-    m_chainCol.clear();
-}
+ {
+  //m_chainCol.clear() ;
+  m_rootIoMap.clear() ;
+ }
 
 StatusCode RootIoSvc::initialize () 
 {   
@@ -244,71 +258,151 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
+    // DC : I guess the original author
+    // was meaning to test m_index, or the
+    // test has no sense
     m_index = m_startIndex;
-    if (m_startIndex >= 0) m_useIndex = true;
+    if (m_index >= 0) m_useIndex = true;
 
     return StatusCode::SUCCESS;
 }
 
-RootInputDesc*  RootIoSvc::getRootInputDesc(const std::string& type)
-{
-    RootInputDesc* rootIo = 0;
 
-    // Look up this type in the map
-    std::map<std::string, RootInputDesc*>::iterator typeItr = m_rootIoMap.find(type);
 
-    // If one exists then get the pointer to the object
-    if (typeItr != m_rootIoMap.end()) rootIo = typeItr->second;
+//============================================================================
+//
+// RootInputDesc
+//
+//============================================================================
 
-    return rootIo;
-}
 
-const RootInputDesc* RootIoSvc::getRootInputDesc(const std::string& type) const
-{
-    const RootInputDesc* rootIo = 0;
+const RootInputDesc * RootIoSvc::getRootInputDesc( const std::string & type ) const
+ {
+  const RootInputDesc * rootInputDesc = 0 ;
+  std::map< std::string, RootInputDesc * >::const_iterator typeItr = m_rootIoMap.find(type) ;
+  if (typeItr!=m_rootIoMap.end()) rootInputDesc = typeItr->second ;
+  return rootInputDesc ;
+ }
 
-    // Look up this type in the map
-    std::map<std::string, RootInputDesc*>::const_iterator typeItr = m_rootIoMap.find(type);
+RootInputDesc * RootIoSvc::getRootInputDesc( const std::string & type )
+ {
+  return const_cast<RootInputDesc *>
+   ( static_cast<const RootIoSvc *>(this)->getRootInputDesc(type) ) ;
+ }
 
-    // If one exists then get the pointer to the object
-    if (typeItr != m_rootIoMap.end()) rootIo = typeItr->second;
 
-    return rootIo;
-}
 
-bool RootIoSvc::setFiles(const std::string& type, const StringArrayProperty& fileName)
-{
-    bool fileSet = false;
+//============================================================================
+//
+// FileList
+//
+//============================================================================
 
-    RootInputDesc* rootIo = getRootInputDesc(type);
 
-    if (rootIo)
-    {
-        rootIo->setFileList(fileName);
+bool RootIoSvc::setFileList( const std::string & type, const StringArrayProperty & fileNames )
+ {
+  bool fileSet = false ;
+  RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
+  if (rootInputDesc)
+   {
+    rootInputDesc->setFileList(fileNames) ;
+    fileSet = true ;
+   }
+  else
+   {
+    fileSet = false ;
+   }
+  return fileSet ;
+ }
 
-        fileSet = true;
-    }
-    else
-    {
-        // unregistered type so is an error
-        fileSet = false;
-    }
+StringArrayProperty RootIoSvc::getFileList( const std::string & type) const
+ {
+  StringArrayProperty result ;
+  const RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
+  if (rootInputDesc) result = rootInputDesc->getFileList() ;
+  return result ;
+ }
 
-    return fileSet;
-}
+unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileName )
+ {
+  // return value :
+  // 0 : all ok
+  // 1 : empty filename
+  // 2 : unknown type
+  // 3 : unknown file
+  
+  std::string myFileName = fileName ;
+  facilities::Util::expandEnvVar(&myFileName) ;
+  if (myFileName.empty())
+   { return 1 ; }
+   
+  RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
+  if (rootInputDesc==0)
+   { return 2 ; }
+  
+  if (!RootPersistence::fileExists(myFileName))
+   { return 3 ; }
+  
+  std::vector<std::string> fileVec ;
+  fileVec.push_back(myFileName) ;
+  StringArrayProperty fileList ;
+  fileList.setValue(fileVec) ;
+  rootInputDesc->setFileList(fileList) ;
 
-StringArrayProperty RootIoSvc::getFileNameList(const std::string& type) const
-{
-    StringArrayProperty result;
+  // fixAcdStreamer
+  if (type=="RECON")
+   {
+    TFile * f = TFile::Open(myFileName.c_str()) ;
+    if (f->IsOpen())
+     {
+      AcdRecon::fixAcdStreamer(f->GetVersion()) ;
+      f->Close() ;
+     }
+   }
+          
+  return 0 ;
+ }
 
-    const RootInputDesc* rootIo = getRootInputDesc(type);
+bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * rec, const char * gcr ) 
+ {
+  bool success = false ;
 
-    if (rootIo) result = rootIo->getFileList();
+  unsigned mcResult = setSingleFile("MC",mc) ;
+  unsigned digiResult = setSingleFile("DIGI",digi) ;
+  unsigned reconResult = setSingleFile("RECON",rec) ;
+  unsigned gcrResult = setSingleFile("GCR",gcr) ;
 
-    return result;
-}
+  // at least one string must be non-null
+  if ( (mcResult==1) &&
+       (digiResult==1) &&
+       (reconResult==1) &&
+       (gcrResult==1) )
+   { return success ; }
 
-StatusCode RootIoSvc::registerIoAlgorithm(const std::string& type, 
+  // any other problem is an error
+  if ( (mcResult>1) ||
+       (digiResult>1) ||
+       (reconResult>1) ||
+       (gcrResult>1) )
+   { return success ; }
+
+//  m_fileChange = true ;
+//  m_chainCol.clear() ;
+
+  success = true ;
+  return success ;
+ }
+
+
+
+//============================================================================
+//
+// 
+//
+//============================================================================
+
+
+StatusCode RootIoSvc::prepareRootInput(const std::string& type, 
                                           const std::string& tree, 
                                           const std::string& branch,
                                           const StringArrayProperty& fileList)
@@ -316,14 +410,14 @@ StatusCode RootIoSvc::registerIoAlgorithm(const std::string& type,
     StatusCode sc = StatusCode::SUCCESS;
 
     // Create a new RootInputDesc object for this algorithm
-    RootInputDesc* rootIo = new RootInputDesc(fileList, tree, branch);
+    RootInputDesc* rootInputDesc = new RootInputDesc(fileList, tree, branch);
 
     // Store the pointer to this in our map
-    m_rootIoMap[type] = rootIo;
+    m_rootIoMap[type] = rootInputDesc;
 
     // Register with RootIoSvc
-    setRootEvtMax(rootIo->getNumEvents());
-    registerRootTree(rootIo->getTChain());
+    setEvtMax(rootInputDesc->getNumEvents());
+    //registerRootTree(rootInputDesc->getTChain());
 
     return sc;
 }
@@ -332,18 +426,18 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
 {
     MsgStream log( msgSvc(), name() );
 
-    RootInputDesc* rootIo = getRootInputDesc(type);
+    RootInputDesc* rootInputDesc = getRootInputDesc(type);
     TObject*    pData  = 0;
 
-    if (rootIo)
+    if (rootInputDesc)
     {
         // Clear the event first
-        //rootIo->clearEvent();
+        //rootInputDesc->clearEvent();
 
         // Read the event depending upon the mode
-        if (useIndex())
+        if (m_useIndex)
         {
-            pData = rootIo->getEvent(index());
+            pData = rootInputDesc->getEvent(index());
         }
         // Otherwise we get by run/event number
         else
@@ -351,8 +445,7 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
             std::pair<int,int> runEvtPair = runEventPair();
             int                runNum     = runEvtPair.first;
             int                evtNum     = runEvtPair.second;
-
-            pData = rootIo->getEvent(runNum, evtNum);
+            pData = rootInputDesc->getEvent(runNum,evtNum) ;
         }
     }
 
@@ -384,188 +477,140 @@ StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterfac
 }
 
 
-bool RootIoSvc::setRootFile(const char *mc, const char *digi, const char *rec, const char *gcr) 
-{
-    bool success = false;
+void RootIoSvc::setEvtMax(Long64_t max)
+ {
+  // Purpose and Method:  Allow users of the RootIoSvc to specify the number
+  //  of events found in their ROOT files
+  if ( m_rootEvtMax == 0 )
+   {
+    m_rootEvtMax = max;
+    return ;
+   }   
+  if ( m_rootEvtMax > max )
+   { m_rootEvtMax = max ; }
+ }
 
-    // Make local copies of the requested strings
-    std::string mcFile    = mc;
-    std::string digiFile  = digi;
-    std::string reconFile = rec;
-    std::string gcrFile   = gcr;
+//void RootIoSvc::registerRootTree(TChain *ch) {
+//    m_chainCol.push_back(ch);
+//    ++m_updated;
+//}
 
-    // Expand to get rid of any environment variables
-    facilities::Util::expandEnvVar(&mcFile);
-    facilities::Util::expandEnvVar(&digiFile);
-    facilities::Util::expandEnvVar(&reconFile);
-    facilities::Util::expandEnvVar(&gcrFile);
+bool RootIoSvc::setIndex( Long64_t i )
+ {
+  if (i<0) return false ;
+  
+  std::map<std::string,RootInputDesc *>::iterator typeItr ;
+  for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
+   {
+    RootInputDesc * rootInputDesc = typeItr->second ;
+    TChain * chain = rootInputDesc->getTChain() ;
+    if (i >= chain->GetEntries())
+     { return false ; }
+   }
+  
+  m_index = i ;
+  m_runEventPair = std::pair<int,int>(-1,-1) ;
+  m_useIndex = true ;
+  return true ;
+ }
 
-    // at least one string must be non-null
-    if (mcFile.empty() && digiFile.empty() && reconFile.empty() && gcrFile.empty())
-        return success;
 
-    // Check that these files exist
-    // blank, skip - since that means we just won't read from that type of file
-    if (!mcFile.empty()) 
-    {
-        if (!RootPersistence::fileExists(mcFile)) return success;
-
-        // Change files in our RootInputDesc
-        StringArrayProperty fileList;
-        std::vector<std::string> fileVec;
-        std::string type = "MC";
-        fileVec.push_back("mc.root");
-        fileList.setValue(fileVec);
-
-        RootInputDesc* rootIo = getRootInputDesc(type);
-
-        rootIo->setFileList(fileList);
-    }
-
-    if (!digiFile.empty()) 
-    {
-        if (!RootPersistence::fileExists(digiFile)) return success;
-    }
-
-    if (!reconFile.empty()) 
-    {
-        if (!RootPersistence::fileExists(reconFile)) return success;
-        else 
-        {
-            TFile f(reconFile.c_str());
-            if (f.IsOpen()) AcdRecon::fixAcdStreamer(f.GetVersion());
-        }
-    }
-
-    if (!gcrFile.empty()) 
-    {
-        if (!RootPersistence::fileExists(gcrFile)) return success;
-    }
-
-    m_chainCol.clear(); // clear out TTrees from old files
-
-    m_mcFile     = mc;
-    m_digiFile   = digi;
-    m_reconFile  = rec;
-    m_gcrFile    = gcr;
-    m_fileChange = true;
-
-    success = true;
-    return success;
-}
-
-void RootIoSvc::setRootEvtMax(Long64_t max) {
-    // Purpose and Method:  Allow users of the RootIoSvc to specify the number
-    //  of events found in their ROOT files
-    if (m_rootEvtMax == 0) {
-        m_rootEvtMax = max;
-        return;
-    } 
+bool RootIoSvc::setRunEventPair( std::pair<int, int> ids )
+ {
+//  // If we just changed ROOT files, we may not have run the reader algs
+//  // yet, so the TTrees are not set to read, so we temporarily load the
+//  // the TTrees so we can check to see if the requested run/event pair
+//    // exists.  
+//    TFile *mc=0, *digi=0, *rec=0, *gcr=0;
+//    TChain *mcChain, *digiChain, *recChain, *gcrChain;
+//
+//    if ((m_fileChange) && (m_chainCol.size() == 0)) {
+//        if (!m_mcFile.empty()) {
+//           mc = TFile::Open(m_mcFile.c_str(), "READ");
+//           if (!mc->IsOpen()) return false;
+//           mcChain = (TChain*)mc->Get("Mc");
+//           if (!mcChain) return false;
+//           if (!mcChain->GetTreeIndex()) 
+//               mcChain->BuildIndex("m_runId", "m_eventId");
+//           registerRootTree(mcChain);
+//        }
+//        if (!m_digiFile.empty()) {
+//           digi = TFile::Open(m_digiFile.c_str(), "READ");
+//           if (!digi->IsOpen()) return false;
+//           digiChain = (TChain*)digi->Get("Digi");
+//           if (!digiChain) return false;
+//           if (!digiChain->GetTreeIndex()) 
+//               digiChain->BuildIndex("m_runId", "m_eventId");
+//           registerRootTree(digiChain);
+//        }
+//        if (!m_reconFile.empty()) {
+//           rec = TFile::Open(m_reconFile.c_str(), "READ");
+//           if (!rec->IsOpen()) return false;
+//           recChain = (TChain*)rec->Get("Recon");
+//           if (!recChain) return false;
+//           if (!recChain->GetTreeIndex()) 
+//               recChain->BuildIndex("m_runId", "m_eventId");
+//           registerRootTree(recChain);
+//        }
+//
+//	if (!m_gcrFile.empty()) {
+//           gcr = TFile::Open(m_gcrFile.c_str(), "READ");
+//           if (!rec->IsOpen()) return false;
+//           gcrChain = (TChain*)gcr->Get("GcrSelect");
+//           if (!gcrChain) return false;
+//           if (!gcrChain->GetTreeIndex()) 
+//               gcrChain->BuildIndex("m_runId", "m_eventId");
+//           registerRootTree(gcrChain);
+//        }
+//
+//
+//    }
+//
+//    std::vector<TChain*>::iterator it;
+//    for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
+//        Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
+//        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) {
+//          if (m_fileChange) {
+//              m_chainCol.clear();
+//              if (mc) delete mc;
+//              if (digi) delete digi;
+//              if (rec) delete rec;
+//              if (gcr) delete gcr;
+//          }
+//          return false;
+//        }
+//    }
     
-    if (m_rootEvtMax > max) m_rootEvtMax = max;
-}
-
-void RootIoSvc::setRootTimeMax(unsigned int max) {
-    // Not yet used
-    return;
-}
-
-
-void RootIoSvc::registerRootTree(TChain *ch) {
-    m_chainCol.push_back(ch);
-    ++m_updated;
-}
-
-bool RootIoSvc::setIndex(Long64_t i) {
-     if (i < 0) return false;
-     std::vector<TChain*>::iterator it;
-     for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
-       if (i >= (*it)->GetEntries()) return false;
-     }
-     m_index = i;
-     m_runEventPair = std::pair<int, int>(-1,-1);
-     m_useIndex = true;
-     m_useRunEventPair = false;
-     return true;
-}
-
-
-bool RootIoSvc::setRunEventPair(std::pair<int, int> ids) {
-    // If we just changed ROOT files, we may not have run the reader algs
-    // yet, so the TTrees are not set to read, so we temporarily load the
-    // the TTrees so we can check to see if the requested run/event pair
-    // exists.  
-    TFile *mc=0, *digi=0, *rec=0, *gcr=0;
-    TChain *mcChain, *digiChain, *recChain, *gcrChain;
-
-    if ((m_fileChange) && (m_chainCol.size() == 0)) {
-        if (!m_mcFile.empty()) {
-           mc = new TFile(m_mcFile.c_str(), "READ");
-           if (!mc->IsOpen()) return false;
-           mcChain = (TChain*)mc->Get("Mc");
-           if (!mcChain) return false;
-           if (!mcChain->GetTreeIndex()) 
-               mcChain->BuildIndex("m_runId", "m_eventId");
-           registerRootTree(mcChain);
-        }
-        if (!m_digiFile.empty()) {
-           digi = new TFile(m_digiFile.c_str(), "READ");
-           if (!digi->IsOpen()) return false;
-           digiChain = (TChain*)digi->Get("Digi");
-           if (!digiChain) return false;
-           if (!digiChain->GetTreeIndex()) 
-               digiChain->BuildIndex("m_runId", "m_eventId");
-           registerRootTree(digiChain);
-        }
-        if (!m_reconFile.empty()) {
-           rec = new TFile(m_reconFile.c_str(), "READ");
-           if (!rec->IsOpen()) return false;
-           recChain = (TChain*)rec->Get("Recon");
-           if (!recChain) return false;
-           if (!recChain->GetTreeIndex()) 
-               recChain->BuildIndex("m_runId", "m_eventId");
-           registerRootTree(recChain);
-        }
-
-	if (!m_gcrFile.empty()) {
-           gcr = new TFile(m_gcrFile.c_str(), "READ");
-           if (!rec->IsOpen()) return false;
-           gcrChain = (TChain*)gcr->Get("GcrSelect");
-           if (!gcrChain) return false;
-           if (!gcrChain->GetTreeIndex()) 
-               gcrChain->BuildIndex("m_runId", "m_eventId");
-           registerRootTree(gcrChain);
-        }
-
-
-    }
-
-    std::vector<TChain*>::iterator it;
-    for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
-        Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
-        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) {
-          if (m_fileChange) {
-              m_chainCol.clear();
-              if (mc) delete mc;
-              if (digi) delete digi;
-              if (rec) delete rec;
-              if (gcr) delete gcr;
-          }
-          return false;
-        }
-    }
+    
+  std::map<std::string,RootInputDesc *>::iterator typeItr ;
+  for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
+   {
+    RootInputDesc * rootInputDesc = typeItr->second ;
+    TChain * chain = rootInputDesc->getTChain() ;
+    Long64_t readInd = chain->GetEntryNumberWithIndex(ids.first,ids.second);
+    if ((readInd<0)||(readInd>=chain->GetEntries()))
+     { return false ; }
+   }
+    
+    
     m_runEventPair = ids;
     m_useIndex = false;
-    m_useRunEventPair = true;
-    if (m_fileChange) {
-        m_chainCol.clear();
-        if (mc) delete mc;
-        if (digi) delete digi;
-        if (rec) delete rec;
-        if (gcr) delete gcr;
-    }
+//    if (m_fileChange) {
+//        m_chainCol.clear();
+//        if (mc) delete mc;
+//        if (digi) delete digi;
+//        if (rec) delete rec;
+//        if (gcr) delete gcr;
+//    }
     return true;
 }
+
+
+//==============================================================
+//
+// Gaudi machinery
+//
+//==============================================================
 
 // handle "incidents"
 void RootIoSvc::handle(const Incident &inc)
@@ -581,34 +626,33 @@ void RootIoSvc::beginEvent() // should be called at the beginning of an event
 }
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
-{        
+ {        
     m_useIndex = false;
-    m_useRunEventPair = false;
-
-    //temp
-    m_useIndex = true;
+    // temp
+    m_useIndex = true ;
     m_index++;
 
-    m_runEventPair = std::pair<int, int>(-1,-1);
+    m_runEventPair = std::pair<int, int>(-1,-1) ;
 
     // clear out the static maps
     m_common.clear();
 
     // reset object in order to avoid memleak
-    TProcessID::SetObjectCount(m_objectNumber);
+    TProcessID::SetObjectCount(m_objectNumber) ;
 
-    // assuming all algs have gotten the new files by now
-    if (m_updated > 0) {
-        m_fileChange = false;
-        m_updated = 0;
-    }
-}
+//    // assuming all algs have gotten the new files by now
+//    if (m_updated>0)
+//     {
+//        m_fileChange = false ;
+//        m_updated = 0 ;
+//     }
+ }
 
-StatusCode RootIoSvc::run(){
-    // Purpose and Method:  Control the event loop
-
-    StatusCode status = StatusCode::FAILURE;
-    MsgStream log( msgSvc(), name() );
+// Purpose and Method:  Control the event loop
+StatusCode RootIoSvc::run()
+ {
+  StatusCode status = StatusCode::FAILURE ;
+  MsgStream log(msgSvc(),name()) ;
 
     if ( 0 == m_appMgrUI )  return status; 
 
@@ -700,22 +744,24 @@ StatusCode RootIoSvc::run(){
     return status;
 }
 
-void RootIoSvc::loopStatus(int eventNumber, double currentTime, MsgStream& log)
 // purpose: print periodic messages
-{
-    static int last_fraction=0;
+void RootIoSvc::loopStatus( int eventNumber, double currentTime, MsgStream & log )
+ {
+  static int last_fraction = 0 ;
 
-    double efrac =   (m_evtMax>0? 100.*eventNumber/m_evtMax: 0.0), 
-        tfrac =   (m_endTime>0? 100.*(currentTime-m_startTime)/(m_endTime-m_startTime) : 0.0) ;
+  double efrac = ( (m_evtMax>0) ? (100.*eventNumber/m_evtMax) : (0.0) ) ;
+  double tfrac = ( (m_endTime>0) ? (100.*(currentTime-m_startTime)/(m_endTime-m_startTime)) : (0.0) ) ;
 
-    int percent_complete= static_cast<int>(  std::max( efrac, tfrac)  );
-    if( percent_complete!=last_fraction){
-        last_fraction=percent_complete;
-        if( percent_complete<10 || percent_complete%10 ==0){
-            log << MSG::INFO <<   percent_complete << "% complete: "
-                << " event "<< eventNumber<<",  time "<< currentTime << endreq;
-        }
+  int percent_complete= static_cast<int>(std::max(efrac,tfrac)) ;
+  if (percent_complete!=last_fraction)
+   {
+    last_fraction = percent_complete ;
+    if ((percent_complete<10)||((percent_complete%10)==0))
+     {
+      log<<MSG::INFO
+        <<percent_complete<<"% complete: "
+        <<" event "<<eventNumber<<",  time "<<currentTime<<endreq ;
+     }
+   }
+ }
 
-    }
-
-}

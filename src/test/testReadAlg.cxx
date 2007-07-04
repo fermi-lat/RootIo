@@ -31,7 +31,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.16 2006/06/23 07:17:34 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.17 2006/08/24 22:08:10 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -84,7 +84,7 @@ StatusCode testReadAlg::initialize()
 StatusCode testReadAlg::execute()
 {
 
-    MsgStream log(msgSvc(), name());
+    MsgStream log(msgSvc(),name()) ;
     StatusCode sc = StatusCode::SUCCESS;
     sc = readEvtHeader();
 
@@ -101,6 +101,7 @@ StatusCode testReadAlg::execute()
 
     return sc;
 }
+
 StatusCode testReadAlg::readEvtHeader() {
     StatusCode sc = StatusCode::SUCCESS;
     SmartDataPtr<Event::EventHeader> evtTds(eventSvc(), EventModel::EventHeader);

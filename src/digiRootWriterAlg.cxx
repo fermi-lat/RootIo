@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.67 2006/08/24 22:08:10 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.68 2006/10/05 19:28:14 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -201,7 +201,7 @@ StatusCode digiRootWriterAlg::initialize()
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
-    m_digiFile = new TFile(m_fileName.c_str(), "RECREATE");
+    m_digiFile = TFile::Open(m_fileName.c_str(), "RECREATE");
     if (!m_digiFile->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for writing." << endreq;
