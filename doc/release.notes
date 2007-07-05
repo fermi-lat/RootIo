@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v17r30p2   5-Jul-2007 TU  Put patch on relation writing on branch so that
+            event and run ids are set correctly
  v17r30p1   2-Apr-2007 TU  Patch relationRootReaderAlg so relational tables will build correctly
  v17r30    14-Mar-2007 HMK Prepare to use patch when using ROOT v5.14.00d
            for reading AcdRecon with vector<Double32_t> and set McTrajectory
