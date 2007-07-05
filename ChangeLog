@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jul  5 08:35:41 PDT 2007
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev11r12
+	requirements 
+Log Message:
+put Tracy's patch on a branch
+    *
+------------------------------------------------------------
 User: chamont  Wed Jul  4 08:19:27 PDT 2007
 RootIo/src/test
 
