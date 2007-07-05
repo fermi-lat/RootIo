@@ -1,10 +1,10 @@
 package RootIo
-version v17r30p1
+version v17r30p2
 
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.196 2007/03/20 00:07:20 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.197 2007/04/03 02:44:21 usher Exp $
 
 branches src doc
 
