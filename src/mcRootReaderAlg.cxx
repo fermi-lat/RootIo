@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.64 2007/05/11 23:00:02 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.65 2007/07/04 15:19:27 chamont Exp $
  */
 
 
@@ -77,7 +77,7 @@ private:
     /// Top-level Monte Carlo ROOT object
     McEvent *m_mcEvt;
 //    /// name of the input ROOT file
-//    std::string m_fileName;
+    std::string m_fileName;
     /// Array of file names for TChain
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
@@ -106,10 +106,11 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-//    declareProperty("mcRootFile",m_fileName="");
+    // Retain for backward compatibility
+    declareProperty("mcRootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-    initVec.push_back("mc.root");
+    //initVec.push_back("mc.root");
     initList.setValue(initVec);
     declareProperty("mcRootFileList", m_fileList=initList);
     // ROOT TTree name
@@ -117,8 +118,10 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
     declareProperty("mcBranchName", m_branchName="McEvent");
     declareProperty("clearOption", m_clearOption="");
     
-    initVec.clear();
+    //initVec.clear();
     m_particleMap.clear();
+
+
 }
 
 StatusCode mcRootReaderAlg::initialize()
@@ -132,14 +135,19 @@ StatusCode mcRootReaderAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
-     
+
     m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
-        log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
+        log << MSG::INFO << "Reading cannot continue" << endreq;
         m_rootIoSvc = 0;
-        //return StatusCode::FAILURE;
+        return StatusCode::FAILURE;
     }   
+
+    if ( !m_fileName.empty() ) 
+        m_rootIoSvc->appendFileList(m_fileList, m_fileName);
+    else if (m_fileList.value().size() == 0)
+        m_rootIoSvc->appendFileList(m_fileList, "mc.root");
 
     m_mcEvt = 0;
     m_common.m_mcEvt = m_mcEvt;

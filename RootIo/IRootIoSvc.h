@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.9 2007/05/09 21:32:38 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.10 2007/07/04 15:19:26 chamont Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -48,7 +48,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.9 2007/05/09 21:32:38 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.10 2007/07/04 15:19:26 chamont Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -77,6 +77,7 @@ class  IRootIoSvc : virtual public IInterface
     // file list
     virtual bool setFileList( const std::string & type, const StringArrayProperty & fileList ) = 0 ;
     virtual StringArrayProperty getFileList( const std::string & type) const = 0 ;
+    virtual bool appendFileList(StringArrayProperty &fileList, const std::string &fileName) = 0;
 
     virtual StatusCode prepareRootInput
      ( const std::string & type, 
