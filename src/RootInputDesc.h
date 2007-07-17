@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.1 2007/05/09 21:32:39 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.2 2007/07/04 15:19:27 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -23,7 +23,7 @@ class RootInputDesc
     RootInputDesc
      ( const StringArrayProperty & fileList, 
        const std::string & treeName, 
-       const std::string & branchName ) ;
+       const std::string & branchName, bool verbose=false ) ;
     ~RootInputDesc() ; 
 
     // Methods to return information about the TTree/TChain being accessed
@@ -41,7 +41,7 @@ class RootInputDesc
     void clearEvent() ;
 
     // Method to change the list of files in this TChain
-    int  setFileList( const StringArrayProperty & fileList ) ;
+    int  setFileList( const StringArrayProperty & fileList, bool verbose = false ) ;
 
   private :
 

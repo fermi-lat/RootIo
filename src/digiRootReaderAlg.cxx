@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.81 2007/05/11 23:00:01 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.82 2007/07/04 15:19:27 chamont Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -113,7 +113,7 @@ private:
     /// Top-level Monte Carlo ROOT object
     DigiEvent *m_digiEvt;
 //    /// name of the input ROOT file
-//    std::string m_fileName;
+    std::string m_fileName;
     /// Array of input file names
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
@@ -142,10 +142,10 @@ Algorithm(name, pSvcLocator), m_digiEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-//    declareProperty("digiRootFile",m_fileName="");
+    declareProperty("digiRootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-    initVec.push_back("digi.root");
+//    initVec.push_back("digi.root");
     initList.setValue(initVec);
     declareProperty("digiRootFileList",m_fileList=initList);
     // Input TTree name
@@ -178,8 +178,15 @@ StatusCode digiRootReaderAlg::initialize()
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
-        //return StatusCode::FAILURE;
+        return StatusCode::FAILURE;
     } 
+
+    if ( !m_fileName.empty() ) 
+        m_rootIoSvc->appendFileList(m_fileList, m_fileName);
+    else if (m_fileList.value().size() == 0)
+        m_rootIoSvc->appendFileList(m_fileList, "digi.root");
+
+
 
     // Set up new school system...
     std::string type = "DIGI";

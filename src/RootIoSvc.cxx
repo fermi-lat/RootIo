@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.28 2007/05/09 21:32:39 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.29 2007/07/04 15:19:27 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -104,6 +104,7 @@ class RootIoSvc :
     // file list
     virtual bool setFileList( const std::string & type, const StringArrayProperty & fileList ) ;
     virtual StringArrayProperty getFileList( const std::string & type) const ;
+    virtual bool appendFileList(StringArrayProperty &fileList, const std::string &fileName);
 
     virtual StatusCode prepareRootInput
      ( const std::string & type, 
@@ -210,6 +211,9 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_useIndex = false;
     //m_fileChange = false;
     //m_updated = 0;
+#ifdef WIN32
+    gSystem->Load("libTreePlayer.dll");
+#endif
 
 }
 
@@ -323,6 +327,27 @@ StringArrayProperty RootIoSvc::getFileList( const std::string & type) const
   return result ;
  }
 
+bool RootIoSvc::appendFileList(StringArrayProperty &fileList, const std::string &fileName) {
+    bool status = false;
+    if (fileName.empty())  return status;
+
+    std::vector<std::string> initVec;
+    typedef std::vector<std::string>::const_iterator StringVecIter ;
+    StringVecIter fileListItr ;
+    for ( fileListItr = fileList.value().begin() ; 
+          fileListItr != fileList.value().end() ;
+          fileListItr++ )
+    {
+          std::string file = *fileListItr ;
+          initVec.push_back(file);
+    }
+    initVec.push_back(fileName);
+    fileList.setValue(initVec);
+    status = true;
+    return status;
+    
+}
+
 unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileName )
  {
   // return value :
@@ -407,10 +432,11 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
                                           const std::string& branch,
                                           const StringArrayProperty& fileList)
 {
+    MsgStream log( msgSvc(), name() );
     StatusCode sc = StatusCode::SUCCESS;
 
     // Create a new RootInputDesc object for this algorithm
-    RootInputDesc* rootInputDesc = new RootInputDesc(fileList, tree, branch);
+    RootInputDesc* rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
 
     // Store the pointer to this in our map
     m_rootIoMap[type] = rootInputDesc;

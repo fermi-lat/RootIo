@@ -11,6 +11,10 @@
 * - digiRootReaderAlg: reads in a Digi ROOT file and puts Digi data on the TDS.
 * - reconRootWriterAlg: writes a Recon ROOT file using recon data from the TDS.
 * - reconRootReaderAlg: reads in a Recon ROOT file and puts Recon data on the TDS.
+* - relationRootWriterAlg: writes a relation ROOT file using the relations stored on the TDS.  This algorithm must be run
+   after all other ROOT writing algorithms.
+* - relationRootReaderAlg: reads in the Relation ROOT file and puts relations on the TDS.  This algorithm must run after
+*  all other ROOT reading algorithms.
 *
 * Services:  RootIoSvc
 * Allows for random event access via the GUI (when using RootDisplay) and can control
@@ -24,7 +28,7 @@
 * <hr>
 * @section jobOptions jobOptions
 * @parma RootIoSvc.MaxTreeSize
-*  Defaults to 25 GB
+*  Defaults to 500 GB
 *  Size in MB for Trees, when a Tree hits this size, the current ROOT file
 *  is closed and a new one is opened for writing.  This parameter is set for
 *  ALL Trees - there is no way to assign it on a per tree basis
@@ -59,6 +63,10 @@
 * @param reconRootWriterAlg.compressionLevel
 * @param reconRootReaderAlg.reconRootFileList
 *  List of input Recon ROOT file(s), default recon.root
+* @param relationRootReaderAlg.relationRootFileList
+*  List of input Relation ROOT file(s), defaults to relations.root
+* @param relationRootWriterAlg.relationRootFile
+*  Name of output relation ROOT file.
 *
 * @section Tests Tests and Demonstrations
 *

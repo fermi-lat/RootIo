@@ -35,9 +35,11 @@
 /** @class relationRootReaderAlg
  * @brief Reads Digitization data from a persistent ROOT file and stores the
  * the data in the TDS.
+ * Note this algorithm should be run after all other root reading algorithms are run so that the objects pointed to by
+ * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.27 2007/05/11 23:00:02 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.28 2007/07/04 15:19:27 chamont Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -86,7 +88,7 @@ private:
     /// Top-level Monte Carlo ROOT object
     RelTable *m_relTab;
 //    /// name of the input ROOT file
-//    std::string m_fileName;
+    std::string m_fileName;
     /// List of files
     StringArrayProperty m_fileList;
     /// name of the Monte Carlo TTree stored in the ROOT file
@@ -132,10 +134,10 @@ Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
 {
     // Input pararmeters that may be set via the jobOptions file
     // Input ROOT file name
-//    declareProperty("rootFile",m_fileName="");
+    declareProperty("rootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-    initVec.push_back("relation.root");
+    //initVec.push_back("relation.root");
     initList.setValue(initVec);
     declareProperty("relationRootFileList", m_fileList=initList);
     initVec.clear();
@@ -164,10 +166,17 @@ StatusCode relationRootReaderAlg::initialize()
      m_rootIoSvc = 0 ;
    if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
-        log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
+        log << MSG::INFO << "Reading cannot continue" << endreq;
         m_rootIoSvc = 0;
-        //return StatusCode::FAILURE;
+        return StatusCode::FAILURE;
     }
+
+    if ( !m_fileName.empty() ) 
+        m_rootIoSvc->appendFileList(m_fileList, m_fileName);
+    else if (m_fileList.value().size() == 0)
+        m_rootIoSvc->appendFileList(m_fileList, "relations.root");
+
+
 
     // Set up new school system...
     std::string type = "RELTAB";

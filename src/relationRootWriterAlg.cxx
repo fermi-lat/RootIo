@@ -41,9 +41,11 @@
 
 /** @class relationRootWriterAlg
  * @brief Writes relational table TDS data to a persistent ROOT file.
+ * Note that this algorithm should be run AFTER all other ROOT writing algorithms, so that the objects pointed to in
+ * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.16 2007/02/21 01:57:32 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.17 2007/07/03 15:42:47 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm

@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.2 2007/05/11 18:09:00 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.3 2007/07/04 15:19:27 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -10,16 +10,17 @@
 #include "facilities/Util.h"
 #include "TROOT.h"
 #include <vector>
+#include <iostream>
 
 
 RootInputDesc::RootInputDesc
  ( const StringArrayProperty& fileList, 
    const std::string & tree, 
-   const std::string & branch )
+   const std::string & branch, bool verbose )
  : m_tree(tree), m_branch(branch), m_chain(0), m_dataObject(0)
  {
   // Set up the input file list
-  m_numEvents = setFileList(fileList) ;
+  m_numEvents = setFileList(fileList, verbose) ;
  }
     
 RootInputDesc::~RootInputDesc() 
@@ -32,7 +33,7 @@ RootInputDesc::~RootInputDesc()
   if (m_dataObject) delete m_dataObject ;
  }
 
-int RootInputDesc::setFileList( const StringArrayProperty & fileList )
+int RootInputDesc::setFileList( const StringArrayProperty & fileList, bool verbose )
  {
   int numEvents = 0 ;
 
@@ -46,8 +47,10 @@ int RootInputDesc::setFileList( const StringArrayProperty & fileList )
    {
     m_chain->GetFile()->Close() ;
     delete m_chain ;
+    m_chain = 0;
    }
-  if (m_dataObject) delete m_dataObject ;
+   if (m_dataObject) 
+       delete m_dataObject ;
 
   // Get a new instance of a TChain for processing this file
   m_chain = new TChain(m_tree.c_str()) ;
@@ -67,6 +70,7 @@ int RootInputDesc::setFileList( const StringArrayProperty & fileList )
     if (fileExists(fileName))
      {
       int nf = m_chain->Add(fileName.c_str()) ;
+      if (verbose) std::cout << "RootInputDesc::setFileList opening: " << fileName << std::endl;
       if (nf != ++fileCount) return numEvents ;
      }
     else return numEvents ;
