@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Tue Jul 17 09:26:31 PDT 2007
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+retain the xxxRootFile JO parameter for now, to avoid undue burden on those with JO files sitting around
+    *
+------------------------------------------------------------
+User: heather  Tue Jul 17 09:26:31 PDT 2007
 RootIo/cmt
 
 Modified Files:
