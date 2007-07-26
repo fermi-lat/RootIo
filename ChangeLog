@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul 26 09:40:57 PDT 2007
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+check in write centralization
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r31, operation: add
 Package: RootIo
