@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: heather  Thu Jul 26 09:40:57 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx digiRootWriterAlg.cxx mcRootWriterAlg.cxx 
+	reconRootWriterAlg.cxx relationRootWriterAlg.cxx 
+Added Files:
+	RootOutputDesc.cxx RootOutputDesc.h 
+Log Message:
+check in write centralization
+    *
+------------------------------------------------------------
+User: heather  Thu Jul 26 09:40:57 PDT 2007
 RootIo/doc
 
 Modified Files:
