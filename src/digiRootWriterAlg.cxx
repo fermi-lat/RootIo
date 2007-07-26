@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.68 2006/10/05 19:28:14 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.69 2007/07/04 15:19:27 chamont Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -191,32 +191,37 @@ StatusCode digiRootWriterAlg::initialize()
 
     m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
-        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
-        log << MSG::INFO << "No Auto Saving" << endreq;
+        log << MSG::WARNING << "Couldn't find the RootIoSvc!" << endreq;
         m_rootIoSvc = 0;
+        return StatusCode::FAILURE;
     } 
 
-    facilities::Util::expandEnvVar(&m_fileName);
+    //facilities::Util::expandEnvVar(&m_fileName);
 
     // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
+    //TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
-    m_digiFile = TFile::Open(m_fileName.c_str(), "RECREATE");
-    if (!m_digiFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for writing." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_digiFile->cd();
-    m_digiFile->SetCompressionLevel(m_compressionLevel);
+    //m_digiFile = TFile::Open(m_fileName.c_str(), "RECREATE");
+    //if (!m_digiFile->IsOpen()) {
+    //    log << MSG::ERROR << "ROOT file " << m_fileName 
+    //        << " could not be opened for writing." << endreq;
+    //    return StatusCode::FAILURE;
+   // }
+   // m_digiFile->cd();
+   // m_digiFile->SetCompressionLevel(m_compressionLevel);
     
     // tree of events
-    m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
+   // m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
+    
+    m_digiTree = m_rootIoSvc->prepareRootOutput("DIGI", m_fileName, m_treeName, 
+        m_compressionLevel, "GLAST Digitization Data");
+
     m_digiEvt = new DigiEvent();
     m_common.m_digiEvt = m_digiEvt;
-    m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
+    //m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("DIGI", "DigiEvent", "DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
 
-    saveDir->cd();
+//    saveDir->cd();
     return sc;
     
 }
@@ -720,26 +725,29 @@ void digiRootWriterAlg::writeEvent()
 {
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.  The m_digiEvt object is cleared for the next event.
-    static int eventCounter = 0;
-try {
-    TDirectory *saveDir = gDirectory;
-    m_digiTree->GetCurrentFile()->cd();
-    if (m_digiTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
-        throw;
-     }
-    m_digiTree->Fill();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-            if (m_digiTree->AutoSave() == 0) throw;
+    //static int eventCounter = 0;
+    
+    m_rootIoSvc->fillTree("DIGI");
 
-    saveDir->cd();
- } catch(...) {   
-     std::cerr << "Failed to write the event to file" << std::endl;   
-     std::cerr << "Exiting..." << std::endl;   
-     std::cerr.flush();   
-     exit(1);   
- } 
+//try {
+//    TDirectory *saveDir = gDirectory;
+//    m_digiTree->GetCurrentFile()->cd();
+//    if (m_digiTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
+//        throw;
+//     }
+//    m_digiTree->Fill();
+ //   ++eventCounter;
+ //   if (m_rootIoSvc)
+ //       if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
+//            if (m_digiTree->AutoSave() == 0) throw;
+
+//    saveDir->cd();
+// } catch(...) {   
+//     std::cerr << "Failed to write the event to file" << std::endl;   
+//     std::cerr << "Exiting..." << std::endl;   
+//     std::cerr.flush();   
+ //    exit(1);   
+ //} 
 
     return;
 }
@@ -753,6 +761,8 @@ void digiRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
+    m_rootIoSvc->closeFile("DIGI");
+    /*
  try {
     TDirectory *saveDir = gDirectory;
     TFile *f = m_digiTree->GetCurrentFile();
@@ -767,7 +777,7 @@ void digiRootWriterAlg::close()
     std::cerr.flush();   
     exit(1);   
  }   
-  
+  */
 
     return;
 }

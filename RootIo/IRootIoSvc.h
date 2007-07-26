@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.10 2007/07/04 15:19:26 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.11 2007/07/17 16:26:31 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -48,7 +48,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.10 2007/07/04 15:19:26 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.11 2007/07/17 16:26:31 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -98,7 +98,23 @@ class  IRootIoSvc : virtual public IInterface
     // For writers
     //====================
     
+    virtual TTree* prepareRootOutput
+        ( const std::string &type,
+        const std::string &fileName,
+        const std::string &treeName,
+        int compressionLevel,
+        const std::string &treeTitle) = 0;
+
+    virtual TTree* getTree(const std::string &type) = 0;
+
+    virtual StatusCode setupBranch(const std::string &type, const std::string &name, 
+        const std::string &classname, void *branchAddr, int bufSize=64000, int splitLevel=1) = 0;
+
+    virtual StatusCode fillTree(const std::string &type) = 0;
+
     virtual int getAutoSaveInterval() = 0 ;
+
+    virtual StatusCode closeFile(const std::string &type) = 0;
 
 
     //====================

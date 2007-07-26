@@ -3,12 +3,13 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.29 2007/07/04 15:19:27 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.30 2007/07/17 16:26:31 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
 #include "commonData.h"
 #include "RootInputDesc.h"
+#include "RootOutputDesc.h"
 
 #include "RootConvert/Utilities/RootReaderUtil.h"
 
@@ -123,6 +124,23 @@ class RootIoSvc :
     //====================
     // For writers
     //====================
+
+    virtual TTree* prepareRootOutput
+        ( const std::string &type,
+        const std::string &fileName,
+        const std::string &treeName,
+        int compressionLevel,
+        const std::string &treeTitle);
+
+    virtual TTree* getTree(const std::string &type);
+
+    virtual StatusCode setupBranch(const std::string &type, const std::string &name, 
+        const std::string &classname, void *branchAddr,
+        int bufSize=64000, int splitLevel=1);
+
+    virtual StatusCode closeFile(const std::string &type);
+
+    virtual StatusCode fillTree(const std::string &type);
     
     virtual int getAutoSaveInterval() { return m_autoSaveInterval ; }
 
@@ -139,6 +157,9 @@ class RootIoSvc :
     RootInputDesc * getRootInputDesc( const std::string & type ) ; 
     unsigned setSingleFile( const std::string & type, const char * fileName ) ;
     void registerRootTree( TChain * ch) ;
+
+    const RootOutputDesc * getRootOutputDesc( const std::string &type) const;
+    RootOutputDesc * getRootOutputDesc( const std::string &type) ;
 
     void beginEvent() ;
     void endEvent() ;
@@ -171,6 +192,8 @@ class RootIoSvc :
     //int m_updated ; // counter to check that algs have updated input root file
 
     std::map< std::string, RootInputDesc * > m_rootIoMap ;
+
+    std::map< std::string, RootOutputDesc *>m_rootOutputMap;
     
  } ;
 
@@ -223,6 +246,7 @@ RootIoSvc::~RootIoSvc()
  {
   //m_chainCol.clear() ;
   m_rootIoMap.clear() ;
+  m_rootOutputMap.clear();
  }
 
 StatusCode RootIoSvc::initialize () 
@@ -476,6 +500,104 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
     }
 
     return pData;
+}
+
+
+//============================================================================
+//
+// RootOutputDesc
+//
+//============================================================================
+
+
+
+ const RootOutputDesc * RootIoSvc::getRootOutputDesc( const std::string &type) const
+ {
+     const RootOutputDesc * rootOutputDesc = 0;
+     std::map<std::string, RootOutputDesc *>::const_iterator typeItr = m_rootOutputMap.find(type);
+     if (typeItr!=m_rootOutputMap.end()) rootOutputDesc = typeItr->second;
+     return rootOutputDesc;
+ }
+
+ RootOutputDesc* RootIoSvc::getRootOutputDesc( const std::string &type)
+ { 
+     return const_cast<RootOutputDesc *>
+         (static_cast<const RootIoSvc*>(this)->getRootOutputDesc(type) );
+ }
+
+TTree* RootIoSvc::prepareRootOutput
+        ( const std::string &type,
+        const std::string &fileName,
+        const std::string &treeName,
+        int compressionLevel,
+        const std::string &treeTitle) {
+
+    MsgStream log(msgSvc(),name());
+    if (getRootOutputDesc(type) != 0) {
+        log << MSG::WARNING << "Already found RootOutputDesc entry for type " << type << endreq;
+        return 0;
+    }
+    // Create a new RootInputDesc object for this algorithm
+    RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
+
+    // Store the pointer to this in our map
+    m_rootOutputMap[type] = outputDesc;
+
+    return outputDesc->getTree();
+
+}
+
+ TTree* RootIoSvc::getTree(const std::string &type) { 
+    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+
+    if (outputDesc) {
+        return outputDesc->getTree();
+    } 
+    MsgStream log (msgSvc(), name() );
+    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+    return 0;
+ }
+
+ StatusCode RootIoSvc::setupBranch(const std::string& type, const std::string &bname, 
+     const std::string &classname, void* branchAddr,
+     int bufSize, int splitLevel) {
+    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+
+    if (outputDesc) {
+        bool stat = outputDesc->setupBranch(bname, classname, branchAddr, bufSize, splitLevel);
+        return ((stat == true) ? StatusCode::SUCCESS : StatusCode::FAILURE);
+    } else {
+        MsgStream log (msgSvc(), name() );
+        log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+    }
+    return StatusCode::FAILURE;
+
+}
+
+StatusCode RootIoSvc::closeFile(const std::string  &type) {
+    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+
+    if (outputDesc) {
+        bool stat = outputDesc->closeFile();
+        return (stat == true) ? StatusCode::SUCCESS : StatusCode::FAILURE;
+    } else {
+        MsgStream log (msgSvc(), name() );
+        log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+    }
+    return StatusCode::FAILURE;
+}
+     
+StatusCode RootIoSvc::fillTree(const std::string &type) {
+    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+
+    if (outputDesc) {
+        bool status = outputDesc->fillTree(this->getAutoSaveInterval());
+        return StatusCode::SUCCESS;
+    } 
+    MsgStream log (msgSvc(), name() );
+    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+    return StatusCode::FAILURE;
+
 }
 
 
