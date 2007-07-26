@@ -1,10 +1,10 @@
 package RootIo
-version v17r31
+version v17r32
 
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.197 2007/04/03 02:44:21 usher Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.198 2007/07/17 16:26:31 heather Exp $
 
 branches src doc
 
@@ -14,6 +14,7 @@ use ROOT v* IExternal
 apply_pattern packageShr
 apply_pattern package_include
 
+#use metaRootData v* -no_auto_imports
 use mcRootData v* -no_auto_imports
 use digiRootData v* -no_auto_imports
 use reconRootData v* -no_auto_imports

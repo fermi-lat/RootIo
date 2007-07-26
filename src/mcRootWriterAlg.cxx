@@ -44,7 +44,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.50 2007/02/22 15:53:04 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.51 2007/03/20 00:07:47 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -189,32 +189,37 @@ StatusCode mcRootWriterAlg::initialize()
 
     m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
-        log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
-        log << MSG::INFO << "No Auto Saving" << endreq;
+        log << MSG::WARNING << "Couldn't find the RootIoSvc!" << endreq;
         m_rootIoSvc = 0;
+        return StatusCode::FAILURE;
     } 
 
-    facilities::Util::expandEnvVar(&m_fileName);
+    m_mcTree = m_rootIoSvc->prepareRootOutput("MC", m_fileName, m_treeName, 
+        m_compressionLevel, "GLAST Monte Carlo Data");
+
+
+    //facilities::Util::expandEnvVar(&m_fileName);
 
     // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
+    //TDirectory *saveDir = gDirectory;   
     // Create the new ROOT file
-    m_mcFile = new TFile(m_fileName.c_str(), "RECREATE");
-    if (!m_mcFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for writing." << endreq;
-        return StatusCode::FAILURE;
-    }
+    //m_mcFile = new TFile(m_fileName.c_str(), "RECREATE");
+    //if (!m_mcFile->IsOpen()) {
+    //    log << MSG::ERROR << "ROOT file " << m_fileName 
+    //        << " could not be opened for writing." << endreq;
+    //    return StatusCode::FAILURE;
+    //}
 
-    m_mcFile->cd();
-    m_mcFile->SetCompressionLevel(m_compressionLevel);
-    m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
+    //m_mcFile->cd();
+    //m_mcFile->SetCompressionLevel(m_compressionLevel);
+    //m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
     m_mcEvt = new McEvent();
-    m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
+    //m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("MC", "McEvent", "McEvent", &m_mcEvt, m_bufSize, m_splitMode);
 
     m_common.m_mcEvt = m_mcEvt;
 
-    saveDir->cd();
+//    saveDir->cd();
     return sc;
     
 }
@@ -666,26 +671,28 @@ void mcRootWriterAlg::writeEvent()
 {
     // Purpose and Method:  Stores the McEvent data for this event in the ROOT
     //    tree.  The m_mcEvt object is cleared for the next event.
+    m_rootIoSvc->fillTree("MC");
 
-    static int eventCounter = 0;
-try {
-    TDirectory *saveDir = gDirectory;
-    m_mcTree->GetCurrentFile()->cd();
-    if (m_mcTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
-        throw;
-    }
-    m_mcTree->Fill();
-    ++eventCounter;
-    if (m_rootIoSvc)
-        if (eventCounter % m_rootIoSvc->getAutoSaveInterval()== 0) 
-            if (m_mcTree->AutoSave() == 0) throw;
-    saveDir->cd();
- } catch(...) { 
-    std::cerr << "Failed to write the event to file" << std::endl; 
-    std::cerr << "Exiting..." << std::endl; 
-    std::cerr.flush(); 
-    exit(1); 
- } 
+
+    //static int eventCounter = 0;
+//try {
+//    TDirectory *saveDir = gDirectory;
+//    m_mcTree->GetCurrentFile()->cd();
+//    if (m_mcTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
+//        throw;
+//    }
+//    m_mcTree->Fill();
+//    ++eventCounter;
+//    if (m_rootIoSvc)
+//        if (eventCounter % m_rootIoSvc->getAutoSaveInterval()== 0) 
+//            if (m_mcTree->AutoSave() == 0) throw;
+ //   saveDir->cd();
+ //} catch(...) { 
+ //   std::cerr << "Failed to write the event to file" << std::endl; 
+ //   std::cerr << "Exiting..." << std::endl; 
+  //  std::cerr.flush(); 
+ //   exit(1); 
+ //} 
 
     return;
 }
@@ -699,6 +706,9 @@ void mcRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
+    m_rootIoSvc->closeFile("MC");
+
+/*
 try {
     TDirectory *saveDir = gDirectory;
     TFile *f = m_mcTree->GetCurrentFile();
@@ -713,7 +723,7 @@ try {
     std::cerr.flush(); 
     exit(1); 
  } 
-
+*/
     return;
 }
 
