@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug  8 07:14:45 PDT 2007
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+check in what works, then clean up
+    *
+------------------------------------------------------------
 TAG
 Tag name: v17r32, operation: add
 Package: RootIo
