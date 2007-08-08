@@ -45,7 +45,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.18 2007/07/17 16:26:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.19 2007/07/26 16:40:57 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -140,7 +140,7 @@ StatusCode relationRootWriterAlg::initialize()
         return StatusCode::FAILURE;
     }
 
-    m_relTree = m_rootIoSvc->prepareRootOutput("RELATION", m_fileName, m_treeName, 
+    m_relTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Digitization Data");
 
     
@@ -161,7 +161,7 @@ StatusCode relationRootWriterAlg::initialize()
 
     m_relTable = new RelTable();
     //m_relTree->Branch("RelTable","RelTable", &m_relTable, m_bufSize, m_splitMode);
-    m_rootIoSvc->setupBranch("RELATION", "RelTable", "RelTable", &m_relTable, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch(m_treeName, "RelTable", "RelTable", &m_relTable, m_bufSize, m_splitMode);
     
  //   saveDir->cd();
 
@@ -467,7 +467,7 @@ void relationRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the Relations data for this event in the ROOT
     //    tree.  The m_common object is cleared for the next event.
 
-    m_rootIoSvc->fillTree("RELATION");
+    m_rootIoSvc->fillTree(m_treeName);
 
     /*
     static int eventCounter = 0;
@@ -506,7 +506,7 @@ void relationRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-m_rootIoSvc->closeFile("RELATION");
+m_rootIoSvc->closeFile(m_treeName);
 /*
 
  try {

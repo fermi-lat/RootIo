@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.3 2007/07/04 15:19:27 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.4 2007/07/17 16:26:31 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -17,11 +17,20 @@ RootInputDesc::RootInputDesc
  ( const StringArrayProperty& fileList, 
    const std::string & tree, 
    const std::string & branch, bool verbose )
- : m_tree(tree), m_branch(branch), m_chain(0), m_dataObject(0)
+ : m_tree(tree), m_branch(branch), m_chain(0), m_treePtr(0), m_dataObject(0), m_verbose(verbose)
  {
   // Set up the input file list
-  m_numEvents = setFileList(fileList, verbose) ;
+  m_numEvents = setFileList(fileList, m_verbose) ;
  }
+
+ RootInputDesc::RootInputDesc
+     ( TTree *t,
+     const std::string & treeName,
+     const std::string & branchName, bool verbose)
+     : m_tree(treeName), m_branch(branchName), m_chain(0), m_treePtr(t), m_dataObject(0), m_verbose(verbose) {
+         m_numEvents = setEventCollection();
+     }
+
     
 RootInputDesc::~RootInputDesc() 
  {
@@ -31,11 +40,62 @@ RootInputDesc::~RootInputDesc()
     delete m_chain ;
    }
   if (m_dataObject) delete m_dataObject ;
+
+  // We don't own the m_treePtr object, so we won't delete it.
  }
 
-int RootInputDesc::setFileList( const StringArrayProperty & fileList, bool verbose )
+ Long64_t RootInputDesc::setEventCollection( ) {
+     Long64_t numEvents = 0;
+     // Save the current directory for the ntuple writer service
+     TDirectory * saveDir = gDirectory ;	
+
+     if (!m_treePtr) return numEvents;
+
+     if (m_dataObject) 
+         delete m_dataObject ;
+
+     m_dataObject = new TObject * ;
+     *m_dataObject = 0 ;
+
+     // Check that we have the right TTree
+     // To do this we will first need to "rediscover" the directory name
+     std::string treeName = std::string(m_treePtr->GetName());
+     if (treeName != m_tree)
+     {
+         return numEvents ;
+     }
+
+     // To set the data pointer we need to find the name of the branch contained
+     // where we note that in Glast each file contains one branch
+     TObjArray * branches = m_treePtr->GetListOfBranches() ;
+     std::string branchName = "" ;
+     int idx ;
+     for( idx = 0 ; idx < branches->GetEntries() ; idx++ )
+     {
+         TBranch * branch = dynamic_cast<TBranch*>(branches->At(idx)) ;
+         if (branch)
+         {
+             branchName = std::string(branch->GetName()) ;
+             if (branchName == m_branch) break ;
+         }
+     }
+     if (branchName!=m_branch) 
+     { return numEvents ; }
+
+     // Set the data pointer to receive the data and we are ready to go
+     m_treePtr->SetBranchAddress(branchName.data(),m_dataObject) ;
+
+     numEvents = m_treePtr->GetEntries() ;
+
+     // Finally restore the context we entered with
+     saveDir->cd() ;
+
+     return numEvents ;
+ }
+
+Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool verbose )
  {
-  int numEvents = 0 ;
+  Long64_t numEvents = 0 ;
 
   m_fileList = fileList ;
  
@@ -153,6 +213,9 @@ TObject * RootInputDesc::getEvent( int index )
    {
     int ret = m_chain->GetEntry(index) ;
     dataPtr = *m_dataObject ;
+   } else if (m_treePtr) {
+       int ret = m_treePtr->GetEntry(index);
+       dataPtr = *m_dataObject;
    }
 
   // Restore context we entered with
@@ -172,7 +235,10 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
    {
     int ret = m_chain->GetEntryWithIndex(runNum,evtNum) ;
     dataPtr = *m_dataObject ;
-    }
+   } else if (m_treePtr) {
+       int ret = m_treePtr->GetEntryWithIndex(runNum, evtNum);
+       dataPtr = *m_dataObject;
+   }
 
   // Restore context we entered with
   saveDir->cd() ;

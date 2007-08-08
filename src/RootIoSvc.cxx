@@ -3,13 +3,14 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.30 2007/07/17 16:26:31 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.31 2007/07/26 16:40:57 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
 #include "commonData.h"
 #include "RootInputDesc.h"
 #include "RootOutputDesc.h"
+#include "EventCollectionMgr.h"
 
 #include "RootConvert/Utilities/RootReaderUtil.h"
 
@@ -160,6 +161,9 @@ class RootIoSvc :
 
     const RootOutputDesc * getRootOutputDesc( const std::string &type) const;
     RootOutputDesc * getRootOutputDesc( const std::string &type) ;
+    void setOutputUpdate(bool flag);
+    bool checkOutputUpdate(const std::string &type);
+    bool checkOutputUpdate();
 
     void beginEvent() ;
     void endEvent() ;
@@ -194,6 +198,11 @@ class RootIoSvc :
     std::map< std::string, RootInputDesc * > m_rootIoMap ;
 
     std::map< std::string, RootOutputDesc *>m_rootOutputMap;
+
+   
+    EventCollectionMgr m_eventColMgr;
+    std::string m_metaFileNameWrite, m_metaFileNameRead;
+    std::vector<TTree*> m_metaTreeCol;
     
  } ;
 
@@ -227,6 +236,10 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartingIndex", m_startIndex=0);
     // limited by the size of an unsigned int, expecting MB
     declareProperty("MaxTreeSize", m_treeSize=0);
+    
+    // 
+    declareProperty("MetaRootFileWrite", m_metaFileNameWrite="");
+    declareProperty("MetaRootFileRead", m_metaFileNameRead="");
 
     m_index = 0;
     m_rootEvtMax = 0;
@@ -247,6 +260,7 @@ RootIoSvc::~RootIoSvc()
   //m_chainCol.clear() ;
   m_rootIoMap.clear() ;
   m_rootOutputMap.clear();
+  m_metaTreeCol.clear();
  }
 
 StatusCode RootIoSvc::initialize () 
@@ -291,6 +305,16 @@ StatusCode RootIoSvc::initialize ()
     // test has no sense
     m_index = m_startIndex;
     if (m_index >= 0) m_useIndex = true;
+
+
+    if (!m_metaFileNameWrite.empty()) 
+        m_eventColMgr.initWrite(m_metaFileNameWrite, "RECREATE");
+    
+    if (!m_metaFileNameRead.empty()) {
+        MsgStream log( msgSvc(), name() );
+        log << MSG::INFO << "Meta ROOT file Reading" << endreq;
+        m_eventColMgr.initRead(m_metaFileNameRead);
+    }
 
     return StatusCode::SUCCESS;
 }
@@ -458,15 +482,33 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
 {
     MsgStream log( msgSvc(), name() );
     StatusCode sc = StatusCode::SUCCESS;
+   
+    RootInputDesc *rootInputDesc = 0;
+    if (m_metaFileNameRead.empty()) {
 
     // Create a new RootInputDesc object for this algorithm
-    RootInputDesc* rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
+    rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
+
+    } else {  // Event Collection
+        MsgStream log( msgSvc(), name() );
+        log << MSG::INFO << "Meta ROOT file Reading" << endreq;   
+
+        TTree *t = m_eventColMgr.getTree(type);
+        if (!t) {
+            MsgStream log(msgSvc(), name());
+            log << MSG::WARNING << "TTree " << type << " not found in event collection" << endreq;
+            return StatusCode::FAILURE;
+        }
+        rootInputDesc = new RootInputDesc(t, tree, branch, log.level()<=MSG::DEBUG);
+    }
 
     // Store the pointer to this in our map
     m_rootIoMap[type] = rootInputDesc;
 
     // Register with RootIoSvc
     setEvtMax(rootInputDesc->getNumEvents());
+
+
     //registerRootTree(rootInputDesc->getTChain());
 
     return sc;
@@ -483,9 +525,14 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
     {
         // Clear the event first
         //rootInputDesc->clearEvent();
+        
+        if (!m_metaFileNameRead.empty()) {  // access via event collection
+
+            Long64_t ind = m_eventColMgr.getEventIndex(type, index());
+            pData = rootInputDesc->getEvent(ind);
 
         // Read the event depending upon the mode
-        if (m_useIndex)
+        } else if (m_useIndex)
         {
             pData = rootInputDesc->getEvent(index());
         }
@@ -525,6 +572,27 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
          (static_cast<const RootIoSvc*>(this)->getRootOutputDesc(type) );
  }
 
+ void RootIoSvc::setOutputUpdate(bool flag) {
+     std::map<std::string, RootOutputDesc*>::iterator it;
+     for (it = m_rootOutputMap.begin(); it != m_rootOutputMap.end(); it++)
+         it->second->setUpdated(flag);
+ }
+
+ bool RootIoSvc::checkOutputUpdate(const std::string &type) {
+     RootOutputDesc* outputDesc = getRootOutputDesc(type);
+     if (!outputDesc) return false;
+     return outputDesc->getUpdated();
+ }
+
+ bool RootIoSvc::checkOutputUpdate() {
+     std::map<std::string, RootOutputDesc*>::const_iterator it;
+     for (it = m_rootOutputMap.begin(); it != m_rootOutputMap.end(); it++) {
+         if (it->second->getUpdated()) return true;
+     }
+     return false;
+ }
+     
+
 TTree* RootIoSvc::prepareRootOutput
         ( const std::string &type,
         const std::string &fileName,
@@ -542,6 +610,11 @@ TTree* RootIoSvc::prepareRootOutput
 
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
+    // store the trees in a vector for pointer skim
+    m_metaTreeCol.push_back(outputDesc->getTree());
+
+    // If a Meta (Event Collection) file is requested, add this component to the PointerSkim
+    if (!m_metaFileNameWrite.empty()) m_eventColMgr.addComponent(treeName, outputDesc->getTree());
 
     return outputDesc->getTree();
 
@@ -592,6 +665,7 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 
     if (outputDesc) {
         bool status = outputDesc->fillTree(this->getAutoSaveInterval());
+        outputDesc->setUpdated(true);
         return StatusCode::SUCCESS;
     } 
     MsgStream log (msgSvc(), name() );
@@ -605,6 +679,8 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 StatusCode RootIoSvc::finalize ()
 {
     StatusCode  status = StatusCode::SUCCESS;
+    if (!m_metaFileNameWrite.empty()) m_eventColMgr.fillMeta();
+    
     return status;
 }
 
@@ -771,6 +847,8 @@ void RootIoSvc::handle(const Incident &inc)
 void RootIoSvc::beginEvent() // should be called at the beginning of an event
 { 
     m_objectNumber = TProcessID::GetObjectCount();
+    if (!m_metaFileNameWrite.empty())
+        setOutputUpdate(false);
 }
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
@@ -787,6 +865,14 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
 
     // reset object in order to avoid memleak
     TProcessID::SetObjectCount(m_objectNumber) ;
+
+
+    // Fill meta (Event collection) if requested
+    if ( (!m_metaFileNameWrite.empty()) && (checkOutputUpdate()) ) {
+        m_eventColMgr.fillEvent();       
+    }
+
+
 
 //    // assuming all algs have gotten the new files by now
 //    if (m_updated>0)
