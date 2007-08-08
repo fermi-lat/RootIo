@@ -1,5 +1,20 @@
 ------------------------------------------------------------
 User: heather  Wed Aug  8 07:14:45 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	RootOutputDesc.cxx RootOutputDesc.h digiRootReaderAlg.cxx 
+	digiRootWriterAlg.cxx mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+	relationRootReaderAlg.cxx relationRootWriterAlg.cxx 
+Added Files:
+	EventCollectionMgr.cxx EventCollectionMgr.h 
+Log Message:
+check in what works, then clean up
+    *
+------------------------------------------------------------
+User: heather  Wed Aug  8 07:14:45 PDT 2007
 RootIo/cmt
 
 Modified Files:
