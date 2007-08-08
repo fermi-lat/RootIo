@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.4 2007/07/17 16:26:31 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.1 2007/07/26 16:40:57 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -20,7 +20,7 @@ RootOutputDesc::RootOutputDesc
    const std::string & tree, 
    int compressionLevel, const std::string& treeTitle, bool verbose )
  : m_fileName(outputFile), m_treeName(tree), m_compressionLevel(compressionLevel), m_tree(0), 
-   m_treeTitle(treeTitle), m_verbose(verbose), m_eventCounter(0)
+   m_treeTitle(treeTitle), m_verbose(verbose), m_eventCounter(0), m_updated(false)
  {
 	 openFile();
  }

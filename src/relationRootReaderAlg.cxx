@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.28 2007/07/04 15:19:27 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.29 2007/07/17 16:26:31 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -179,7 +179,7 @@ StatusCode relationRootReaderAlg::initialize()
 
 
     // Set up new school system...
-    std::string type = "RELTAB";
+    std::string type = m_treeName;
     m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
 
     return sc;
@@ -200,7 +200,7 @@ StatusCode relationRootReaderAlg::execute()
     m_relTab = 0;
 
     // Try reading the event this way... 
-    std::string type = "RELTAB";
+    std::string type = m_treeName;
     m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent(type));
 
     if (!m_relTab) return StatusCode::FAILURE;

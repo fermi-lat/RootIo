@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.69 2007/07/04 15:19:27 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.70 2007/07/26 16:40:57 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -213,13 +213,13 @@ StatusCode digiRootWriterAlg::initialize()
     // tree of events
    // m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
     
-    m_digiTree = m_rootIoSvc->prepareRootOutput("DIGI", m_fileName, m_treeName, 
+    m_digiTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Digitization Data");
 
     m_digiEvt = new DigiEvent();
     m_common.m_digiEvt = m_digiEvt;
     //m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
-    m_rootIoSvc->setupBranch("DIGI", "DigiEvent", "DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch(m_treeName, "DigiEvent", "DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
 
 //    saveDir->cd();
     return sc;
@@ -727,7 +727,7 @@ void digiRootWriterAlg::writeEvent()
     //    tree.  The m_digiEvt object is cleared for the next event.
     //static int eventCounter = 0;
     
-    m_rootIoSvc->fillTree("DIGI");
+    m_rootIoSvc->fillTree(m_treeName);
 
 //try {
 //    TDirectory *saveDir = gDirectory;
@@ -761,7 +761,7 @@ void digiRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    m_rootIoSvc->closeFile("DIGI");
+    m_rootIoSvc->closeFile(m_treeName);
     /*
  try {
     TDirectory *saveDir = gDirectory;

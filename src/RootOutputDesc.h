@@ -3,7 +3,7 @@
 * @brief definition of the class RootOutputDesc
 *        This class is used to set up and handle the actual root output files
 *
-*  $Header$
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.1 2007/07/26 16:40:57 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -39,6 +39,11 @@ class RootOutputDesc
 
 	TFile* getCurrentFile();
 
+    Long64_t getEventCounter() const { return m_eventCounter; };
+
+    bool getUpdated() const { return m_updated; };
+    void setUpdated(bool u) { m_updated = u; };
+
 	bool LoadTree(Long64_t ievent){ m_tree->LoadTree(ievent); };
 
 	bool fillTree(int autoSaveInterval=1000); 
@@ -54,6 +59,7 @@ class RootOutputDesc
 	std::string m_treeTitle; /// Title to pass to TTree ctor
 	bool m_verbose;  /// set the chattiness for debug statements
     Long64_t m_eventCounter;  // Count number of events filled to the TTree so far
+    bool m_updated;
     
  } ;
 

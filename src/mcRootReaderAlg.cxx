@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.65 2007/07/04 15:19:27 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.66 2007/07/17 16:26:31 heather Exp $
  */
 
 
@@ -153,8 +153,8 @@ StatusCode mcRootReaderAlg::initialize()
     m_common.m_mcEvt = m_mcEvt;
 
     // Set up new school system...
-    std::string type = "MC";
-    m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
+    //std::string type = "MC";
+    m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
      
     return sc;
     
@@ -175,8 +175,8 @@ StatusCode mcRootReaderAlg::execute()
     m_mcEvt = 0;
 
     // Try reading the event this way... 
-    std::string type = "MC";
-    m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent(type));
+    //std::string type = "MC";
+    m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent(m_treeName));
 
     if (!m_mcEvt) return StatusCode::FAILURE;
 
