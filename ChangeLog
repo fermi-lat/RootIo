@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  9 10:17:08 PDT 2007
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+fix up meta reading
+    *
+------------------------------------------------------------
 User: heather  Wed Aug  8 07:14:45 PDT 2007
 RootIo/src
 
