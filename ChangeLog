@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  9 10:17:09 PDT 2007
+RootIo/src
+
+Modified Files:
+	EventCollectionMgr.cxx EventCollectionMgr.h RootInputDesc.cxx 
+	RootInputDesc.h RootIoSvc.cxx digiRootReaderAlg.cxx 
+	digiRootWriterAlg.cxx gcrSelectRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+fix up meta reading
+    *
+------------------------------------------------------------
 User: heather  Thu Aug  9 10:17:08 PDT 2007
 RootIo/cmt
 
