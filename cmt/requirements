@@ -4,7 +4,7 @@ version v18r1
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.198 2007/07/17 16:26:31 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.200 2007/08/08 14:14:44 heather Exp $
 
 branches src doc
 
@@ -14,6 +14,7 @@ use ROOT v* IExternal
 apply_pattern packageShr
 apply_pattern package_include
 
+# I believe these no_auto_imports are essentially overridden by the use of RootConvert
 use metaRootData v* -no_auto_imports
 use mcRootData v* -no_auto_imports
 use digiRootData v* -no_auto_imports

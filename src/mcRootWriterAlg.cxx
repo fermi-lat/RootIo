@@ -6,7 +6,6 @@
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/MCEvent.h"
-//#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/MonteCarlo/McIntegratingHit.h"
@@ -44,7 +43,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.52 2007/07/26 16:40:57 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.53 2007/08/08 14:14:45 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -86,11 +85,6 @@ private:
     /// to the ROOT file
     StatusCode writeMcTkrStrips();
 
-// Moved to RootConvert
-//    /// Converts idents::VolumeIdentifier into ROOT's VolumeIdentifier
-//    void convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-//        VolumeIdentifier &rootVolId);
-//
     /// Calls TTree::Fill for each event and clears m_mcEvt
     void writeEvent();
 
@@ -117,10 +111,6 @@ private:
     bool m_saveTrajectories;
     /// Flag to write McTkrStrips
     bool m_saveMcTkrStrips;
-
-    /// Keep track of MC particles as we retrieve them from TDS
-    /// Used only to aid in writing the ROOT file.
-    //std::map<const Event::McParticle*, McParticle*> m_mcPartMap;
 
     commonData m_common;
     IRootIoSvc* m_rootIoSvc;
@@ -178,10 +168,6 @@ StatusCode mcRootWriterAlg::initialize()
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    //headersSc = m_headersTool->newMcHeader() ;
-    if (headersSc.isFailure()) {
-        log<<MSG::WARNING << "Failed to create a new Mc FileHeader" << endreq;
-    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -191,35 +177,18 @@ StatusCode mcRootWriterAlg::initialize()
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::WARNING << "Couldn't find the RootIoSvc!" << endreq;
         m_rootIoSvc = 0;
+        // Need RootIoSvc for writing/reading, cannot continue without it
         return StatusCode::FAILURE;
     } 
 
     m_mcTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Monte Carlo Data");
 
-
-    //facilities::Util::expandEnvVar(&m_fileName);
-
-    // Save the current directory for the ntuple writer service
-    //TDirectory *saveDir = gDirectory;   
-    // Create the new ROOT file
-    //m_mcFile = new TFile(m_fileName.c_str(), "RECREATE");
-    //if (!m_mcFile->IsOpen()) {
-    //    log << MSG::ERROR << "ROOT file " << m_fileName 
-    //        << " could not be opened for writing." << endreq;
-    //    return StatusCode::FAILURE;
-    //}
-
-    //m_mcFile->cd();
-    //m_mcFile->SetCompressionLevel(m_compressionLevel);
-    //m_mcTree = new TTree(m_treeName.c_str(), "GLAST Monte Carlo Data");
     m_mcEvt = new McEvent();
-    //m_mcTree->Branch("McEvent","McEvent", &m_mcEvt, m_bufSize, m_splitMode);
     m_rootIoSvc->setupBranch(m_treeName, "McEvent", "McEvent", &m_mcEvt, m_bufSize, m_splitMode);
 
     m_common.m_mcEvt = m_mcEvt;
 
-//    saveDir->cd();
     return sc;
     
 }
@@ -386,20 +355,6 @@ StatusCode mcRootWriterAlg::writeMcParticles() {
         mcPart->initialize(momRoot, idRoot, statFlagsRoot, initMomRoot, 
             finalMomRoot, initPosRoot, finalPosRoot, (*p)->getProcess().c_str());
         
-        /* HMK This is probably no longer necessary - as this is handled in McParticle::initialize
-        // Process the Daughter Particles
-        const SmartRefVector<Event::McParticle> daughterCol = (*p)->daughterList();
-        SmartRefVector<Event::McParticle>::const_iterator daughterIt;
-        for (daughterIt = daughterCol.begin(); daughterIt != daughterCol.end(); daughterIt++) {
-            if (m_mcPartMap.find((*daughterIt)) != m_mcPartMap.end()) {
-                McParticle *daughter = m_mcPartMap[(*daughterIt)];
-                mcPart->addDaughter(daughter);
-            } else {
-                log << MSG::WARNING << "Did not find daughter McParticle in the"
-                    << " map!" << endreq;
-            }
-        }
-        */
 
         // Add the ROOT McParticle to the ROOT collection of McParticle
         m_mcEvt->addMcParticle(mcPart);     
@@ -649,22 +604,6 @@ StatusCode mcRootWriterAlg::writeMcTkrStrips()
     return sc;
 }
 
-//void mcRootWriterAlg::convertVolumeId(idents::VolumeIdentifier tdsVolId, 
-//                     VolumeIdentifier& rootVolId) 
-//{
-//    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
-//    //     in the ROOT class.  Hence, we must convert the 64 bit representation
-//    //     used in the idents::VolumeIdentifier class into two 32 bit UInt_t.
-//    //     To perform the conversion, we iterate over all the ids in the TDS
-//    //     version of the idents::VolumeIdentifier and append each to the ROOT
-//    //     VolumeIdentifier
-//    
-//    int index;
-//    rootVolId.Clear();
-//    for (index = 0; index < tdsVolId.size(); index++) {
-//        rootVolId.append(tdsVolId.operator [](index));
-//    }
-//}
 
 
 void mcRootWriterAlg::writeEvent() 
@@ -672,27 +611,6 @@ void mcRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the McEvent data for this event in the ROOT
     //    tree.  The m_mcEvt object is cleared for the next event.
     m_rootIoSvc->fillTree(m_treeName);
-
-
-    //static int eventCounter = 0;
-//try {
-//    TDirectory *saveDir = gDirectory;
-//    m_mcTree->GetCurrentFile()->cd();
-//    if (m_mcTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
-//        throw;
-//    }
-//    m_mcTree->Fill();
-//    ++eventCounter;
-//    if (m_rootIoSvc)
-//        if (eventCounter % m_rootIoSvc->getAutoSaveInterval()== 0) 
-//            if (m_mcTree->AutoSave() == 0) throw;
- //   saveDir->cd();
- //} catch(...) { 
- //   std::cerr << "Failed to write the event to file" << std::endl; 
- //   std::cerr << "Exiting..." << std::endl; 
-  //  std::cerr.flush(); 
- //   exit(1); 
- //} 
 
     return;
 }
@@ -708,22 +626,6 @@ void mcRootWriterAlg::close()
 
     m_rootIoSvc->closeFile(m_treeName);
 
-/*
-try {
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_mcTree->GetCurrentFile();
-    f->cd();
-    m_mcTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
- } catch(...) { 
-    std::cerr << "Failed to final write to MC file" << std::endl; 
-    std::cerr << "Exiting..." << std::endl; 
-    std::cerr.flush(); 
-    exit(1); 
- } 
-*/
     return;
 }
 

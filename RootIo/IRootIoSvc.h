@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.11 2007/07/17 16:26:31 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.12 2007/07/26 16:40:56 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -48,7 +48,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.11 2007/07/17 16:26:31 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.12 2007/07/26 16:40:56 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -90,8 +90,6 @@ class  IRootIoSvc : virtual public IInterface
     // based on ApplicationMgr.EvtMax and number available in files
     virtual Long64_t getEvtMax() = 0 ;
     virtual void setEvtMax( Long64_t max ) = 0 ;
-
-    //virtual void setActualIndex(Long64_t i) = 0 ;
 
 
     //====================

@@ -2,7 +2,7 @@
 * @file EventCollectionMgr.cxx
 * @brief definition of the class EventCollectionMgr
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.cxx,v 1.1 2007/07/26 16:40:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.cxx,v 1.1 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef EventCollectionMgr_cxx
@@ -15,6 +15,14 @@
 #include <iostream>
 
 
+EventCollectionMgr::~EventCollectionMgr() 
+{
+    m_treeCol.clear();
+    if (m_compChainCol) m_compChainCol->Delete();
+    if (m_masterChain) delete m_masterChain;
+}
+
+// Writing Methods 
 
 bool EventCollectionMgr::initWrite(const std::string &fileName, const std::string &options, bool verbose) {
     bool stat = true;
@@ -36,12 +44,6 @@ bool EventCollectionMgr::initOutputFile() {
     return stat;
 }
 
-
-
-EventCollectionMgr::~EventCollectionMgr() 
-{
-    m_treeCol.clear();
-}
 
 UInt_t EventCollectionMgr::addComponent(const std::string &compName, TTree *t) {
     unsigned int ret = m_pointerSkimWrite.addComponent(compName);
@@ -94,7 +96,8 @@ bool EventCollectionMgr::fillEvent() {
 
 
 
-/// Reading
+/// Reading Methods
+
 bool EventCollectionMgr::initRead(const std::string &fileName, bool verbose) {
     bool stat = true;
     m_fileNameRead = fileName;
@@ -106,27 +109,52 @@ bool EventCollectionMgr::initRead(const std::string &fileName, bool verbose) {
         std::cout << "EventCollectionMgr Error opening ROOT file " << m_fileNameRead << std::endl;
         return stat;
     }
-    // prime the pump so the TTrees are loaded
-    m_pointerSkimRead.read(0);
+
+    // Set up our master TChain and the component TChains
+    if (!m_compChainCol) m_compChainCol = new TObjArray();
+    m_masterChain = m_pointerSkimRead.buildLinks(m_compChainCol);
+    TIter itr(m_compChainCol);
+    TChain *curChain;
+    while ( (curChain = (TChain*)itr.Next()) ) {
+        curChain->SetBranchStatus("*", 1);
+        m_chainIndexCol[curChain->GetName()] = curChain->GetTreeIndex();
+    }
+
+   
     return stat;
 }
 
 Long64_t EventCollectionMgr::getEventIndex(const std::string &treeName, Long64_t index) {
-    // Load the event
-    m_pointerSkimRead.read(index);
-    UInt_t componentInd = m_pointerSkimRead.componentIndex(treeName);
-    if (componentInd == 0xFFFFFFFF) return -1;  // No such component in this event collection
-    const Component* comp = m_pointerSkimRead.getComponent(componentInd);
-    if (!comp) return -1;
-    return (comp->eventPointer().eventIndex());
+    // make sure the pointer skim index is the active TVirtualIndex
+    setIndex();
+    m_masterChain->LoadTree(index);  // Causes all component TChains to be loaded correctly via PointerIndex
+    TChain *compChain = getChainByType(treeName);
+    if (!compChain) return -1;
+    return (compChain->GetReadEntry());
 }
 
-TTree* EventCollectionMgr::getTree(const std::string &treeName) {
-    UInt_t componentInd = m_pointerSkimRead.componentIndex(treeName);
-    if (componentInd == 0xFFFFFFFF) return 0;  // No such component in this event collection
-    const Component* comp = m_pointerSkimRead.getComponent(componentInd);
-    if (!comp) return 0;
-    return (comp->getTree());
+int EventCollectionMgr::setIndex() {
+    int numSet=0;
+    std::map<std::string, TVirtualIndex*>::iterator mapIt;
+    for (mapIt=m_chainIndexCol.begin();mapIt != m_chainIndexCol.end(); mapIt++) {
+        TChain *curChain = getChainByType(mapIt->first);
+        if (curChain) {
+            curChain->SetTreeIndex(mapIt->second);
+            numSet++;
+        }
+    }
+    return numSet;
+}
+
+
+
+TChain* EventCollectionMgr::getChainByType(const std::string& treeName) {
+    TIter itr(m_compChainCol);
+    TChain *curChain;
+    while ((curChain = (TChain*)itr.Next())) {
+        if (curChain->GetName() == treeName) return curChain;
+    }
+    return 0;
 }
 
 #endif

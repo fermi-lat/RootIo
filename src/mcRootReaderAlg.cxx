@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.66 2007/07/17 16:26:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.67 2007/08/08 14:14:45 heather Exp $
  */
 
 
@@ -105,20 +105,21 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
                                  : Algorithm(name, pSvcLocator), m_mcEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
-    // Input ROOT file name
-    // Retain for backward compatibility
+    // Input ROOT file name, this will be overridden in RootIoSvc is provided a meta ROOT file for reading
+    // Retain for backward compatibility, mcRootFileList is preferred
     declareProperty("mcRootFile",m_fileName="");
+
+    // mcRootFileList to fill TChain, this will be overriden if RootIoSvc is provided a meta ROOT file for reading
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-    //initVec.push_back("mc.root");
     initList.setValue(initVec);
     declareProperty("mcRootFileList", m_fileList=initList);
+
     // ROOT TTree name
     declareProperty("mcTreeName", m_treeName="Mc");
     declareProperty("mcBranchName", m_branchName="McEvent");
     declareProperty("clearOption", m_clearOption="");
     
-    //initVec.clear();
     m_particleMap.clear();
 
 
@@ -140,6 +141,7 @@ StatusCode mcRootReaderAlg::initialize()
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Reading cannot continue" << endreq;
+        // Now need RootIoSvc for both reading and writing, we cannot continue without it
         m_rootIoSvc = 0;
         return StatusCode::FAILURE;
     }   
@@ -153,7 +155,7 @@ StatusCode mcRootReaderAlg::initialize()
     m_common.m_mcEvt = m_mcEvt;
 
     // Set up new school system...
-    //std::string type = "MC";
+    // Use the name of this TTree (default "Mc") as key type 
     m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
      
     return sc;
@@ -175,7 +177,7 @@ StatusCode mcRootReaderAlg::execute()
     m_mcEvt = 0;
 
     // Try reading the event this way... 
-    //std::string type = "MC";
+    // use name of TTree as key type
     m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent(m_treeName));
 
     if (!m_mcEvt) return StatusCode::FAILURE;
@@ -546,25 +548,6 @@ StatusCode mcRootReaderAlg::readMcTrajectories()
 
     return sc;
 }
-
-//void mcRootReaderAlg::convertVolumeId(VolumeIdentifier rootVolId, 
-//                                      idents::VolumeIdentifier& tdsVolId) 
-//{
-//    // Purpose and Method:  We must store the volume ids as two 32 bit UInt_t
-//    //	   in the ROOT class.  The idents::VolumeIdentifier class stores the
-//    //	   data in one 64 bit word.  We must convert from the two 32 bit words
-//    //	   into the 64 bit word.  We perform the conversion by iterating over
-//    //	   all of the ids in the ROOT VolumeIdentifier and appending them to
-//    //	   the TDS idents::VolumeIdentifier.
-//    // Input:  ROOT VolumeIdentifier
-//    // Ouput:  idents::VolumeIdentifier
-//    
-//    int index;
-//    for (index = 0; index < rootVolId.size(); index++) {
-//        tdsVolId.append(rootVolId.operator [](index));
-//    }
-//    
-//}
 
 
 StatusCode mcRootReaderAlg::finalize()

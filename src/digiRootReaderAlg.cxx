@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.83 2007/07/17 16:26:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.84 2007/08/08 14:14:45 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -141,11 +141,11 @@ digiRootReaderAlg::digiRootReaderAlg(const std::string& name, ISvcLocator* pSvcL
 Algorithm(name, pSvcLocator), m_digiEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
-    // Input ROOT file name
+    // Input ROOT file name  provided for backward compatibility, digiRootFileList is preferred
+    // The files will be ignored if RootIoSvc is provided a meta (event collection) ROOT file
     declareProperty("digiRootFile",m_fileName="");
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-//    initVec.push_back("digi.root");
     initList.setValue(initVec);
     declareProperty("digiRootFileList",m_fileList=initList);
     // Input TTree name
@@ -178,6 +178,8 @@ StatusCode digiRootReaderAlg::initialize()
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::INFO << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
+        // We truly depend on the RootIoSvc now to read/write files, so we cannot just
+        // continue if this service is not found.
         return StatusCode::FAILURE;
     } 
 
@@ -189,7 +191,7 @@ StatusCode digiRootReaderAlg::initialize()
 
 
     // Set up new school system...
-    //std::string type = "DIGI";
+    // Use the TTree name as the key type 
     m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
 
     return sc;
@@ -209,7 +211,7 @@ StatusCode digiRootReaderAlg::execute()
     m_digiEvt = 0;
 
     // Try reading the event this way... 
-    //std::string type = "DIGI";
+    // using treename as the key
     m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent(m_treeName));
 
     if (!m_digiEvt) return StatusCode::FAILURE;
@@ -409,14 +411,8 @@ StatusCode digiRootReaderAlg::readEventSummary() {
 
     evtSumTds->initialize(summaryWord);
     evtSumTds->initEventFlags(eventFlags);
-    //evtSumTds->initOswEvtSequence(evtSeq);
     evtSumTds->initEventSizeInBytes(evtSizeInBytes);
 
-    //const unsigned int nTem = 16;
-    //unsigned int iTem;
-    //unsigned int tem[nTem];
-    //for (iTem = 0; iTem < nTem; iTem++) 
-    //    tem[iTem] = evtSummary.temLength(iTem);
     evtSumTds->initContribLen((unsigned int*)evtSummary.temLength(), evtSummary.gemLength(), 
                               evtSummary.oswLength(), (unsigned int*)evtSummary.errLength(), 
                               (unsigned int*)evtSummary.diagLength(), evtSummary.aemLength());
@@ -454,8 +450,7 @@ StatusCode digiRootReaderAlg::readGem() {
 
     sc = eventSvc()->registerObject("/Event/Gem", gemTds);
     if( sc.isFailure() ) {
-        log << MSG::ERROR << "could not register /Event/Gem " << endreq
-;
+        log << MSG::ERROR << "could not register /Event/Gem " << endreq;
         return sc;
     }
     return sc;
@@ -789,12 +784,7 @@ void digiRootReaderAlg::close()
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
 
-    // HMK Skipping deletion of TChain, due to segmentation fault with 
-    // TChainIndex
-//    if (m_digiTree) {
-//        delete m_digiTree ;
-//        m_digiTree = 0 ;
-//    }
+
 }
 
 StatusCode digiRootReaderAlg::finalize()

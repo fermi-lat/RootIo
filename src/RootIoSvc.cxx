@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.31 2007/07/26 16:40:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.32 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -119,8 +119,6 @@ class RootIoSvc :
     virtual Long64_t getEvtMax() { return m_evtMax ; }
     virtual void setEvtMax(Long64_t max) ;
 
-    //virtual void setActualIndex(Long64_t i) { m_index = i ; }
-
 
     //====================
     // For writers
@@ -191,10 +189,6 @@ class RootIoSvc :
 
     bool m_useIndex ;
 
-    //std::vector< TChain * > m_chainCol ;
-    //bool m_fileChange ;
-    //int m_updated ; // counter to check that algs have updated input root file
-
     std::map< std::string, RootInputDesc * > m_rootIoMap ;
 
     std::map< std::string, RootOutputDesc *>m_rootOutputMap;
@@ -245,8 +239,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_useIndex = false;
-    //m_fileChange = false;
-    //m_updated = 0;
+
 #ifdef WIN32
     gSystem->Load("libTreePlayer.dll");
 #endif
@@ -257,7 +250,6 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 /// Standard Destructor
 RootIoSvc::~RootIoSvc()  
  {
-  //m_chainCol.clear() ;
   m_rootIoMap.clear() ;
   m_rootOutputMap.clear();
   m_metaTreeCol.clear();
@@ -459,9 +451,6 @@ bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * re
        (gcrResult>1) )
    { return success ; }
 
-//  m_fileChange = true ;
-//  m_chainCol.clear() ;
-
   success = true ;
   return success ;
  }
@@ -486,20 +475,20 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
     RootInputDesc *rootInputDesc = 0;
     if (m_metaFileNameRead.empty()) {
 
-    // Create a new RootInputDesc object for this algorithm
-    rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
+        // Create a new RootInputDesc object for this algorithm
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
 
     } else {  // Event Collection
         MsgStream log( msgSvc(), name() );
         log << MSG::INFO << "Meta ROOT file Reading" << endreq;   
 
-        TTree *t = m_eventColMgr.getTree(type);
-        if (!t) {
+        TChain *chain = m_eventColMgr.getChainByType(type);
+        if (!chain) {
             MsgStream log(msgSvc(), name());
-            log << MSG::WARNING << "TTree " << type << " not found in event collection" << endreq;
+            log << MSG::WARNING << "TChain " << type << " could not be constructed from event collection" << endreq;
             return StatusCode::FAILURE;
         }
-        rootInputDesc = new RootInputDesc(t, tree, branch, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(chain, tree, branch, log.level()<=MSG::DEBUG);
     }
 
     // Store the pointer to this in our map
@@ -507,9 +496,6 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
 
     // Register with RootIoSvc
     setEvtMax(rootInputDesc->getNumEvents());
-
-
-    //registerRootTree(rootInputDesc->getTChain());
 
     return sc;
 }
@@ -523,16 +509,16 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
 
     if (rootInputDesc)
     {
-        // Clear the event first
+        // Clear the event occurs in the xxxRootReader algorithm execute methods
         //rootInputDesc->clearEvent();
         
+        // Read the event depending upon the mode
         if (!m_metaFileNameRead.empty()) {  // access via event collection
 
             Long64_t ind = m_eventColMgr.getEventIndex(type, index());
             pData = rootInputDesc->getEvent(ind);
 
-        // Read the event depending upon the mode
-        } else if (m_useIndex)
+        } else if (m_useIndex)  // typical serial reading
         {
             pData = rootInputDesc->getEvent(index());
         }
@@ -714,11 +700,6 @@ void RootIoSvc::setEvtMax(Long64_t max)
    { m_rootEvtMax = max ; }
  }
 
-//void RootIoSvc::registerRootTree(TChain *ch) {
-//    m_chainCol.push_back(ch);
-//    ++m_updated;
-//}
-
 bool RootIoSvc::setIndex( Long64_t i )
  {
   if (i<0) return false ;
@@ -739,95 +720,25 @@ bool RootIoSvc::setIndex( Long64_t i )
  }
 
 
-bool RootIoSvc::setRunEventPair( std::pair<int, int> ids )
+ bool RootIoSvc::setRunEventPair( std::pair<int, int> ids )
  {
-//  // If we just changed ROOT files, we may not have run the reader algs
-//  // yet, so the TTrees are not set to read, so we temporarily load the
-//  // the TTrees so we can check to see if the requested run/event pair
-//    // exists.  
-//    TFile *mc=0, *digi=0, *rec=0, *gcr=0;
-//    TChain *mcChain, *digiChain, *recChain, *gcrChain;
-//
-//    if ((m_fileChange) && (m_chainCol.size() == 0)) {
-//        if (!m_mcFile.empty()) {
-//           mc = TFile::Open(m_mcFile.c_str(), "READ");
-//           if (!mc->IsOpen()) return false;
-//           mcChain = (TChain*)mc->Get("Mc");
-//           if (!mcChain) return false;
-//           if (!mcChain->GetTreeIndex()) 
-//               mcChain->BuildIndex("m_runId", "m_eventId");
-//           registerRootTree(mcChain);
-//        }
-//        if (!m_digiFile.empty()) {
-//           digi = TFile::Open(m_digiFile.c_str(), "READ");
-//           if (!digi->IsOpen()) return false;
-//           digiChain = (TChain*)digi->Get("Digi");
-//           if (!digiChain) return false;
-//           if (!digiChain->GetTreeIndex()) 
-//               digiChain->BuildIndex("m_runId", "m_eventId");
-//           registerRootTree(digiChain);
-//        }
-//        if (!m_reconFile.empty()) {
-//           rec = TFile::Open(m_reconFile.c_str(), "READ");
-//           if (!rec->IsOpen()) return false;
-//           recChain = (TChain*)rec->Get("Recon");
-//           if (!recChain) return false;
-//           if (!recChain->GetTreeIndex()) 
-//               recChain->BuildIndex("m_runId", "m_eventId");
-//           registerRootTree(recChain);
-//        }
-//
-//	if (!m_gcrFile.empty()) {
-//           gcr = TFile::Open(m_gcrFile.c_str(), "READ");
-//           if (!rec->IsOpen()) return false;
-//           gcrChain = (TChain*)gcr->Get("GcrSelect");
-//           if (!gcrChain) return false;
-//           if (!gcrChain->GetTreeIndex()) 
-//               gcrChain->BuildIndex("m_runId", "m_eventId");
-//           registerRootTree(gcrChain);
-//        }
-//
-//
-//    }
-//
-//    std::vector<TChain*>::iterator it;
-//    for(it = m_chainCol.begin(); it != m_chainCol.end(); it++) {
-//        Long64_t readInd = (*it)->GetEntryNumberWithIndex(ids.first, ids.second);
-//        if ( (readInd < 0) || (readInd >= (*it)->GetEntries()) ) {
-//          if (m_fileChange) {
-//              m_chainCol.clear();
-//              if (mc) delete mc;
-//              if (digi) delete digi;
-//              if (rec) delete rec;
-//              if (gcr) delete gcr;
-//          }
-//          return false;
-//        }
-//    }
-    
-    
-  std::map<std::string,RootInputDesc *>::iterator typeItr ;
-  for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
-   {
-    RootInputDesc * rootInputDesc = typeItr->second ;
-    TChain * chain = rootInputDesc->getTChain() ;
-    Long64_t readInd = chain->GetEntryNumberWithIndex(ids.first,ids.second);
-    if ((readInd<0)||(readInd>=chain->GetEntries()))
-     { return false ; }
-   }
-    
-    
-    m_runEventPair = ids;
-    m_useIndex = false;
-//    if (m_fileChange) {
-//        m_chainCol.clear();
-//        if (mc) delete mc;
-//        if (digi) delete digi;
-//        if (rec) delete rec;
-//        if (gcr) delete gcr;
-//    }
-    return true;
-}
+     // This assumes separate input files for reading with no use of event collection - need to modify for META files
+
+     std::map<std::string,RootInputDesc *>::iterator typeItr ;
+     for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
+     {
+         RootInputDesc * rootInputDesc = typeItr->second ;
+         TChain * chain = rootInputDesc->getTChain() ;
+         Long64_t readInd = chain->GetEntryNumberWithIndex(ids.first,ids.second);
+         if ((readInd<0)||(readInd>=chain->GetEntries()))
+         { return false ; }
+     }
+
+     m_runEventPair = ids;
+     m_useIndex = false;
+
+     return true;
+ }
 
 
 //==============================================================
@@ -872,14 +783,6 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
         m_eventColMgr.fillEvent();       
     }
 
-
-
-//    // assuming all algs have gotten the new files by now
-//    if (m_updated>0)
-//     {
-//        m_fileChange = false ;
-//        m_updated = 0 ;
-//     }
  }
 
 // Purpose and Method:  Control the event loop

@@ -3,7 +3,7 @@
 * @brief definition of the class EventCollectionMgr
 *        This class is used to set up and handle the event collection (meta) root files
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.h,v 1.1 2007/07/26 16:40:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.h,v 1.1 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -11,9 +11,11 @@
 #define EventCollectionMgr_h
 
 #include "TTree.h"
+#include "TChain.h"
 #include "TFile.h"
 #include <string>
 #include <vector>
+#include <map>
 #include "metaRootData/PointerSkim.h"
 
 
@@ -22,7 +24,9 @@ class EventCollectionMgr
   public :
   
       EventCollectionMgr() : m_fileNameWrite(""),m_fileNameRead(""),
-          m_fileWrite(0),m_fileRead(0),m_verbose(false), m_eventCounter(0) { };
+          m_fileWrite(0),m_fileRead(0),m_verbose(false), m_eventCounter(0),
+          m_compChainCol(0), m_masterChain(0)  
+      { };
 
       ~EventCollectionMgr() ; 
 
@@ -42,7 +46,8 @@ class EventCollectionMgr
     bool initRead(const std::string &fileName="meta.root", bool verbose=false);
     Long64_t getNumEntries() { return (m_pointerSkimRead.entries()); };
     Long64_t getEventIndex(const std::string &treeName, Long64_t index);
-    TTree* getTree(const std::string &treeName);
+    TChain* getChainByType(const std::string &treeName);
+    int setIndex();
 
 
   private :
@@ -55,6 +60,9 @@ class EventCollectionMgr
     std::vector<TTree*> m_treeCol;
 	bool m_verbose;  /// set the chattiness for debug statements
     Long64_t m_eventCounter;  // Count number of events filled to the TTree so far
+    TObjArray *m_compChainCol; // List of component TChains for reading
+    TChain *m_masterChain;  // Master TChain for reading
+    std::map<std::string, TVirtualIndex*> m_chainIndexCol;
     
  } ;
 

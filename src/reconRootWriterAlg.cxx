@@ -10,14 +10,6 @@
 #include "Event/Recon/TkrRecon/TkrCluster.h"
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
-//#include "Event/Recon/TkrRecon/TkrDiagnostics.h"  // This future expansion coming soon
-
-//#include "Event/Recon/CalRecon/CalCluster.h"   
-//#include "Event/Recon/CalRecon/CalXtalRecData.h"   
-//#include "Event/Recon/CalRecon/CalMipClasses.h"
-//#include "Event/Recon/CalRecon/CalEventEnergy.h"
-
-//#include "Event/Recon/AcdRecon/AcdRecon.h"
 
 #include "LdfEvent/EventSummaryData.h"
 
@@ -50,7 +42,6 @@
 #include "RootConvert/Recon/AcdReconConvert.h"
 
 #include "RootConvert/Recon/GcrXtalConvert.h"
-//#include "RootConvert/Recon/GcrSelectedXtalConvert.h"
 #include "RootConvert/Recon/GcrTrackConvert.h"
 
 #include <cstdlib>
@@ -59,7 +50,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.79 2007/07/26 16:40:57 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.80 2007/08/08 14:14:45 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -177,10 +168,6 @@ StatusCode reconRootWriterAlg::initialize()
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    //headersSc = m_headersTool->newReconHeader() ;
-    if (headersSc.isFailure()) {
-        log<<MSG::WARNING << "Failed to create a new Recon FileHeader" << endreq;
-    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -190,33 +177,17 @@ StatusCode reconRootWriterAlg::initialize()
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::WARNING << "Couldn't find the RootIoSvc!" << endreq;
         m_rootIoSvc = 0;
+        // RootIoSvc is now required for reading/writing, cannot continue without it
         return StatusCode::FAILURE;
     } 
 
     m_reconTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Reconstruction Data");
 
-//    facilities::Util::expandEnvVar(&m_fileName);
-    
-    // Save the current directory for the ntuple writer service
-//    TDirectory *saveDir = gDirectory;   
-    // Create the new ROOT file
-//    m_reconFile = new TFile(m_fileName.c_str(), "RECREATE");
-//    if (!m_reconFile->IsOpen()) {
-//        log << MSG::ERROR << "ROOT file " << m_fileName 
-//            << " could not be opened for writing." << endreq;
-//        return StatusCode::FAILURE;
-//    }
-//    m_reconFile->cd();
-//    m_reconFile->SetCompressionLevel(m_compressionLevel);
-//    m_reconTree = new TTree(m_treeName.c_str(), "GLAST Reconstruction Data");
-
     m_reconEvt = new ReconEvent();
-    //m_reconTree->Branch("ReconEvent","ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
     m_rootIoSvc->setupBranch(m_treeName, "ReconEvent", "ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
     m_common.m_reconEvt = m_reconEvt;
     
-//    saveDir->cd();
     return sc;
     
 }
@@ -798,31 +769,9 @@ StatusCode reconRootWriterAlg::writeAdfRecon()
 void reconRootWriterAlg::writeEvent() 
 {
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
-    //    tree.  The m_reconEvt object is cleared for the next event.
+    //    tree.
     
     m_rootIoSvc->fillTree(m_treeName);
-
-  //  static int eventCounter = 0 ;
-    
-//    try {
-//        TDirectory *saveDir = gDirectory;
-//        m_reconTree->GetCurrentFile()->cd();
-//        if (m_reconTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
-//            throw;
-//        }
-//        m_reconTree->Fill();
-//        ++eventCounter;
-//        if (m_rootIoSvc)
-//            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-//               if( m_reconTree->AutoSave() == 0) throw; 
-//        saveDir->cd();
-//    }
-//    catch(...) { 
-//        std::cerr << "Failed to write the event to file" << std::endl; 
-//        std::cerr << "Exiting..." << std::endl; 
-//        std::cerr.flush(); 
-//        exit(1); 
-//    } 
 
     return;
 }
@@ -837,23 +786,6 @@ void reconRootWriterAlg::close()
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
     m_rootIoSvc->closeFile(m_treeName);
-    /*
-    try {
-        TDirectory *saveDir = gDirectory;
-        TFile *f = m_reconTree->GetCurrentFile();
-        f->cd();
-        m_reconTree->BuildIndex("m_runId", "m_eventId");
-        f->Write(0, TObject::kWriteDelete);
-        f->Close();
-        saveDir->cd();
-    }
-    catch(...) { 
-        std::cerr << "Failed to final write to RECON file" << std::endl; 
-        std::cerr << "Exiting..." << std::endl; 
-        std::cerr.flush(); 
-        exit(1); 
-    } 
-    */
 
     return;
 }

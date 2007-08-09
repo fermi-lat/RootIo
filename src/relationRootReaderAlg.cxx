@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.29 2007/07/17 16:26:31 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.30 2007/08/08 14:14:45 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -78,9 +78,6 @@ private:
     StatusCode readMcParticleRelations(Relation*);
     /// Handles converting McTrajectoryPoint to hit relations back to TDS
     StatusCode readMcTrajectoryPointRelations(Relation*);
-
-    //StatusCode readTkrDigiRelations();  
-    //StatusCode readCalDigiRelations();
 
     /// Closes the ROOT file
     void close();
@@ -133,11 +130,14 @@ relationRootReaderAlg::relationRootReaderAlg(const std::string& name, ISvcLocato
 Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
 {
     // Input pararmeters that may be set via the jobOptions file
-    // Input ROOT file name
+    // Input ROOT file name, for backward compatibility with older JO files, relationRootFileList is preferred
+    // This will be overridden if RootIoSvc is provided a meta ROOT file for reading
     declareProperty("rootFile",m_fileName="");
+
+    // Provide a list of input files to init TChain, this will be overridden if RootIoSvc is provided a
+    // meta ROOT file for reading
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-    //initVec.push_back("relation.root");
     initList.setValue(initVec);
     declareProperty("relationRootFileList", m_fileList=initList);
     initVec.clear();
@@ -179,8 +179,8 @@ StatusCode relationRootReaderAlg::initialize()
 
 
     // Set up new school system...
-    std::string type = m_treeName;
-    m_rootIoSvc->prepareRootInput(type, m_treeName, m_branchName, m_fileList);
+    // Use treeName as key type
+    m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
 
     return sc;
     
@@ -200,8 +200,8 @@ StatusCode relationRootReaderAlg::execute()
     m_relTab = 0;
 
     // Try reading the event this way... 
-    std::string type = m_treeName;
-    m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent(type));
+    // use treeName as key type
+    m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent(m_treeName));
 
     if (!m_relTab) return StatusCode::FAILURE;
 
@@ -501,11 +501,6 @@ void relationRootReaderAlg::close()
 {
     // Purpose and Method:  Closes the ROOT file at the end of the run.
 
-   // HMK skip deleting chain due to seg fault with TChainIndex
-   // if (m_relTree) {
-   //     delete m_relTree;
-   //     m_relTree = 0;
-   // }
 }
 
 StatusCode relationRootReaderAlg::finalize()
