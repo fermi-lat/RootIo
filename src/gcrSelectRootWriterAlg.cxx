@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.2 2006/12/13 15:16:21 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.3 2007/07/04 15:19:27 chamont Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -142,28 +142,18 @@ StatusCode gcrSelectRootWriterAlg::initialize()
     m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
-        log << MSG::INFO << "No Auto Saving" << endreq;
         m_rootIoSvc = 0;
+        // RootIoSvc is now required for reading/writing, cannot continue without it
+        return StatusCode::FAILURE;
     } 
 
-    facilities::Util::expandEnvVar(&m_fileName);
-    
-    // Save the current directory for the ntuple writer service
-    TDirectory *saveDir = gDirectory;   
-    // Create the new ROOT file
-    m_gcrSelectFile = TFile::Open(m_fileName.c_str(), "RECREATE");
-    if (!m_gcrSelectFile->IsOpen()) {
-        log << MSG::ERROR << "ROOT file " << m_fileName 
-            << " could not be opened for writing." << endreq;
-        return StatusCode::FAILURE;
-    }
-    m_gcrSelectFile->cd();
-    m_gcrSelectFile->SetCompressionLevel(m_compressionLevel);
-    m_gcrTree = new TTree(m_treeName.c_str(), "GLAST GcrSelect Data");
+
+    m_gcrTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
+        m_compressionLevel, "GLAST GcrSelect Data");
+
     m_gcrSelEvt = new GcrSelectEvent();
-    m_gcrTree->Branch("GcrSelectEvent","GcrSelectEvent", &m_gcrSelEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch(m_treeName, "GcrSelectEvent", "GcrSelectEvent", &m_gcrSelEvt, m_bufSize, m_splitMode);
     
-    saveDir->cd();
     return sc;
     
 }
@@ -176,9 +166,7 @@ StatusCode gcrSelectRootWriterAlg::execute()
     
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
-    //log << MSG::INFO << "gcrSelectRootWriterAlg::execute BEGIN" << endreq;
-    
+        
     if(!m_gcrTree->GetCurrentFile()->IsOpen()) {
         log << MSG::ERROR << "ROOT file " << m_fileName 
             << " could not be opened for writing." << endreq;
@@ -333,28 +321,11 @@ void gcrSelectRootWriterAlg::fillGcrSelectVals(GcrSelect *gcrSelect, Event::GcrS
 
 void gcrSelectRootWriterAlg::writeEvent() 
 {
-    // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
-    //    tree.  The m_digiEvt object is cleared for the next event.
+    // Purpose and Method:  Stores the GcrSelectEvent data for this event in the ROOT
+    //    tree.  
     
-    static int eventCounter = 0 ;
+    m_rootIoSvc->fillTree(m_treeName);
     
-    try {
-        TDirectory *saveDir = gDirectory;
-        m_gcrTree->GetCurrentFile()->cd();
-        m_gcrTree->Fill();
-        ++eventCounter;
-        if (m_rootIoSvc)
-            if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-               m_gcrTree->AutoSave();
-        saveDir->cd();
-    }
-    catch(...) { 
-        std::cerr << "Failed to write the event to file" << std::endl; 
-        std::cerr << "Exiting..." << std::endl; 
-        std::cerr.flush(); 
-        exit(1); 
-    } 
-
     return;
 }
 
@@ -367,21 +338,7 @@ void gcrSelectRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    try {
-        TDirectory *saveDir = gDirectory;
-        TFile *f = m_gcrTree->GetCurrentFile();
-        f->cd();
-        m_gcrTree->BuildIndex("m_runId", "m_eventId");
-        f->Write(0, TObject::kWriteDelete);
-        f->Close();
-        saveDir->cd();
-    }
-    catch(...) { 
-        std::cerr << "Failed to final write to RECON file" << std::endl; 
-        std::cerr << "Exiting..." << std::endl; 
-        std::cerr.flush(); 
-        exit(1); 
-    } 
+    m_rootIoSvc->closeFile(m_treeName);
 
     return;
 }

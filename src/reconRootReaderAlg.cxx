@@ -49,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.82 2007/07/17 16:26:31 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.83 2007/08/08 14:14:45 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -111,7 +111,7 @@ private:
     
     /// Top-level Monte Carlo ROOT object
     ReconEvent *m_reconEvt;
-//    /// name of the input ROOT file
+    /// name of the input ROOT file
     std::string m_fileName;
     /// List of input files
     StringArrayProperty m_fileList;
@@ -139,11 +139,14 @@ reconRootReaderAlg::reconRootReaderAlg(const std::string& name, ISvcLocator* pSv
 Algorithm(name, pSvcLocator), m_reconEvt(0)
 {
     // Input pararmeters that may be set via the jobOptions file
-    // Input ROOT file name
+    // Input ROOT file name, this will be overridden if RootIoSvc is provided a meta ROOT file for reading
+    // Provided for backward-compatibility with older JO files, reconRootFileList is preferred JO parameter
     declareProperty("reconRootFile",m_fileName="");
+
+    // Allows init of a TChain of files for reading, this will be overridden if RootIoSvc is provided
+    // a meta ROOT file for reading
     StringArrayProperty initList;
     std::vector<std::string> initVec;
-//    initVec.push_back("recon.root");
     initList.setValue(initVec);
     declareProperty("reconRootFileList", m_fileList=initList);
     initVec.clear();
@@ -177,6 +180,7 @@ StatusCode reconRootReaderAlg::initialize()
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
         log << MSG::DEBUG << "Event loop will not terminate gracefully" << endreq;
         m_rootIoSvc = 0;
+        // RootIoSvc is required for reading and writing, cannot continue without it
         return StatusCode::FAILURE;
     }
 
@@ -187,7 +191,7 @@ StatusCode reconRootReaderAlg::initialize()
 
 
     // Set up new school system...
-    //std::string type = "RECON";
+    // Use treeName as key type
     m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
 
     return sc;
@@ -210,8 +214,8 @@ StatusCode reconRootReaderAlg::execute()
      }
 
     // Try reading the event this way... 
-    std::string type = m_treeName;
-    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(type)) ;
+    // Use treeName as key type
+    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(m_treeName)) ;
 
     if (!m_reconEvt) return StatusCode::FAILURE;
 
@@ -889,11 +893,6 @@ void reconRootReaderAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    // skip deletion of chain due to seg fault with TChainIndex
-    //if (m_reconTree) {
-    //    delete m_reconTree;
-    //    m_reconTree = 0;
-    //}
 }
 
 StatusCode reconRootReaderAlg::finalize()

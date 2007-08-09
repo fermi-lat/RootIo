@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.4 2007/07/17 16:26:31 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.5 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -13,21 +13,26 @@
 #include <iostream>
 
 
+// ctor for vanilla reading from a list of ROOT files
+// Setup the TChain* in this case, as we may have multiple files
 RootInputDesc::RootInputDesc
  ( const StringArrayProperty& fileList, 
    const std::string & tree, 
    const std::string & branch, bool verbose )
- : m_tree(tree), m_branch(branch), m_chain(0), m_treePtr(0), m_dataObject(0), m_verbose(verbose)
+ : m_tree(tree), m_branch(branch), m_chain(0), m_dataObject(0), m_verbose(verbose), m_runEvtIndex(0)
  {
   // Set up the input file list
   m_numEvents = setFileList(fileList, m_verbose) ;
  }
 
+ // ctor for Event Collections
+ // Set up the TChain* as we will retrieve a TChain* from the PointerSkim via the EventCollectionMgr
  RootInputDesc::RootInputDesc
-     ( TTree *t,
+     ( TChain *t,
      const std::string & treeName,
      const std::string & branchName, bool verbose)
-     : m_tree(treeName), m_branch(branchName), m_chain(0), m_treePtr(t), m_dataObject(0), m_verbose(verbose) {
+     : m_tree(treeName), m_branch(branchName), m_chain(t), m_dataObject(0), m_verbose(verbose), 
+       m_runEvtIndex(0) {
          m_numEvents = setEventCollection();
      }
 
@@ -41,7 +46,6 @@ RootInputDesc::~RootInputDesc()
    }
   if (m_dataObject) delete m_dataObject ;
 
-  // We don't own the m_treePtr object, so we won't delete it.
  }
 
  Long64_t RootInputDesc::setEventCollection( ) {
@@ -49,7 +53,7 @@ RootInputDesc::~RootInputDesc()
      // Save the current directory for the ntuple writer service
      TDirectory * saveDir = gDirectory ;	
 
-     if (!m_treePtr) return numEvents;
+     if (!m_chain) return numEvents;
 
      if (m_dataObject) 
          delete m_dataObject ;
@@ -59,7 +63,7 @@ RootInputDesc::~RootInputDesc()
 
      // Check that we have the right TTree
      // To do this we will first need to "rediscover" the directory name
-     std::string treeName = std::string(m_treePtr->GetName());
+     std::string treeName = std::string(m_chain->GetName());
      if (treeName != m_tree)
      {
          return numEvents ;
@@ -67,7 +71,7 @@ RootInputDesc::~RootInputDesc()
 
      // To set the data pointer we need to find the name of the branch contained
      // where we note that in Glast each file contains one branch
-     TObjArray * branches = m_treePtr->GetListOfBranches() ;
+     TObjArray * branches = m_chain->GetListOfBranches() ;
      std::string branchName = "" ;
      int idx ;
      for( idx = 0 ; idx < branches->GetEntries() ; idx++ )
@@ -83,9 +87,15 @@ RootInputDesc::~RootInputDesc()
      { return numEvents ; }
 
      // Set the data pointer to receive the data and we are ready to go
-     m_treePtr->SetBranchAddress(branchName.data(),m_dataObject) ;
+     m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;
 
-     numEvents = m_treePtr->GetEntries() ;
+     // If necessary, set up the TChainIndex
+     TVirtualIndex *resetIndex = m_chain->GetTreeIndex();
+     m_chain->BuildIndex("m_runId", "m_eventId") ;
+     m_runEvtIndex = m_chain->GetTreeIndex();
+     m_chain->SetTreeIndex(resetIndex);
+
+     numEvents = m_chain->GetEntries() ;
 
      // Finally restore the context we entered with
      saveDir->cd() ;
@@ -148,6 +158,7 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   if (!m_chain->GetTreeIndex()) 
    {
     m_chain->BuildIndex("m_runId", "m_eventId") ;
+    m_runEvtIndex = m_chain->GetTreeIndex();
    }
 
   // Get a pointer to the TTree within this data file
@@ -213,16 +224,15 @@ TObject * RootInputDesc::getEvent( int index )
    {
     int ret = m_chain->GetEntry(index) ;
     dataPtr = *m_dataObject ;
-   } else if (m_treePtr) {
-       int ret = m_treePtr->GetEntry(index);
-       dataPtr = *m_dataObject;
-   }
+   } 
 
   // Restore context we entered with
   saveDir->cd();
 
   return dataPtr ;
  }
+
+
 
 TObject * RootInputDesc::getEvent( int runNum, int evtNum )
  {
@@ -233,12 +243,10 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
 
   if (m_chain) 
    {
+    if (m_runEvtIndex) m_chain->SetTreeIndex(m_runEvtIndex);
     int ret = m_chain->GetEntryWithIndex(runNum,evtNum) ;
     dataPtr = *m_dataObject ;
-   } else if (m_treePtr) {
-       int ret = m_treePtr->GetEntryWithIndex(runNum, evtNum);
-       dataPtr = *m_dataObject;
-   }
+   } 
 
   // Restore context we entered with
   saveDir->cd() ;

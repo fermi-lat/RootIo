@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.70 2007/07/26 16:40:57 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.71 2007/08/08 14:14:45 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -180,10 +180,6 @@ StatusCode digiRootWriterAlg::initialize()
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    //headersSc = m_headersTool->newDigiHeader() ;
-    if (headersSc.isFailure()) {
-        log<<MSG::WARNING << "Failed to create a new Digi FileHeader" << endreq;
-    }
     
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
@@ -196,32 +192,13 @@ StatusCode digiRootWriterAlg::initialize()
         return StatusCode::FAILURE;
     } 
 
-    //facilities::Util::expandEnvVar(&m_fileName);
-
-    // Save the current directory for the ntuple writer service
-    //TDirectory *saveDir = gDirectory;   
-    // Create the new ROOT file
-    //m_digiFile = TFile::Open(m_fileName.c_str(), "RECREATE");
-    //if (!m_digiFile->IsOpen()) {
-    //    log << MSG::ERROR << "ROOT file " << m_fileName 
-    //        << " could not be opened for writing." << endreq;
-    //    return StatusCode::FAILURE;
-   // }
-   // m_digiFile->cd();
-   // m_digiFile->SetCompressionLevel(m_compressionLevel);
-    
-    // tree of events
-   // m_digiTree = new TTree(m_treeName.c_str(), "GLAST Digitization Data");
-    
+    // Use the RootIoSvc to setup our output ROOT files
     m_digiTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Digitization Data");
-
     m_digiEvt = new DigiEvent();
     m_common.m_digiEvt = m_digiEvt;
-    //m_digiTree->Branch("DigiEvent","DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
     m_rootIoSvc->setupBranch(m_treeName, "DigiEvent", "DigiEvent", &m_digiEvt, m_bufSize, m_splitMode);
 
-//    saveDir->cd();
     return sc;
     
 }
@@ -724,30 +701,9 @@ StatusCode digiRootWriterAlg::writeAdf() {
 void digiRootWriterAlg::writeEvent() 
 {
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
-    //    tree.  The m_digiEvt object is cleared for the next event.
-    //static int eventCounter = 0;
+    //    tree. 
     
     m_rootIoSvc->fillTree(m_treeName);
-
-//try {
-//    TDirectory *saveDir = gDirectory;
-//    m_digiTree->GetCurrentFile()->cd();
-//    if (m_digiTree->GetCurrentFile()->TestBits(TFile::kWriteError)) {
-//        throw;
-//     }
-//    m_digiTree->Fill();
- //   ++eventCounter;
- //   if (m_rootIoSvc)
- //       if (eventCounter % m_rootIoSvc->getAutoSaveInterval() == 0) 
-//            if (m_digiTree->AutoSave() == 0) throw;
-
-//    saveDir->cd();
-// } catch(...) {   
-//     std::cerr << "Failed to write the event to file" << std::endl;   
-//     std::cerr << "Exiting..." << std::endl;   
-//     std::cerr.flush();   
- //    exit(1);   
- //} 
 
     return;
 }
@@ -762,22 +718,6 @@ void digiRootWriterAlg::close()
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
     m_rootIoSvc->closeFile(m_treeName);
-    /*
- try {
-    TDirectory *saveDir = gDirectory;
-    TFile *f = m_digiTree->GetCurrentFile();
-    f->cd();
-    m_digiTree->BuildIndex("m_runId", "m_eventId");
-    f->Write(0, TObject::kWriteDelete);
-    f->Close();
-    saveDir->cd();
- } catch(...) {   
-    std::cerr << "Failed final write to DIGI file" << std::endl;   
-    std::cerr << "Exiting..." << std::endl;   
-    std::cerr.flush();   
-    exit(1);   
- }   
-  */
 
     return;
 }
