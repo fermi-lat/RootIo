@@ -2,7 +2,7 @@
 * @file EventCollectionMgr.cxx
 * @brief definition of the class EventCollectionMgr
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.cxx,v 1.1 2007/08/08 14:14:45 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/EventCollectionMgr.cxx,v 1.2 2007/08/09 17:17:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef EventCollectionMgr_cxx
@@ -127,7 +127,8 @@ bool EventCollectionMgr::initRead(const std::string &fileName, bool verbose) {
 Long64_t EventCollectionMgr::getEventIndex(const std::string &treeName, Long64_t index) {
     // make sure the pointer skim index is the active TVirtualIndex
     setIndex();
-    m_masterChain->LoadTree(index);  // Causes all component TChains to be loaded correctly via PointerIndex
+    Long64_t retVal = m_masterChain->LoadTree(index);  // Causes all component TChains to be loaded correctly via PointerIndex
+    if (retVal < 0) return retVal;
     TChain *compChain = getChainByType(treeName);
     if (!compChain) return -1;
     return (compChain->GetReadEntry());

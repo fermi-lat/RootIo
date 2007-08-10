@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.32 2007/08/08 14:14:45 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.33 2007/08/09 17:17:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -477,6 +477,8 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
 
         // Create a new RootInputDesc object for this algorithm
         rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
+        // Register with RootIoSvc
+        setEvtMax(rootInputDesc->getNumEvents());
 
     } else {  // Event Collection
         MsgStream log( msgSvc(), name() );
@@ -489,13 +491,14 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
             return StatusCode::FAILURE;
         }
         rootInputDesc = new RootInputDesc(chain, tree, branch, log.level()<=MSG::DEBUG);
+        // Register number of events
+        setEvtMax(m_eventColMgr.getNumEntries());
     }
 
     // Store the pointer to this in our map
     m_rootIoMap[type] = rootInputDesc;
 
-    // Register with RootIoSvc
-    setEvtMax(rootInputDesc->getNumEvents());
+
 
     return sc;
 }
@@ -700,40 +703,55 @@ void RootIoSvc::setEvtMax(Long64_t max)
    { m_rootEvtMax = max ; }
  }
 
-bool RootIoSvc::setIndex( Long64_t i )
+ bool RootIoSvc::setIndex( Long64_t i )
  {
-  if (i<0) return false ;
-  
-  std::map<std::string,RootInputDesc *>::iterator typeItr ;
-  for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
-   {
-    RootInputDesc * rootInputDesc = typeItr->second ;
-    TChain * chain = rootInputDesc->getTChain() ;
-    if (i >= chain->GetEntries())
-     { return false ; }
-   }
-  
-  m_index = i ;
-  m_runEventPair = std::pair<int,int>(-1,-1) ;
-  m_useIndex = true ;
-  return true ;
- }
+     // Purpose and Method:  Interface routine for the event display to allow GUI to check on the
+     // availability of an index into the ROOT files being read in.
+     // As long as any input ROOT file has the index, we will report true.
 
-
- bool RootIoSvc::setRunEventPair( std::pair<int, int> ids )
- {
-     // This assumes separate input files for reading with no use of event collection - need to modify for META files
+     bool status = false;
+     // In the context of an event collection, the index i will refer to the meta ROOT file.
+     if (i<0) return false ;
 
      std::map<std::string,RootInputDesc *>::iterator typeItr ;
      for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
      {
          RootInputDesc * rootInputDesc = typeItr->second ;
-         TChain * chain = rootInputDesc->getTChain() ;
-         Long64_t readInd = chain->GetEntryNumberWithIndex(ids.first,ids.second);
-         if ((readInd<0)||(readInd>=chain->GetEntries()))
-         { return false ; }
+         if (!m_metaFileNameRead.empty()) {  // access via event collection
+             Long64_t ind = m_eventColMgr.getEventIndex(typeItr->first, i);
+             if (ind < 0) 
+                 status |= false;
+             else
+                 status |= true;
+         } else {
+             status |= rootInputDesc->checkEventAvailability(i);
+         }
      }
 
+     if (!status) return false;
+
+     m_index = i ;
+     m_runEventPair = std::pair<int,int>(-1,-1) ;
+     m_useIndex = true ;
+     return true ;
+ }
+
+
+ bool RootIoSvc::setRunEventPair( std::pair<int, int> ids )
+ {
+     // Purpose and Method:  Interface routine for the event display.  Allows the client to check
+     // if a run/event id pair is available for loading.  If at least one of the TTrees has the event
+     // available we will return true, otherwise return false.
+
+     bool status = false;
+     std::map<std::string,RootInputDesc *>::iterator typeItr ;
+     for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
+     {
+         RootInputDesc * rootInputDesc = typeItr->second ;
+         status |= rootInputDesc->checkEventAvailability(ids.first, ids.second);
+     }
+
+     if (!status) return false;
      m_runEventPair = ids;
      m_useIndex = false;
 
