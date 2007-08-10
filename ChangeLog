@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug  9 19:46:43 PDT 2007
+RootIo/src
+
+Modified Files:
+	EventCollectionMgr.cxx RootInputDesc.cxx RootInputDesc.h 
+	RootIoSvc.cxx 
+Log Message:
+get setting of run event ids going
+    *
+------------------------------------------------------------
 User: heather  Thu Aug  9 10:17:09 PDT 2007
 RootIo/src
 
