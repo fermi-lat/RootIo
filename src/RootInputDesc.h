@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.4 2007/08/08 14:14:45 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.5 2007/08/09 17:17:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -44,6 +44,8 @@ class RootInputDesc
     /// Methods to handle reading and clearing events
     TObject * getEvent( int index ) ;
     TObject * getEvent( int runNum, int evtNum ) ;
+    bool checkEventAvailability( Long64_t index );
+    bool checkEventAvailability( int runNum, int evtNum );
     void clearEvent() ;
 
     /// Method to change the list of files in this TChain

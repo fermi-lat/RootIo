@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.5 2007/08/08 14:14:45 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.6 2007/08/09 17:17:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -252,6 +252,25 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
   saveDir->cd() ;
 
   return dataPtr ;
+ }
+
+ bool RootInputDesc::checkEventAvailability( Long64_t index ) {
+  TDirectory * saveDir = gDirectory ;	
+  if (!m_chain) return false;
+  if (index < 0) return false;
+  if (index > m_chain->GetEntries()) return false;
+  return true;
+ }
+
+ bool RootInputDesc::checkEventAvailability( int runNum, int evtNum ) {
+  TDirectory * saveDir = gDirectory ;	
+  if (!m_chain) return false;
+
+  if (m_runEvtIndex) m_chain->SetTreeIndex(m_runEvtIndex);
+  Long64_t readInd = m_chain->GetEntryNumberWithIndex(runNum,evtNum);
+  saveDir->cd();
+  if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
+  return true;
  }
 
 void RootInputDesc::clearEvent()
