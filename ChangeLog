@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Aug 29 06:31:14 PDT 2007
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+handle second trigger word for engines
+    *
+------------------------------------------------------------
+User: heather  Wed Aug 29 06:31:14 PDT 2007
 RootIo/doc
 
 Modified Files:
