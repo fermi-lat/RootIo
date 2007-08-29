@@ -3,7 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
- v17r32     26-Jul-2007 HMK Extend David's centralization to writing
+ v18r2     28-Aug-2007 HMK
+ v18r1       -Aug-2007 HMK Start using event collections and metaRootData
+ v17r32    26-Jul-2007 HMK Extend David's centralization to writing
  v17r31    17-Jul-2007 DC Reorganization of ROOT reading to centralize calls
            in RootIoSvc
  v17r30p1   2-Apr-2007 TU  Patch relationRootReaderAlg so relational tables will build correctly
