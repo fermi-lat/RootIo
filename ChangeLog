@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 29 06:31:13 PDT 2007
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+handle second trigger word for engines
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r1, operation: add
 Package: RootIo
