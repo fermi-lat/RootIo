@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Sep  6 15:20:26 PDT 2007
+RootIo/src
+
+Modified Files:
+	commonData.cxx 
+Log Message:
+Also clear the TrajectoryPoint map too!!
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r2, operation: add
 Package: RootIo
