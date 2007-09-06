@@ -35,6 +35,7 @@ void commonData::clear() {
     m_mcIntHitMap.clear();
     m_mcPosHitMap.clear();
     m_mcTrajectoryMap.clear();
+    m_mcTrajectoryPointMap.clear();
     m_tkrDigiMap.clear();
     m_calDigiMap.clear(); 
     m_tkrClusterMap.clear();
