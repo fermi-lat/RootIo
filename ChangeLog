@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: cohen  Fri Sep  7 14:05:59 PDT 2007
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+read/write the TKR Truncation info
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r2p1, operation: add
 Package: RootIo
