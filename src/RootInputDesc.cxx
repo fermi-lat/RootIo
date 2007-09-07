@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.6 2007/08/09 17:17:08 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.7 2007/08/10 02:46:43 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -33,7 +33,7 @@ RootInputDesc::RootInputDesc
      const std::string & branchName, bool verbose)
      : m_tree(treeName), m_branch(branchName), m_chain(t), m_dataObject(0), m_verbose(verbose), 
        m_runEvtIndex(0) {
-         m_numEvents = setEventCollection();
+       m_numEvents = setEventCollection();
      }
 
     
@@ -105,7 +105,7 @@ RootInputDesc::~RootInputDesc()
 
 Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool verbose )
  {
-  Long64_t numEvents = 0 ;
+  Long64_t numEvents = -1;
 
   m_fileList = fileList ;
  
@@ -141,7 +141,12 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
      {
       int nf = m_chain->Add(fileName.c_str()) ;
       if (verbose) std::cout << "RootInputDesc::setFileList opening: " << fileName << std::endl;
-      if (nf != ++fileCount) return numEvents ;
+      if (nf != ++fileCount) {
+          if (verbose) 
+              std::cout << "RootInputDesc::setFileList number of files opened " 
+                        << nf << " != filecount " << fileCount << std::endl;
+         return numEvents ;
+      }
      }
     else return numEvents ;
    }
@@ -149,6 +154,8 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   // Make sure the file is open
   if (m_chain->GetFile()->IsOpen() != kTRUE)
    {
+    if (verbose) 
+        std::cout << "RootInputDesc::setFileList failed to open" << std::endl;
     return numEvents ;
    }
 
@@ -166,6 +173,9 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   std::string treeName = std::string(m_chain->GetTree()->GetName());
   if (treeName != m_tree)
    {
+    if (verbose) 
+        std::cout << "RootInputDesc::setFileList failed to find tree " 
+                  << m_tree << std::endl;
     return numEvents ;
    }
         
@@ -183,8 +193,12 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
       if (branchName == m_branch) break ;
      }
    }
-  if (branchName!=m_branch) 
-   { return numEvents ; }
+  if (branchName!=m_branch) { 
+    if (verbose) 
+        std::cout << "RootInputDesc::setFileList failed to find branch " 
+                  << m_branch << std::endl;
+     return numEvents ; 
+   }
 
   // Set the data pointer to receive the data and we are ready to go
   m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;

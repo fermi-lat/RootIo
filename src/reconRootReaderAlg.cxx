@@ -49,7 +49,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.83 2007/08/08 14:14:45 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.84 2007/08/09 17:17:09 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -184,7 +184,7 @@ StatusCode reconRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }
 
-    if ( !m_fileName.empty() ) 
+    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "recon.root");
