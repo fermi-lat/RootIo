@@ -9,6 +9,7 @@
 #include "idents/CalXtalId.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrCluster.h"
+#include "Event/Recon/TkrRecon/TkrTruncationInfo.h"
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
@@ -34,6 +35,7 @@
 #include "RootIo/FhTool.h"
 
 // low level converters
+#include "RootConvert/Recon/TkrTruncationInfoConvert.h"
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
@@ -49,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.84 2007/08/09 17:17:09 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.85 2007/09/07 01:34:20 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -75,6 +77,8 @@ private:
     /// Reads TKR recon data from ROOT and puts data on TDS
     StatusCode readTkrRecon();
     
+    StatusCode storeTkrTruncationInfo(TkrRecon *tkrRecRoot);
+
     StatusCode storeTkrClusterCol(TkrRecon *tkrRecRoot);
     
     StatusCode storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool vertexOnTdsFlag);
@@ -354,7 +358,18 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
         }
     }
     
-    
+    //check to see if TKR TruncationInfo exists on the TDS already
+    SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(),EventModel::TkrRecon::TkrTruncationInfo);
+    if(truncationInfoTds) {
+        log << MSG::INFO << "TkrTruncationInfo is already on TDS" << endreq;
+    } else {
+      sc = storeTkrTruncationInfo(tkrRecRoot);
+      if (sc.isFailure()) {
+        log << MSG::ERROR << "failed to store TkrtruncationInfo on the TDS" << endreq;
+        return sc;
+      }
+    }
+
     return sc;
 }
 
@@ -637,6 +652,15 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::QMATERIAL));
 
     return trackHitTds;
+}
+
+StatusCode reconRootReaderAlg::storeTkrTruncationInfo(TkrRecon *tkrRecRoot) {
+  StatusCode sc = StatusCode::SUCCESS;
+  const TObjArray *truncationDataColRoot = tkrRecRoot->getTruncationDataCol();
+  Event::TkrTruncationInfo* truncationInfoTds = new Event::TkrTruncationInfo();
+  RootPersistence::convert(*truncationDataColRoot,*truncationInfoTds) ;
+  sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTruncationInfo, truncationInfoTds);    
+  return sc;    
 }
 
 StatusCode reconRootReaderAlg::readCalRecon() {
