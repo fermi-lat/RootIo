@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v18r2p1   06-Sep-2007 TU&HMK Tracy made sure to clear out the McTrajPoint
+           relations, and Heather fixed the setup of the files being read,
+           she had introduced an error in v17r32
  v18r2     28-Aug-2007 HMK
  v18r1       -Aug-2007 HMK Start using event collections and metaRootData
  v17r32    26-Jul-2007 HMK Extend David's centralization to writing

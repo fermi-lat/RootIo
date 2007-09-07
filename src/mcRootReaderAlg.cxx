@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.67 2007/08/08 14:14:45 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.68 2007/08/09 17:17:08 heather Exp $
  */
 
 
@@ -146,7 +146,7 @@ StatusCode mcRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }   
 
-    if ( !m_fileName.empty() ) 
+    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "mc.root");

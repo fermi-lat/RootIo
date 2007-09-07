@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.85 2007/08/09 17:17:08 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.86 2007/08/29 13:31:14 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -183,7 +183,7 @@ StatusCode digiRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     } 
 
-    if ( !m_fileName.empty() ) 
+    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "digi.root");
