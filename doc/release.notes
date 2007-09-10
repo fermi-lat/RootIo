@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v18r2p2   10-Sep-2007 JCT Read/Write of TruncationData
  v18r2p1   06-Sep-2007 TU&HMK Tracy made sure to clear out the McTrajPoint
            relations, and Heather fixed the setup of the files being read,
            she had introduced an error in v17r32
