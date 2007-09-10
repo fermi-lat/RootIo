@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 10 07:52:07 PDT 2007
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev12r3
+	RootInputDesc.cxx RootIoSvc.cxx digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx 
+Log Message:
+fix up checking for filenames
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r2p2, operation: add
 Package: RootIo
