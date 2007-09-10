@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.33 2007/08/09 17:17:08 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.34 2007/08/10 02:46:43 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -349,8 +349,8 @@ bool RootIoSvc::setFileList( const std::string & type, const StringArrayProperty
   RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
   if (rootInputDesc)
    {
-    rootInputDesc->setFileList(fileNames) ;
-    fileSet = true ;
+    Long64_t retVal = rootInputDesc->setFileList(fileNames) ;
+    if (retVal > 0) fileSet = true ;
    }
   else
    {
@@ -478,6 +478,10 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
         // Create a new RootInputDesc object for this algorithm
         rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
+        if (rootInputDesc->getNumEvents() <= 0) {
+            log << MSG::ERROR << "Failed to setup ROOT input" << endreq;
+            return StatusCode::FAILURE;
+        }
         setEvtMax(rootInputDesc->getNumEvents());
 
     } else {  // Event Collection
@@ -487,11 +491,16 @@ StatusCode RootIoSvc::prepareRootInput(const std::string& type,
         TChain *chain = m_eventColMgr.getChainByType(type);
         if (!chain) {
             MsgStream log(msgSvc(), name());
-            log << MSG::WARNING << "TChain " << type << " could not be constructed from event collection" << endreq;
+            log << MSG::WARNING << "TChain " << type 
+                << " could not be constructed from event collection" << endreq;
             return StatusCode::FAILURE;
         }
         rootInputDesc = new RootInputDesc(chain, tree, branch, log.level()<=MSG::DEBUG);
         // Register number of events
+        if (m_eventColMgr.getNumEntries() <= 0) {
+            log << MSG::ERROR << "Failed to setup ROOT input" << endreq;
+            return StatusCode::FAILURE;
+        }
         setEvtMax(m_eventColMgr.getNumEntries());
     }
 

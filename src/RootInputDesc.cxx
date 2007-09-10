@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.7 2007/08/10 02:46:43 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.8 2007/09/07 01:34:19 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -49,7 +49,7 @@ RootInputDesc::~RootInputDesc()
  }
 
  Long64_t RootInputDesc::setEventCollection( ) {
-     Long64_t numEvents = 0;
+     Long64_t numEvents = -1;
      // Save the current directory for the ntuple writer service
      TDirectory * saveDir = gDirectory ;	
 
@@ -66,6 +66,8 @@ RootInputDesc::~RootInputDesc()
      std::string treeName = std::string(m_chain->GetName());
      if (treeName != m_tree)
      {
+         std::cout << "RootInputDesc:setEventCollection failed to find "
+                   << "tree " << m_tree << std::endl;
          return numEvents ;
      }
 
@@ -84,7 +86,11 @@ RootInputDesc::~RootInputDesc()
          }
      }
      if (branchName!=m_branch) 
-     { return numEvents ; }
+     { 
+         std::cout << "RootInputDesc:setEventCollection failed to find "
+                   << "branch " << m_branch << std::endl;
+         return numEvents ; 
+     }
 
      // Set the data pointer to receive the data and we are ready to go
      m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;
@@ -140,22 +146,26 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
     if (fileExists(fileName))
      {
       int nf = m_chain->Add(fileName.c_str()) ;
-      if (verbose) std::cout << "RootInputDesc::setFileList opening: " << fileName << std::endl;
+      if (verbose) 
+          std::cout << "RootInputDesc::setFileList opening: " << fileName 
+                    << std::endl;
       if (nf != ++fileCount) {
-          if (verbose) 
-              std::cout << "RootInputDesc::setFileList number of files opened " 
-                        << nf << " != filecount " << fileCount << std::endl;
+          std::cout << "RootInputDesc::setFileList number of files opened " 
+                    << nf << " != filecount " << fileCount << std::endl;
          return numEvents ;
       }
      }
-    else return numEvents ;
+    else {
+        std::cout << "RootInputDesc::setFileList Failed to open " << fileName 
+                  << std::endl;
+        return numEvents ;
+    }
    }
 
   // Make sure the file is open
   if (m_chain->GetFile()->IsOpen() != kTRUE)
    {
-    if (verbose) 
-        std::cout << "RootInputDesc::setFileList failed to open" << std::endl;
+    std::cout << "RootInputDesc::setFileList failed to open" << std::endl;
     return numEvents ;
    }
 
@@ -173,9 +183,8 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   std::string treeName = std::string(m_chain->GetTree()->GetName());
   if (treeName != m_tree)
    {
-    if (verbose) 
-        std::cout << "RootInputDesc::setFileList failed to find tree " 
-                  << m_tree << std::endl;
+    std::cout << "RootInputDesc::setFileList failed to find tree " 
+              << m_tree << std::endl;
     return numEvents ;
    }
         
@@ -194,9 +203,8 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
      }
    }
   if (branchName!=m_branch) { 
-    if (verbose) 
-        std::cout << "RootInputDesc::setFileList failed to find branch " 
-                  << m_branch << std::endl;
+     std::cout << "RootInputDesc::setFileList failed to find branch " 
+               << m_branch << std::endl;
      return numEvents ; 
    }
 
