@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.68 2007/08/09 17:17:08 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.69 2007/09/07 01:34:19 heather Exp $
  */
 
 
@@ -146,7 +146,12 @@ StatusCode mcRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }   
 
-    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
+    if ( (m_fileList.value().size() > 0) && ( !m_fileName.empty() )) {
+        log << MSG::WARNING << "Both mcRootFile and mcRootFileList have "
+            << "been specified, mcRootFile is deprecated, please use "
+            << "mcRootFileList" << endreq;
+         return StatusCode::FAILURE;
+    } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "mc.root");
