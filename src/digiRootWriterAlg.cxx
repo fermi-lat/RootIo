@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.72 2007/08/09 17:17:08 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.73 2007/08/29 13:31:14 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -641,6 +641,16 @@ StatusCode digiRootWriterAlg::writeFilterStatus() {
 
     FilterStatus obfRoot;
     RootPersistence::convert(*obfTds,obfRoot);
+    m_digiEvt->setFilterStatus(obfRoot);
+
+    SmartDataPtr<OnboardFilterTds::ObfFilterStatus> obfFilterStatusTds(eventSvc(), "/Event/Filter/ObfFilterStatus");
+    if (!obfFilterStatusTds) {
+        log << MSG::DEBUG << "No OBF ObfFilterStatus" << endreq;
+        return sc;
+     }
+
+    ObfFilterStatus obfFilterStatusRoot;
+    RootPersistence::convert(*obfFilterStatusTds,obfFilterStatusRoot);
     m_digiEvt->setFilterStatus(obfRoot);
 
     return sc;
