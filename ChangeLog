@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Sep 13 07:55:51 PDT 2007
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+Modifications to digi input/output to include the ObfFilterStatus output from the OnboardFilter
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r2p1gr1, operation: add
 Package: RootIo
