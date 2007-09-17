@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.87 2007/09/07 01:34:19 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.88 2007/09/13 14:55:51 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -716,6 +716,8 @@ StatusCode digiRootReaderAlg::readFilterStatus() {
     const ObfFilterStatus& obfFilterStatusRoot = m_digiEvt->getObfFilterStatus();
 
     OnboardFilterTds::ObfFilterStatus *obfFilterStatusTds = new OnboardFilterTds::ObfFilterStatus;
+
+    RootPersistence::convert(obfFilterStatusRoot, *obfFilterStatusTds);
 
     sc = eventSvc()->registerObject("/Event/Filter/ObfFilterStatus", obfFilterStatusTds);
     if (sc.isFailure()) {
