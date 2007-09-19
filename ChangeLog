@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Sep 18 21:39:51 PDT 2007
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+merge from GlastReleasev12r3 branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r3, operation: add
 Package: RootIo
