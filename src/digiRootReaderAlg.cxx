@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.88 2007/09/13 14:55:51 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.87.2.1 2007/09/10 14:52:07 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -183,7 +183,12 @@ StatusCode digiRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     } 
 
-    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
+    if ( (m_fileList.value().size() > 0) && ( !m_fileName.empty() )) {
+        log << MSG::WARNING << "Both digiRootFile and digiRootFileList have "
+            << "been specified, digiRootFile is deprecated, please use "
+            << "digiRootFileList" << endreq;
+         return StatusCode::FAILURE;
+    } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "digi.root");
