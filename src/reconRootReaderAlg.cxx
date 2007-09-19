@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.85 2007/09/07 01:34:20 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.85.2.1 2007/09/10 14:52:07 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -188,7 +188,12 @@ StatusCode reconRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }
 
-    if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
+    if ( (m_fileList.value().size() > 0) && ( !m_fileName.empty() )) {
+        log << MSG::WARNING << "Both reconRootFile and reconRootFileList have "
+            << "been specified, reconRootFile is deprecated, please use "
+            << "reconRootFileList" << endreq;
+         return StatusCode::FAILURE;
+    } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "recon.root");
