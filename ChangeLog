@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Tue Sep 18 21:38:49 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootIoSvc.cxx digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx 
+Log Message:
+merge from GlastReleasev12r3 branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r3, operation: add
 Package: RootIo
