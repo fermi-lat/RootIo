@@ -34,7 +34,7 @@
 #include "RootIo/FhTool.h"
 
 // low level converters
-#include "RootConvert/Recon/TkrTruncationInfoConvert.h"
+// HMK-v12r7 #include "RootConvert/Recon/TkrTruncationInfoConvert.h"
 
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalXtalRecDataConvert.h"   
@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.81 2007/08/09 17:17:09 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.82 2007/09/07 21:05:59 cohen Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -81,7 +81,7 @@ private:
     
     /// These are the methods specific to filling the pieces of the TkrRecon stuff
     void fillTkrClusterCol( TkrRecon* recon, Event::TkrClusterCol* clusterColTds);
-    void fillTruncationInfo(TkrRecon* recon, Event::TkrTruncationInfo* truncationInfoTds);
+    // HMK-v12r7 void fillTruncationInfo(TkrRecon* recon, Event::TkrTruncationInfo* truncationInfoTds);
     void fillFitTracks( TkrRecon* recon, Event::TkrTrackCol* tracksTds);
     void fillVertices( TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
     
@@ -291,8 +291,8 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
     if (clusterColTds) fillTkrClusterCol(recon, clusterColTds);
 
-    SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(), EventModel::TkrRecon::TkrTruncationInfo);
-    if (truncationInfoTds &&  truncationInfoTds->isTruncated() ) fillTruncationInfo(recon, truncationInfoTds);
+    // HMK-v12e7 SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(), EventModel::TkrRecon::TkrTruncationInfo);
+    // if (truncationInfoTds &&  truncationInfoTds->isTruncated() ) fillTruncationInfo(recon, truncationInfoTds);
 
     // Retrieve the information on fit tracks
     SmartDataPtr<Event::TkrTrackCol> tracksTds(eventSvc(), EventModel::TkrRecon::TkrTrackCol);
@@ -366,6 +366,7 @@ void reconRootWriterAlg::fillTkrClusterCol(TkrRecon* recon, Event::TkrClusterCol
     }
 }
 
+/* HMK-v12r7
 void reconRootWriterAlg::fillTruncationInfo(TkrRecon* recon, Event::TkrTruncationInfo* truncationInfoTds)
 {
 //Purpose and Method : fill ROOT persistent version of the truncation info with the TDS class.
@@ -378,6 +379,7 @@ void reconRootWriterAlg::fillTruncationInfo(TkrRecon* recon, Event::TkrTruncatio
 
   }
 }
+*/
 
 void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrTrackCol* tracksTds)
 {
