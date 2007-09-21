@@ -9,7 +9,7 @@
 #include "idents/CalXtalId.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrCluster.h"
-#include "Event/Recon/TkrRecon/TkrTruncationInfo.h"
+// HMK-v12r7 #include "Event/Recon/TkrRecon/TkrTruncationInfo.h"
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
@@ -35,7 +35,7 @@
 #include "RootIo/FhTool.h"
 
 // low level converters
-#include "RootConvert/Recon/TkrTruncationInfoConvert.h"
+// HMK-v12r7 #include "RootConvert/Recon/TkrTruncationInfoConvert.h"
 #include "RootConvert/Recon/CalClusterConvert.h"
 #include "RootConvert/Recon/CalEventEnergyConvert.h"
 #include "RootConvert/Recon/CalMipTrackConvert.h"
@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.85.2.1 2007/09/10 14:52:07 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.87 2007/09/19 04:38:49 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -77,7 +77,7 @@ private:
     /// Reads TKR recon data from ROOT and puts data on TDS
     StatusCode readTkrRecon();
     
-    StatusCode storeTkrTruncationInfo(TkrRecon *tkrRecRoot);
+    // HMK-v12r7 StatusCode storeTkrTruncationInfo(TkrRecon *tkrRecRoot);
 
     StatusCode storeTkrClusterCol(TkrRecon *tkrRecRoot);
     
@@ -364,6 +364,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
     }
     
     //check to see if TKR TruncationInfo exists on the TDS already
+    /* HMK-v12r7
     SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(),EventModel::TkrRecon::TkrTruncationInfo);
     if(truncationInfoTds) {
         log << MSG::INFO << "TkrTruncationInfo is already on TDS" << endreq;
@@ -374,6 +375,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
         return sc;
       }
     }
+    */
 
     return sc;
 }
@@ -659,6 +661,7 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
     return trackHitTds;
 }
 
+/* HMK-v12r7
 StatusCode reconRootReaderAlg::storeTkrTruncationInfo(TkrRecon *tkrRecRoot) {
   StatusCode sc = StatusCode::SUCCESS;
   const TObjArray *truncationDataColRoot = tkrRecRoot->getTruncationDataCol();
@@ -667,6 +670,7 @@ StatusCode reconRootReaderAlg::storeTkrTruncationInfo(TkrRecon *tkrRecRoot) {
   sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTruncationInfo, truncationInfoTds);    
   return sc;    
 }
+*/
 
 StatusCode reconRootReaderAlg::readCalRecon() {
     // Purpose and Method:: Read in CAL recon data from ROOT and store on the TDS
