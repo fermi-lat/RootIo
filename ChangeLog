@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 20 20:25:34 PDT 2007
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+turn off TkrTruncationData for now
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r4, operation: add
 Package: RootIo
