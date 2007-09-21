@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Thu Sep 20 20:25:34 PDT 2007
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+turn off TkrTruncationData for now
+    *
+------------------------------------------------------------
+User: heather  Thu Sep 20 20:25:34 PDT 2007
 RootIo/doc
 
 Modified Files:
