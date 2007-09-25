@@ -4,7 +4,7 @@ version v18r5
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.206 2007/09/19 04:39:51 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.207 2007/09/21 03:25:34 heather Exp $
 
 branches src doc
 
@@ -16,6 +16,7 @@ apply_pattern package_include
 
 # I believe these no_auto_imports are essentially overridden by the use of RootConvert
 use metaRootData v* -no_auto_imports
+use rootUtil v* -no_auto_imports
 use mcRootData v* -no_auto_imports
 use digiRootData v* -no_auto_imports
 use reconRootData v* -no_auto_imports
@@ -36,7 +37,7 @@ use GlastSvc v*
 use Trigger v*
 use AncillaryDataEvent v*
 
-macro_append includes ' $(ppcmd)"$(metaRootData_root)" '
+macro_append includes ' $(ppcmd)"$(rootUtil_root)" '
 
 # for building this DLL, need includes from the rootData packages
 # also need modification for the use of OnboardFilterTds for windows due to Endianness.h file

@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.12 2007/07/26 16:40:56 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.13 2007/08/09 17:17:07 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -48,7 +48,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.12 2007/07/26 16:40:56 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.13 2007/08/09 17:17:07 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -77,11 +77,12 @@ class  IRootIoSvc : virtual public IInterface
     // file list
     virtual bool setFileList( const std::string & type, const StringArrayProperty & fileList ) = 0 ;
     virtual StringArrayProperty getFileList( const std::string & type) const = 0 ;
-    virtual bool appendFileList(StringArrayProperty &fileList, const std::string &fileName) = 0;
+    virtual bool appendFileList( StringArrayProperty & fileList, const std::string & fileName ) = 0 ;
 
     virtual StatusCode prepareRootInput
      ( const std::string & type, 
-       const std::string & tree, const std::string & branch,
+       const std::string & tree,
+       const std::string & branch,
        const StringArrayProperty & fileList) = 0 ;
        
     virtual TObject * getNextEvent( const std::string & type ) = 0 ;
@@ -96,30 +97,30 @@ class  IRootIoSvc : virtual public IInterface
     // For writers
     //====================
     
-    virtual TTree* prepareRootOutput
-        ( const std::string &type,
-        const std::string &fileName,
-        const std::string &treeName,
-        int compressionLevel,
-        const std::string &treeTitle) = 0;
+    virtual TTree * prepareRootOutput
+     ( const std::string & type,
+       const std::string & fileName,
+       const std::string & treeName,
+       int compressionLevel,
+       const std::string & treeTitle ) = 0 ;
 
-    virtual TTree* getTree(const std::string &type) = 0;
+    virtual TTree * getTree( const std::string & type ) = 0 ;
 
-    virtual StatusCode setupBranch(const std::string &type, const std::string &name, 
-        const std::string &classname, void *branchAddr, int bufSize=64000, int splitLevel=1) = 0;
+    virtual StatusCode setupBranch( const std::string & type, const std::string & name, 
+        const std::string & classname, void * branchAddr, int bufSize=64000, int splitLevel =1 ) = 0 ;
 
-    virtual StatusCode fillTree(const std::string &type) = 0;
+    virtual StatusCode fillTree( const std::string & type ) = 0;
 
     virtual int getAutoSaveInterval() = 0 ;
 
-    virtual StatusCode closeFile(const std::string &type) = 0;
+    virtual StatusCode closeFile( const std::string & type ) = 0 ;
 
 
     //====================
     // Gaudi machinery
     //====================
 
-    static const InterfaceID& interfaceID()
+    static const InterfaceID & interfaceID()
      { return IID_IRootIoSvc ; }
   
  } ;

@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.5 2007/08/09 17:17:08 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.6 2007/08/10 02:46:43 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -66,7 +66,7 @@ class RootInputDesc
     TObject * * m_dataObject ;       // A pointer to the pointer to the data
     Long64_t m_numEvents ;           // Number of events in current TChain
     bool m_verbose;
-    TVirtualIndex *m_runEvtIndex;    /// Save the RunId/EventId Index in case other indices are in use such as PointerSkim
+    TVirtualIndex *m_runEvtIndex;    /// Save the RunId/EventId Index in case other indices are in use such as CompositeEventList
     
  } ;
 

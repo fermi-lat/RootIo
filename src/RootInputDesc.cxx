@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.8.2.1 2007/09/10 14:52:07 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.9 2007/09/19 04:38:48 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -26,7 +26,7 @@ RootInputDesc::RootInputDesc
  }
 
  // ctor for Event Collections
- // Set up the TChain* as we will retrieve a TChain* from the PointerSkim via the EventCollectionMgr
+ // Set up the TChain* as we will retrieve a TChain* from the CompositeEventList via the CelManager
  RootInputDesc::RootInputDesc
      ( TChain *t,
      const std::string & treeName,
