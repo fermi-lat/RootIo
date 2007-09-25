@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Tue Sep 25 05:25:17 PDT 2007
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+Log Message:
+move from metaRootData/EventCollectionMgr/PointerSkim to rootUtil/CelManager/CompositeEventList, the formers are still here but deprecated
+    *
+------------------------------------------------------------
+User: chamont  Tue Sep 25 05:25:17 PDT 2007
 RootIo/cmt
 
 Modified Files:
