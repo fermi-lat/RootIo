@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.34.2.1 2007/09/10 14:52:07 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.35 2007/09/19 04:38:49 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -32,9 +32,11 @@
 #include "TSystem.h"
 #include "TFile.h"
 #include "facilities/Util.h"
+#include "facilities/Timestamp.h"
 
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 
 //forward declarations
 template <class TYPE> class SvcFactory;
@@ -922,9 +924,14 @@ void RootIoSvc::loopStatus( int eventNumber, double currentTime, MsgStream & log
     last_fraction = percent_complete ;
     if ((percent_complete<10)||((percent_complete%10)==0))
      {
+      facilities::Timestamp tstamp;
       log<<MSG::INFO
+        << " [" << tstamp.getString() << "]  "
+        <<  std::setprecision(12)<< std::resetiosflags(4096) // scientific??
         <<percent_complete<<"% complete: "
-        <<" event "<<eventNumber<<",  time "<<currentTime<<endreq ;
+        <<" event "<<eventNumber<<",  time "
+        <<currentTime<<"=launch+"
+        << (currentTime-m_startTime) << endreq ;
      }
    }
  }

@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v18r5p1   05-Oct-2007 HMK Follow Tom's prescription for reporting percent
+           completed
  v18r5     20-Sep-2007 HMK Turn off TkrTruncationData for now
  v18r4     18-Sep-2007 HMK Merge in GlastReleasev12r3 branch
  v18r3     18-Sep-2007 TU  Add in ObfFilterStatus
