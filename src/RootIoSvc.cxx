@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.35 2007/09/19 04:38:49 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.35.18.1 2007/10/05 12:56:07 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -27,6 +27,7 @@
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "RootIo/IRootIoSvc.h"
 
 #include "TSystem.h"
@@ -173,6 +174,9 @@ class RootIoSvc :
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
+ 
+    IDataProviderSvc *m_eventSvc;
+
     IntegerProperty m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
     UnsignedLongProperty m_treeSize ;
@@ -272,6 +276,20 @@ StatusCode RootIoSvc::initialize ()
     status = service ("IncidentSvc", incsvc, true);
 
     if( status.isFailure() ) return status;
+
+    m_eventSvc = 0;
+    if( serviceLocator() ) {
+        status = serviceLocator()->service("EventDataSvc", m_eventSvc, true );
+            MsgStream log( msgSvc(), name() );
+        if (status.isFailure()) {
+            log << MSG::INFO << "Failed to retrieve event service "
+                << "Will not report evt/run numbers" << endreq;
+        }
+        log << MSG::INFO << "Retrieved EventDataSvc" << endreq;
+    } else {
+      MsgStream log (msgSvc(), name());
+      log << MSG::WARNING << "No service locator" << endreq;
+    }
 
     incsvc->addListener(this, "BeginEvent", 100);
     incsvc->addListener(this, "EndEvent", 0);
@@ -924,14 +942,29 @@ void RootIoSvc::loopStatus( int eventNumber, double currentTime, MsgStream & log
     last_fraction = percent_complete ;
     if ((percent_complete<10)||((percent_complete%10)==0))
      {
+
+      long curRun = -1;
+      unsigned long curEvt = 0;
+      TimeStamp curTime = -1.;
+
+      if (m_eventSvc) {
+          SmartDataPtr<Event::EventHeader> evtTds(m_eventSvc, EventModel::EventHeader);
+          if(evtTds) {
+              curRun = evtTds->run();
+              curEvt = evtTds->event();
+              curTime = evtTds->time();
+          }
+      }
+
       facilities::Timestamp tstamp;
       log<<MSG::INFO
         << " [" << tstamp.getString() << "]  "
         <<  std::setprecision(12)<< std::resetiosflags(4096) // scientific??
         <<percent_complete<<"% complete: "
-        <<" event "<<eventNumber<<",  time "
-        <<currentTime<<"=launch+"
-        << (currentTime-m_startTime) << endreq ;
+        <<" event "<<eventNumber<< " ROOT Index " 
+        << ((m_useIndex) ? index() : -1) << " run " << curRun
+        << " event Num " << curEvt
+        <<",  time " <<curTime<<endreq;
      }
    }
  }

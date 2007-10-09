@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v18r5p2   09-Oct-2007 HMK Extend reporting precent completed to include
+           time and run numbers
  v18r5p1   05-Oct-2007 HMK Follow Tom's prescription for reporting percent
            completed
  v18r5     20-Sep-2007 HMK Turn off TkrTruncationData for now
