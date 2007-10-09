@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.34 2007/08/10 02:46:43 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.34.2.1 2007/09/10 14:52:07 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -22,6 +22,7 @@
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IAppMgrUI.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/Service.h"
@@ -32,6 +33,7 @@
 #include "TSystem.h"
 #include "TFile.h"
 #include "facilities/Util.h"
+#include "facilities/Timestamp.h"
 
 #include <vector>
 #include <algorithm>
@@ -171,6 +173,7 @@ class RootIoSvc :
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
+    IDataProviderSvc* m_eventSvc;
     IntegerProperty m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
     UnsignedLongProperty m_treeSize ;
@@ -239,6 +242,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_useIndex = false;
+    m_eventSvc = 0;
 
 #ifdef WIN32
     gSystem->Load("libTreePlayer.dll");
@@ -264,6 +268,16 @@ StatusCode RootIoSvc::initialize ()
     
     m_appMgrUI = 0 ;
     status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
+
+    status = serviceLocator()->service("EventDataSvc", m_eventSvc, true );
+    if(status.isFailure()) {
+        MsgStream log( msgSvc(), name() );
+        log << MSG::INFO << "Could not find EventDataSvc will not print" 
+            << " event numbers and time updates" << endreq;
+        m_eventSvc = 0;
+    }
+
+
     
     // use the incident service to register begin, end events
     IIncidentSvc* incsvc = 0;
@@ -922,9 +936,27 @@ void RootIoSvc::loopStatus( int eventNumber, double currentTime, MsgStream & log
     last_fraction = percent_complete ;
     if ((percent_complete<10)||((percent_complete%10)==0))
      {
+
+
+      unsigned int curRun = 0, curEvtNum = 0;
+      TimeStamp curTime;
+      if (m_eventSvc) {
+          SmartDataPtr<Event::EventHeader> evtTds(m_eventSvc, EventModel::EventHeader);   if (evtTds) {
+              curRun = evtTds->run();
+              curEvtNum = evtTds->event();
+              curTime = evtTds->time();
+          }
+      }
+
+      facilities::Timestamp tstamp;
+
       log<<MSG::INFO
         <<percent_complete<<"% complete: "
-        <<" event "<<eventNumber<<",  time "<<currentTime<<endreq ;
+        <<" processing " << eventNumber << " ROOT index " 
+        << ((m_useIndex) ? index() : -1)
+        <<" run " << curRun
+        <<" event " << curEvtNum <<",  time "
+        << curTime << endreq ;
      }
    }
  }
