@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Oct  8 21:01:03 PDT 2007
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev12r4
+	requirements 
+Log Message:
+update percentage completed log for Tom
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r5p1, operation: add
 Package: RootIo
