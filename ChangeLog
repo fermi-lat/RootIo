@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct 30 18:36:53 PDT 2007
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+minor patch to allow for compilation until metaRootData is fully removed
+    *
+------------------------------------------------------------
 TAG
 Tag name: v18r5p2, operation: add
 Package: RootIo
