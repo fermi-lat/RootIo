@@ -4,7 +4,7 @@ version v19r0
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.208 2007/09/25 12:25:17 chamont Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.209 2007/10/31 01:36:53 heather Exp $
 
 branches src doc
 
@@ -36,6 +36,7 @@ private
 use GlastSvc v*
 use Trigger v*
 use AncillaryDataEvent v*
+use gr_app v*
 
 macro_append includes ' $(ppcmd)"$(rootUtil_root)" $(ppcmd)"$(metaRootData_root)" '
 
