@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.35 2007/09/19 04:38:49 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.36 2007/09/25 12:25:17 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -526,7 +526,7 @@ TObject* RootIoSvc::getNextEvent(const std::string& type)
         // Read the event depending upon the mode
         if (!m_celFileNameRead.empty()) {  // access via event collection
 
-            Long64_t ind = m_celManager.getEventIndex(type, index());
+            Long64_t ind = m_celManager.getEventIndexInTree(type, index());
             pData = rootInputDesc->getEvent(ind);
 
         } else if (m_useIndex)  // typical serial reading
@@ -726,7 +726,7 @@ void RootIoSvc::setEvtMax(Long64_t max)
      {
          RootInputDesc * rootInputDesc = typeItr->second ;
          if (!m_celFileNameRead.empty()) {  // access via event collection
-             Long64_t ind = m_celManager.getEventIndex(typeItr->first, i);
+             Long64_t ind = m_celManager.getEventIndexInTree(typeItr->first, i);
              if (ind < 0) 
                  status |= false;
              else
