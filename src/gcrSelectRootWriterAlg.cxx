@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.3 2007/07/04 15:19:27 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.4 2007/08/09 17:17:08 heather Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -148,11 +148,11 @@ StatusCode gcrSelectRootWriterAlg::initialize()
     } 
 
 
-    m_gcrTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
+    m_gcrTree = m_rootIoSvc->prepareRootOutput("gcr", m_fileName, m_treeName, 
         m_compressionLevel, "GLAST GcrSelect Data");
 
     m_gcrSelEvt = new GcrSelectEvent();
-    m_rootIoSvc->setupBranch(m_treeName, "GcrSelectEvent", "GcrSelectEvent", &m_gcrSelEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("gcr", "GcrSelectEvent", "GcrSelectEvent", &m_gcrSelEvt, m_bufSize, m_splitMode);
     
     return sc;
     
@@ -324,7 +324,7 @@ void gcrSelectRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the GcrSelectEvent data for this event in the ROOT
     //    tree.  
     
-    m_rootIoSvc->fillTree(m_treeName);
+    m_rootIoSvc->fillTree("gcr");
     
     return;
 }
@@ -338,7 +338,7 @@ void gcrSelectRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
-    m_rootIoSvc->closeFile(m_treeName);
+    m_rootIoSvc->closeFile("gcr");
 
     return;
 }

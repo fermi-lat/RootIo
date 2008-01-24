@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.82 2007/09/07 21:05:59 cohen Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.83 2007/09/21 03:25:34 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -184,11 +184,11 @@ StatusCode reconRootWriterAlg::initialize()
         return StatusCode::FAILURE;
     } 
 
-    m_reconTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
+    m_reconTree = m_rootIoSvc->prepareRootOutput("recon", m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Reconstruction Data");
 
     m_reconEvt = new ReconEvent();
-    m_rootIoSvc->setupBranch(m_treeName, "ReconEvent", "ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("recon", "ReconEvent", "ReconEvent", &m_reconEvt, m_bufSize, m_splitMode);
     m_common.m_reconEvt = m_reconEvt;
     
     return sc;
@@ -792,7 +792,7 @@ void reconRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the DigiEvent data for this event in the ROOT
     //    tree.
     
-    m_rootIoSvc->fillTree(m_treeName);
+    m_rootIoSvc->fillTree("recon");
 
     return;
 }
@@ -806,7 +806,7 @@ void reconRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    m_rootIoSvc->closeFile(m_treeName);
+    m_rootIoSvc->closeFile("recon");
 
     return;
 }

@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.1 2007/07/26 16:40:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.2 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -64,10 +64,10 @@ bool RootOutputDesc::openFile() {
     return stat;
 }
 
-bool RootOutputDesc::setupBranch(const std::string& name, const std::string &classname, void* branchAddr, 
+bool RootOutputDesc::setupBranch(const std::string& branchName, const std::string &classname, void* branchAddr, 
                                  int bufSize, int splitLevel) {
     
-    TBranch *br = m_tree->Branch(name.c_str(),classname.c_str(), branchAddr, bufSize, splitLevel);
+    TBranch *br = m_tree->Branch(branchName.c_str(),classname.c_str(), branchAddr, bufSize, splitLevel);
     if (0 == br) {
         return false;
     }

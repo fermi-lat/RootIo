@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.87 2007/09/19 04:38:49 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.88 2007/09/21 03:25:34 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -201,7 +201,7 @@ StatusCode reconRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use treeName as key type
-    m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("recon", m_treeName, m_branchName, m_fileList);
 
     return sc;
     
@@ -224,7 +224,7 @@ StatusCode reconRootReaderAlg::execute()
 
     // Try reading the event this way... 
     // Use treeName as key type
-    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent(m_treeName)) ;
+    m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent("recon")) ;
 
     if (!m_reconEvt) return StatusCode::FAILURE;
 

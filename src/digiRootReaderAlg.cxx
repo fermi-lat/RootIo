@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.87.2.1 2007/09/10 14:52:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.90 2007/09/19 04:38:49 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -197,7 +197,7 @@ StatusCode digiRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use the TTree name as the key type 
-    m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("digi", m_treeName, m_branchName, m_fileList);
 
     return sc;
     
@@ -217,7 +217,7 @@ StatusCode digiRootReaderAlg::execute()
 
     // Try reading the event this way... 
     // using treename as the key
-    m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent(m_treeName));
+    m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent("digi"));
 
     if (!m_digiEvt) return StatusCode::FAILURE;
 

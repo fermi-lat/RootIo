@@ -44,7 +44,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.20 2007/08/08 14:14:45 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.21 2007/08/09 17:17:09 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -140,11 +140,11 @@ StatusCode relationRootWriterAlg::initialize()
         return StatusCode::FAILURE;
     }
 
-    m_relTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
+    m_relTree = m_rootIoSvc->prepareRootOutput("rel", m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Digitization Data");
 
     m_relTable = new RelTable();
-    m_rootIoSvc->setupBranch(m_treeName, "RelTable", "RelTable", &m_relTable, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("rel", "RelTable", "RelTable", &m_relTable, m_bufSize, m_splitMode);
     
     return sc;
     
@@ -448,7 +448,7 @@ void relationRootWriterAlg::writeEvent()
     // Purpose and Method:  Stores the Relations data for this event in the ROOT
     //    tree.
 
-    m_rootIoSvc->fillTree(m_treeName);
+    m_rootIoSvc->fillTree("rel");
 
     return;
 }
@@ -462,7 +462,7 @@ void relationRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    m_rootIoSvc->closeFile(m_treeName);
+    m_rootIoSvc->closeFile("rel");
 
     return;
 }

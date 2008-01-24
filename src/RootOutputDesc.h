@@ -3,7 +3,7 @@
 * @brief definition of the class RootOutputDesc
 *        This class is used to set up and handle the actual root output files
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.1 2007/07/26 16:40:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.2 2007/08/08 14:14:45 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@ class RootOutputDesc
 
     bool closeFile();
 
-    bool setupBranch(const std::string& name, const std::string &classname, void* branchAddr, 
+    bool setupBranch(const std::string& branchName, const std::string &classname, void* branchAddr, 
         int bufSize=64000, int splitLevel=1);
 
 

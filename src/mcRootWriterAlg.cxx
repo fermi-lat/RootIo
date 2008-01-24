@@ -43,7 +43,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.53 2007/08/08 14:14:45 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.54 2007/08/09 17:17:08 heather Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -181,11 +181,11 @@ StatusCode mcRootWriterAlg::initialize()
         return StatusCode::FAILURE;
     } 
 
-    m_mcTree = m_rootIoSvc->prepareRootOutput(m_treeName, m_fileName, m_treeName, 
+    m_mcTree = m_rootIoSvc->prepareRootOutput("mc", m_fileName, m_treeName, 
         m_compressionLevel, "GLAST Monte Carlo Data");
 
     m_mcEvt = new McEvent();
-    m_rootIoSvc->setupBranch(m_treeName, "McEvent", "McEvent", &m_mcEvt, m_bufSize, m_splitMode);
+    m_rootIoSvc->setupBranch("mc", "McEvent", "McEvent", &m_mcEvt, m_bufSize, m_splitMode);
 
     m_common.m_mcEvt = m_mcEvt;
 
@@ -610,7 +610,7 @@ void mcRootWriterAlg::writeEvent()
 {
     // Purpose and Method:  Stores the McEvent data for this event in the ROOT
     //    tree.  The m_mcEvt object is cleared for the next event.
-    m_rootIoSvc->fillTree(m_treeName);
+    m_rootIoSvc->fillTree("mc");
 
     return;
 }
@@ -624,7 +624,7 @@ void mcRootWriterAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
 
-    m_rootIoSvc->closeFile(m_treeName);
+    m_rootIoSvc->closeFile("mc");
 
     return;
 }
