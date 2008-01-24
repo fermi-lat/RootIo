@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Jan 24 13:38:30 PST 2008
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+hardcode the data type names (before, the tree names weer reused as data type names)
+    *
+------------------------------------------------------------
 TAG
 Tag name: v19r0p1, operation: add
 Package: RootIo
