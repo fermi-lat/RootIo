@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Thu Jan 24 14:57:55 PST 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+restore temporally the use of CelManager for writing
+    *
+------------------------------------------------------------
 User: chamont  Thu Jan 24 13:38:30 PST 2008
 RootIo/src
 
