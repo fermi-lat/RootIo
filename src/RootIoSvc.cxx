@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.36 2007/09/25 12:25:17 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.37 2007/12/19 22:47:32 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -12,6 +12,7 @@
 #include "RootOutputDesc.h"
 #include "RootConvert/Utilities/RootReaderUtil.h"
 #include "rootUtil/CelManager.h"
+#include "rootUtil/CompositeEventList.h"
 
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/MsgStream.h"
@@ -130,10 +131,11 @@ class RootIoSvc :
         int compressionLevel,
         const std::string & treeTitle ) ;
 
-    virtual TTree * getTree( const std::string & type) ;
+    //[David] hidden to check if it is used or not
+    //virtual TTree * getTree( const std::string & type) ;
 
     virtual StatusCode setupBranch(const std::string & type,
-        const std::string & name, 
+        const std::string & branchName, 
         const std::string & classname, void * branchAddr,
         int bufSize =64000, int splitLevel =1 ) ;
 
@@ -194,6 +196,7 @@ class RootIoSvc :
 
    
     CelManager m_celManager ;
+    CompositeEventList * m_outputCel ;
     std::string m_celFileNameWrite, m_celFileNameRead ;
     std::vector<TTree*> m_celTreeCol ;
     
@@ -214,7 +217,7 @@ const ISvcFactory& RootIoSvcFactory = a_factory ;
 
 /// Standard Constructor
 RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
-: Service(name,svc)
+: Service(name,svc), m_outputCel(0)
 {
     
     declareProperty("EvtMax"     , m_evtMax=0);
@@ -252,6 +255,7 @@ RootIoSvc::~RootIoSvc()
   m_rootIoMap.clear() ;
   m_rootOutputMap.clear();
   m_celTreeCol.clear();
+  delete m_outputCel ;
  }
 
 StatusCode RootIoSvc::initialize () 
@@ -299,7 +303,9 @@ StatusCode RootIoSvc::initialize ()
 
 
     if (!m_celFileNameWrite.empty()) 
-        m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
+      {
+       //m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
+      }
     
     if (!m_celFileNameRead.empty()) {
         MsgStream log( msgSvc(), name() );
@@ -617,16 +623,17 @@ TTree* RootIoSvc::prepareRootOutput
 
 }
 
- TTree* RootIoSvc::getTree(const std::string &type) { 
-    RootOutputDesc* outputDesc = getRootOutputDesc(type);
-
-    if (outputDesc) {
-        return outputDesc->getTree();
-    } 
-    MsgStream log (msgSvc(), name() );
-    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
-    return 0;
- }
+//[David] hidden to check if it is used or not
+// TTree* RootIoSvc::getTree(const std::string &type) { 
+//    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+//
+//    if (outputDesc) {
+//        return outputDesc->getTree();
+//    } 
+//    MsgStream log (msgSvc(), name() );
+//    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+//    return 0;
+// }
 
  StatusCode RootIoSvc::setupBranch(const std::string& type, const std::string &bname, 
      const std::string &classname, void* branchAddr,
@@ -644,7 +651,7 @@ TTree* RootIoSvc::prepareRootOutput
 
 }
 
-StatusCode RootIoSvc::closeFile(const std::string  &type) {
+StatusCode RootIoSvc::closeFile( const std::string & type ) {
     RootOutputDesc* outputDesc = getRootOutputDesc(type);
 
     if (outputDesc) {

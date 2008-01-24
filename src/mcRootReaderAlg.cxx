@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.69.2.1 2007/09/10 14:52:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.70 2007/09/19 04:38:49 heather Exp $
  */
 
 
@@ -161,7 +161,7 @@ StatusCode mcRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
-    m_rootIoSvc->prepareRootInput(m_treeName, m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("mc", m_treeName, m_branchName, m_fileList);
      
     return sc;
     
@@ -183,7 +183,7 @@ StatusCode mcRootReaderAlg::execute()
 
     // Try reading the event this way... 
     // use name of TTree as key type
-    m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent(m_treeName));
+    m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent("mc"));
 
     if (!m_mcEvt) return StatusCode::FAILURE;
 

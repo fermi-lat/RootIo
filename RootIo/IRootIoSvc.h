@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.13 2007/08/09 17:17:07 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.14 2007/09/25 12:25:16 chamont Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -48,7 +48,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.13 2007/08/09 17:17:07 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.14 2007/09/25 12:25:16 chamont Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -104,9 +104,10 @@ class  IRootIoSvc : virtual public IInterface
        int compressionLevel,
        const std::string & treeTitle ) = 0 ;
 
-    virtual TTree * getTree( const std::string & type ) = 0 ;
+    //[David] hidden to check if it is used or not
+    //virtual TTree * getTree( const std::string & type ) = 0 ;
 
-    virtual StatusCode setupBranch( const std::string & type, const std::string & name, 
+    virtual StatusCode setupBranch( const std::string & type, const std::string & branchName, 
         const std::string & classname, void * branchAddr, int bufSize=64000, int splitLevel =1 ) = 0 ;
 
     virtual StatusCode fillTree( const std::string & type ) = 0;
