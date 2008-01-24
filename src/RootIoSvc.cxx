@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.37 2007/12/19 22:47:32 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.38 2008/01/24 21:38:30 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -304,7 +304,7 @@ StatusCode RootIoSvc::initialize ()
 
     if (!m_celFileNameWrite.empty()) 
       {
-       //m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
+       m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
       }
     
     if (!m_celFileNameRead.empty()) {
