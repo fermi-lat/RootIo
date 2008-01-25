@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.38 2008/01/24 21:38:30 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.39 2008/01/24 22:57:55 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -131,8 +131,8 @@ class RootIoSvc :
         int compressionLevel,
         const std::string & treeTitle ) ;
 
-    //[David] hidden to check if it is used or not
-    //virtual TTree * getTree( const std::string & type) ;
+    //[David] APPARENTLY NEVER USED ?!?
+    virtual TTree * getTree( const std::string & type) ;
 
     virtual StatusCode setupBranch(const std::string & type,
         const std::string & branchName, 
@@ -195,10 +195,10 @@ class RootIoSvc :
     std::map< std::string, RootOutputDesc *> m_rootOutputMap ;
 
    
-    CelManager m_celManager ;
-    CompositeEventList * m_outputCel ;
+    CelManager m_celManager ; // so to read
+    CompositeEventList * m_outputCel ; // so to write
+    std::vector<TTree*> m_celTreeCol ; // so to write
     std::string m_celFileNameWrite, m_celFileNameRead ;
-    std::vector<TTree*> m_celTreeCol ;
     
  } ;
 
@@ -298,13 +298,14 @@ StatusCode RootIoSvc::initialize ()
     // DC : I guess the original author
     // was meaning to test m_index, or the
     // test has no sense
-    m_index = m_startIndex;
+    m_index = m_startIndex ;
     if (m_index >= 0) m_useIndex = true;
 
 
     if (!m_celFileNameWrite.empty()) 
       {
-       m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
+       //m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
+       m_outputCel = new CompositeEventList(m_celFileNameWrite,"RECREATE") ;
       }
     
     if (!m_celFileNameRead.empty()) {
@@ -469,10 +470,11 @@ bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * re
 //============================================================================
 
 
-StatusCode RootIoSvc::prepareRootInput(const std::string& type, 
-                                          const std::string& tree, 
-                                          const std::string& branch,
-                                          const StringArrayProperty& fileList)
+StatusCode RootIoSvc::prepareRootInput
+ ( const std::string & type, 
+   const std::string & tree, 
+   const std::string & branch,
+   const StringArrayProperty & fileList )
 {
     MsgStream log( msgSvc(), name() );
     StatusCode sc = StatusCode::SUCCESS;
@@ -613,27 +615,30 @@ TTree* RootIoSvc::prepareRootOutput
 
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
-    // store the trees in a vector for a composite event list
-    m_celTreeCol.push_back(outputDesc->getTree());
 
     // If a composite event list file is requested, add this component to the CompositeEventList
-    if (!m_celFileNameWrite.empty()) m_celManager.addComponent(treeName, outputDesc->getTree());
+    if (!m_celFileNameWrite.empty())
+     {
+      m_outputCel->declareComponent(type) ;
+      m_celTreeCol.push_back(outputDesc->getTree());
+      //m_celManager.addComponent(treeName, outputDesc->getTree()) ;
+     }
 
     return outputDesc->getTree();
 
 }
 
-//[David] hidden to check if it is used or not
-// TTree* RootIoSvc::getTree(const std::string &type) { 
-//    RootOutputDesc* outputDesc = getRootOutputDesc(type);
-//
-//    if (outputDesc) {
-//        return outputDesc->getTree();
-//    } 
-//    MsgStream log (msgSvc(), name() );
-//    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
-//    return 0;
-// }
+//[David] NEVER USED ?!?
+ TTree* RootIoSvc::getTree(const std::string &type) { 
+    RootOutputDesc* outputDesc = getRootOutputDesc(type);
+
+    if (outputDesc) {
+        return outputDesc->getTree();
+    } 
+    MsgStream log (msgSvc(), name() );
+    log << MSG::WARNING << "RootOutputDesc of type " << type << " not found" << endreq;
+    return 0;
+ }
 
  StatusCode RootIoSvc::setupBranch(const std::string& type, const std::string &bname, 
      const std::string &classname, void* branchAddr,
@@ -683,7 +688,16 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 StatusCode RootIoSvc::finalize ()
 {
     StatusCode  status = StatusCode::SUCCESS;
-    if (!m_celFileNameWrite.empty()) m_celManager.fillFileAndTreeSet();
+    if (!m_celFileNameWrite.empty())
+     {
+      //m_celManager.fillFileAndTreeSet();
+      TDirectory * saveDir = gDirectory ;
+      m_outputCel->fillFileAndTreeSet() ;
+      m_outputCel->writeAndClose() ;
+      delete m_outputCel ;
+      m_outputCel = 0 ;
+      saveDir->cd() ;
+     }
     
     return status;
 }
@@ -792,7 +806,9 @@ void RootIoSvc::beginEvent() // should be called at the beginning of an event
 { 
     m_objectNumber = TProcessID::GetObjectCount();
     if (!m_celFileNameWrite.empty())
-        setOutputUpdate(false);
+     {
+      setOutputUpdate(false) ;
+     }
 }
 
 void RootIoSvc::endEvent()  // must be called at the end of an event to update, allow pause
@@ -812,9 +828,11 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
 
 
     // Fill Composite Event List if requested
-    if ( (!m_celFileNameWrite.empty()) && (checkOutputUpdate()) ) {
-        m_celManager.fillEvent();       
-    }
+    if ( (!m_celFileNameWrite.empty()) && (checkOutputUpdate()) )
+     {
+      //m_celManager.fillEvent() ;       
+      m_outputCel->fillEvent(m_celTreeCol) ;
+     }
 
  }
 
