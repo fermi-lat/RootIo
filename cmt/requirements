@@ -4,10 +4,11 @@ version v19r0
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.209 2007/10/31 01:36:53 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.210 2007/11/28 18:06:26 heather Exp $
 
 branches src doc
 
+use GlastPolicy v*
 use Event v*
 use ROOT v* IExternal
 
@@ -15,7 +16,7 @@ apply_pattern packageShr
 apply_pattern package_include
 
 # I believe these no_auto_imports are essentially overridden by the use of RootConvert
-use metaRootData v* -no_auto_imports
+#use metaRootData v* -no_auto_imports
 use rootUtil v* -no_auto_imports
 use mcRootData v* -no_auto_imports
 use digiRootData v* -no_auto_imports
@@ -32,7 +33,10 @@ use LdfEvent v*
 macro_append ROOT_libs " -lHist -lGraf -lGraf3d -lTreePlayer "\
                  WIN32 " libHist.lib libGraf.lib libGraf3d.lib libTreePlayer.lib "
 
+macro_prepend includes " -I .. " WIN32 " /I .. "
+
 private
+
 use GlastSvc v*
 use Trigger v*
 use AncillaryDataEvent v*
