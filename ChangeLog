@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Fri Jan 25 03:40:27 PST 2008
+RootIo/src/test
+
+Modified Files:
+	jobOptions.ref 
+Log Message:
+shotcut the CelManager when writing a CEL
+    *
+------------------------------------------------------------
+User: chamont  Fri Jan 25 03:40:27 PST 2008
 RootIo/src
 
 Modified Files:
