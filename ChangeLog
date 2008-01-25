@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: chamont  Fri Jan 25 15:24:22 PST 2008
+RootIo/src
+
+Removed Files:
+	EventCollectionMgr.cxx EventCollectionMgr.h 
+Log Message:
+
+    *
+------------------------------------------------------------
+User: chamont  Fri Jan 25 15:24:22 PST 2008
 RootIo/cmt
 
 Modified Files:
