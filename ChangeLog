@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chamont  Fri Jan 25 03:40:27 PST 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+shotcut the CelManager when writing a CEL
+    *
+------------------------------------------------------------
 User: chamont  Thu Jan 24 14:57:55 PST 2008
 RootIo/src
 
