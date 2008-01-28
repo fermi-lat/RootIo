@@ -1,3 +1,4 @@
 writetest.*.root
 *-fake.root
 *.log
+*.fulllog
