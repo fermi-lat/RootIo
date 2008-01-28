@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.39 2008/01/24 22:57:55 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.40 2008/01/25 11:40:27 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -674,7 +674,7 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 
     if (outputDesc) {
         bool status = outputDesc->fillTree(this->getAutoSaveInterval());
-        outputDesc->setUpdated(true);
+        outputDesc->setUpdated(true);        
         return StatusCode::SUCCESS;
     } 
     MsgStream log (msgSvc(), name() );
@@ -830,7 +830,18 @@ void RootIoSvc::endEvent()  // must be called at the end of an event to update, 
     // Fill Composite Event List if requested
     if ( (!m_celFileNameWrite.empty()) && (checkOutputUpdate()) )
      {
-      //m_celManager.fillEvent() ;       
+//    [David] The difference between trees in read mode and write mode
+//    is now taken in charge bt the CEL, which will use "GetEntries()-1"
+//    instead of "GetReadEntry()" when the TDirectory associated to a tree
+//    "IsWritable()".
+//      // [David] During a writing job, filling a tree apparently
+//      // does not upgrade the value which is returned bt GetReadEntry(),
+//      // and that we use to generate the CEL. That's why we make
+//      // below the call to LoadTree.
+//      std::vector<TTree*>::iterator treeItr ;
+//      Long64_t numBytes ;
+//      for ( treeItr=m_celTreeCol.begin() ; treeItr != m_celTreeCol.end() ; treeItr++ )
+//       { numBytes = (*treeItr)->LoadTree((*treeItr)->GetEntries()-1) ; }
       m_outputCel->fillEvent(m_celTreeCol) ;
      }
 

@@ -2,13 +2,14 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.2 2007/08/08 14:14:45 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.3 2008/01/24 21:38:30 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
 #define RootOutputDesc_cxx
 
 #include "RootOutputDesc.h"
+#include "rootUtil/RuUtil.h"
 #include "facilities/Util.h"
 #include "TROOT.h"
 #include <vector>
@@ -81,28 +82,34 @@ TFile* RootOutputDesc::getCurrentFile() {
 	return 0;
 }
     
-bool RootOutputDesc::fillTree(int autoSaveInterval) {
-	bool stat = true;
-	try {
-		TDirectory *saveDir = gDirectory;
-		getCurrentFile()->cd();
-		if (getCurrentFile()->TestBits(TFile::kWriteError)) {
-			throw;
-		}
-		m_tree->Fill();
-        ++m_eventCounter;
-        if (m_eventCounter % autoSaveInterval == 0) 
-            if (m_tree->AutoSave() == 0) throw;
-	}  catch(...) {   
-		std::cerr << "Failed to write the event to " << m_treeName << " Tree" << std::endl;   
-		std::cerr << "Exiting..." << std::endl;   
-		std::cerr.flush();   
-		exit(1);   
-	} 
-	return stat;
-}
+bool RootOutputDesc::fillTree(int autoSaveInterval)
+ {
+  bool stat = true;
+  try
+   {
+    rootUtil::AutoCd cd(getCurrentFile()) ;
+    if (getCurrentFile()->TestBits(TFile::kWriteError))
+     { throw ; }
+    m_tree->Fill() ;
+    ++m_eventCounter;
+    if ( m_eventCounter % autoSaveInterval == 0 )
+     {
+      if ( m_tree->AutoSave() == 0 )
+       { throw ; }
+     }
+   }
+  catch(...)
+   {   
+    std::cerr << "Failed to write the event to " << m_treeName << " Tree" << std::endl ;   
+    std::cerr << "Exiting..." << std::endl ;   
+    std::cerr.flush() ;   
+    exit(1) ;   
+   } 
+  return stat;
+ }
 
-bool RootOutputDesc::closeFile() {
+bool RootOutputDesc::closeFile()
+ {
     // Purpose and Method:  Writes the ROOT file at the end of the run.
     //    The TObject::kWriteDelete parameter is used in the Write method
     //    Used rather than TObject::kOverwrite - supposed to be safer but slower
