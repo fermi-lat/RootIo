@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Jan 27 20:18:49 PST 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+clean up removal of metaRootData
+    *
+------------------------------------------------------------
 User: chamont  Fri Jan 25 15:24:22 PST 2008
 RootIo/src/test
 
