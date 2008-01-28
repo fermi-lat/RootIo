@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v19r1     28-Jan-2008 DC  Tag David's latest CEL updates which he reports
+           creates a working CEL file
  v19r0p1   19-Dec-2007 HMK Migrate to renamed CelManager::getEventIndexInTree
  v19r0     28-Nov-2007 HMK Tag CEL updates
  v18r5     20-Sep-2007 HMK Turn off TkrTruncationData for now
