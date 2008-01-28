@@ -4,7 +4,7 @@ version v19r0
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.210 2007/11/28 18:06:26 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.211 2008/01/25 23:24:22 chamont Exp $
 
 branches src doc
 
@@ -33,7 +33,7 @@ use LdfEvent v*
 macro_append ROOT_libs " -lHist -lGraf -lGraf3d -lTreePlayer "\
                  WIN32 " libHist.lib libGraf.lib libGraf3d.lib libTreePlayer.lib "
 
-macro_prepend includes " -I .. " WIN32 " /I .. "
+#macro_prepend includes " -I .. " WIN32 " /I .. "
 
 private
 
@@ -42,7 +42,7 @@ use Trigger v*
 use AncillaryDataEvent v*
 use gr_app v*
 
-macro_append includes ' $(ppcmd)"$(rootUtil_root)" $(ppcmd)"$(metaRootData_root)" '
+macro_append includes ' $(ppcmd)"$(rootUtil_root)" '
 
 # for building this DLL, need includes from the rootData packages
 # also need modification for the use of OnboardFilterTds for windows due to Endianness.h file
