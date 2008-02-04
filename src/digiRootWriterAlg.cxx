@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.75 2007/09/17 19:36:28 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.76 2008/01/24 21:38:30 chamont Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -340,6 +340,7 @@ StatusCode digiRootWriterAlg::writeDigiEvent() {
 
     L1T levelOne(evtTds->trigger(), digiRowBits, trgReqRowBits);
     levelOne.setTriggerWordTwo(evtTds->triggerWordTwo());
+    levelOne.setPrescale(evtTds->gemPrescale(), evtTds->gltPrescale(), evtTds->prescaleExpired());
 
     m_digiEvt->initialize(evtId, runId, timeObj.time(), liveTime, levelOne, fromMc);
     

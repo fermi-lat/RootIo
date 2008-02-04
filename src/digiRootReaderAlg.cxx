@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.90 2007/09/19 04:38:49 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.91 2008/01/24 21:38:30 chamont Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -354,6 +354,9 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     evt->setTrigger(m_digiEvt->getL1T().getTriggerWord());
     evt->setTriggerWordTwo(m_digiEvt->getL1T().getTriggerWordTwo());
+    evt->setGemPrescale(m_digiEvt->getL1T().getGemPrescale());
+    evt->setGltPrescale(m_digiEvt->getL1T().getGltPrescale());
+    evt->setPrescaleExpired(m_digiEvt->getL1T().getPrescaleExpired());
 
     Event::DigiEvent* digiEventTds = 
         SmartDataPtr<Event::DigiEvent>(eventSvc(), EventModel::Digi::Event);
