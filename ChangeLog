@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Feb  4 11:03:28 PST 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+add handling of new glt and gem prescales
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-19-01-00, operation: add
 Package: RootIo
