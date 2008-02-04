@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Feb  4 11:03:28 PST 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+add handling of new glt and gem prescales
+    *
+------------------------------------------------------------
+User: heather  Mon Feb  4 11:03:28 PST 2008
 RootIo/cmt
 
 Modified Files:
