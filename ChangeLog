@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Mar  5 20:29:01 PST 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+add merit to CEL
+    *
+------------------------------------------------------------
+User: heather  Wed Mar  5 20:29:01 PST 2008
 RootIo/cmt
 
 Modified Files:
