@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.40 2008/01/25 11:40:27 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.41 2008/01/28 13:52:31 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,6 +28,7 @@
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
+#include "ntupleWriterSvc/INtupleWriterSvc.h"
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -145,6 +146,7 @@ class RootIoSvc :
     
     virtual int getAutoSaveInterval() { return m_autoSaveInterval ; }
 
+    virtual CompositeEventList* getCel() { return m_outputCel; }
 
   protected : 
     
@@ -176,6 +178,7 @@ class RootIoSvc :
     IntegerProperty m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
     UnsignedLongProperty m_treeSize ;
+    StringProperty m_tupleName;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -199,6 +202,11 @@ class RootIoSvc :
     CompositeEventList * m_outputCel ; // so to write
     std::vector<TTree*> m_celTreeCol ; // so to write
     std::string m_celFileNameWrite, m_celFileNameRead ;
+
+    /// access the ntupleWriter service to access the output Ntuple
+    INTupleWriterSvc *   m_rootTupleSvc;
+    TTree *m_outputTuple;
+
     
  } ;
 
@@ -217,7 +225,7 @@ const ISvcFactory& RootIoSvcFactory = a_factory ;
 
 /// Standard Constructor
 RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
-: Service(name,svc), m_outputCel(0)
+: Service(name,svc), m_outputCel(0), m_rootTupleSvc(0), m_outputTuple(0)
 {
     
     declareProperty("EvtMax"     , m_evtMax=0);
@@ -232,6 +240,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("StartingIndex", m_startIndex=0);
     // limited by the size of an unsigned int, expecting MB
     declareProperty("MaxTreeSize", m_treeSize=0);
+    declareProperty("TupleName", m_tupleName="MeritTuple");
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -302,6 +311,26 @@ StatusCode RootIoSvc::initialize ()
     if (m_index >= 0) m_useIndex = true;
 
 
+    // Retrieve tuple info an set up
+    // get a pointer to RootTupleSvc
+    status = service("RootTupleSvc", m_rootTupleSvc);       
+    if( status.isFailure() ) 
+    {
+        MsgStream log( msgSvc(), name() );
+        log << MSG::WARNING << "failed to get the RootTupleSvc" << endreq;
+        m_rootTupleSvc = 0;
+    } else {
+        // Use this to recover a pointer to the output tree
+        void * ptr= 0;
+        m_rootTupleSvc->getItem(m_tupleName.value().c_str(),"", ptr);
+        if( ptr==0) {
+            MsgStream log( msgSvc(), name() );
+            log << MSG::WARNING << "Could not find the tuple: " +  m_tupleName.value() << endreq;
+        } else
+            m_outputTuple = static_cast<TTree*>(ptr);
+    }
+
+
     if (!m_celFileNameWrite.empty()) 
       {
        //m_celManager.initWrite(m_celFileNameWrite, "RECREATE");
@@ -313,6 +342,14 @@ StatusCode RootIoSvc::initialize ()
         log << MSG::INFO << "Cel ROOT file Reading" << endreq;
         m_celManager.initRead(m_celFileNameRead);
     }
+
+
+    // Include the merit ntuple in the output CEL
+    if (m_outputTuple) {
+        m_outputCel->declareComponent("merit") ;
+        m_celTreeCol.push_back(m_outputTuple);
+    }
+
 
     return StatusCode::SUCCESS;
 }
@@ -692,7 +729,11 @@ StatusCode RootIoSvc::finalize ()
      {
       //m_celManager.fillFileAndTreeSet();
       TDirectory * saveDir = gDirectory ;
-      m_outputCel->fillFileAndTreeSet() ;
+      long long retVal = m_outputCel->fillFileAndTreeSet() ;
+      if (retVal < 0) {
+          MsgStream log(msgSvc(),name()) ;
+          log << MSG::WARNING << "Error Condition when closing CompositeEventList via fillFileAndTreeSet" << endreq;
+      }
       m_outputCel->writeAndClose() ;
       delete m_outputCel ;
       m_outputCel = 0 ;

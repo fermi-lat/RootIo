@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.14 2007/09/25 12:25:16 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.15 2008/01/24 21:38:30 chamont Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -38,6 +38,7 @@
 #include "GaudiKernel/IInterface.h"
 #include <TChain.h>
 #include <string>
+#include "rootUtil/CompositeEventList.h"
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
 static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ; 
@@ -48,7 +49,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.14 2007/09/25 12:25:16 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.15 2008/01/24 21:38:30 chamont Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -115,6 +116,8 @@ class  IRootIoSvc : virtual public IInterface
     virtual int getAutoSaveInterval() = 0 ;
 
     virtual StatusCode closeFile( const std::string & type ) = 0 ;
+
+    virtual CompositeEventList* getCel() = 0;
 
 
     //====================
