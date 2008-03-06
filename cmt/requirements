@@ -4,7 +4,7 @@ version v19r2
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.213 2008/01/28 18:36:28 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.214 2008/02/04 19:03:27 heather Exp $
 
 branches src doc
 
@@ -17,7 +17,7 @@ apply_pattern package_include
 
 # I believe these no_auto_imports are essentially overridden by the use of RootConvert
 #use metaRootData v* -no_auto_imports
-use rootUtil v* -no_auto_imports
+use rootUtil v*
 use mcRootData v* -no_auto_imports
 use digiRootData v* -no_auto_imports
 use reconRootData v* -no_auto_imports
