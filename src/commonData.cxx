@@ -23,8 +23,6 @@ std::map<const TObject*, const Event::TkrCluster*>        commonData::m_rootTkrC
 std::map<const TObject*, const Event::TkrTrack*>          commonData::m_rootTkrTrackMap;
 std::map<const TObject*, const Event::TkrVertex*>         commonData::m_rootTkrVertexMap;
 
-
-
 McEvent* commonData::m_mcEvt;
 DigiEvent* commonData::m_digiEvt;
 ReconEvent* commonData::m_reconEvt;
@@ -53,6 +51,4 @@ void commonData::clear() {
     m_rootTkrClusterMap.clear();
     m_rootTkrTrackMap.clear();
     m_rootTkrVertexMap.clear();
-
-
 }

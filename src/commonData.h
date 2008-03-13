@@ -42,7 +42,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.7 2006/03/21 01:21:45 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.8 2007/02/15 19:30:06 usher Exp $
 */
 
 class commonData 
@@ -86,8 +86,6 @@ public:
     static std::map<const TObject*, const Event::TkrCluster*>       m_rootTkrClusterMap;
     static std::map<const TObject*, const Event::TkrTrack*>         m_rootTkrTrackMap;
     static std::map<const TObject*, const Event::TkrVertex*>        m_rootTkrVertexMap;
-
-
 
     /// Provide access to the ROOT event pointers
     static McEvent *m_mcEvt;
