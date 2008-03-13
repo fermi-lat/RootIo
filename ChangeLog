@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Mar 13 13:15:00 PDT 2008
+RootIo/src
+
+Modified Files:
+	relationRootReaderAlg.cxx 
+Log Message:
+Clean up a bit to make more understandable
+    *
+------------------------------------------------------------
 User: usher  Thu Mar 13 12:56:55 PDT 2008
 RootIo/src
 
