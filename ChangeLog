@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Thu Mar 13 12:56:55 PDT 2008
+RootIo/src
+
+Modified Files:
+	commonData.cxx commonData.h digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 User: heather  Wed Mar  5 20:29:01 PST 2008
 RootIo/src
 
