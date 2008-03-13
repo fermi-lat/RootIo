@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.70 2007/09/19 04:38:49 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.71 2008/01/24 21:38:30 chamont Exp $
  */
 
 
@@ -176,8 +176,6 @@ StatusCode mcRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    log<<MSG::INFO<<"Begin mcRootReaderAlg::execute()"<<endreq ;
-    
     if (m_mcEvt) m_mcEvt->Clear(m_clearOption.c_str());
     m_mcEvt = 0;
 
@@ -199,6 +197,13 @@ StatusCode mcRootReaderAlg::execute()
     m_common.m_rootMcIntHitMap.clear();
     m_common.m_rootMcTrajectoryMap.clear();
     m_common.m_rootMcTrajectoryPointMap.clear();
+
+    // Clear the TDS to root maps
+    m_common.m_mcPartMap.clear();
+    m_common.m_mcPosHitMap.clear();
+    m_common.m_mcIntHitMap.clear();
+    m_common.m_mcTrajectoryMap.clear();
+    m_common.m_mcTrajectoryPointMap.clear();
     
     m_particleMap.clear();
     
@@ -291,6 +296,7 @@ StatusCode mcRootReaderAlg::readMcParticles() {
         Event::McParticle *pTds = new Event::McParticle();
         m_particleMap[pRoot->GetUniqueID()] = pTds;
         m_common.m_rootMcPartMap[pRoot] = pTds;
+        m_common.m_mcPartMap[pTds]      = pRoot;
     }
     
     // reset the iterator to the beginning of the list of McParticles
@@ -394,6 +400,7 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
         Event::McPositionHit *posHitTds = new Event::McPositionHit();
 
         m_common.m_rootMcPosHitMap[posHitRoot] = posHitTds;
+        m_common.m_mcPosHitMap[posHitTds]      = const_cast<McPositionHit*>(posHitRoot);
         
         RootPersistence::convert(*posHitRoot,*posHitTds) ;
         
@@ -449,6 +456,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
         Event::McIntegratingHit *intHitTds = new Event::McIntegratingHit();
 
         m_common.m_rootMcIntHitMap[intHitRoot] = intHitTds;
+        m_common.m_mcIntHitMap[intHitTds]      = intHitRoot;
         
         const VolumeIdentifier idRoot = intHitRoot->getVolumeId();
         idents::VolumeIdentifier idTds;
@@ -525,6 +533,7 @@ StatusCode mcRootReaderAlg::readMcTrajectories()
         Event::McTrajectory* trajectoryTds = new Event::McTrajectory();
 
         m_common.m_rootMcTrajectoryMap[trajectoryRoot] = trajectoryTds;
+        m_common.m_mcTrajectoryMap[trajectoryTds]      = trajectoryRoot;
         
         RootPersistence::convert(*trajectoryRoot,*trajectoryTds);
 
@@ -541,6 +550,7 @@ StatusCode mcRootReaderAlg::readMcTrajectories()
 
             // Store in map
             m_common.m_rootMcTrajectoryPointMap[pointRoot] = pointTds;
+            m_common.m_mcTrajectoryPointMap[pointTds]      = pointRoot;
 
             RootPersistence::convert(*pointRoot, *pointTds);
 

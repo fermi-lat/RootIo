@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.91 2008/01/24 21:38:30 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.92 2008/02/04 19:03:28 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -224,6 +224,10 @@ StatusCode digiRootReaderAlg::execute()
     // Clear the digi common maps
     m_common.m_rootTkrDigiMap.clear();
     m_common.m_rootCalDigiMap.clear();
+
+    // Clear the digi common maps
+    m_common.m_tkrDigiMap.clear();
+    m_common.m_calDigiMap.clear();
 
     sc = readDigiEvent();
     if (sc.isFailure()) {
@@ -642,6 +646,7 @@ StatusCode digiRootReaderAlg::readCalDigi() {
         calDigiTdsCol->push_back(calDigiTds);
 
         m_common.m_rootCalDigiMap[calDigiRoot] = calDigiTds;
+        m_common.m_calDigiMap[calDigiTds]      = calDigiRoot;
     }
  
     return sc;
@@ -689,6 +694,7 @@ StatusCode digiRootReaderAlg::readTkrDigi() {
         tkrDigiTdsCol->push_back(tkrDigiTds);
 
         m_common.m_rootTkrDigiMap[tkrDigiRoot] = tkrDigiTds;
+        m_common.m_tkrDigiMap[tkrDigiTds]      = tkrDigiRoot;
     }
 
     return sc;

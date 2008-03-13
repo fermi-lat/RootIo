@@ -44,7 +44,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.21 2007/08/09 17:17:09 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.22 2008/01/24 21:38:30 chamont Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -176,7 +176,6 @@ StatusCode relationRootWriterAlg::execute()
 
     m_relTable->initialize(evtId, runId);
 
-
     sc = writeTkrDigiRelations();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write TkrDigiRelations" << endreq;
@@ -219,30 +218,32 @@ StatusCode relationRootWriterAlg::writeTkrDigiRelations() {
         Event::McPositionHit *posHitTds = (*relation)->getSecond();
 
         TkrDigi *tkrDigiRoot = 0;
+        TRef     posHitRef   = 0;
         McPositionHit *posHitRoot = 0;
 
+        // Look up the key first
+        if (m_common.m_tkrDigiMap.find(tkrDigiTds) != m_common.m_tkrDigiMap.end()) {
+            TRef ref = m_common.m_tkrDigiMap[tkrDigiTds];
+            tkrDigiRoot = (TkrDigi*)ref.GetObject();
+        } else {
+            log << MSG::WARNING << "Could not located TkrDigi TDS/ROOT pair" << endreq;
+            continue;
+        }
+
+        // Now the thing it depends on
         if (m_common.m_mcPosHitMap.find(posHitTds) != m_common.m_mcPosHitMap.end()) {
-            TRef ref = m_common.m_mcPosHitMap[posHitTds];
-            posHitRoot = (McPositionHit*)ref.GetObject();
+            posHitRef  = m_common.m_mcPosHitMap[posHitTds];
+            posHitRoot = (McPositionHit*)posHitRef.GetObject();
         // Note that noise hits will not have any McPositionHit associated with them
         } else {
         //    log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
             continue;
         }
 
-        if (m_common.m_tkrDigiMap.find(tkrDigiTds) != m_common.m_tkrDigiMap.end()) {
-            TRef ref = m_common.m_tkrDigiMap[tkrDigiTds];
-            tkrDigiRoot = (TkrDigi*)ref.GetObject();
-        } else {
-            log << MSG::WARNING << "Could not located TkrDigi TDS/ROOT pair" << endreq;
-        }
-
         if (tkrDigiRoot && posHitRoot) tkrRelationMap[tkrDigiRoot].Add(posHitRoot);
-
-
     }
 
-   fillRelTable(tkrRelationMap);
+    fillRelTable(tkrRelationMap);
 
     return sc;
 }
