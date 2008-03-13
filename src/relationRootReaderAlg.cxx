@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.34 2008/01/24 21:38:30 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.35 2008/03/13 19:56:55 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -295,9 +295,8 @@ StatusCode relationRootReaderAlg::readTkrDigiRelations(Relation* relation)
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    const TkrDigi*        digiRoot  = dynamic_cast<const TkrDigi*>(relation->getKey());
-    const TRefArray&      relArrRoot = relation->getValueCol();
-    Event::TkrDigi*       digiTds   = 0;
+    const TkrDigi*  digiRoot = dynamic_cast<const TkrDigi*>(relation->getKey());
+    Event::TkrDigi* digiTds  = 0;
 
     // Look up TDS to root relation for digis
     if (m_common.m_rootTkrDigiMap.find(digiRoot) != m_common.m_rootTkrDigiMap.end()) {
@@ -307,37 +306,26 @@ StatusCode relationRootReaderAlg::readTkrDigiRelations(Relation* relation)
         return sc;
     }
 
-    int numRel = relArrRoot.GetEntries();
+    // Get the list of related objects
+    const TRefArray& relArrRoot = relation->getValueCol();
+    int              numRel     = relArrRoot.GetEntries();
 
+    // Loop over the list
     for(int idx = 0; idx < relArrRoot.GetEntries(); idx++)
     {
-    TObject*              mcHitRoot = relation->getValueCol().At(idx);
+        TObject* mcHitRoot = relation->getValueCol().At(idx);
 
-//    Event::TkrDigi*       digiTds   = 0;
-//    Event::McPositionHit* mcHitTds  = 0;
-        
-///    TRef     ref  = relation->getValueCol().At(0);
-///    TObject* tObj = (TObject *)ref.GetObject();
-///    McPositionHit* posHit = dynamic_cast<McPositionHit*>(tObj);
+        // Look up TDS to root relation for position hits
+        if (m_common.m_rootMcPosHitMap.find(mcHitRoot) != m_common.m_rootMcPosHitMap.end()) {
+            Event::McPositionHit* mcHitTds = const_cast<Event::McPositionHit*>(m_common.m_rootMcPosHitMap[mcHitRoot]);
 
-    // Look up TDS to root relation for digis
-//    if (m_common.m_rootTkrDigiMap.find(digiRoot) != m_common.m_rootTkrDigiMap.end()) {
-//        digiTds = const_cast<Event::TkrDigi*>(m_common.m_rootTkrDigiMap[digiRoot]);
-//    } else {
-//        log << MSG::WARNING << "Could not located TkrDigi TDS/ROOT pair" << endreq;
-//    }
-
-    // Look up TDS to root relation for position hits
-    if (m_common.m_rootMcPosHitMap.find(mcHitRoot) != m_common.m_rootMcPosHitMap.end()) {
-        Event::McPositionHit* mcHitTds = const_cast<Event::McPositionHit*>(m_common.m_rootMcPosHitMap[mcHitRoot]);
-
-        // Make the event relation here
-        typedef Event::Relation<Event::TkrDigi,Event::McPositionHit> relType;
-        relType* rel = new relType(digiTds, mcHitTds);
-        m_tkrDigiRelTab->addRelation(rel);
-    } else {
-        log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
-    }
+            // Make the event relation here
+            typedef Event::Relation<Event::TkrDigi,Event::McPositionHit> relType;
+            relType* rel = new relType(digiTds, mcHitTds);
+            m_tkrDigiRelTab->addRelation(rel);
+        } else {
+            log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
+        }
     }
 
     return sc;
@@ -351,29 +339,37 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    const CalDigi*           digiRoot  = dynamic_cast<const CalDigi*>(relation->getKey());
-    TObject*                 mcHitRoot = relation->getValueCol().At(0);
-
-    Event::CalDigi*          digiTds   = 0;
-    Event::McIntegratingHit* mcHitTds  = 0;
+    const CalDigi*  digiRoot = dynamic_cast<const CalDigi*>(relation->getKey());
+    Event::CalDigi* digiTds  = 0;
 
     // Look up TDS to root relation for digis
     if (m_common.m_rootCalDigiMap.find(digiRoot) != m_common.m_rootCalDigiMap.end()) {
         digiTds = const_cast<Event::CalDigi*>(m_common.m_rootCalDigiMap[digiRoot]);
     } else {
         log << MSG::WARNING << "Could not located CalDigi TDS/ROOT pair" << endreq;
+        return sc;
     }
 
-    // Look up TDS to root relation for position hits
-    if (m_common.m_rootMcIntHitMap.find(mcHitRoot) != m_common.m_rootMcIntHitMap.end()) {
-        mcHitTds = const_cast<Event::McIntegratingHit*>(m_common.m_rootMcIntHitMap[mcHitRoot]);
+    // Get the list of related objects
+    const TRefArray& relArrRoot = relation->getValueCol();
+    int              numRel     = relArrRoot.GetEntries();
 
-        // Make the event relation here
-        typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit> relType;
-        relType* rel = new relType(digiTds, mcHitTds);
-        m_calDigiRelTab->addRelation(rel);
-    } else {
-        log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
+    // Loop over the list
+    for(int idx = 0; idx < relArrRoot.GetEntries(); idx++)
+    {
+        TObject* mcHitRoot = relation->getValueCol().At(idx);
+
+        // Look up TDS to root relation for position hits
+        if (m_common.m_rootMcIntHitMap.find(mcHitRoot) != m_common.m_rootMcIntHitMap.end()) {
+            Event::McIntegratingHit* mcHitTds = const_cast<Event::McIntegratingHit*>(m_common.m_rootMcIntHitMap[mcHitRoot]);
+
+            // Make the event relation here
+            typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit> relType;
+            relType* rel = new relType(digiTds, mcHitTds);
+            m_calDigiRelTab->addRelation(rel);
+        } else {
+            log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
+        }
     }
 
     return sc;
@@ -457,11 +453,8 @@ StatusCode relationRootReaderAlg::readMcParticleRelations(Relation* relation)
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    const McParticle*    mcPartRoot = dynamic_cast<const McParticle*>(relation->getKey());
-    TObject*             mcTrajRoot = relation->getValueCol().At(0);
-
-    Event::McParticle*   mcPartTds  = 0;
-    Event::McTrajectory* mcTrajTds  = 0;
+    const McParticle*  mcPartRoot = dynamic_cast<const McParticle*>(relation->getKey());
+    Event::McParticle* mcPartTds  = 0;
 
     // Look up TDS to root relation for McParticles
     if (m_common.m_rootMcPartMap.find(mcPartRoot) != m_common.m_rootMcPartMap.end()) {
@@ -470,15 +463,25 @@ StatusCode relationRootReaderAlg::readMcParticleRelations(Relation* relation)
         log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
     }
 
-    // Look up TDS to root relation for position hits
-    if (m_common.m_rootMcTrajectoryMap.find(mcTrajRoot) != m_common.m_rootMcTrajectoryMap.end()) {
-        mcTrajTds = const_cast<Event::McTrajectory*>(m_common.m_rootMcTrajectoryMap[mcTrajRoot]);
+    // Get the list of related objects
+    const TRefArray& relArrRoot = relation->getValueCol();
+    int              numRel     = relArrRoot.GetEntries();
 
-        // Make the event relation here
-        Event::McPartToTrajectoryRel* rel = new Event::McPartToTrajectoryRel(mcPartTds, mcTrajTds);
-        m_mcPartToTrajList->push_back(rel);
-    } else {
-        log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
+    // Loop over the list
+    for(int idx = 0; idx < relArrRoot.GetEntries(); idx++)
+    {
+        TObject* mcTrajRoot = relation->getValueCol().At(idx);
+
+        // Look up TDS to root relation for position hits
+        if (m_common.m_rootMcTrajectoryMap.find(mcTrajRoot) != m_common.m_rootMcTrajectoryMap.end()) {
+            Event::McTrajectory* mcTrajTds = const_cast<Event::McTrajectory*>(m_common.m_rootMcTrajectoryMap[mcTrajRoot]);
+
+            // Make the event relation here
+            Event::McPartToTrajectoryRel* rel = new Event::McPartToTrajectoryRel(mcPartTds, mcTrajTds);
+            m_mcPartToTrajList->push_back(rel);
+        } else {
+            log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
+        }
     }
 
     return sc;
@@ -490,12 +493,8 @@ StatusCode relationRootReaderAlg::readMcTrajectoryPointRelations(Relation* relat
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    const McTrajectoryPoint*  mcPointRoot  = dynamic_cast<const McTrajectoryPoint*>(relation->getKey());
-    TObject*                  mcHitRoot = relation->getValueCol().At(0);
-
-    Event::McTrajectoryPoint* mcPointTds   = 0;
-    
-    Event::McPositionHit* mcHitTds  = 0;
+    const McTrajectoryPoint*  mcPointRoot = dynamic_cast<const McTrajectoryPoint*>(relation->getKey());
+    Event::McTrajectoryPoint* mcPointTds  = 0;
 
     // Look up TDS to root relation for digis
     if (m_common.m_rootMcTrajectoryPointMap.find(mcPointRoot) != m_common.m_rootMcTrajectoryPointMap.end()) {
@@ -504,22 +503,32 @@ StatusCode relationRootReaderAlg::readMcTrajectoryPointRelations(Relation* relat
         log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
     }
 
-    // Look up TDS to root relation for position hits
-    if (m_common.m_rootMcPosHitMap.find(mcHitRoot) != m_common.m_rootMcPosHitMap.end()) 
+    // Get the list of related objects
+    const TRefArray& relArrRoot = relation->getValueCol();
+    int              numRel     = relArrRoot.GetEntries();
+
+    // Loop over the list
+    for(int idx = 0; idx < relArrRoot.GetEntries(); idx++)
     {
-        Event::McPositionHit* mcHitTds = const_cast<Event::McPositionHit*>(m_common.m_rootMcPosHitMap[mcHitRoot]);
-        Event::McPointToPosHitRel* rel = new Event::McPointToPosHitRel(mcPointTds, mcHitTds);
-        m_mcPointToPosHitList->push_back(rel);
-    }
-    else if (m_common.m_rootMcIntHitMap.find(mcHitRoot) != m_common.m_rootMcIntHitMap.end())
-    {
-        Event::McIntegratingHit* mcHitTds = const_cast<Event::McIntegratingHit*>(m_common.m_rootMcIntHitMap[mcHitRoot]);
-        Event::McPointToIntHitRel* rel = new Event::McPointToIntHitRel(mcPointTds, mcHitTds);
-        m_mcPointToIntHitList->push_back(rel);
-    } 
-    else 
-    {
-        log << MSG::WARNING << "Could not located McPositionHit/McIntegrating TDS/ROOT pair" << endreq;
+        TObject* mcHitRoot = relation->getValueCol().At(idx);
+
+        // Look up TDS to root relation for position hits
+        if (m_common.m_rootMcPosHitMap.find(mcHitRoot) != m_common.m_rootMcPosHitMap.end()) 
+        {
+            Event::McPositionHit* mcHitTds = const_cast<Event::McPositionHit*>(m_common.m_rootMcPosHitMap[mcHitRoot]);
+            Event::McPointToPosHitRel* rel = new Event::McPointToPosHitRel(mcPointTds, mcHitTds);
+            m_mcPointToPosHitList->push_back(rel);
+        }
+        else if (m_common.m_rootMcIntHitMap.find(mcHitRoot) != m_common.m_rootMcIntHitMap.end())
+        {
+            Event::McIntegratingHit* mcHitTds = const_cast<Event::McIntegratingHit*>(m_common.m_rootMcIntHitMap[mcHitRoot]);
+            Event::McPointToIntHitRel* rel = new Event::McPointToIntHitRel(mcPointTds, mcHitTds);
+            m_mcPointToIntHitList->push_back(rel);
+        } 
+        else 
+        {
+            log << MSG::WARNING << "Could not located McPositionHit/McIntegrating TDS/ROOT pair" << endreq;
+        }
     }
 
     return sc;
