@@ -3,6 +3,11 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0     13-Mar-2008 TU&HMK Update to RootIo interface to provide access
+           to CompositeEventList, and this from Tracy:
+           Updates to improve running recon in a separate job step from
+           generation/digitization.  Allows one to read in MC, Digi, and
+           releations, then output only recon and a new relations file
  v19r2     04-Feb-2008 HMK JIRA TRG-12, add new gemPrescale, gltPrescale
            and prescaleExpired stored in EventHeader on TDS
  v19r1     28-Jan-2008 DC  Tag David's latest CEL updates which he reports
