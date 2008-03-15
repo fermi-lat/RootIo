@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.42 2008/03/06 04:29:01 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.43 2008/03/15 05:10:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -475,10 +475,10 @@ bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * re
  {
   bool success = false ;
 
-  unsigned mcResult = setSingleFile("MC",mc) ;
-  unsigned digiResult = setSingleFile("DIGI",digi) ;
-  unsigned reconResult = setSingleFile("RECON",rec) ;
-  unsigned gcrResult = setSingleFile("GCR",gcr) ;
+  unsigned mcResult = setSingleFile("mc",mc) ;
+  unsigned digiResult = setSingleFile("digi",digi) ;
+  unsigned reconResult = setSingleFile("recon",rec) ;
+  unsigned gcrResult = setSingleFile("gcr",gcr) ;
 
   // at least one string must be non-null
   if ( (mcResult==1) &&
