@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.41 2008/01/28 13:52:31 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.42 2008/03/06 04:29:01 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 #include "GaudiKernel/IRunable.h"
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
-#include "ntupleWriterSvc/INtupleWriterSvc.h"
+#include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include "TSystem.h"
 #include "TFile.h"
