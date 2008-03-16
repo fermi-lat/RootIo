@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Sun Mar 16 05:29:42 PDT 2008
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-BigRun2008
+	requirements 
+Log Message:
+remove prescale updates for big run branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-20-00-02, operation: add
 Package: RootIo
