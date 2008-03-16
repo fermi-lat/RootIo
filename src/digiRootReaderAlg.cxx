@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.92 2008/02/04 19:03:28 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.93 2008/03/13 19:56:55 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -358,9 +358,11 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
 
     evt->setTrigger(m_digiEvt->getL1T().getTriggerWord());
     evt->setTriggerWordTwo(m_digiEvt->getL1T().getTriggerWordTwo());
-    evt->setGemPrescale(m_digiEvt->getL1T().getGemPrescale());
-    evt->setGltPrescale(m_digiEvt->getL1T().getGltPrescale());
-    evt->setPrescaleExpired(m_digiEvt->getL1T().getPrescaleExpired());
+    // HMK 3-16-2008 Comment this out for Big Run use that does not      
+    // Containt the updates to configData
+    //evt->setGemPrescale(m_digiEvt->getL1T().getGemPrescale());
+    //evt->setGltPrescale(m_digiEvt->getL1T().getGltPrescale());
+    //evt->setPrescaleExpired(m_digiEvt->getL1T().getPrescaleExpired());
 
     Event::DigiEvent* digiEventTds = 
         SmartDataPtr<Event::DigiEvent>(eventSvc(), EventModel::Digi::Event);
