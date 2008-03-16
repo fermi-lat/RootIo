@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Sun Mar 16 05:29:42 PDT 2008
+RootIo/src
+
+Modified Files:
+      Tag: GR-BigRun2008
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+remove prescale updates for big run branch
+    *
+------------------------------------------------------------
+User: heather  Sun Mar 16 05:29:42 PDT 2008
 RootIo/doc
 
 Modified Files:
