@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr2 17-Mar-2008 HMK Patch addition of meritTuple to CEL
  v20r0p2gr1 16-Mar-2008 HMK Branch for big run that removes some of the 
            prescale updates for now
  v20r0p2   13-Mar-2008 HMK Fix tree names for heprep interface
