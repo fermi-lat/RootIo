@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Mon Mar 17 20:45:15 PDT 2008
+RootIo/doc
+
+Modified Files:
+      Tag: GR-BigRun2008
+	release.notes 
+Log Message:
+patch addition of MeritTuple to CEL
+    *
+------------------------------------------------------------
+User: heather  Mon Mar 17 20:45:15 PDT 2008
 RootIo/cmt
 
 Modified Files:
