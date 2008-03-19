@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 18 20:27:24 PDT 2008
+RootIo/src
+
+Modified Files:
+      Tag: GR-BigRun2008
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+Log Message:
+first attempt to handle env var for list of input root files
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 18 20:27:23 PDT 2008
 RootIo/doc
 
