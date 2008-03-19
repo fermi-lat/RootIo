@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.44 2008/03/15 05:18:23 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.44.2.1 2008/03/18 03:45:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -832,27 +832,27 @@ void RootIoSvc::handle(const Incident &inc)
 void RootIoSvc::beginEvent() // should be called at the beginning of an event
 { 
     m_objectNumber = TProcessID::GetObjectCount();
-    static bool gotTuple = false;
+    //static bool gotTuple = false;
 
-    if ((!m_celFileNameWrite.empty()) && (!gotTuple) && (m_rootTupleSvc)) {
-        try {
+    //if ((!m_celFileNameWrite.empty()) && (!gotTuple) && (m_rootTupleSvc)) {
+    //    try {
         // Use this to recover a pointer to the output tree
-        void * ptr= 0;
-        m_rootTupleSvc->getItem(m_tupleName.value().c_str(),"", ptr);
-        if( ptr==0) {
-            MsgStream log( msgSvc(), name() );
-            log << MSG::WARNING << "Could not find the tuple: " +  m_tupleName.value() << endreq;
-        } else {
-            m_outputTuple = static_cast<TTree*>(ptr);
+   //     void * ptr= 0;
+   //     m_rootTupleSvc->getItem(m_tupleName.value().c_str(),"", ptr);
+   //     if( ptr==0) {
+   //         MsgStream log( msgSvc(), name() );
+   //         log << MSG::WARNING << "Could not find the tuple: " +  m_tupleName.value() << endreq;
+    //    } else {
+    //        m_outputTuple = static_cast<TTree*>(ptr);
             // Include the merit ntuple in the output CEL
-            m_outputCel->declareComponent("merit") ;
-            m_celTreeCol.push_back(m_outputTuple);
-        }
-        gotTuple = true;
-        } catch(...) {
-            m_outputTuple = 0;
-        }
-    }
+   //         m_outputCel->declareComponent("merit") ;
+    //        m_celTreeCol.push_back(m_outputTuple);
+    //    }
+    //    gotTuple = true;
+    //    } catch(...) {
+    //        m_outputTuple = 0;
+    //    }
+ //   }
 
 
     if (!m_celFileNameWrite.empty())

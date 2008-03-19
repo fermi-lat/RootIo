@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr3 18-Mar-2008 HMK Comment out the CEL updates, not needed in big
+            run branch.  Add support for env var to denote list of input
+            ROOT files
  v20r0p2gr2 17-Mar-2008 HMK Patch addition of meritTuple to CEL
  v20r0p2gr1 16-Mar-2008 HMK Branch for big run that removes some of the 
            prescale updates for now
