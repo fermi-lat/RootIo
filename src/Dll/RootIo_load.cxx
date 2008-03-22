@@ -3,7 +3,7 @@
 * @brief This is needed for forcing the linker to load all components
 * of the library.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.13 2005/07/19 21:33:02 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/Dll/RootIo_load.cxx,v 1.14 2006/11/13 10:38:56 claval Exp $
 */
 
 #include "GaudiKernel/DeclareFactoryEntries.h"
@@ -26,6 +26,7 @@ DECLARE_FACTORY_ENTRIES(RootIo) {
     DECLARE_TOOL( RootIoRandom );
 #endif
     DECLARE_SERVICE( RootIoSvc );
+    DECLARE_SERVICE( ntupleReaderSvc );
 
 
 }
