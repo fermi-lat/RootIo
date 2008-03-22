@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr4 21-Mar-2008 HMK add ntupleReaderSvc
  v20r0p2gr3 18-Mar-2008 HMK Comment out the CEL updates, not needed in big
             run branch.  Add support for env var to denote list of input
             ROOT files
