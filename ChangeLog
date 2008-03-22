@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Fri Mar 21 21:20:15 PDT 2008
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-BigRun2008
+	requirements 
+Log Message:
+add ntupleReaderSvc
+    *
+------------------------------------------------------------
+User: heather  Fri Mar 21 21:20:15 PDT 2008
 RootIo/RootIo
 
 Added Files:
