@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Mar 21 21:20:15 PDT 2008
+RootIo/RootIo
+
+Added Files:
+      Tag: GR-BigRun2008
+	INtupleReaderSvc.h 
+Log Message:
+add ntupleReaderSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v20r0p2gr3, operation: add
 Package: RootIo
