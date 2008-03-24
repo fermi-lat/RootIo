@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Mar 24 08:25:43 PDT 2008
+RootIo/RootIo
+
+Added Files:
+	INtupleReaderSvc.h 
+Log Message:
+update the HEAD with the ntupleReaderSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v20r0p2gr4, operation: add
 Package: RootIo
