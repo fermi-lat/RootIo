@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Mar 24 08:25:43 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+update the HEAD with the ntupleReaderSvc
+    *
+------------------------------------------------------------
+User: heather  Mon Mar 24 08:25:43 PDT 2008
 RootIo/cmt
 
 Modified Files:
