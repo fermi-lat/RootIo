@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10 2007/09/25 12:25:17 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.1 2008/03/19 03:27:23 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -115,9 +115,18 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
  {
   Long64_t numEvents = -1;
  
-  bool stat = checkForEnvVar(fileList);
+ // bool stat = checkForEnvVar(fileList);
+  try {
+      std::vector<std::string> expandedList;
+    facilities::Util::expandEnvVarList(fileList.value(),expandedList);
+    m_fileList.setValue(expandedList);
+  } catch(...) {
+      std::cout << "RootInputDesc::setFileList call to expandEnvVarList failed, taking the JO"
+          << " parameter as is and continuing on" << std::endl;
+      m_fileList = fileList;
+  }
   // If the checkForEnvVar method fails, just set the local m_fileList to the fileList input
-  if (!stat) m_fileList = fileList;
+  //if (!stat) m_fileList = fileList;
  
   // Save the current directory for the ntuple writer service
   TDirectory * saveDir = gDirectory ;	
@@ -297,34 +306,6 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
   saveDir->cd();
   if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
   return true;
- }
-
-bool RootInputDesc::checkForEnvVar(const StringArrayProperty & fileList) {
-     // Purpose and Method:  The JobOptions parameter for the file list may be an env variable.
-     // This env variable may contain a list of files.  We desire to expand the env variable and 
-     // then populate the m_fileList StringArrayProperty
-     try {
-         std::vector<std::string> finalList;
-         std::vector<std::string>::const_iterator listIt, listIt2;
-         // iterate over all the elements in the job options parameter
-         for (listIt = fileList.value().begin(); listIt != fileList.value().end(); listIt++) {
-             std::string tempStr = *listIt;
-             int num = facilities::Util::expandEnvVar(&tempStr);
-             std::vector<std::string> tempList;
-             // find all the individual file names
-             facilities::Util::stringTokenize(tempStr, ",", tempList);
-             // Save all the file names
-             for (listIt2 = tempList.begin(); listIt2 != tempList.end(); listIt2++)
-                 finalList.push_back(*listIt2);
-         }
-         m_fileList.setValue(finalList);
-      
-     } catch(...) {
-         std::cout << "RootInputDesc: Failed to process the fileList JobOptions property!" 
-                   << std::endl;
-         return false;
-     }
-     return true;
  }
 
 void RootInputDesc::clearEvent()

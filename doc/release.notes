@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr5 03-Apr-2008 HMK remove ntupleReaderSvc and clean up support
+            of env variable for lists of files in RootInputDesc
  v20r0p2gr4 21-Mar-2008 HMK add ntupleReaderSvc
  v20r0p2gr3 18-Mar-2008 HMK Comment out the CEL updates, not needed in big
             run branch.  Add support for env var to denote list of input
