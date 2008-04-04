@@ -31,7 +31,6 @@ mcRootReaderAlg.mcRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_mu
 digiRootReaderAlg.digiRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/digi.root" } ;
 reconRootReaderAlg.reconRootFileList = { "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/recon.root" } ;
 
-
 //==============================================================
 //
 // End of job options file
