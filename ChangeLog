@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Thu Apr  3 20:05:19 PDT 2008
+RootIo/src
+
+Modified Files:
+      Tag: GR-BigRun2008
+	RootInputDesc.cxx 
+Removed Files:
+      Tag: GR-BigRun2008
+	ntupleReaderSvc.cxx 
+Log Message:
+prepare to tag
+    *
+------------------------------------------------------------
 User: heather  Thu Apr  3 20:05:18 PDT 2008
 RootIo/doc
 
