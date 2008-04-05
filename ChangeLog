@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: claval  Sat Apr  5 02:09:03 PDT 2008
+RootIo/src
+
+Modified Files:
+	gcrSelectRootWriterAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+include gcrOBFWordStatus in gcrSelect.root
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-00-00, operation: add
 Package: RootIo
