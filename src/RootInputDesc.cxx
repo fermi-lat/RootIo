@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.1 2008/03/19 03:27:23 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.2 2008/04/04 03:05:18 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -149,7 +149,6 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   // Add the files to the TChain
   typedef std::vector<std::string>::const_iterator StringVecIter ;
   StringVecIter fileListItr ;
-  int fileCount = 0 ;
   for ( fileListItr = m_fileList.value().begin() ; 
         fileListItr != m_fileList.value().end() ;
         fileListItr++ )
@@ -162,9 +161,9 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
       if (verbose) 
           std::cout << "RootInputDesc::setFileList opening: " << fileName 
                     << std::endl;
-      if (nf != ++fileCount) {
-          std::cout << "RootInputDesc::setFileList number of files opened " 
-                    << nf << " != filecount " << fileCount << std::endl;
+      if (nf <= 0) {
+          std::cout << "RootInputDesc::setFileList failed to TChain::Add " 
+                    << fileName << " returned " << nf << std::endl;
          return numEvents ;
       }
      }
