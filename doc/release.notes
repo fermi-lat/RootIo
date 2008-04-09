@@ -3,6 +3,10 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr6 09-Apr-2008 HMK Patch RootInputDesc when checking return code
+            from TChain::Add, it returns 0 if failure, it does not return the
+            total number of files Added to the TChain thus far, only the
+            total added in THIS call to Add
  v20r0p2gr5 03-Apr-2008 HMK remove ntupleReaderSvc and clean up support
             of env variable for lists of files in RootInputDesc
  v20r0p2gr4 21-Mar-2008 HMK add ntupleReaderSvc
