@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Mon Apr 14 03:07:00 PDT 2008
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+downgrade to DEBUG fillGcrXtal message output
+    *
+------------------------------------------------------------
 TAG
 Tag name: v20r0p2gr6, operation: add
 Package: RootIo
