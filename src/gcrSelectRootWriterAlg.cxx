@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.5 2008/01/24 21:38:30 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.6 2008/04/05 09:09:03 claval Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -256,7 +256,7 @@ StatusCode gcrSelectRootWriterAlg::writeGcrSelect() {
     if (gcrSelectValsTds) 
       fillGcrSelectVals(gcrSelect, gcrSelectValsTds); 
     else
-      log << MSG::INFO << "no gcrSelectVals found in TDS, do not fill GcrSelectVals" << endreq;
+      log << MSG::DEBUG << "no gcrSelectVals found in TDS, do not fill GcrSelectVals" << endreq;
     
    //log << MSG::INFO << "gcrSelectRootWriterAlg::writeGcrSelect END" << endreq;
     
