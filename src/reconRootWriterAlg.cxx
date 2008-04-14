@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.84 2008/01/24 21:38:30 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.85 2008/04/05 09:09:03 claval Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -677,7 +677,7 @@ void reconRootWriterAlg::fillGcrXtal(CalRecon *calRec, Event::GcrXtalCol* gcrXta
     MsgStream log(msgSvc(), name());
     Event::GcrXtalCol::const_iterator gcrXtalColIterTds;
     
-    log << MSG::INFO << "reconRootWriterAlg::fillGcrXtal BEGIN, gcrXtalColTds->size()=" << gcrXtalColTds->size()<< endreq;   
+    log << MSG::DEBUG << "reconRootWriterAlg::fillGcrXtal BEGIN, gcrXtalColTds->size()=" << gcrXtalColTds->size()<< endreq;   
     
     for (gcrXtalColIterTds = gcrXtalColTds->begin(); gcrXtalColIterTds != gcrXtalColTds->end(); gcrXtalColIterTds++) {
 	
