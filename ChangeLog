@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Mon Apr 14 07:38:41 PDT 2008
+RootIo/src
+
+Modified Files:
+	gcrSelectRootWriterAlg.cxx 
+Log Message:
+downgrade noisy output to DEBUG
+    *
+------------------------------------------------------------
 User: cohen  Mon Apr 14 03:07:00 PDT 2008
 RootIo/src
 
