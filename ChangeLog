@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Wed Apr 23 09:41:17 PDT 2008
+RootIo/src
+
+Modified Files:
+	gcrSelectRootWriterAlg.cxx 
+Log Message:
+fix verbosity
+    *
+------------------------------------------------------------
 TAG
 Tag name: v21r1, operation: add
 Package: RootIo
