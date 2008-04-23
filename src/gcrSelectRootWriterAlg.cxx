@@ -36,7 +36,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.6 2008/04/05 09:09:03 claval Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/gcrSelectRootWriterAlg.cxx,v 1.7 2008/04/14 14:38:40 cohen Exp $
 */
 
 class gcrSelectRootWriterAlg : public Algorithm
@@ -301,7 +301,7 @@ void gcrSelectRootWriterAlg::fillGcrSelectVals(GcrSelect *gcrSelect, Event::GcrS
     
      MsgStream log(msgSvc(), name());
  
-    log << MSG::INFO << "gcrSelectRootWriterAlg::fillGcrSelectVals BEGIN" << endreq;   
+    log << MSG::VERBOSE << "gcrSelectRootWriterAlg::fillGcrSelectVals BEGIN" << endreq;   
     
     
     GcrSelectVals* gcrSelectValsRoot = new GcrSelectVals();
@@ -312,12 +312,12 @@ void gcrSelectRootWriterAlg::fillGcrSelectVals(GcrSelect *gcrSelect, Event::GcrS
     
     //log << MSG::INFO << "gcrSelectValsRoot->getInferedZ()" << gcrSelectValsRoot->getInferedZ()<< endreq;   
     
-    std::cout << "gcrOBFStatusWord=" << std::hex << gcrSelectValsRoot->getGcrOBFStatusWord() << std::dec << std::endl;
+    log << MSG::INFO << "gcrOBFStatusWord=" << std::hex << gcrSelectValsRoot->getGcrOBFStatusWord() << std::dec << endreq;
    
     gcrSelect->addGcrSelectVals(gcrSelectValsRoot);
     
   
-   log << MSG::INFO << "gcrSelectRootWriterAlg::fillGcrSelectVals END" << endreq;   
+   log << MSG::VERBOSE << "gcrSelectRootWriterAlg::fillGcrSelectVals END" << endreq;   
     
     return;   
  
