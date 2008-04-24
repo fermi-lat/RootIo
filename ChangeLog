@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Thu Apr 24 02:18:18 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix verbosity, ooops
+    *
+------------------------------------------------------------
+User: cohen  Thu Apr 24 02:18:18 PDT 2008
 RootIo/cmt
 
 Modified Files:
