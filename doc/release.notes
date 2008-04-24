@@ -3,7 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
- v21r1p1      24-Apr-08 JCT fix a painful verbosity 
+ v21r1p2      24-Apr-08 JCT fix a painful verbosity 
  v21r1      22-Apr-08 JCT adding computation of gcr filter status word 
  v21r0      04-Apr-2008 HMK removing ntupleReaderSvc
             merging GR-BigRun2008 branch which include env var handling
