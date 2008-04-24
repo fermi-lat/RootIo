@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Thu Apr 24 02:09:52 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix verbosity, preparing for tagging
+    *
+------------------------------------------------------------
 User: cohen  Wed Apr 23 09:41:17 PDT 2008
 RootIo/src
 
