@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.93.2.1 2008/03/16 12:29:42 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.94 2008/03/24 15:25:43 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -739,7 +739,18 @@ StatusCode digiRootReaderAlg::readFilterStatus() {
         return StatusCode::FAILURE;
     }
 
-    RootPersistence::convert(obfFilterStatusRoot, *obfFilterStatusTds);
+    // Now do the new style obf filter track class
+    const ObfFilterTrack& obfFilterTrackRoot = m_digiEvt->getObfFilterTrack();
+
+    OnboardFilterTds::ObfFilterTrack *obfFilterTrackTds = new OnboardFilterTds::ObfFilterTrack;
+
+    RootPersistence::convert(obfFilterTrackRoot, *obfFilterTrackTds);
+
+    sc = eventSvc()->registerObject("/Event/Filter/ObfFilterTrack", obfFilterTrackTds);
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to register ObfFilterTrack" << endreq;
+        return StatusCode::FAILURE;
+    }
 
     return sc;
 
