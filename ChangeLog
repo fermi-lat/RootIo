@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+User: usher  Mon Apr 28 14:16:55 PDT 2008
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-01-02, operation: add
 Package: RootIo
