@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr7 08-May-2008 HMK check for TTree and numEvents > 0 in 
+            RootInputDesc::fileExists before adding to TChain
  v20r0p2gr6 09-Apr-2008 HMK Patch RootInputDesc when checking return code
             from TChain::Add, it returns 0 if failure, it does not return the
             total number of files Added to the TChain thus far, only the

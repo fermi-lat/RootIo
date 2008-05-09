@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.2 2008/04/04 03:05:18 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.3 2008/04/09 21:16:01 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -155,7 +155,7 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
    {
     std::string fileName = *fileListItr ;
     facilities::Util::expandEnvVar(&fileName);
-    if (fileExists(fileName))
+    if (fileExists(fileName, m_tree.c_str()))
      {
       int nf = m_chain->Add(fileName.c_str()) ;
       if (verbose) 
@@ -168,7 +168,8 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
       }
      }
     else {
-        std::cout << "RootInputDesc::setFileList Failed to open " << fileName 
+        std::cout << "RootInputDesc::setFileList Failed to open and add " 
+                  << fileName << " the file may have no TTree entries"
                   << std::endl;
         return numEvents ;
     }
@@ -231,7 +232,7 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   return numEvents ;
  }
     
-bool RootInputDesc::fileExists( const std::string & filename )
+bool RootInputDesc::fileExists( const std::string & filename, const char* treeName )
  {
   bool fileExists = false ;
   TFile * file = TFile::Open(filename.c_str()) ;
@@ -239,6 +240,11 @@ bool RootInputDesc::fileExists( const std::string & filename )
    {
     if (!file->IsZombie()) 
      {
+      if (treeName != 0) {
+          TTree *t = (TTree*)file->Get(treeName);
+          if (!t) return false;
+          if (t->GetEntries() <= 0) return false;
+      }
       file->Close() ;
       fileExists = true ;
      }
