@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Thu May  8 19:37:13 PDT 2008
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx digiRootWriterAlg.cxx 
+Log Message:
+ACD-10 merge
+    *
+------------------------------------------------------------
+User: heather  Thu May  8 19:37:13 PDT 2008
 RootIo/doc
 
 Modified Files:
