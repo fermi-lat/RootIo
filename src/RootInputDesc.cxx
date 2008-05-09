@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.3 2008/04/09 21:16:01 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.4 2008/05/09 02:12:59 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -170,8 +170,8 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
     else {
         std::cout << "RootInputDesc::setFileList Failed to open and add " 
                   << fileName << " the file may have no TTree entries"
-                  << std::endl;
-        return numEvents ;
+                  << " Continuing on" << std::endl;
+        //return numEvents ;
     }
    }
 
