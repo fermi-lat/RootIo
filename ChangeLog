@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Thu May  8 19:12:59 PDT 2008
+RootIo/src
+
+Modified Files:
+      Tag: GR-BigRun2008
+	RootInputDesc.cxx RootInputDesc.h 
+Log Message:
+check for TTree before adding to TChain
+    *
+------------------------------------------------------------
+User: heather  Thu May  8 19:12:59 PDT 2008
 RootIo/doc
 
 Modified Files:
