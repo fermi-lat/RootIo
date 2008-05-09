@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.94 2008/03/24 15:25:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.94.8.1 2008/04/30 20:53:22 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -586,6 +586,9 @@ StatusCode digiRootReaderAlg::readAcdDigi() {
 
         acdDigiTds->initLdfParameters(acdDigiRoot->getTileName(), 
                              acdDigiRoot->getTileNumber(), range, err);
+
+        acdDigiTds->initGem(acdDigiRoot->isNinja(), acdDigiRoot->getGemFlag());
+
         acdDigiTdsCol->push_back(acdDigiTds);
     }
 

@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.78 2008/03/24 15:25:43 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.79 2008/04/28 21:16:55 usher Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -529,6 +529,8 @@ StatusCode digiRootWriterAlg::writeAcdDigi() {
 
         digi->initLdfParameters((*acdDigiTds)->getTileName(), 
               (*acdDigiTds)->getTileNumber(), range, oddParity, headerParity);
+
+        digi->initGem((*acdDigiTds)->isNinja(), (*acdDigiTds)->getGemFlag());
 
     }
 
