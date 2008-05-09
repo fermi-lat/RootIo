@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu May  8 19:12:58 PDT 2008
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-BigRun2008
+	requirements 
+Log Message:
+check for TTree before adding to TChain
+    *
+------------------------------------------------------------
 TAG
 Tag name: v21r0gr1, operation: add
 Package: RootIo
