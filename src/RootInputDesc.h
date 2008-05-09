@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.7 2007/09/25 12:25:17 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.7.38.1 2008/03/19 03:27:23 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -56,7 +56,10 @@ class RootInputDesc
 
   private :
 
-    bool fileExists( const std::string & filename ) ;
+    /// Checks to see if the filename exists and can be opened
+    /// if treeName is non-NULL, the TTree object is checked to be sure
+    /// there are entries.  If either fails, false is returned
+    bool fileExists( const std::string & filename, const char* treeName=0 ) ;
     bool checkForEnvVar( const StringArrayProperty & fileList);
 
     StringArrayProperty m_fileList ; // A list of files (fully qualified) associated to this TChain
