@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon May 12 21:16:24 PDT 2008
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-BigRun2008
+	requirements 
+Log Message:
+allow zero event input files to terminate via event loop
+    *
+------------------------------------------------------------
 TAG
 Tag name: v20r0p2gr8, operation: add
 Package: RootIo
