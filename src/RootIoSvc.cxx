@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.44.2.1 2008/03/18 03:45:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.44.2.2 2008/03/19 03:27:24 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -179,6 +179,7 @@ class RootIoSvc :
     IntegerProperty m_autoSaveInterval ;
     UnsignedLongProperty m_treeSize ;
     StringProperty m_tupleName;
+    IntegerProperty m_noFailure;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -241,6 +242,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     // limited by the size of an unsigned int, expecting MB
     declareProperty("MaxTreeSize", m_treeSize=0);
     declareProperty("TupleName", m_tupleName="MeritTuple");
+    declareProperty("NoFailure", m_noFailure=0);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -509,8 +511,9 @@ StatusCode RootIoSvc::prepareRootInput
         rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
-            log << MSG::ERROR << "Failed to setup ROOT input" << endreq;
-            return StatusCode::FAILURE;
+            log << MSG::WARNING << "Failed to setup ROOT input for " 
+                << type << endreq;
+            if(!m_noFailure) return StatusCode::FAILURE;
         }
         setEvtMax(rootInputDesc->getNumEvents());
 
@@ -523,13 +526,14 @@ StatusCode RootIoSvc::prepareRootInput
             MsgStream log(msgSvc(), name());
             log << MSG::WARNING << "TChain " << type 
                 << " could not be constructed from event collection" << endreq;
-            return StatusCode::FAILURE;
+            if (!m_noFailure) return StatusCode::FAILURE;
         }
         rootInputDesc = new RootInputDesc(chain, tree, branch, log.level()<=MSG::DEBUG);
         // Register number of events
         if (m_celManager.getNumEvents() <= 0) {
-            log << MSG::ERROR << "Failed to setup ROOT input" << endreq;
-            return StatusCode::FAILURE;
+            log << MSG::WARNING << "Failed to setup ROOT input for " 
+                << type << endreq;
+            if (!m_noFailure) return StatusCode::FAILURE;
         }
         setEvtMax(m_celManager.getNumEvents());
     }
