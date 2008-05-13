@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Mon May 12 21:16:25 PDT 2008
+RootIo/src
+
+Modified Files:
+      Tag: GR-BigRun2008
+	RootInputDesc.cxx RootIoSvc.cxx 
+Log Message:
+allow zero event input files to terminate via event loop
+    *
+------------------------------------------------------------
+User: heather  Mon May 12 21:16:25 PDT 2008
 RootIo/doc
 
 Modified Files:
