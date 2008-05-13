@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.4 2008/05/09 02:12:59 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.5 2008/05/09 20:54:52 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -163,8 +163,9 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
                     << std::endl;
       if (nf <= 0) {
           std::cout << "RootInputDesc::setFileList failed to TChain::Add " 
-                    << fileName << " returned " << nf << std::endl;
-         return numEvents ;
+                    << fileName << " returned " << nf 
+                    << " Continuing on" << std::endl;
+         //return numEvents ;
       }
      }
     else {
@@ -176,6 +177,11 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
    }
 
   // Make sure the file is open
+  if (!m_chain->GetFile()) {
+      std::cout << "RootInputDesc::setFileList, no TFile available, no events"
+                << std::endl;
+      return numEvents;
+  }
   if (m_chain->GetFile()->IsOpen() != kTRUE)
    {
     std::cout << "RootInputDesc::setFileList failed to open" << std::endl;

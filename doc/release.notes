@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v20r0p2gr9 12-May-2008 HMK If zero entries in input TTrees, allow processing
+            to continue and let event loop terminate job
  v20r0p2gr8 09-May-2008 HMK Make sure failure to find a TTree doesn't
             terminate job
  v20r0p2gr7 08-May-2008 HMK check for TTree and numEvents > 0 in 
