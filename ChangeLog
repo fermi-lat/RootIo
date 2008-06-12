@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Thu Jun 12 10:25:20 PDT 2008
+RootIo/doc
+
+Modified Files:
+      Tag: GlastReleasev14r4
+	release.notes 
+Log Message:
+merge in reprocessing updates from GR-BigRun2008 branch
+    *
+------------------------------------------------------------
+User: heather  Thu Jun 12 10:25:20 PDT 2008
 RootIo/cmt
 
 Modified Files:
