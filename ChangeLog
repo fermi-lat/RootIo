@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 12 10:39:16 PDT 2008
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+Log Message:
+merge in GR-BigRun2008 mods
+    *
+------------------------------------------------------------
 User: heather  Thu Jun 12 10:39:15 PDT 2008
 RootIo/doc
 
