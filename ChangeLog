@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun 12 10:25:20 PDT 2008
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev14r4
+	requirements 
+Log Message:
+merge in reprocessing updates from GR-BigRun2008 branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-03-00, operation: add
 Package: RootIo
