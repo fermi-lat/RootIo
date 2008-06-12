@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.2 2008/04/04 03:05:18 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.6 2008/05/13 04:16:25 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -149,33 +149,39 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   // Add the files to the TChain
   typedef std::vector<std::string>::const_iterator StringVecIter ;
   StringVecIter fileListItr ;
-  int fileCount = 0 ;
   for ( fileListItr = m_fileList.value().begin() ; 
         fileListItr != m_fileList.value().end() ;
         fileListItr++ )
    {
     std::string fileName = *fileListItr ;
     facilities::Util::expandEnvVar(&fileName);
-    if (fileExists(fileName))
+    if (fileExists(fileName, m_tree.c_str()))
      {
       int nf = m_chain->Add(fileName.c_str()) ;
       if (verbose) 
           std::cout << "RootInputDesc::setFileList opening: " << fileName 
                     << std::endl;
-      if (nf != ++fileCount) {
-          std::cout << "RootInputDesc::setFileList number of files opened " 
-                    << nf << " != filecount " << fileCount << std::endl;
-         return numEvents ;
+      if (nf <= 0) {
+          std::cout << "RootInputDesc::setFileList failed to TChain::Add " 
+                    << fileName << " returned " << nf 
+                    << " Continuing on" << std::endl;
+         //return numEvents ;
       }
      }
     else {
-        std::cout << "RootInputDesc::setFileList Failed to open " << fileName 
-                  << std::endl;
-        return numEvents ;
+        std::cout << "RootInputDesc::setFileList Failed to open and add " 
+                  << fileName << " the file may have no TTree entries"
+                  << " Continuing on" << std::endl;
+        //return numEvents ;
     }
    }
 
   // Make sure the file is open
+  if (!m_chain->GetFile()) {
+      std::cout << "RootInputDesc::setFileList, no TFile available, no events"
+                << std::endl;
+      return numEvents;
+  }
   if (m_chain->GetFile()->IsOpen() != kTRUE)
    {
     std::cout << "RootInputDesc::setFileList failed to open" << std::endl;
@@ -232,7 +238,7 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   return numEvents ;
  }
     
-bool RootInputDesc::fileExists( const std::string & filename )
+bool RootInputDesc::fileExists( const std::string & filename, const char* treeName )
  {
   bool fileExists = false ;
   TFile * file = TFile::Open(filename.c_str()) ;
@@ -240,6 +246,11 @@ bool RootInputDesc::fileExists( const std::string & filename )
    {
     if (!file->IsZombie()) 
      {
+      if (treeName != 0) {
+          TTree *t = (TTree*)file->Get(treeName);
+          if (!t) return false;
+          if (t->GetEntries() <= 0) return false;
+      }
       file->Close() ;
       fileExists = true ;
      }
@@ -307,35 +318,6 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
   if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
   return true;
  }
-
-/*bool RootInputDesc::checkForEnvVar(const StringArrayProperty & fileList) {
-     // Purpose and Method:  The JobOptions parameter for the file list may be an env variable.
-     // This env variable may contain a list of files.  We desire to expand the env variable and 
-     // then populate the m_fileList StringArrayProperty
-     try {
-         std::vector<std::string> finalList;
-         std::vector<std::string>::const_iterator listIt, listIt2;
-         // iterate over all the elements in the job options parameter
-         for (listIt = fileList.value().begin(); listIt != fileList.value().end(); listIt++) {
-             std::string tempStr = *listIt;
-             int num = facilities::Util::expandEnvVar(&tempStr);
-             std::vector<std::string> tempList;
-             // find all the individual file names
-             facilities::Util::stringTokenize(tempStr, ",", tempList);
-             // Save all the file names
-             for (listIt2 = tempList.begin(); listIt2 != tempList.end(); listIt2++)
-                 finalList.push_back(*listIt2);
-         }
-         m_fileList.setValue(finalList);
-      
-     } catch(...) {
-         std::cout << "RootInputDesc: Failed to process the fileList JobOptions property!" 
-                   << std::endl;
-         return false;
-     }
-     return true;
- }
-*/
 
 void RootInputDesc::clearEvent()
  {
