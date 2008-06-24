@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Jun 23 19:32:32 PDT 2008
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+patch for ObfFilterStatus writing
+    *
+------------------------------------------------------------
+User: heather  Mon Jun 23 19:32:32 PDT 2008
 RootIo/doc
 
 Modified Files:
