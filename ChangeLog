@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jun 23 19:32:32 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch for ObfFilterStatus writing
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-04-00, operation: add
 Package: RootIo
