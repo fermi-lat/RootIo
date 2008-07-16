@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Jul 16 11:16:39 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+provide new JO option to rebuild indices, and make the default true
+    *
+------------------------------------------------------------
+User: heather  Wed Jul 16 11:16:39 PDT 2008
 RootIo/cmt
 
 Modified Files:
