@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.44.2.3 2008/05/13 04:16:25 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.46 2008/06/12 17:39:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -180,6 +180,7 @@ class RootIoSvc :
     UnsignedLongProperty m_treeSize ;
     StringProperty m_tupleName;
     IntegerProperty m_noFailure;
+    bool m_rebuildIndex;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -243,6 +244,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("MaxTreeSize", m_treeSize=0);
     declareProperty("TupleName", m_tupleName="MeritTuple");
     declareProperty("NoFailure", m_noFailure=0);
+    declareProperty("RebuildIndex", m_rebuildIndex=true);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -508,7 +510,7 @@ StatusCode RootIoSvc::prepareRootInput
     if (m_celFileNameRead.empty()) {
 
         // Create a new RootInputDesc object for this algorithm
-        rootInputDesc = new RootInputDesc(fileList, tree, branch, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 
@@ -528,7 +530,7 @@ StatusCode RootIoSvc::prepareRootInput
                 << " could not be constructed from event collection" << endreq;
             if (!m_noFailure) return StatusCode::FAILURE;
         }
-        rootInputDesc = new RootInputDesc(chain, tree, branch, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(chain, tree, branch, m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register number of events
         if (m_celManager.getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 
@@ -637,7 +639,7 @@ TTree* RootIoSvc::prepareRootOutput
         log << MSG::WARNING << "Already found RootOutputDesc entry for type " << type << endreq;
         return 0;
     }
-    // Create a new RootInputDesc object for this algorithm
+    // Create a new RootOutputDesc object for this algorithm
     RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
 
     // Store the pointer to this in our map
