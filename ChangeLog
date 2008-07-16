@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Jul 16 11:16:39 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+provide new JO option to rebuild indices, and make the default true
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-04-01, operation: add
 Package: RootIo
