@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.7.38.2 2008/05/09 02:12:59 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.10 2008/06/12 17:39:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -23,12 +23,14 @@ class RootInputDesc
     RootInputDesc
      ( const StringArrayProperty & fileList, 
        const std::string & treeName, 
-       const std::string & branchName, bool verbose=false ) ;
+       const std::string & branchName, bool rebuildIndex = true,
+       bool verbose=false ) ;
 
     RootInputDesc
      (  TChain *t,
        const std::string & treename,
-       const std::string & branchName, bool verbose=false);
+       const std::string & branchName, bool rebuildIndex = true, 
+       bool verbose=false);
 
     ~RootInputDesc() ; 
 
@@ -70,6 +72,8 @@ class RootInputDesc
     TObject * * m_dataObject ;       // A pointer to the pointer to the data
     Long64_t m_numEvents ;           // Number of events in current TChain
     bool m_verbose;
+    bool m_rebuildIndex;             ///Flag denoting that we should force 
+                                     /// the rebuild of the input files' index
     TVirtualIndex *m_runEvtIndex;    /// Save the RunId/EventId Index in case other indices are in use such as CompositeEventList
     
  } ;

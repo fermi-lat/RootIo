@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.10.38.6 2008/05/13 04:16:25 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.13 2008/06/12 17:39:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -18,8 +18,8 @@
 RootInputDesc::RootInputDesc
  ( const StringArrayProperty& fileList, 
    const std::string & tree, 
-   const std::string & branch, bool verbose )
- : m_tree(tree), m_branch(branch), m_chain(0), m_dataObject(0), m_verbose(verbose), m_runEvtIndex(0)
+   const std::string & branch, bool rebuildIndex, bool verbose )
+ : m_tree(tree), m_branch(branch), m_chain(0), m_dataObject(0), m_verbose(verbose),m_rebuildIndex(rebuildIndex), m_runEvtIndex(0)
  {
   // Set up the input file list
   m_numEvents = setFileList(fileList, m_verbose) ;
@@ -30,8 +30,8 @@ RootInputDesc::RootInputDesc
  RootInputDesc::RootInputDesc
      ( TChain *t,
      const std::string & treeName,
-     const std::string & branchName, bool verbose)
-     : m_tree(treeName), m_branch(branchName), m_chain(t), m_dataObject(0), m_verbose(verbose), 
+     const std::string & branchName, bool rebuildIndex, bool verbose)
+     : m_tree(treeName), m_branch(branchName), m_chain(t), m_dataObject(0), m_verbose(verbose), m_rebuildIndex(rebuildIndex), 
        m_runEvtIndex(0) {
        m_numEvents = setEventCollection();
      }
@@ -96,10 +96,10 @@ RootInputDesc::~RootInputDesc()
      m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;
 
      // If necessary, set up the TChainIndex
-     TVirtualIndex *resetIndex = m_chain->GetTreeIndex();
+     //TVirtualIndex *resetIndex = m_chain->GetTreeIndex();
      m_chain->BuildIndex("m_runId", "m_eventId") ;
      m_runEvtIndex = m_chain->GetTreeIndex();
-     m_chain->SetTreeIndex(resetIndex);
+     //m_chain->SetTreeIndex(resetIndex);
 
      numEvents = m_chain->GetEntries() ;
 
@@ -191,7 +191,7 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   // TODO : those branch names could depend
   // on the data type
   // If necessary, set up the TChainIndex
-  if (!m_chain->GetTreeIndex()) 
+  if ((m_rebuildIndex) || (!m_chain->GetTreeIndex())) 
    {
     m_chain->BuildIndex("m_runId", "m_eventId") ;
     m_runEvtIndex = m_chain->GetTreeIndex();
