@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.13 2008/06/12 17:39:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.14 2008/07/16 18:16:39 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -11,6 +11,7 @@
 #include "TROOT.h"
 #include <vector>
 #include <iostream>
+#include "TTreeIndex.h"
 
 
 // ctor for vanilla reading from a list of ROOT files
@@ -96,10 +97,16 @@ RootInputDesc::~RootInputDesc()
      m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;
 
      // If necessary, set up the TChainIndex
-     //TVirtualIndex *resetIndex = m_chain->GetTreeIndex();
+     if (m_rebuildIndex) {
+         unsigned int iTree;
+         for (iTree = 0; iTree < m_chain->GetNtrees(); iTree++) {
+             m_chain->LoadTree((m_chain->GetTreeOffset())[iTree]);
+             m_chain->GetTree()->SetTreeIndex(0);
+         }
+         m_chain->LoadTree(0);
+     }
      m_chain->BuildIndex("m_runId", "m_eventId") ;
      m_runEvtIndex = m_chain->GetTreeIndex();
-     //m_chain->SetTreeIndex(resetIndex);
 
      numEvents = m_chain->GetEntries() ;
 
@@ -191,7 +198,15 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
   // TODO : those branch names could depend
   // on the data type
   // If necessary, set up the TChainIndex
-  if ((m_rebuildIndex) || (!m_chain->GetTreeIndex())) 
+  if (m_rebuildIndex) {
+       unsigned int iTree;
+       for (iTree = 0; iTree < m_chain->GetNtrees(); iTree++) {
+           m_chain->LoadTree((m_chain->GetTreeOffset())[iTree]);
+           m_chain->GetTree()->SetTreeIndex(0);
+       }
+       m_chain->LoadTree(0);
+   }
+  if (!m_chain->GetTreeIndex()) 
    {
     m_chain->BuildIndex("m_runId", "m_eventId") ;
     m_runEvtIndex = m_chain->GetTreeIndex();
@@ -289,7 +304,6 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
 
   if (m_chain) 
    {
-    if (m_runEvtIndex) m_chain->SetTreeIndex(m_runEvtIndex);
     int ret = m_chain->GetEntryWithIndex(runNum,evtNum) ;
     dataPtr = *m_dataObject ;
    } 
@@ -312,7 +326,6 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
   TDirectory * saveDir = gDirectory ;	
   if (!m_chain) return false;
 
-  if (m_runEvtIndex) m_chain->SetTreeIndex(m_runEvtIndex);
   Long64_t readInd = m_chain->GetEntryNumberWithIndex(runNum,evtNum);
   saveDir->cd();
   if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
