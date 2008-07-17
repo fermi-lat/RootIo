@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r6      17-Jul-08 HMK TChainIndex requires no pre-existing indices 
+            to force rebuild of index
  v21r5      16-Jul-08 HMK Provide JO to force rebuild of the indices
  v21r4p1    23-Jun-08 HMK Patch to make sure we write out the OBF Filter
             status bits
