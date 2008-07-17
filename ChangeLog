@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul 17 11:32:09 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+real patch for JIRA ROOT-40
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-05-00, operation: add
 Package: RootIo
