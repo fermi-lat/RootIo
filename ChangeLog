@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul 17 11:32:10 PDT 2008
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx 
+Log Message:
+real patch for JIRA ROOT-40
+    *
+------------------------------------------------------------
 User: heather  Thu Jul 17 11:32:09 PDT 2008
 RootIo/doc
 
