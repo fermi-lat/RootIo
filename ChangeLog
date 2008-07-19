@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jul 18 21:48:24 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+prepare to write Gleam OBF to flight OBF when running MC
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-06-01, operation: add
 Package: RootIo
