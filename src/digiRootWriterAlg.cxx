@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.80 2008/05/09 02:37:13 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.81 2008/06/24 02:32:32 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -109,6 +109,8 @@ private:
 
     /// Retrieves CCSDS data from TDS and fills Ccsds ROOT object 
     StatusCode writeCcsds();
+       
+    StatusCode writeMcObf2FlightObf(MetaEvent &metaRoot);
 
     /// Retrieves AncillaryDataEvent/Digi data from TDS and fille AdfDigi ROOT object
     StatusCode writeAdf();
@@ -670,6 +672,9 @@ StatusCode digiRootWriterAlg::writeMetaEvent() {
     SmartDataPtr<LsfEvent::MetaEvent> metaEventTds(eventSvc(), "/Event/MetaEvent");
     if (!metaEventTds) {
         log << MSG::DEBUG << "No MetaEvent" << endreq;
+        MetaEvent metaEventRoot;
+        sc = writeMcObf2FlightObf(metaEventRoot);
+        m_digiEvt->setMetaEvent(metaEventRoot);
         return sc;
      }
 
@@ -678,6 +683,15 @@ StatusCode digiRootWriterAlg::writeMetaEvent() {
     m_digiEvt->setMetaEvent(metaEventRoot);
 
     return sc;
+}
+ 
+StatusCode digiRootWriterAlg::writeMcObf2FlightObf(MetaEvent &metaRoot){
+    SmartDataPtr<OnboardFilterTds::ObfFilterStatus> obfFilterStatusTds(eventSvc(), "/Event/Filter/ObfFilterStatus");
+    if (obfFilterStatusTds) {
+        RootPersistence::convert(*obfFilterStatusTds,metaRoot);
+        return StatusCode::SUCCESS;
+    }
+    return StatusCode::FAILURE;
 }
 
 StatusCode digiRootWriterAlg::writeCcsds() {
