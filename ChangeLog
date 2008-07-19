@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Jul 18 21:48:24 PDT 2008
+RootIo/src
+
+Modified Files:
+	digiRootWriterAlg.cxx 
+Log Message:
+prepare to write Gleam OBF to flight OBF when running MC
+    *
+------------------------------------------------------------
+User: heather  Fri Jul 18 21:48:24 PDT 2008
 RootIo/doc
 
 Modified Files:
