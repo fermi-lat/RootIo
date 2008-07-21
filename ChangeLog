@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: glastrm  Mon Jul 21 08:17:33 PDT 2008
+GlastRelease-scons/RootIo/src/test
+
+Modified Files:
+	g4Options.txt readHeadersOptions.txt readOptions.txt 
+	testRootIoSvcAlg.cxx 
+Log Message:
+Removed dependency on CMT env variables
+    *
+------------------------------------------------------------
+User: glastrm  Mon Jul 21 08:17:33 PDT 2008
 GlastRelease-scons/RootIo/src
 
 Modified Files:
