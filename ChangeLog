@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: glastrm  Mon Jul 21 08:17:33 PDT 2008
+GlastRelease-scons/RootIo/src
+
+Modified Files:
+	readRootOptions.txt 
+Log Message:
+Removed dependency on CMT env variables
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-07-00, operation: add
 Package: RootIo
