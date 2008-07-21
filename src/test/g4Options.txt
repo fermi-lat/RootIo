@@ -2,7 +2,7 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.9 2002/06/12 07:53:20 heather Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/g4Options.txt,v 1.10 2004/02/27 11:01:50 kuss Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GlastSvc", "G4Generator",
@@ -19,7 +19,7 @@ EventPersistencySvc.CnvServices = {"EventCnvSvc"};
 EventSelector.Input = "NONE";
 
 // Stuff for detModel
-GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
+GlastDetSvc.xmlfile="$(XMLGEODBSXMLPATH)/flight/flightSegVols.xml";
 GlastDetSvc.topVolume="LAT";         // the whole schebang 
 GlastDetSvc.visitorMode="recon";
 
