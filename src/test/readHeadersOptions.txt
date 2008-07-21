@@ -20,7 +20,7 @@ EventSelector.Input = "NONE";
 ApplicationMgr.EvtMax = 10 ;
 
 // Stuff for detModel
-GlastDetSvc.xmlfile="$(XMLGEODBSROOT)/xml/flight/flightSegVols.xml";
+GlastDetSvc.xmlfile="$(XMLGEODBSXMLPATH)/flight/flightSegVols.xml";
 // select one of the following for a top volume 
 GlastDetSvc.topVolume="LAT";         // the whole schebang 
 

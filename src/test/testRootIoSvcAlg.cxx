@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.6 2006/11/22 18:12:18 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.7 2007/07/04 15:19:27 chamont Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -84,8 +84,8 @@ StatusCode testRootIoSvcAlg::execute()
         }
         retVal = m_rootIoSvc->setRootFile( 
                  "",
-                 "$(ROOTTESTDATAROOT)/data/vertical_surface_muons/digi.root", 
-                 "$(ROOTTESTDATAROOT)/data//vertical_surface_muons/recon.root",
+                 "$(ROOTTESTDATADATAPATH)/vertical_surface_muons/digi.root", 
+                 "$(ROOTTESTDATADATAPATH)//vertical_surface_muons/recon.root",
                  "");
         if (retVal)
              log << MSG::INFO << "Passed ROOT file open test "

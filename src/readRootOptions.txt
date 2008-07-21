@@ -9,9 +9,9 @@ Digitization.Members = {"digiRootReaderAlg"};
 Reconstruction.Members = {"reconRootReaderAlg" };
 Output.Members = {};
 
-mcRootReaderAlg.mcRootFileList = {"$(ROOTTESTDATAROOT)/data/default/mc.root"};
-digiRootReaderAlg.digiRootFileList = {"$(ROOTTESTDATAROOT)/data/default/digi.root"};
-reconRootReaderAlg.reconRootFileList = {"$(ROOTTESTDATAROOT)/data/default/recon.root"};
+mcRootReaderAlg.mcRootFileList = {"$(ROOTTESTDATADATAPATH)/default/mc.root"};
+digiRootReaderAlg.digiRootFileList = {"$(ROOTTESTDATADATAPATH)/default/digi.root"};
+reconRootReaderAlg.reconRootFileList = {"$(ROOTTESTDATADATAPATH)/default/recon.root"};
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 
