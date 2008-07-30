@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jul 29 20:59:35 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging removal of CMT env vars
+    *
+------------------------------------------------------------
 User: glastrm  Mon Jul 21 08:17:33 PDT 2008
 GlastRelease-scons/RootIo/src/test
 
