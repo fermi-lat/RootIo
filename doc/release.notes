@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r8      29-Jul-08 HMK Tagging removal of CMT env vars
  v21r7      18-Jul-08 HMK Fill Flight OBF data with Gleam OBF when running MC
  v21r6p1    17-Jul-08 HMK update mainpage.h
  v21r6      17-Jul-08 HMK TChainIndex requires no pre-existing indices 
