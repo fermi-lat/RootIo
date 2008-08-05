@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.88 2007/09/21 03:25:34 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.89 2008/01/24 21:38:30 chamont Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -290,6 +290,8 @@ StatusCode reconRootReaderAlg::readReconEvent() {
 
     log << MSG::DEBUG << "Reading Event (run, event): (" << runIdRoot
         << ", " << eventIdRoot << ")" << endreq;
+
+    evt->setGleamEventFlags(m_reconEvt->getGleamEventFlags());
     
     // Only update the eventflags on the TDS if the /Event/EventSummary
     // does not yet exist (digiRootReader may fill this for us)
