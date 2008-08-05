@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Aug  4 21:56:31 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+add GleamEventFlags
+    *
+------------------------------------------------------------
+User: heather  Mon Aug  4 21:56:31 PDT 2008
 RootIo/cmt
 
 Modified Files:
