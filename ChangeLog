@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Aug  4 21:56:31 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+add GleamEventFlags
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-08-00, operation: add
 Package: RootIo
