@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Aug  4 21:56:32 PDT 2008
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+add GleamEventFlags
+    *
+------------------------------------------------------------
 User: heather  Mon Aug  4 21:56:31 PDT 2008
 RootIo/doc
 
