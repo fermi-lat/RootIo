@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r9p1    18-Sep-08 HMK JIRA GRINF-42 include time info formatted as in 
+            FluxSvc at Tom's request
  v21r9      05-Aug-08 HMK add GleamEventFlags
  v21r8      29-Jul-08 HMK Tagging removal of CMT env vars
  v21r7      18-Jul-08 HMK Fill Flight OBF data with Gleam OBF when running MC
