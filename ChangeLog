@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sat Oct  4 22:23:05 PDT 2008
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx 
+Log Message:
+set fromMc and read Gem correctly
+    *
+------------------------------------------------------------
 User: heather  Sat Oct  4 22:23:04 PDT 2008
 RootIo/doc
 
