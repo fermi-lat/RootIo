@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.94.8.1 2008/04/30 20:53:22 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.96 2008/05/09 02:37:13 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -365,15 +365,16 @@ StatusCode digiRootReaderAlg::readDigiEvent() {
     Event::DigiEvent* digiEventTds = 
         SmartDataPtr<Event::DigiEvent>(eventSvc(), EventModel::Digi::Event);
     if (!digiEventTds) {
-        sc = eventSvc()->registerObject(EventModel::Digi::Event /*"/Event/Digi"*/,new DataObject);
+        digiEventTds = new Event::DigiEvent;
+        sc = eventSvc()->registerObject(EventModel::Digi::Event /*"/Event/Digi"*/, digiEventTds);
         if( sc.isFailure() ) {
             log << MSG::ERROR << "could not register " << EventModel::Digi::Event /*<< /Event/Digi "*/ << endreq;
             return sc;
         }
-    } else {
-        bool fromMc = m_digiEvt->getFromMc();
-        digiEventTds->initialize(fromMc);
-    }
+        
+    } 
+    bool fromMc = m_digiEvt->getFromMc();
+    digiEventTds->initialize(fromMc);
 
     TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
     sc = eventSvc()->registerObject("/Event/TriRowBits", rowbits);
@@ -437,7 +438,7 @@ StatusCode digiRootReaderAlg::readGem() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     // Skip GEM if this is simulated data
-    if (m_digiEvt->getFromMc()) return sc;
+    //if (m_digiEvt->getFromMc()) return sc;  HMK oct2008
 
     const Gem &gemRoot = m_digiEvt->getGem();
     GemTileList tileListRoot = gemRoot.getTileList();
