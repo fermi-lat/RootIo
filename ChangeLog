@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Sat Oct  4 22:23:04 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+set fromMc and read Gem correctly
+    *
+------------------------------------------------------------
+User: heather  Sat Oct  4 22:23:04 PDT 2008
 RootIo/cmt
 
 Modified Files:
