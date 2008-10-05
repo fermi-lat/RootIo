@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sat Oct  4 22:23:04 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+set fromMc and read Gem correctly
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-09-01, operation: add
 Package: RootIo
