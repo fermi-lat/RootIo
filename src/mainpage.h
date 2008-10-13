@@ -41,6 +41,10 @@
 *  Defaults to true
 *  Determines if the TTreeIndex is automatically rebuilt from scratch whether
 *  or not one pre-exists in the input ROOT files.
+* @param RootIoSvc.AbortOnRootError
+*  Defaults to true
+*  Determines action taken if ROOT errors are reported for an event.  If set
+*  to true (the default), the job will terminate and return an error code
 * @param mcRootWriterAlg.mcRootFile
 *  Name of the output MC ROOT file, default mc.root
 * @param mcRootWriterAlg.splitMode 
