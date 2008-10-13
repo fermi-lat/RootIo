@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Oct 12 22:09:04 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+try to catch AFS read errors
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-10-00, operation: add
 Package: RootIo
