@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Mon Oct 13 13:29:04 PDT 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx mainpage.h 
+Added Files:
+	GleamMessageHandler.cxx GleamMessageHandler.h 
+Log Message:
+add more error handling
+    *
+------------------------------------------------------------
 User: heather  Mon Oct 13 13:29:01 PDT 2008
 RootIo/doc
 
