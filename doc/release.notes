@@ -3,9 +3,11 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r12     13-Oct-08 HMK Add new Gleam class derived from ROOT's 
+            TMessageHandler to hopefully handle TFile errors
+            13-Oct-08 TU  Add RootIoSvc methods to close input files
  v21r11     13-Oct-08 HMK Catch bad reads and return null object, which should
             cause gaudi to return failure
-            13-Oct-08 TU  Add RootIoSvc methods to close input files
  v21r10     04-Oct-08 HMK Patch to make sure to read and set DigiEvent::fromMc
  v21r9p1    18-Sep-08 HMK JIRA GRINF-42 include time info formatted as in 
             FluxSvc at Tom's request
