@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.14 2008/07/16 18:16:39 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.15 2008/07/17 18:32:10 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -284,6 +284,10 @@ TObject * RootInputDesc::getEvent( int index )
   if (m_chain) 
    {
     int ret = m_chain->GetEntry(index) ;
+    if (ret <= 0) {
+        std::cout << "RootInputDesc::getEvent bad read" << std::endl;
+        return 0;
+    }
     dataPtr = *m_dataObject ;
    } 
 
@@ -305,6 +309,10 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
   if (m_chain) 
    {
     int ret = m_chain->GetEntryWithIndex(runNum,evtNum) ;
+    if (ret <= 0) {
+        std::cout << "RootInputDesc::getEvent bad read" << std::endl;
+        return 0;
+    }
     dataPtr = *m_dataObject ;
    } 
 
