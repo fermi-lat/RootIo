@@ -3,13 +3,14 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.48 2008/09/18 14:37:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.49 2008/10/13 15:21:24 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
 #include "commonData.h"
 #include "RootInputDesc.h"
 #include "RootOutputDesc.h"
+#include "GleamMessageHandler.h"
 #include "RootConvert/Utilities/RootReaderUtil.h"
 #include "rootUtil/CelManager.h"
 #include "rootUtil/CompositeEventList.h"
@@ -185,6 +186,7 @@ class RootIoSvc :
     StringProperty m_tupleName;
     IntegerProperty m_noFailure;
     bool m_rebuildIndex;
+    bool m_abortOnRootError;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -213,6 +215,7 @@ class RootIoSvc :
     INTupleWriterSvc *   m_rootTupleSvc;
     TTree *m_outputTuple;
 
+    GleamMessageHandler* m_rootFileMessageHandler;
     
  } ;
 
@@ -253,6 +256,8 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
     declareProperty("CelRootFileRead", m_celFileNameRead="");
+
+    declareProperty("AbortOnRootError", m_abortOnRootError=true);
 
     m_index = 0;
     m_rootEvtMax = 0;
@@ -299,6 +304,9 @@ StatusCode RootIoSvc::initialize ()
     gSystem->ResetSignal(kSigSegmentationViolation); 
     gSystem->ResetSignal(kSigIllegalInstruction); 
     gSystem->ResetSignal(kSigFloatingException);  
+
+    // Create a local MessageHandler to check for ROOT errors
+    m_rootFileMessageHandler = new GleamMessageHandler("TFile", kTRUE);
 
     if (m_treeSize > 0) {
         // JO parameter in MB - need to convert to bytes
@@ -1030,6 +1038,21 @@ StatusCode RootIoSvc::run()
         //if(flux!=0){
          //   currentTime = flux->gpsTime();
        // }
+
+
+        // Check for ROOT errors
+        if ( (m_rootFileMessageHandler->getError()) || 
+             (m_rootFileMessageHandler->getSysError()) ||
+             (m_rootFileMessageHandler->getFatal()) ) {
+             m_rootFileMessageHandler->Print();
+             if (m_abortOnRootError) {
+                 // Bailing out and returning error code
+                 log << MSG::ERROR << "Terminating due to ROOT error" << endreq;
+                 exit(-1);
+             }
+             m_rootFileMessageHandler->resetFlags();
+         }
+   
         eventNumber++;
     }
     if( status.isFailure()){
@@ -1040,6 +1063,7 @@ StatusCode RootIoSvc::run()
     }else {
         log << MSG::INFO << "Processing loop terminated by event count" << endreq;
     }
+    m_rootFileMessageHandler->Print();
     return status;
 }
 
