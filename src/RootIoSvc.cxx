@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.47 2008/07/16 18:16:39 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.48 2008/09/18 14:37:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -115,6 +115,8 @@ class RootIoSvc :
        const std::string & tree,
        const std::string & branch,
        const StringArrayProperty & fileList ) ;
+
+    virtual StatusCode closeInput(const std::string& type);
        
     virtual TObject * getNextEvent( const std::string & type) ;
 
@@ -159,6 +161,7 @@ class RootIoSvc :
 
     const RootInputDesc * getRootInputDesc( const std::string & type ) const ;
     RootInputDesc * getRootInputDesc( const std::string & type ) ; 
+    StatusCode deleteRootInputDesc( const std::string& type );
     unsigned setSingleFile( const std::string & type, const char * fileName ) ;
     void registerRootTree( TChain * ch ) ;
 
@@ -368,6 +371,27 @@ RootInputDesc * RootIoSvc::getRootInputDesc( const std::string & type )
    ( static_cast<const RootIoSvc *>(this)->getRootInputDesc(type) ) ;
  }
 
+StatusCode RootIoSvc::deleteRootInputDesc(const std::string& type)
+{
+    StatusCode sc = StatusCode::SUCCESS;
+
+    std::map<std::string,RootInputDesc*>::iterator descItr = m_rootIoMap.find(type);
+
+    if (descItr != m_rootIoMap.end())
+    {
+        delete descItr->second;
+        m_rootIoMap.erase(descItr);
+    }
+    else
+    {
+        MsgStream log( msgSvc(), name() );
+
+        log << MSG::ERROR << "Failed to find " << type << " in the input descriptor map" << endreq;
+
+        sc = StatusCode::FAILURE;
+    }
+    return sc;
+}
 
 
 //============================================================================
@@ -546,6 +570,25 @@ StatusCode RootIoSvc::prepareRootInput
 
 
 
+    return sc;
+}
+
+StatusCode RootIoSvc::closeInput(const std::string& type)
+{
+    StatusCode sc = StatusCode::SUCCESS;
+
+    RootInputDesc* inputDesc = getRootInputDesc(type);
+
+    if (inputDesc) 
+    {
+        sc = deleteRootInputDesc(type);
+    } 
+    else 
+    {
+        MsgStream log (msgSvc(), name() );
+        log << MSG::WARNING << "RootInputDesc of type " << type << " not found" << endreq;
+        sc = StatusCode::FAILURE;
+    }
     return sc;
 }
 
