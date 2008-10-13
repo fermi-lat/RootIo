@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.15 2008/01/24 21:38:30 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.16 2008/03/06 04:29:01 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -49,7 +49,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.15 2008/01/24 21:38:30 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.16 2008/03/06 04:29:01 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -85,6 +85,8 @@ class  IRootIoSvc : virtual public IInterface
        const std::string & tree,
        const std::string & branch,
        const StringArrayProperty & fileList) = 0 ;
+
+    virtual StatusCode closeInput(const std::string& type) = 0;
        
     virtual TObject * getNextEvent( const std::string & type ) = 0 ;
     
