@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Mon Oct 13 08:21:24 PDT 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+Add mechanism to close an input file which will be used by the Overlay to handle file switching during a particular run.
+    *
+------------------------------------------------------------
 User: usher  Mon Oct 13 08:21:23 PDT 2008
 RootIo/RootIo
 
