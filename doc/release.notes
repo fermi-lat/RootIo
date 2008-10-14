@@ -3,6 +3,9 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r13     14-Oct-08 HMK Fix Win build and check RootTupleSvc to find
+            number of entries when reading root files - should allow
+            just an input tuple as an option
  v21r12     13-Oct-08 HMK Add new Gleam class derived from ROOT's 
             TMessageHandler to hopefully handle TFile errors
             13-Oct-08 TU  Add RootIoSvc methods to close input files

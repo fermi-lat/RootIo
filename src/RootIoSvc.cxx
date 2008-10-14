@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.49 2008/10/13 15:21:24 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.50 2008/10/13 20:29:04 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -968,6 +968,14 @@ StatusCode RootIoSvc::run()
     if( status.isFailure()) {
         log << MSG::ERROR << "Unable to locate PropertyManager Service" << endreq;
         return status;
+    }
+
+    // Check for an input merit tuple, and add its number of events to our
+    // m_rootEvtMax
+    if (m_rootTupleSvc) {
+        void *treePtr;
+        Long64_t entries = m_rootTupleSvc->getInputTreePtr(treePtr);
+        if (entries > 0) setEvtMax(entries);
     }
     
     IntegerProperty evtMax("EvtMax",0);
