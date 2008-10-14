@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct 13 21:18:16 PDT 2008
+RootIo/src
+
+Modified Files:
+	GleamMessageHandler.cxx RootIoSvc.cxx 
+Log Message:
+check tuple as possible read option
+    *
+------------------------------------------------------------
 User: heather  Mon Oct 13 21:18:15 PDT 2008
 RootIo/doc
 
