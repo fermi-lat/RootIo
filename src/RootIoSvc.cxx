@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.50 2008/10/13 20:29:04 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.51 2008/10/14 04:18:16 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -121,8 +121,15 @@ class RootIoSvc :
        
     virtual TObject * getNextEvent( const std::string & type) ;
 
-    virtual Long64_t getEvtMax() { return m_evtMax ; }
+    /// Max Event for event loop for read jobs
+    virtual long long getEvtMax() const { return m_evtMax ; }
+
+    virtual long long getRootEvtMax() const { return m_rootEvtMax; }
+
+    /// Allows reader algorithms to register the number of events in their
+    /// input ROOT files
     virtual void setEvtMax(Long64_t max) ;
+    virtual void setRootEvtMax(Long64_t max) { setEvtMax(max); }
 
 
     //====================
@@ -174,13 +181,14 @@ class RootIoSvc :
 
     void beginEvent() ;
     void endEvent() ;
-    void loopStatus( int eventNumber, double currentTime, MsgStream & log) ;	
+    void loopStatus( long long eventNumber, double currentTime, MsgStream & log) ;	
     /// Allow SvcFactory to instantiate the service.
     friend class SvcFactory<RootIoSvc> ;
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
-    IntegerProperty m_evtMax ;
+    //IntegerProperty m_evtMax ;
+    long long m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
     UnsignedLongProperty m_treeSize ;
     StringProperty m_tupleName;
@@ -237,7 +245,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 : Service(name,svc), m_outputCel(0), m_rootTupleSvc(0), m_outputTuple(0)
 {
     
-    declareProperty("EvtMax"     , m_evtMax=0);
+    //declareProperty("EvtMax"     , m_evtMax=0);
 
     // disable for now
     //declareProperty("StartTime"   , m_startTime=0);
@@ -963,13 +971,6 @@ StatusCode RootIoSvc::run()
 
     if ( 0 == m_appMgrUI )  return status; 
 
-    IProperty* propMgr=0;
-    status = serviceLocator()->service("ApplicationMgr", propMgr );
-    if( status.isFailure()) {
-        log << MSG::ERROR << "Unable to locate PropertyManager Service" << endreq;
-        return status;
-    }
-
     // Check for an input merit tuple, and add its number of events to our
     // m_rootEvtMax
     if (m_rootTupleSvc) {
@@ -977,7 +978,15 @@ StatusCode RootIoSvc::run()
         Long64_t entries = m_rootTupleSvc->getInputTreePtr(treePtr);
         if (entries > 0) setEvtMax(entries);
     }
-    
+
+    IProperty* propMgr=0;
+    status = serviceLocator()->service("ApplicationMgr", propMgr );
+    if( status.isFailure()) {
+        log << MSG::ERROR << "Unable to locate PropertyManager Service" << endreq;
+        return status;
+    }
+
+    // Pick up ApplicationMgr.EvtMax
     IntegerProperty evtMax("EvtMax",0);
     status = propMgr->getProperty( &evtMax );
     if (status.isFailure()) return status;
@@ -990,8 +999,9 @@ StatusCode RootIoSvc::run()
        setProperty(evtMax);
     } else setProperty(evtMax);
 
+    m_evtMax = evtMax;
+
     // now find the top alg so we can monitor its error count
-    //
     IAlgManager* theAlgMgr =0 ;
     status = serviceLocator( )->getService( "ApplicationMgr",
         IID_IAlgManager,
@@ -1015,7 +1025,7 @@ StatusCode RootIoSvc::run()
     
     // loop over the events
 
-    int eventNumber= 0;
+    long long eventNumber= 0;
     double currentTime=m_startTime;
     
     { bool noend=true;
@@ -1036,7 +1046,8 @@ StatusCode RootIoSvc::run()
 
         status =  m_appMgrUI->nextEvent(1); // currently, always success
         
-        // the single event may have created a failure. Check the ErrorCount propery of the Top alg.
+        // the single event may have created a failure. 
+        // Check the ErrorCount propery of the Top alg.
         if( theAlgorithm !=0) theAlgorithm->getProperty(&errorProperty);
         if( status.isFailure() || errorProperty.value() > 0){
             status = StatusCode::FAILURE;
@@ -1076,7 +1087,7 @@ StatusCode RootIoSvc::run()
 }
 
 // purpose: print periodic messages
-void RootIoSvc::loopStatus( int eventNumber, double currentTime, MsgStream & log )
+void RootIoSvc::loopStatus( long long eventNumber, double currentTime, MsgStream & log )
  {
   static int last_fraction = 0 ;
 
