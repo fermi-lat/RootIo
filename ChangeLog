@@ -1,4 +1,31 @@
 ------------------------------------------------------------
+User: ecephas  Mon Oct 27 12:04:07 PDT 2008
+GlastRelease-scons/RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+
+Changed
+       progEnv.AppendUnique(CPPDEFINES = 'GLEAM')
+       progEnv.AppendUnique(CPPDEFINES = '__i386')
+       progEnv.AppendUnique(CPPDEFINES = 'EFC_FILTER')
+       progEnv.AppendUnique(CPPDEFINES = '_WIN32')
+to
+       progEnv.AppendUnique(CPPDEFINES = ['GLEAM'])
+       progEnv.AppendUnique(CPPDEFINES = ['__i386'])
+       progEnv.AppendUnique(CPPDEFINES = ['EFC_FILTER'])
+       progEnv.AppendUnique(CPPDEFINES = ['_WIN32'])
+----
+
+Changed
+	progEnv.Tool('registerObjects', package = 'RootIo', libraries = [RootIo], testApps = [test_RootIo])
+to
+	progEnv.Tool('registerObjects', package = 'RootIo', libraries = [RootIo], testApps = [test_RootIo], 
+       	includes = listFiles(['RootIo/*.h']))
+
+    *
+------------------------------------------------------------
 User: heather  Tue Oct 14 21:26:09 PDT 2008
 RootIo/src
 
