@@ -1,4 +1,25 @@
 ------------------------------------------------------------
+User: ecephas  Mon Oct 27 12:05:56 PDT 2008
+GlastRelease-scons/RootIo
+
+Modified Files:
+	RootIoLib.py 
+Log Message:
+Added the following:
+
+     env.Tool('commonRootDataLib')
+     env.Tool('rootUtilLib')
+     env.Tool('digiRootDataLib')
+     env.Tool('RootConvertLib')
+     env.Tool('TriggerLib')
+     env.Tool('OnboardFilterTdsLib')
+     env.Tool('LdfEventLib')
+     env.Tool('AncillaryDataEventLib')
+     env.Tool('ntupleWriterSvcLib')
+     env.Tool('gcrSelectRootDataLib')
+
+    *
+------------------------------------------------------------
 User: ecephas  Mon Oct 27 12:04:07 PDT 2008
 GlastRelease-scons/RootIo
 
