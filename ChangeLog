@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Oct 29 07:31:02 PDT 2008
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+add ntupleRootReaderAlg
+    *
+------------------------------------------------------------
+User: heather  Wed Oct 29 07:31:02 PDT 2008
 RootIo/src
 
 Modified Files:
