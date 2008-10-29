@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Oct 29 07:31:01 PDT 2008
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+add ntupleRootReaderAlg
+    *
+------------------------------------------------------------
 User: ecephas  Mon Oct 27 12:05:56 PDT 2008
 GlastRelease-scons/RootIo
 
