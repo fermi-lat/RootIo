@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.51 2008/10/14 04:18:16 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.52 2008/10/15 04:26:09 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -337,7 +337,7 @@ StatusCode RootIoSvc::initialize ()
 
     // Retrieve tuple info an set up
     // get a pointer to RootTupleSvc
-    status = service("RootTupleSvc", m_rootTupleSvc);       
+    status = service("RootTupleSvc", m_rootTupleSvc, true);       
     if( status.isFailure() ) 
     {
         MsgStream log( msgSvc(), name() );
