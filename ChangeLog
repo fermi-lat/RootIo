@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Wed Oct 29 07:31:02 PDT 2008
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Added Files:
+	ntupleRootReaderAlg.cxx 
+Log Message:
+add ntupleRootReaderAlg
+    *
+------------------------------------------------------------
 User: heather  Wed Oct 29 07:31:01 PDT 2008
 RootIo/doc
 
