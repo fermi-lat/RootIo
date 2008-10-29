@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Oct 29 07:31:01 PDT 2008
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+add ntupleRootReaderAlg
+    *
+------------------------------------------------------------
+User: heather  Wed Oct 29 07:31:01 PDT 2008
 RootIo/cmt
 
 Modified Files:
