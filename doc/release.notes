@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v22r1      12-Nov-08 LSR Mods for Digi merging
  v22r0      29-Oct-08 HMK Add ntupleRootReaderAlg to set up TDS when using
             just input tuples
  v21r13     14-Oct-08 HMK Fix Win build and check RootTupleSvc to find
