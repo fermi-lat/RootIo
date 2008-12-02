@@ -1,5 +1,13 @@
 ------------------------------------------------------------
 TAG
+Tag name: v22r1p0, operation: mov
+Package: RootIo
+User: glastrm  Tue Dec  2 13:30:12 2008
+Files:
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: v22r1p0, operation: add
 Package: RootIo
 User: usher  Tue Dec  2 13:25:19 2008
