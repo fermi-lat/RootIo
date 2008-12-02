@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue Dec  2 13:21:44 PST 2008
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx 
+Log Message:
+Fix memory leak with missing deletion on file close, rearrange initialization order slightly when opening a file to try to prevent double allocation of base object
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-22-01-00, operation: add
 Package: RootIo
