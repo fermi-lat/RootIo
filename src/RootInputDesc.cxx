@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.15 2008/07/17 18:32:10 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.16 2008/10/13 05:09:04 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -45,7 +45,11 @@ RootInputDesc::~RootInputDesc()
     m_chain->GetFile()->Close() ;
     delete m_chain ;
    }
-  if (m_dataObject) delete m_dataObject ;
+  if (m_dataObject) 
+  {
+      if (*m_dataObject) delete *m_dataObject;
+      delete m_dataObject ;
+  }
 
  }
 
@@ -57,7 +61,11 @@ RootInputDesc::~RootInputDesc()
      if (!m_chain) return numEvents;
 
      if (m_dataObject) 
-         delete m_dataObject ;
+     {
+       if (*m_dataObject) delete *m_dataObject;
+       delete m_dataObject ;
+       m_dataObject = 0;
+     }
 
      m_dataObject = new TObject * ;
      *m_dataObject = 0 ;
@@ -146,7 +154,11 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
     m_chain = 0;
    }
    if (m_dataObject) 
-       delete m_dataObject ;
+   {
+     if (*m_dataObject) delete *m_dataObject;
+     delete m_dataObject ;
+     m_dataObject = 0;
+   }
 
   // Get a new instance of a TChain for processing this file
   m_chain = new TChain(m_tree.c_str()) ;
@@ -206,11 +218,11 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
        }
        m_chain->LoadTree(0);
    }
-  if (!m_chain->GetTreeIndex()) 
-   {
-    m_chain->BuildIndex("m_runId", "m_eventId") ;
-    m_runEvtIndex = m_chain->GetTreeIndex();
-   }
+//  if (!m_chain->GetTreeIndex()) 
+//   {
+//    m_chain->BuildIndex("m_runId", "m_eventId") ;
+//    m_runEvtIndex = m_chain->GetTreeIndex();
+//   }
 
   // Get a pointer to the TTree within this data file
   // To do this we will first need to "rediscover" the directory name
@@ -244,6 +256,13 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
 
   // Set the data pointer to receive the data and we are ready to go
   m_chain->SetBranchAddress(branchName.data(),m_dataObject) ;
+
+  // Try doing this part here to avoid double allocation of memory?
+  if (!m_chain->GetTreeIndex()) 
+  {
+    m_chain->BuildIndex("m_runId", "m_eventId") ;
+    m_runEvtIndex = m_chain->GetTreeIndex();
+  }
 
   numEvents = m_chain->GetEntries() ;
 
