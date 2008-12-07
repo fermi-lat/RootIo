@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: usher  Sun Dec  7 08:30:48 PST 2008
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+A slight rearrangement of RootInputDesc to try to alleviate one source of memory leaking, also modify RootInputDesc so user can optionally supply the input buffer to be used during reading.
+    *
+------------------------------------------------------------
 User: usher  Sun Dec  7 08:30:47 PST 2008
 RootIo/RootIo
 
