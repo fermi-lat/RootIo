@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.35 2008/03/13 19:56:55 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.36 2008/03/13 20:15:00 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -186,7 +186,7 @@ StatusCode relationRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use treeName as key type
-    m_rootIoSvc->prepareRootInput("rel", m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("rel", m_treeName, m_branchName, 0, m_fileList);
 
     return sc;
     

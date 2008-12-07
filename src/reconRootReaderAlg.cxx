@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.89 2008/01/24 21:38:30 chamont Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.90 2008/08/05 04:56:31 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -201,7 +201,7 @@ StatusCode reconRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use treeName as key type
-    m_rootIoSvc->prepareRootInput("recon", m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("recon", m_treeName, m_branchName, 0, m_fileList);
 
     return sc;
     
