@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.52 2008/10/15 04:26:09 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.53 2008/10/29 14:31:01 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -112,10 +112,11 @@ class RootIoSvc :
     virtual bool appendFileList( StringArrayProperty & fileList, const std::string & fileName ) ;
 
     virtual StatusCode prepareRootInput
-     ( const std::string & type, 
-       const std::string & tree,
-       const std::string & branch,
-       const StringArrayProperty & fileList ) ;
+     ( const std::string&         type, 
+       const std::string&         tree,
+       const std::string&         branch,
+       TObject**                  branchPtr,
+       const StringArrayProperty& fileList ) ;
 
     virtual StatusCode closeInput(const std::string& type);
        
@@ -539,10 +540,11 @@ bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * re
 
 
 StatusCode RootIoSvc::prepareRootInput
- ( const std::string & type, 
-   const std::string & tree, 
-   const std::string & branch,
-   const StringArrayProperty & fileList )
+ ( const std::string&         type, 
+   const std::string&         tree, 
+   const std::string&         branch,
+   TObject**                  branchPtr,
+   const StringArrayProperty& fileList )
 {
     MsgStream log( msgSvc(), name() );
     StatusCode sc = StatusCode::SUCCESS;
@@ -551,7 +553,7 @@ StatusCode RootIoSvc::prepareRootInput
     if (m_celFileNameRead.empty()) {
 
         // Create a new RootInputDesc object for this algorithm
-        rootInputDesc = new RootInputDesc(fileList, tree, branch, m_rebuildIndex, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 
@@ -571,7 +573,7 @@ StatusCode RootIoSvc::prepareRootInput
                 << " could not be constructed from event collection" << endreq;
             if (!m_noFailure) return StatusCode::FAILURE;
         }
-        rootInputDesc = new RootInputDesc(chain, tree, branch, m_rebuildIndex, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(chain, tree, branch, branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register number of events
         if (m_celManager.getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 

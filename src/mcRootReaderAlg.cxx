@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.71 2008/01/24 21:38:30 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.72 2008/03/13 19:56:55 usher Exp $
  */
 
 
@@ -161,7 +161,7 @@ StatusCode mcRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
-    m_rootIoSvc->prepareRootInput("mc", m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("mc", m_treeName, m_branchName, 0, m_fileList);
      
     return sc;
     

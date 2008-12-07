@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.17 2008/10/13 15:21:23 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.18 2008/10/15 04:26:09 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -49,7 +49,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.17 2008/10/13 15:21:23 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.18 2008/10/15 04:26:09 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -81,10 +81,11 @@ class  IRootIoSvc : virtual public IInterface
     virtual bool appendFileList( StringArrayProperty & fileList, const std::string & fileName ) = 0 ;
 
     virtual StatusCode prepareRootInput
-     ( const std::string & type, 
-       const std::string & tree,
-       const std::string & branch,
-       const StringArrayProperty & fileList) = 0 ;
+     ( const std::string&         type, 
+       const std::string&         tree,
+       const std::string&         branch,
+       TObject**                  branchPtr,
+       const StringArrayProperty& fileList) = 0 ;
 
     virtual StatusCode closeInput(const std::string& type) = 0;
        

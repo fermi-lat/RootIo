@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.96 2008/05/09 02:37:13 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.97 2008/10/05 05:23:04 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -197,7 +197,7 @@ StatusCode digiRootReaderAlg::initialize()
 
     // Set up new school system...
     // Use the TTree name as the key type 
-    m_rootIoSvc->prepareRootInput("digi", m_treeName, m_branchName, m_fileList);
+    m_rootIoSvc->prepareRootInput("digi", m_treeName, m_branchName, 0, m_fileList);
 
     return sc;
     
