@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Sun Dec  7 08:49:04 PST 2008
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx 
+Log Message:
+Change order of check on whether input buffer is supplied or not
+    *
+------------------------------------------------------------
 User: usher  Sun Dec  7 08:30:48 PST 2008
 RootIo/src
 
