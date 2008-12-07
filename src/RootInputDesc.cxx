@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.17 2008/12/02 21:21:44 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.18 2008/12/07 16:30:48 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -32,11 +32,11 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
      m_rebuildIndex(rebuildIndex), 
      m_runEvtIndex(0)
  {
-    // Set up the input file list
-    m_numEvents = setFileList(fileList, m_verbose) ;
-
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
+
+    // Set up the input file list
+    m_numEvents = setFileList(fileList, m_verbose) ;
 
     return;
  }
@@ -58,10 +58,10 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
        m_rebuildIndex(rebuildIndex), 
        m_runEvtIndex(0) 
  {
-    m_numEvents = setEventCollection();
-
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
+
+    m_numEvents = setEventCollection();
 
     return;
  }
