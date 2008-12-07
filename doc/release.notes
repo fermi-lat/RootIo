@@ -3,6 +3,7 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v22r1p1     7-Dec-08 TU  More memory leak stuff, change slightly RootInputDesc interface
  v22r1p0     2-Dec-08 TU  Fix mem leak on closing of input files
  v22r1      12-Nov-08 LSR Mods for Digi merging
  v22r0      29-Oct-08 HMK Add ntupleRootReaderAlg to set up TDS when using
