@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Sun Dec  7 08:30:47 PST 2008
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+A slight rearrangement of RootInputDesc to try to alleviate one source of memory leaking, also modify RootInputDesc so user can optionally supply the input buffer to be used during reading.
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-22-01-00, operation: add
 Package: RootIo
