@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 TAG
+Tag name: v22r0, operation: mov
+Package: RootIo
+User: glast  Mon Dec  8 14:41:26 2008
+Files:
+  RootIo/SConscript  1.10
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: v22r0, operation: add
 Package: RootIo
 User: ecephas  Mon Dec  8 14:30:12 2008
