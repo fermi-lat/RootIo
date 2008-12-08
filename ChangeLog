@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+TAG
+Tag name: RootIo-22-00-00, operation: add
+Package: RootIo
+User: ecephas  Mon Dec  8 14:29:01 2008
+Files:
+
+    *
+------------------------------------------------------------
 User: ecephas  Mon Dec  8 14:28:27 PST 2008
 GlastRelease-scons/RootIo
 
