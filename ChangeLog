@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: ecephas  Mon Dec  8 14:28:27 PST 2008
+GlastRelease-scons/RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+Check in RootIo/SConscript for RootIo v22r0 (branch tag, GlastReleasev15r49). 
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-22-01-01, operation: add
 Package: RootIo
