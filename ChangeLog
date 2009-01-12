@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jan 12 07:56:02 PST 2009
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+allow input relation files for HepRepSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-15-50-10, operation: del
 Package: RootIo
