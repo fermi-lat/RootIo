@@ -2,7 +2,9 @@
  Package RootIo
  Coordinator:H.Kelly
  @verbatim
+ EOH
 
+ v22r2      12-Jan-09 HMK Add support for input relation files through HepRepSvc
  v22r1p1     7-Dec-08 TU  More memory leak stuff, change slightly RootInputDesc interface
  v22r1p0     2-Dec-08 TU  Fix mem leak on closing of input files
  v22r1      12-Nov-08 LSR Mods for Digi merging
