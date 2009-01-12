@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.53 2008/10/29 14:31:01 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.54 2008/12/07 16:30:48 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -93,7 +93,7 @@ class RootIoSvc :
     
     virtual bool setRootFile
      ( const char * mc, const char * digi, 
-       const char * rec, const char * gcr ) ;
+       const char * rec, const char* relation, const char * gcr ) ;
 
     virtual bool setIndex( Long64_t i ) ;
     virtual Long64_t index() { return m_index ; }
@@ -474,7 +474,10 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
   std::string myFileName = fileName ;
   facilities::Util::expandEnvVar(&myFileName) ;
   if (myFileName.empty())
-   { return 1 ; }
+   { 
+    closeInput(type); // remove the corresponding RootInputDesc object
+    return 1 ; 
+   }
    
   RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
   if (rootInputDesc==0)
@@ -503,19 +506,21 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
   return 0 ;
  }
 
-bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * rec, const char * gcr ) 
+bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * rec, const char* relation, const char * gcr ) 
  {
   bool success = false ;
 
   unsigned mcResult = setSingleFile("mc",mc) ;
   unsigned digiResult = setSingleFile("digi",digi) ;
   unsigned reconResult = setSingleFile("recon",rec) ;
+  unsigned relationResult = setSingleFile("rel", relation);
   unsigned gcrResult = setSingleFile("gcr",gcr) ;
 
   // at least one string must be non-null
   if ( (mcResult==1) &&
        (digiResult==1) &&
        (reconResult==1) &&
+       (relationResult==1) &&
        (gcrResult==1) )
    { return success ; }
 
@@ -523,6 +528,7 @@ bool RootIoSvc::setRootFile( const char * mc, const char * digi, const char * re
   if ( (mcResult>1) ||
        (digiResult>1) ||
        (reconResult>1) ||
+       (relationResult>1) ||
        (gcrResult>1) )
    { return success ; }
 

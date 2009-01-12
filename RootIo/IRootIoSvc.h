@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.18 2008/10/15 04:26:09 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.19 2008/12/07 16:30:47 usher Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -49,7 +49,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.18 2008/10/15 04:26:09 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.19 2008/12/07 16:30:47 usher Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -62,7 +62,7 @@ class  IRootIoSvc : virtual public IInterface
     
     virtual bool setRootFile
      ( const char * mc, const char * digi, 
-       const char * rec, const char * gcr="" ) = 0 ;
+       const char * rec, const char* relation="", const char * gcr="" ) = 0 ;
        
     virtual bool setIndex( Long64_t ) = 0 ;
     virtual Long64_t index() = 0 ;
