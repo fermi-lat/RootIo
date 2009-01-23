@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/SConscript,v 1.12 2009/01/12 16:30:08 glastrm Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/SConscript,v 1.7 2008/10/27 19:04:07 ecephas Exp $
 # Authors: Heather Kelly <heather@milkyway.gsfc.nasa.gov>, David Chamont <chamont@poly.in2p3.fr>
-# Version: RootIo-23-00-00
+# Version: RootIo-22-00-00
 Import('baseEnv')
 Import('listFiles')
 Import('packages')
@@ -26,6 +26,7 @@ test_RootIo = progEnv.GaudiProgram('test_RootIo', listFiles(['src/test/*.cxx']),
 
 progEnv.Tool('registerObjects', package = 'RootIo', libraries = [RootIo], testApps = [test_RootIo], 
 	includes = listFiles(['RootIo/*.h']))
+
 
 
 
