@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: ecephas  Thu Jan 22 16:07:17 PST 2009
+GlastRelease-scons/RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+Check in for GlastRelease-15-49-00
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-23-00-00, operation: add
 Package: RootIo
