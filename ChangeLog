@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+TAG
+Tag name: RootIo-22-00-00, operation: mov
+Package: RootIo
+User: glastrm  Thu Jan 22 16:31:36 2009
+Files:
+  RootIo/SConscript  1.14
+  RootIo/SConscript  1.14
+  RootIo/SConscript  1.14
+
+    *
+------------------------------------------------------------
 User: ecephas  Thu Jan 22 16:07:17 PST 2009
 GlastRelease-scons/RootIo
 
