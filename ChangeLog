@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: echarles  Thu Feb 26 16:37:17 PST 2009
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev17r5
+	reconRootWriterAlg.cxx 
+Log Message:
+Changes for new Acd reconstruction
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-22-00-00, operation: mov
 Package: RootIo
