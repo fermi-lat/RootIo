@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.54 2008/12/07 16:30:48 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.55 2009/01/12 15:56:03 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -260,7 +260,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("MaxTreeSize", m_treeSize=0);
     declareProperty("TupleName", m_tupleName="MeritTuple");
     declareProperty("NoFailure", m_noFailure=0);
-    declareProperty("RebuildIndex", m_rebuildIndex=true);
+    declareProperty("RebuildIndex", m_rebuildIndex=false);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");

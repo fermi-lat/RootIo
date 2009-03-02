@@ -4,6 +4,9 @@
  @verbatim
  EOH
 
+ v24r0      02-Mar-09 HMK RootIoSvc::rebuildIndex now defaults to false
+            use TChainIndex in place of TTree::BuildIndex and try to contain
+            use of indices to those methods where it is truly required
  v23r0      20-Jan-09 HMK Mods to GleamMessageHandler for ROOT v5.20.00
  v22r2      12-Jan-09 HMK Add support for input relation files through HepRepSvc
  v22r1p1     7-Dec-08 TU  More memory leak stuff, change slightly RootInputDesc interface

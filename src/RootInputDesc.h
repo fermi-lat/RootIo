@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.11 2008/07/16 18:16:39 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.12 2008/12/07 16:30:48 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -12,6 +12,7 @@
 
 #include "GaudiKernel/Property.h"
 #include "TChain.h"
+#include "TChainIndex.h"
 #include "TFile.h"
 #include "TObject.h"
 #include <string>
@@ -48,7 +49,7 @@ public:
     TObject*                   getTObject()          { return *m_dataObject ; }
 
     /// Methods to handle reading and clearing events
-    TObject*                   getEvent( int index ) ;
+    TObject*                   getEvent( Long64_t index ) ;
     TObject*                   getEvent( int runNum, int evtNum ) ;
     bool                       checkEventAvailability( Long64_t index );
     bool                       checkEventAvailability( int runNum, int evtNum );
@@ -80,6 +81,7 @@ public:
     bool                m_rebuildIndex; ///Flag denoting that we should force 
                                         /// the rebuild of the input files' index
     TVirtualIndex*      m_runEvtIndex;  /// Save the RunId/EventId Index in case other indices are in use such as CompositeEventList
+    TChainIndex*        m_chainIndex;
     
  } ;
 
