@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.18 2008/12/07 16:30:48 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.19 2008/12/07 16:49:04 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,7 +30,8 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
      m_myDataObject(true), 
      m_verbose(verbose),
      m_rebuildIndex(rebuildIndex), 
-     m_runEvtIndex(0)
+     m_runEvtIndex(0),
+     m_chainIndex(0)
  {
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
@@ -56,7 +57,8 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
        m_myDataObject(true), 
        m_verbose(verbose), 
        m_rebuildIndex(rebuildIndex), 
-       m_runEvtIndex(0) 
+       m_runEvtIndex(0),
+       m_chainIndex(0)
  {
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
@@ -69,6 +71,11 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
     
 RootInputDesc::~RootInputDesc() 
 {
+    if (m_chainIndex) {
+        delete m_chainIndex;
+        m_chainIndex = 0;
+    }
+
     if (m_chain)
     {
 /*
@@ -160,10 +167,12 @@ Long64_t RootInputDesc::setEventCollection( )
             m_chain->GetTree()->SetTreeIndex(0);
         }
         m_chain->LoadTree(0);
+        m_chainIndex = new TChainIndex(m_chain,"m_runId","m_eventId");
+        //m_chain->BuildIndex("m_runId", "m_eventId") ;
     }
-    m_chain->BuildIndex("m_runId", "m_eventId") ;
-    m_runEvtIndex = m_chain->GetTreeIndex();
 
+    // This will force reading in the file headers to determine the number
+    // of events
     numEvents = m_chain->GetEntries() ;
 
     // Finally restore the context we entered with
@@ -312,15 +321,10 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
             }
         }
         m_chain->LoadTree(0);
+        m_chainIndex = new TChainIndex(m_chain,"m_runId","m_eventId");
     }
 
-    // Try doing this part here to avoid double allocation of memory?
-    if (!m_chain->GetTreeIndex()) 
-    {
-        m_chain->BuildIndex("m_runId", "m_eventId") ;
-        m_runEvtIndex = m_chain->GetTreeIndex();
-    }
-
+    // This call forces the file headers to be read in
     numEvents = m_chain->GetEntries() ;
 
     // Finally restore the context we entered with
@@ -351,7 +355,7 @@ bool RootInputDesc::fileExists( const std::string & filename, const char* treeNa
     return fileExists ;
 }  
 
-TObject * RootInputDesc::getEvent( int index )
+TObject * RootInputDesc::getEvent( Long64_t index )
 {
     TObject * dataPtr = 0 ;
  
@@ -386,19 +390,19 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
 
     if (m_chain) 
     {
-        int ret = m_chain->GetEntryWithIndex(runNum,evtNum) ;
-        if (ret <= 0) 
-        {
-            std::cout << "RootInputDesc::getEvent bad read" << std::endl;
-            return 0;
+        if (!m_chainIndex) {
+            m_chainIndex = new TChainIndex(m_chain,"m_runId","m_eventId");
+            if (!m_chainIndex) {
+                std::cout << "RootInputDes::checkEventAvailability "
+                          << "Failed to create TChainIndex" << std::endl;
+                return false;
+            }
         }
-        dataPtr = *m_dataObject ;
-    } 
-
-    // Restore context we entered with
-    saveDir->cd() ;
-
-    return dataPtr ;
+        Long64_t ind  = m_chainIndex->GetEntryNumberWithIndex(runNum,evtNum) ;
+        dataPtr = getEvent(ind);
+    }
+    saveDir->cd();
+    return dataPtr;
 }
 
  bool RootInputDesc::checkEventAvailability( Long64_t index ) 
@@ -415,7 +419,16 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
     TDirectory * saveDir = gDirectory ;	
     if (!m_chain) return false;
 
-    Long64_t readInd = m_chain->GetEntryNumberWithIndex(runNum,evtNum);
+    if (!m_chainIndex) {
+        m_chainIndex = new TChainIndex(m_chain,"m_runId","m_eventId");
+        if (!m_chainIndex) {
+            std::cout << "RootInputDes::checkEventAvailability "
+                      << "Failed to create TChainIndex" << std::endl;
+            return false;
+        }
+    }
+    
+    Long64_t readInd = m_chainIndex->GetEntryNumberWithIndex(runNum,evtNum);
     saveDir->cd();
     if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
     return true;
