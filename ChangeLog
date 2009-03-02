@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Mar  2 13:37:07 PST 2009
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+use TChainIndex
+    *
+------------------------------------------------------------
+User: heather  Mon Mar  2 13:37:07 PST 2009
 RootIo/cmt
 
 Modified Files:
