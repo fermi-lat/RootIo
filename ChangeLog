@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Mar  2 13:37:08 PST 2009
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+Log Message:
+use TChainIndex
+    *
+------------------------------------------------------------
 User: heather  Mon Mar  2 13:37:07 PST 2009
 RootIo/doc
 
