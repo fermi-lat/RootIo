@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: echarles  Tue Mar 17 14:29:52 PDT 2009
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev17r5
+	requirements 
+Log Message:
+
+update cmt requirements
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-00-00, operation: add
 Package: RootIo
