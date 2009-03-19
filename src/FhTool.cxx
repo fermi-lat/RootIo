@@ -16,11 +16,13 @@ FhTool::FhTool( const std::string & type,
     m_digiHeader = 0 ;
     m_reconHeader = 0 ;
     m_gcrHeader = 0 ;
+    m_meritHeader = 0 ;
    
     m_constMcHeader = 0 ;
     m_constDigiHeader = 0 ;
     m_constReconHeader = 0 ;
     m_constGcrHeader = 0 ;
+    m_constMeritHeader = 0 ;
    
 }
 
@@ -30,11 +32,13 @@ FhTool::~FhTool() {
     delete m_digiHeader ;
     delete m_reconHeader ;
     delete m_gcrHeader ;
+    delete m_meritHeader ;
    
     delete m_constMcHeader ;
     delete m_constDigiHeader ;
     delete m_constReconHeader ;
     delete m_constGcrHeader ;
+    delete m_constMeritHeader ;
    
 }
 
@@ -54,6 +58,10 @@ FileHeader * FhTool::gcrHeader() {
 	return m_gcrHeader ;
 }
 
+FileHeader * FhTool::meritHeader() {
+	return m_meritHeader ;
+}
+
 const FileHeader * FhTool::constMcHeader() {
 	return m_constMcHeader ;
 }
@@ -68,6 +76,10 @@ const FileHeader * FhTool::constReconHeader() {
 
 const FileHeader * FhTool::constGcrHeader() {
 	return m_constGcrHeader ;
+}
+
+const FileHeader * FhTool::constMeritHeader() {
+	return m_constMeritHeader ;
 }
 
 StatusCode FhTool::newMcHeader() {
@@ -114,6 +126,16 @@ StatusCode FhTool::newGcrHeader() {
 	return StatusCode::SUCCESS ;
 }
 
+StatusCode FhTool::newMeritHeader() {
+    if (m_meritHeader) {
+        MsgStream log(msgSvc(),name()) ;
+	    log<<MSG::WARNING<<"Merit FileHeader already existing"<<endreq ;
+    }
+    else {
+        m_meritHeader = new FileHeader ;
+    }
+	return StatusCode::SUCCESS ;
+}
 
 StatusCode FhTool::writeMcHeader( TFile * file ) {
 	return writeHeader(file,m_mcHeader) ;
@@ -131,6 +153,10 @@ StatusCode FhTool::writeGcrHeader( TFile * file ) {
 	return writeHeader(file,m_gcrHeader) ;
 }
 
+StatusCode FhTool::writeMeritHeader( TFile * file ) {
+	return writeHeader(file,m_meritHeader) ;
+}
+
 StatusCode FhTool::readConstMcHeader( TFile * file ) {
 	return readHeader(file,m_constMcHeader) ;
 }
@@ -145,6 +171,10 @@ StatusCode FhTool::readConstReconHeader( TFile * file ) {
 
 StatusCode FhTool::readConstGcrHeader( TFile * file ) {
 	return readHeader(file,m_constGcrHeader) ;
+}
+
+StatusCode FhTool::readConstMeritHeader( TFile * file ) {
+	return readHeader(file,m_constMeritHeader) ;
 }
 
 StatusCode FhTool::writeHeader( TFile * file,
