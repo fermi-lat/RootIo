@@ -47,10 +47,14 @@ StatusCode FhSetAlg::initialize() {
     headersTool->newMcHeader();
     headersTool->newDigiHeader();;
     headersTool->newReconHeader();
+    headersTool->newGcrHeader();
+    headersTool->newMeritHeader();
 
     FileHeader * mcHeader = headersTool->mcHeader() ;
     FileHeader * digiHeader = headersTool->digiHeader() ;
     FileHeader * reconHeader = headersTool->reconHeader() ;
+    FileHeader * gcrHeader = headersTool->gcrHeader() ;
+    FileHeader * meritHeader = headersTool->meritHeader() ;
     
   
     // system environment variables
@@ -63,6 +67,8 @@ StatusCode FhSetAlg::initialize() {
     if (mcHeader) systemEnv.store(mcHeader) ;
     if (digiHeader) systemEnv.store(digiHeader) ;
     if (reconHeader) systemEnv.store(reconHeader) ;
+    if (gcrHeader) systemEnv.store(gcrHeader) ;
+    if (meritHeader) systemEnv.store(meritHeader) ;
     }
     
     // cmt
@@ -75,6 +81,8 @@ StatusCode FhSetAlg::initialize() {
     if (mcHeader) cmtConfig.store(mcHeader) ;
     if (digiHeader) cmtConfig.store(digiHeader) ;
     if (reconHeader) cmtConfig.store(reconHeader) ;
+    if (gcrHeader) cmtConfig.store(gcrHeader) ;
+    if (meritHeader) cmtConfig.store(meritHeader) ;
     }
 
     // job options
@@ -83,6 +91,8 @@ StatusCode FhSetAlg::initialize() {
     if (mcHeader) jobOptions.store(mcHeader) ;
     if (digiHeader) jobOptions.store(digiHeader) ;
     if (reconHeader) jobOptions.store(reconHeader) ;
+    if (gcrHeader) jobOptions.store(gcrHeader) ;
+    if (meritHeader) jobOptions.store(meritHeader) ;
 
     log << MSG::INFO << "headers common data ready" << endreq ;
 	return StatusCode::SUCCESS ;
@@ -106,12 +116,16 @@ StatusCode FhSetAlg::finalize() {
     FileHeader * mcHeader = headersTool->mcHeader() ;
     FileHeader * digiHeader = headersTool->digiHeader() ;
     FileHeader * reconHeader = headersTool->reconHeader() ;
+    FileHeader * gcrHeader = headersTool->gcrHeader() ;
+    FileHeader * meritHeader = headersTool->meritHeader() ;
     // catch chrono stat SUMMARY
     FhChronoStatTable chronoStatTable ;
     chronoStatTable.init(serviceLocator()) ;
     if (mcHeader) chronoStatTable.store(mcHeader) ;
     if (digiHeader) chronoStatTable.store(digiHeader) ;
     if (reconHeader) chronoStatTable.store(reconHeader) ;
+    if (gcrHeader) chronoStatTable.store(gcrHeader) ;
+    if (meritHeader) chronoStatTable.store(meritHeader) ;
 	return StatusCode::SUCCESS ;
 }
 

@@ -38,7 +38,7 @@
 /** @class IFhTool
  * @brief Interface for FhTool.
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/FhTool.h,v 1.1 2004/10/07 12:15:16 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/FhTool.h,v 1.2 2006/11/13 10:38:55 claval Exp $
  */
 
 static const InterfaceID IID_IFhTool("IFhTool",1,0) ;
@@ -110,13 +110,27 @@ public:
     /// access to the current read-only gcr header
     virtual const FileHeader * constGcrHeader() =0 ;
 
+    /// create a writable mc header
+    virtual StatusCode newMeritHeader() =0 ;
+    
+    /// access to the current writable mc file header
+    virtual FileHeader * meritHeader() =0 ;
+    
+    /// write the mc header
+    virtual StatusCode writeMeritHeader( TFile * ) =0 ;
+    
+    /// if the file is new, extract its header
+    virtual StatusCode readConstMeritHeader( TFile * ) =0 ;
+
+    /// access to the current read-only mc file header
+    virtual const FileHeader * constMeritHeader() =0 ;
     
 } ; 
  
 /** @class FhTool
  * @brief Tool which manage the files headers.
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/FhTool.h,v 1.1 2004/10/07 12:15:16 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/FhTool.h,v 1.2 2006/11/13 10:38:55 claval Exp $
  */
 
 class FhTool : public AlgTool, virtual public IFhTool {
@@ -151,6 +165,12 @@ public:
     StatusCode readConstGcrHeader( TFile * ) ;
     const FileHeader * constGcrHeader() ;
 
+    StatusCode newMeritHeader() ;
+    FileHeader * meritHeader() ;
+    StatusCode writeMeritHeader( TFile * ) ;
+    StatusCode readConstMeritHeader( TFile * ) ;
+    const FileHeader * constMeritHeader() ;
+    
     
 private:
 
@@ -161,11 +181,13 @@ private:
     FileHeader * m_digiHeader ;
     FileHeader * m_reconHeader ;
     FileHeader * m_gcrHeader ;
+    FileHeader * m_meritHeader ;
 
     const FileHeader * m_constMcHeader ;
     const FileHeader * m_constDigiHeader ;
     const FileHeader * m_constReconHeader ;
     const FileHeader * m_constGcrHeader ;
+    const FileHeader * m_constMeritHeader ;
 
 } ; 
  

@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.55 2009/01/12 15:56:03 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.56 2009/03/02 21:37:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -30,6 +30,7 @@
 #include "GaudiKernel/Property.h"
 #include "RootIo/IRootIoSvc.h"
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
+#include "RootIo/FhTool.h"
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -225,6 +226,9 @@ class RootIoSvc :
     TTree *m_outputTuple;
 
     GleamMessageHandler* m_rootFileMessageHandler;
+
+    IToolSvc * m_gaudiToolSvc;
+    IFhTool * m_headersTool;
     
  } ;
 
@@ -272,6 +276,9 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_rootEvtMax = 0;
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_useIndex = false;
+
+    m_headersTool = 0;
+    m_gaudiToolSvc = 0;
 
 #ifdef WIN32
     gSystem->Load("libTreePlayer.dll");
@@ -359,7 +366,19 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
+    StatusCode toolSvcSc = service("ToolSvc", m_gaudiToolSvc, true);
 
+    if  ( toolSvcSc.isSuccess() ) {
+        StatusCode headersSc = m_gaudiToolSvc->retrieveTool("FhTool", m_headersTool);
+        if (headersSc.isFailure() ) {
+            MsgStream log( msgSvc(), name() );
+            m_headersTool = 0;
+            log << MSG::WARNING << "Failed to set up FhTool" << endreq;
+        }
+     } else {
+        MsgStream log( msgSvc(), name() );
+        log << MSG::WARNING << "Failed to set up FhTool" << endreq;
+     }
 
 
     return StatusCode::SUCCESS;
@@ -785,6 +804,19 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 StatusCode RootIoSvc::finalize ()
 {
     StatusCode  status = StatusCode::SUCCESS;
+
+    if (m_rootTupleSvc) {
+        void *treePtr;
+        m_rootTupleSvc->getOutputTreePtr(treePtr,"MeritTuple");
+        TTree *theTree = (TTree*)treePtr;
+        if (theTree) { 
+            FileHeader *meritHeader = m_headersTool->meritHeader();
+            meritHeader->setInteger("MeritVersion", m_rootTupleSvc->getMeritVersion());
+            m_headersTool->writeMeritHeader(theTree->GetCurrentFile());
+        }
+
+    }
+
     if (!m_celFileNameWrite.empty())
      {
       //m_celManager.fillFileAndTreeSet();
