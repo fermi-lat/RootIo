@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.56 2009/03/02 21:37:08 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.57 2009/03/19 14:49:09 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -811,8 +811,15 @@ StatusCode RootIoSvc::finalize ()
         TTree *theTree = (TTree*)treePtr;
         if (theTree) { 
             FileHeader *meritHeader = m_headersTool->meritHeader();
-            meritHeader->setInteger("MeritVersion", m_rootTupleSvc->getMeritVersion());
-            m_headersTool->writeMeritHeader(theTree->GetCurrentFile());
+            if (meritHeader) {
+                meritHeader->setInteger("MeritVersion", m_rootTupleSvc->getMeritVersion());
+                m_headersTool->writeMeritHeader(theTree->GetCurrentFile());
+            } else {
+                MsgStream log(msgSvc(),name()) ;
+                log << MSG::WARNING << "MeritHeader object is NULL, not writing"
+                    << " Merit Header, even though an output file exists"
+                    << endreq;
+            }
         }
 
     }
