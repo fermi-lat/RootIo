@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Sat Mar 21 10:39:07 PDT 2009
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+check for existance of meritHeader before using
+    *
+------------------------------------------------------------
+User: heather  Sat Mar 21 10:39:07 PDT 2009
 RootIo/doc
 
 Modified Files:
