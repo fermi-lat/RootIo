@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sat Mar 21 10:39:06 PDT 2009
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+check for existance of meritHeader before using
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-01-00, operation: add
 Package: RootIo
