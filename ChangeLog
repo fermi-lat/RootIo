@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: usher  Wed Mar 25 17:20:52 PDT 2009
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Log Message:
+Modify the interface to RootIoSvc a little bit to allow Overlay to read from different event indices for each of the open files it keeps. This should NOT require changes to any other code. FLW!!!
+    *
+------------------------------------------------------------
+User: usher  Wed Mar 25 17:20:52 PDT 2009
 RootIo/RootIo
 
 Modified Files:
