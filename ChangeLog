@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+TAG
+Tag name: v24r2p0, operation: mov
+Package: RootIo
+User: glastrm  Wed Mar 25 17:30:13 2009
+Files:
+  RootIo/SConscript  1.18
+
+    *
+------------------------------------------------------------
 User: glastrm  Wed Mar 25 17:30:07 PDT 2009
 RootIo
 
