@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.19 2008/12/07 16:30:47 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.20 2009/01/12 15:56:02 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -49,7 +49,7 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.19 2008/12/07 16:30:47 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.20 2009/01/12 15:56:02 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
@@ -89,13 +89,13 @@ class  IRootIoSvc : virtual public IInterface
 
     virtual StatusCode closeInput(const std::string& type) = 0;
        
-    virtual TObject * getNextEvent( const std::string & type ) = 0 ;
+    virtual TObject * getNextEvent( const std::string & type, long long inputIndex = -1 ) = 0 ;
     
     // the number of events we want to read
     // based on ApplicationMgr.EvtMax and entries available in files
-    virtual long long getEvtMax() const = 0 ;
+    virtual long long getEvtMax() const = 0;
     /// min number of entries in input ROOT files
-    virtual long long getRootEvtMax() const = 0;
+    virtual long long getRootEvtMax(const std::string& type = "") const = 0;
     /// used by reader algs to register their number of ROOT events per file
     virtual void setEvtMax( Long64_t max ) = 0 ;
     virtual void setRootEvtMax( Long64_t max ) = 0;
