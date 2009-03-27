@@ -4,6 +4,9 @@
  @verbatim
  EOH
 
+ v24r3      27-Mar-09 HMK add FhSetMeritAlg, setting merit header in a service
+            does not work in all cases due to order of finalization of
+            algorithms versus services
  v24r2p0    25-Mar-09  TU Slight mod to RootIo interface to allow overlay to read 
                           individual events and separately for each open file
  v24r1p1    21-Mar-09 HMK Check that MeritHeader object exists before
