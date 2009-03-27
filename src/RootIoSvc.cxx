@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.58 2009/03/21 17:39:07 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.59 2009/03/26 00:20:52 usher Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -228,7 +228,7 @@ class RootIoSvc :
     GleamMessageHandler* m_rootFileMessageHandler;
 
     IToolSvc * m_gaudiToolSvc;
-    IFhTool * m_headersTool;
+    //IFhTool * m_headersTool;
     
  } ;
 
@@ -277,7 +277,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     m_runEventPair = std::pair<int,int>(-1,-1);
     m_useIndex = false;
 
-    m_headersTool = 0;
+    //m_headersTool = 0;
     m_gaudiToolSvc = 0;
 
 #ifdef WIN32
@@ -366,6 +366,7 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
+/*
     StatusCode toolSvcSc = service("ToolSvc", m_gaudiToolSvc, true);
 
     if  ( toolSvcSc.isSuccess() ) {
@@ -380,7 +381,7 @@ StatusCode RootIoSvc::initialize ()
         log << MSG::WARNING << "Failed to set up FhTool" << endreq;
      }
 
-
+*/
     return StatusCode::SUCCESS;
 }
 
@@ -826,6 +827,7 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
 StatusCode RootIoSvc::finalize ()
 {
     StatusCode  status = StatusCode::SUCCESS;
+/*
 
     if (m_rootTupleSvc) {
         void *treePtr;
@@ -845,6 +847,7 @@ StatusCode RootIoSvc::finalize ()
         }
 
     }
+*/
 
     if (!m_celFileNameWrite.empty())
      {
