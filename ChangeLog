@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Mar 27 11:52:50 PDT 2009
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+move merit header handling to alg
+    *
+------------------------------------------------------------
+User: heather  Fri Mar 27 11:52:50 PDT 2009
 RootIo/cmt
 
 Modified Files:
