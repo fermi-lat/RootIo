@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Mar 27 11:52:50 PDT 2009
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+move merit header handling to alg
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-02-00, operation: add
 Package: RootIo
