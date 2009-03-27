@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Mar 27 11:52:51 PDT 2009
+RootIo/src/Dll
+
+Modified Files:
+	RootIo_load.cxx 
+Log Message:
+move merit header handling to alg
+    *
+------------------------------------------------------------
+User: heather  Fri Mar 27 11:52:51 PDT 2009
 RootIo/src
 
 Modified Files:
