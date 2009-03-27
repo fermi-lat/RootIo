@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Fri Mar 27 11:52:51 PDT 2009
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx 
+Added Files:
+	FhSetMeritAlg.cxx 
+Log Message:
+move merit header handling to alg
+    *
+------------------------------------------------------------
 User: heather  Fri Mar 27 11:52:50 PDT 2009
 RootIo/doc
 
