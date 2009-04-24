@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.90 2008/08/05 04:56:31 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.91 2008/12/07 16:30:48 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -226,7 +226,12 @@ StatusCode reconRootReaderAlg::execute()
     // Use treeName as key type
     m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent("recon")) ;
 
-    if (!m_reconEvt) return StatusCode::FAILURE;
+    if (!m_reconEvt) {
+        // Do not fail if there was no RECON data to read - this may be an Event Display run - where the user 
+        // did not provide an RECON input file
+        log << MSG::WARNING << "No Recon data Available" << endreq;
+        return StatusCode::SUCCESS;
+    }
 
     sc = readReconEvent();
     if (sc.isFailure()) {
