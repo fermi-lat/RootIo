@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Apr 24 12:03:04 PDT 2009
+RootIo/src
+
+Modified Files:
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+avoid failure if ROOT data is unavailable - this allows event displays to modify which input files are available
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-03-00, operation: add
 Package: RootIo
