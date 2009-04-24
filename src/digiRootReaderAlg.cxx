@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.97 2008/10/05 05:23:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.98 2008/12/07 16:30:48 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -219,7 +219,12 @@ StatusCode digiRootReaderAlg::execute()
     // using treename as the key
     m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent("digi"));
 
-    if (!m_digiEvt) return StatusCode::FAILURE;
+    if (!m_digiEvt) {
+        // Do not fail if there was no DIGI data to read - this may be an Event Display run - where the user 
+        // did not provide an DIGI input file
+        log << MSG::WARNING << "No Digi Data Available" << endreq;
+        return StatusCode::SUCCESS;
+    }
 
     // Clear the digi common maps
     m_common.m_rootTkrDigiMap.clear();

@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.36 2008/03/13 20:15:00 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.37 2008/12/07 16:30:48 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -212,7 +212,12 @@ StatusCode relationRootReaderAlg::execute()
     // use treeName as key type
     m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent("rel"));
 
-    if (!m_relTab) return StatusCode::FAILURE;
+    if (!m_relTab) {
+         // Do not fail if there was no Relation data to read - this may be an Event Display run - where the user 
+        // did not provide a relation input file
+        log << MSG::WARNING << "No Relation Data Available" << endreq;
+        return StatusCode::SUCCESS;
+    }
 
     sc = createTDSTables();
     if (sc.isFailure()) {
