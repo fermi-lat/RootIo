@@ -4,6 +4,8 @@
  @verbatim
  EOH
 
+ v24r4      07-May-09 HMK Prevent job failure with the xxRootReaderAlgs do not
+            find data, in case this is an event display run
  v24r3      27-Mar-09 HMK add FhSetMeritAlg, setting merit header in a service
             does not work in all cases due to order of finalization of
             algorithms versus services
