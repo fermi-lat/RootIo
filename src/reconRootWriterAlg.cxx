@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.87 2008/08/05 04:56:31 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.87.164.1 2009/05/18 17:44:48 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -267,7 +267,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     if( log.isActive())evtTds->fillStream(log.stream());
     log << endreq;
     
-    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon);
+    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdReconi, new AcdReconV2);
 
     // For simulated data - this may not exist on the TDS and that is ok
     // no need to fail for that
