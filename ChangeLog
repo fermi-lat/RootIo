@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed May 27 06:30:51 PDT 2009
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev17r25
+	requirements 
+Log Message:
+fix type
+    *
+------------------------------------------------------------
 TAG
 Tag name: v24r4gr2, operation: add
 Package: RootIo
