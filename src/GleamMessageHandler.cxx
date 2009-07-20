@@ -2,7 +2,7 @@
 * @file GleamMessageHandler.cxx
 * @brief definition of the class GleamMessageHandler
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/GleamMessageHandler.cxx,v 1.16 2008/10/13 05:09:04 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/GleamMessageHandler.cxx,v 1.1 2008/10/13 20:29:04 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -39,5 +39,6 @@ Bool_t GleamMessageHandler::Notify() {
     default :
       break;
   }
+  return kTRUE;
 }
 
