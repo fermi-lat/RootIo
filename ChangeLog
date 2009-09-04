@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Sep  4 11:50:13 PDT 2009
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix up versions in req and SConscript
+    *
+------------------------------------------------------------
+User: heather  Fri Sep  4 11:50:13 PDT 2009
 RootIo/cmt
 
 Modified Files:
