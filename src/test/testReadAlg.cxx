@@ -31,7 +31,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.17 2006/08/24 22:08:10 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.18 2007/07/04 15:19:27 chamont Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -108,15 +108,15 @@ StatusCode testReadAlg::readEvtHeader() {
 
     if (!evtTds) return sc;
 
-    int evtId = evtTds->event();
-    int runId = evtTds->run();
+    /*int evtId =*/ evtTds->event();
+    /*int runId =*/ evtTds->run();
 
     SmartDataPtr<Event::MCEvent> mcEvt(eventSvc(), EventModel::MC::Event);
     if (!mcEvt) return sc;
 
-    int sourceid = mcEvt->getSourceId();
-    int seq = mcEvt->getSequence();
-    double t = mcEvt->time();
+    /*int sourceid =*/ mcEvt->getSourceId();
+    /*int seq =*/ mcEvt->getSequence();
+    /*double t =*/ mcEvt->time();
 
     return sc;
 }
