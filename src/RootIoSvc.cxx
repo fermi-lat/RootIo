@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.59 2009/03/26 00:20:52 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.60 2009/03/27 18:52:51 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -331,7 +331,7 @@ StatusCode RootIoSvc::initialize ()
     } else if (m_treeSize == 0) {
         // 500 GB default
         //Long64_t maxTreeSize = 25000000000;
-        Long64_t maxTreeSize = 500000000000;
+        Long64_t maxTreeSize = 500000000000LL;
         TTree::SetMaxTreeSize(maxTreeSize);
     }
 
@@ -812,7 +812,7 @@ StatusCode RootIoSvc::fillTree(const std::string &type) {
     RootOutputDesc* outputDesc = getRootOutputDesc(type);
 
     if (outputDesc) {
-        bool status = outputDesc->fillTree(this->getAutoSaveInterval());
+        /*bool status =*/ outputDesc->fillTree(this->getAutoSaveInterval());
         outputDesc->setUpdated(true);        
         return StatusCode::SUCCESS;
     } 
@@ -1173,9 +1173,11 @@ void RootIoSvc::loopStatus( long long eventNumber, double currentTime, MsgStream
     if ((percent_complete<10)||((percent_complete%10)==0))
      {
       facilities::Timestamp tstamp;
+      ios_base::fmtflags ioFlags = 0;
+      ioFlags = 4096;
       log<<MSG::INFO
         << " [" << tstamp.getString() << "] "
-        << std::setprecision(12) << std::resetiosflags(4096)
+        << std::setprecision(12) << std::resetiosflags(ioFlags)
         <<percent_complete<<"% complete: "
         <<" event "<<eventNumber<<",  time= "<<currentTime<<endreq ;
      }

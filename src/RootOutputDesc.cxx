@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.3 2008/01/24 21:38:30 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.4 2008/01/28 13:52:31 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -155,3 +155,4 @@ bool RootOutputDesc::fileExists( const std::string & filename )
  }  
 
 #endif
+
