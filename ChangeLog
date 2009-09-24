@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 24 07:11:10 PDT 2009
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	SConscript 
+Log Message:
+allow setting EvtMax ==0 to denote reading in a complete input ROOT file
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-04-02, operation: add
 Package: RootIo
