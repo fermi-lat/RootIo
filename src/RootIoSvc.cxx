@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.49 2008/10/13 15:21:24 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.50 2008/10/13 20:29:04 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -977,10 +977,12 @@ StatusCode RootIoSvc::run()
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
+    if ( ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) || (evtMax == 0)) {
        evtMax = rootEvtMax - m_startIndex;
        setProperty(evtMax);
-    } else setProperty(evtMax);
+    } else {
+      setProperty(evtMax);
+    }
 
     // now find the top alg so we can monitor its error count
     //

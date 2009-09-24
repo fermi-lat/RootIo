@@ -3,6 +3,8 @@
  Coordinator:H.Kelly
  @verbatim
 
+ v21r12gr2  23-Sep-09 HMK Patch to allow use of EvtMax==0 to read in a complete
+            input ROOT file
  v21r12gr1  20-Jul-09 HMK Patch to return kTRUE in GleamMessageHandler::Notify
  v21r12     13-Oct-08 HMK Add new Gleam class derived from ROOT's 
             TMessageHandler to hopefully handle TFile errors
