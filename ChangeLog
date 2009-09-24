@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 24 07:11:11 PDT 2009
+RootIo/doc
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	release.notes 
+Log Message:
+allow setting EvtMax ==0 to denote reading in a complete input ROOT file
+    *
+------------------------------------------------------------
 User: heather  Thu Sep 24 07:11:10 PDT 2009
 RootIo/cmt
 
