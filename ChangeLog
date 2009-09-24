@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 24 07:24:49 PDT 2009
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	SConscript 
+Log Message:
+retagging to create a more unique tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-12-00-gr2, operation: add
 Package: RootIo
