@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 25 05:19:37 PDT 2009
+RootIo/doc
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	release.notes 
+Log Message:
+make RootConvert use private
+    *
+------------------------------------------------------------
 User: heather  Fri Sep 25 05:19:36 PDT 2009
 RootIo/cmt
 
