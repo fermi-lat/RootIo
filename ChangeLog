@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 25 05:19:36 PDT 2009
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	SConscript 
+Log Message:
+make RootConvert use private
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-12-00-gr3, operation: add
 Package: RootIo
