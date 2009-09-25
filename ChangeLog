@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Fri Sep 25 05:19:36 PDT 2009
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	requirements 
+Log Message:
+make RootConvert use private
+    *
+------------------------------------------------------------
+User: heather  Fri Sep 25 05:19:36 PDT 2009
 RootIo
 
 Modified Files:
