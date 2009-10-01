@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Oct  1 06:06:41 PDT 2009
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	requirements 
+Log Message:
+try making RootConvert public, but no_auto_imports for OnboardFilterTds
+    *
+------------------------------------------------------------
 User: heather  Thu Oct  1 06:06:40 PDT 2009
 RootIo
 
