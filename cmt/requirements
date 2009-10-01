@@ -1,10 +1,10 @@
 package RootIo
-version v21r12p0gr4
+version v21r12p0gr5
 
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.236.12.1.2.3 2009/09/24 14:24:50 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.236.12.1.2.4 2009/09/25 12:19:36 heather Exp $
 
 branches src doc
 
@@ -23,7 +23,7 @@ use digiRootData v* -no_auto_imports
 use reconRootData v* -no_auto_imports
 use commonRootData v* -no_auto_imports
 use OnboardFilterTds v* -no_auto_imports
-#use RootConvert v*
+use RootConvert v*
 
 use rootTestData v*
 
@@ -37,7 +37,7 @@ macro_append ROOT_libs " -lHist -lGraf -lGraf3d -lTreePlayer "\
 
 private
 
-use RootConvert v*
+#use RootConvert v*
 use GlastSvc v*
 use Trigger v*
 use AncillaryDataEvent v*
