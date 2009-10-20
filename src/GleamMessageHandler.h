@@ -3,7 +3,7 @@
 * @brief definition of the class GleamMessageHandler
 *        This class handles ROOT message to check for errors
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/GleamMessageHandler.h,v 1.11 2008/07/16 18:16:39 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/GleamMessageHandler.h,v 1.1 2008/10/13 20:29:04 heather Exp $
 *  Original author: Heather Kelly heather625@gmail.com
 */
 
@@ -24,6 +24,7 @@ class GleamMessageHandler : public TMessageHandler
                  ROOT_FATAL = 1004
     } MessageIds;
   
+/*
     GleamMessageHandler(const GleamMessageHandler& other) : TMessageHandler(other) {  m_warningCount = other.m_warningCount;
      m_errorCount = other.m_errorCount;
      m_syserrorCount = other.m_syserrorCount;
@@ -33,6 +34,8 @@ class GleamMessageHandler : public TMessageHandler
      m_syserror = other.m_syserror;
      m_fatal = other.m_fatal;
    };
+
+*/
 
     GleamMessageHandler(const TClass* cl, Bool_t derived = kTRUE) :
        TMessageHandler(cl, derived),
