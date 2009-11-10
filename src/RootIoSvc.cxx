@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.59 2009/03/26 00:20:52 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.60 2009/03/27 18:52:51 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -118,6 +118,12 @@ class RootIoSvc :
        const std::string&         branch,
        TObject**                  branchPtr,
        const StringArrayProperty& fileList ) ;
+
+    virtual bool setBranchStatus
+     ( const std::string&         type,
+       const std::string&         branch,
+       int                        status );
+
 
     virtual StatusCode closeInput(const std::string& type);
        
@@ -615,6 +621,20 @@ StatusCode RootIoSvc::prepareRootInput
 
 
     return sc;
+}
+
+bool RootIoSvc::setBranchStatus(const std::string& type,
+  const std::string& branch, int status) {
+
+    MsgStream log( msgSvc(), name() );
+
+    RootInputDesc* rootInputDesc = getRootInputDesc(type);
+    if (rootInputDesc) {
+        return rootInputDesc->setBranchStatus(branch,status);
+    }
+    log << MSG::WARNING << "Did not find RootInputDesc type " << type << endreq;
+    return false;
+
 }
 
 StatusCode RootIoSvc::closeInput(const std::string& type)
