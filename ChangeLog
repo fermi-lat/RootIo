@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Nov  9 21:24:22 PST 2009
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev17r35p1
+	SConscript 
+Log Message:
+test out turning off branches while reading
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-21-12-00-gr06, operation: add
 Package: RootIo
