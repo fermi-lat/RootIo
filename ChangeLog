@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: heather  Mon Nov  9 21:24:23 PST 2009
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev17r35p1
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+test out turning off branches while reading
+    *
+------------------------------------------------------------
+User: heather  Mon Nov  9 21:24:23 PST 2009
 RootIo/doc
 
 Modified Files:
