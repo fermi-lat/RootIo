@@ -3,7 +3,7 @@
 * @brief definition of the class RootInputDesc
 *        This class is used to set up and handle the actual root IO
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.12 2008/12/07 16:30:48 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.h,v 1.13 2009/03/02 21:37:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -60,6 +60,8 @@ public:
 
     /// Setup to read from an event collection
     Long64_t setEventCollection( );
+
+    bool setBranchStatus(const std::string& branch, int status);
 
   private :
 

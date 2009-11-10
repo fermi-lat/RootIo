@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.37 2008/12/07 16:30:48 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.38 2009/04/24 19:03:04 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -95,6 +95,8 @@ private:
     std::string m_branchName;
     /// Option string which will be passed to McEvent::Clear
     std::string m_clearOption;
+    /// Branch Exclusion List
+    StringArrayProperty m_excludeBranchList;
 
     Long64_t m_numEvents;
 
@@ -145,6 +147,7 @@ Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
     declareProperty("relTreeName", m_treeName="Relations");
     declareProperty("relBranchName", m_branchName="RelTable");
     declareProperty("clearOption", m_clearOption="");
+    declareProperty("ExcludeBranches",m_excludeBranchList=initList);
 
     m_mcPartToTrajList    = 0;
     m_mcPointToPosHitList = 0;
@@ -187,6 +190,24 @@ StatusCode relationRootReaderAlg::initialize()
     // Set up new school system...
     // Use treeName as key type
     m_rootIoSvc->prepareRootInput("rel", m_treeName, m_branchName, 0, m_fileList);
+
+    if (m_excludeBranchList.value().size() > 0) {
+        std::vector<std::string>::const_iterator excludeListItr;
+        for (excludeListItr = m_excludeBranchList.value().begin();
+             excludeListItr != m_excludeBranchList.value().end();
+             excludeListItr++ ) {
+             std::string branchName = *excludeListItr;
+             bool foundFlag  = m_rootIoSvc->setBranchStatus("rel",branchName,0);
+             if (!foundFlag)
+                 log << MSG::WARNING << "Did  not find any matching branch"
+                     << " names for " << branchName << endreq;
+             else
+                 log << MSG::INFO << "Set BranchStatus to 0 (off) for "
+                     << "branch " << branchName << endreq;
+
+         }
+    }
+
 
     return sc;
     

@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.19 2008/12/07 16:49:04 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.20 2009/03/02 21:37:08 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -440,4 +440,13 @@ void RootInputDesc::clearEvent()
     { 
         dataPtr->Clear() ; 
     }
+}
+
+bool RootInputDesc::setBranchStatus(const std::string& branch, int status) {
+    if (!m_chain) return false;
+    TDirectory * saveDir = gDirectory ;	
+    unsigned int foundFlag;
+    m_chain->SetBranchStatus(branch.c_str(),status,&foundFlag);
+    saveDir->cd();
+    return ((foundFlag==0) ? false : true);
 }
