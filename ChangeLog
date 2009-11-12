@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Wed Nov 11 17:02:33 PST 2009
+GlastRelease-scons/RootIo
+
+Modified Files:
+	.cvsignore SConscript 
+Log Message:
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-04-01-gr01, operation: add
 Package: RootIo
