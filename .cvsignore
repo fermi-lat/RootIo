@@ -9,3 +9,5 @@ Linux-i686*
 VC8*
 Visual
 rh*
+build
+*.pyc
