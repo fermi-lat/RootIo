@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: heather  Wed Dec  2 11:18:39 PST 2009
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+merge in mods to allow turning off branches when reading
+    *
+------------------------------------------------------------
+User: heather  Wed Dec  2 11:18:39 PST 2009
 RootIo/doc
 
 Modified Files:
