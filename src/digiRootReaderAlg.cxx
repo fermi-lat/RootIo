@@ -48,7 +48,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.98 2008/12/07 16:30:48 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.99.42.1 2009/11/10 05:24:23 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm
@@ -123,6 +123,8 @@ private:
     std::string m_branchName;
     /// Option string which will be passed to McEvent::Clear
     std::string m_clearOption;
+    /// Branch Exclusion list 
+    StringArrayProperty m_excludeBranchList;
 
     Long64_t m_numEvents;
   
@@ -153,6 +155,7 @@ Algorithm(name, pSvcLocator), m_digiEvt(0)
     declareProperty("digiTreeName", m_treeName="Digi");
     declareProperty("digiBranchName", m_branchName="DigiEvent");
     declareProperty("clearOption", m_clearOption="");
+    declareProperty("ExcludeBranches", m_excludeBranchList=initList);
 }
 
 StatusCode digiRootReaderAlg::initialize()
@@ -198,6 +201,25 @@ StatusCode digiRootReaderAlg::initialize()
     // Set up new school system...
     // Use the TTree name as the key type 
     m_rootIoSvc->prepareRootInput("digi", m_treeName, m_branchName, 0, m_fileList);
+
+    if (m_excludeBranchList.value().size() > 0) {
+        std::vector<std::string>::const_iterator excludeListItr;
+        for (excludeListItr = m_excludeBranchList.value().begin();
+             excludeListItr != m_excludeBranchList.value().end();
+             excludeListItr++ ) {
+             std::string branchName = *excludeListItr;
+             bool foundFlag  = m_rootIoSvc->setBranchStatus("digi",branchName,0);
+             if (!foundFlag)
+                 log << MSG::WARNING << "Did  not find any matching branch"
+                     << " names for " << branchName << endreq;
+             else
+                 log << MSG::INFO << "Set BranchStatus to 0 (off) for "
+                     << "branch " << branchName << endreq;
+        }
+
+    }
+
+
 
     return sc;
     

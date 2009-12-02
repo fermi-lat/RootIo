@@ -36,7 +36,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.73 2008/12/07 16:30:48 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.74.42.1 2009/11/10 05:24:23 heather Exp $
  */
 
 
@@ -86,6 +86,8 @@ private:
     std::string m_branchName;
     /// Option string which will be passed to McEvent::Clear
     std::string m_clearOption;
+    // Branches to exclude from reading
+    StringArrayProperty m_excludeBranchList;
 
     commonData m_common;
 
@@ -119,6 +121,7 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
     declareProperty("mcTreeName", m_treeName="Mc");
     declareProperty("mcBranchName", m_branchName="McEvent");
     declareProperty("clearOption", m_clearOption="");
+    declareProperty("ExcludeBranches",m_excludeBranchList=initList);
     
     m_particleMap.clear();
 
@@ -162,7 +165,23 @@ StatusCode mcRootReaderAlg::initialize()
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
     m_rootIoSvc->prepareRootInput("mc", m_treeName, m_branchName, 0, m_fileList);
-     
+    if (m_excludeBranchList.value().size() > 0) {
+        std::vector<std::string>::const_iterator excludeListItr;
+        for (excludeListItr = m_excludeBranchList.value().begin();
+             excludeListItr != m_excludeBranchList.value().end();
+             excludeListItr++ ) {
+             std::string branchName = *excludeListItr;
+             bool foundFlag  = m_rootIoSvc->setBranchStatus("mc",branchName,0);
+             if (!foundFlag)
+                 log << MSG::WARNING << "Did  not find any matching branch"
+                     << " names for " << branchName << endreq;
+             else
+                 log << MSG::INFO << "Set BranchStatus to 0 (off) for " 
+                     << "branch " << branchName << endreq;
+        }
+
+    }
+ 
     return sc;
     
 }
