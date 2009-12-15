@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Dec 15 07:12:37 PST 2009
+RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+merging in Eric's updates for AcdRecon for Pass 8
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-05-00, operation: add
 Package: RootIo
