@@ -4,6 +4,7 @@
  @verbatim
  EOH
 
+ RootIo-24-06-01 14-Dec-2009    hmk Merge in Eric's mods from GlastReleasev17r25
  RootIo-24-05-00 02-Dec-2009    hmk Merge in ability to turn off branches
             while reading from GlastReleasev17r35p1 branch
  RootIo-24-04-03 11-Nov-2009    jrb Updates for SCons
@@ -14,6 +15,12 @@
             RootIo
  RootIo-24-04-01-gr01 11-Nov-09 HMK Provide JO to set active branches when
             reading
+GlastReleasev17r25 branch
+ v24r4gr3   27-May-09 HMK Fix silly typo
+ v24r4gr2   19-May-09 HMK Get the other changed line in here too
+ v24r4gr1   18-May-09 HMK Merge in Eric's changes for AcdRecon into 
+            GlastReleasev17r25 branch for testing
+End GlastReleasev17r25 branch
  v24r4      07-May-09 HMK Prevent job failure with the xxRootReaderAlgs do not
             find data, in case this is an event display run
  v24r3      27-Mar-09 HMK add FhSetMeritAlg, setting merit header in a service

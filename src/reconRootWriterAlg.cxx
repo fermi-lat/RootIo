@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.86 2008/04/14 10:07:00 cohen Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.87.164.3 2009/05/27 13:30:52 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -267,7 +267,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     if( log.isActive())evtTds->fillStream(log.stream());
     log << endreq;
     
-    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon);
+    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon, new AcdReconV2);
 
     // For simulated data - this may not exist on the TDS and that is ok
     // no need to fail for that
@@ -775,6 +775,13 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
     if (!acdRecTds) return StatusCode::SUCCESS;
     RootPersistence::convert(*acdRecTds,*acdRec) ;
+
+    AcdReconV2* acdRecV2 = m_reconEvt->getAcdReconV2();
+    if (!acdRecV2) return StatusCode::FAILURE;
+    SmartDataPtr<Event::AcdReconV2> acdRecTdsV2(eventSvc(), EventModel::AcdReconV2::Event);
+    if (!acdRecTdsV2) return StatusCode::SUCCESS;
+    RootPersistence::convert(*acdRecTdsV2,*acdRecV2) ;
+
     return StatusCode::SUCCESS;
 }
 
