@@ -1,14 +1,4 @@
 ------------------------------------------------------------
-User: usher  Mon Jan 25 09:31:55 PST 2010
-RootIo/src
-
-Modified Files:
-	commonData.cxx commonData.h reconRootReaderAlg.cxx 
-	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
-	relationRootWriterAlg.cxx 
-Log Message:
-    *
-------------------------------------------------------------
 TAG
 Tag name: RootIo-24-06-01, operation: add
 Package: RootIo
