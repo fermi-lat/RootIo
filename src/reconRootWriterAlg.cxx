@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.87.164.3 2009/05/27 13:30:52 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.88 2009/12/15 15:12:37 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -626,11 +626,15 @@ void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* 
     unsigned int numClusters = clusterColTds->size();   
     unsigned int iCluster;   
     for (iCluster = 0; iCluster < numClusters; iCluster++)
-     {
-      Event::CalCluster * clusterTds = (*clusterColTds)[iCluster] ;
-      CalCluster * clusterRoot = new CalCluster ;
-      RootPersistence::convert(*clusterTds,*clusterRoot) ;
-      calRec->addCalCluster(clusterRoot) ;   
+    {
+        Event::CalCluster * clusterTds = (*clusterColTds)[iCluster] ;
+        CalCluster * clusterRoot = new CalCluster ;
+        RootPersistence::convert(*clusterTds,*clusterRoot) ;
+        calRec->addCalCluster(clusterRoot) ;   
+
+        // Keep the relationship between the TDS and root objects
+        TRef ref = clusterRoot;
+        m_common.m_calClusterMap[clusterTds] = ref;
     }   
     
     return;   
@@ -664,6 +668,11 @@ void reconRootWriterAlg::fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* 
         CalXtalRecData * xtalRoot = new CalXtalRecData() ;
         RootPersistence::convert(**xtalTds,*xtalRoot) ;        
         calRec->addXtalRecData(xtalRoot) ;   
+
+        // Keep the relationship between the TDS and root objects
+        TRef ref = xtalRoot;
+        const Event::CalXtalRecData* xtalRecData = *xtalTds;
+        m_common.m_calXtalRecDataMap[xtalRecData] = ref;
     }   
     
     return;   

@@ -25,6 +25,9 @@
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 
+#include "Event/Recon/CalRecon/CalXtalRecData.h"
+#include "Event/Recon/CalRecon/CalCluster.h"
+
 #include "TFile.h"
 #include "TTree.h"
 #include "TRef.h"
@@ -42,7 +45,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.8 2007/02/15 19:30:06 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.9 2008/03/13 19:56:55 usher Exp $
 */
 
 class commonData 
@@ -66,10 +69,12 @@ public:
     static std::map<const Event::CalDigi*, TRef> m_calDigiMap;
     
     /// Create a set of maps between Recon data in TDS and TRefs in ROOT
-    static std::map<const Event::TkrCluster*, TRef> m_tkrClusterMap;
-    static std::map<const Event::TkrTrack*,   TRef> m_tkrTrackMap;
-    static std::map<const Event::TkrVertex*,  TRef> m_tkrVertexMap;
+    static std::map<const Event::TkrCluster*,     TRef> m_tkrClusterMap;
+    static std::map<const Event::TkrTrack*,       TRef> m_tkrTrackMap;
+    static std::map<const Event::TkrVertex*,      TRef> m_tkrVertexMap;
 
+    static std::map<const Event::CalCluster*,     TRef> m_calClusterMap;
+    static std::map<const Event::CalXtalRecData*, TRef> m_calXtalRecDataMap;
 
     /// Create a set of maps between ROOT MC objects and the TDS MC data
     static std::map<const TObject*, const Event::McParticle*>        m_rootMcPartMap;
@@ -86,6 +91,9 @@ public:
     static std::map<const TObject*, const Event::TkrCluster*>       m_rootTkrClusterMap;
     static std::map<const TObject*, const Event::TkrTrack*>         m_rootTkrTrackMap;
     static std::map<const TObject*, const Event::TkrVertex*>        m_rootTkrVertexMap;
+
+    static std::map<const TObject*, const Event::CalCluster*>       m_rootCalClusterMap;
+    static std::map<const TObject*, const Event::CalXtalRecData*>   m_rootCalXtalRecDataMap;
 
     /// Provide access to the ROOT event pointers
     static McEvent *m_mcEvt;
