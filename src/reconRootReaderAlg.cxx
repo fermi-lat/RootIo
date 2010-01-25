@@ -51,7 +51,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.92.42.1 2009/11/10 05:24:23 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.93 2009/12/02 19:18:39 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm
@@ -798,6 +798,8 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
         RootPersistence::convert(*calXtalRecRoot,*calXtalRecDataTds) ;
         
         calXtalRecColTds->push_back(calXtalRecDataTds);
+
+        m_common.m_rootCalXtalRecDataMap[calXtalRecRoot] = calXtalRecDataTds;
     }
     
     //register output data collection as a TDS object
@@ -827,6 +829,8 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
         Event::CalCluster * calClusterTds = new Event::CalCluster() ;
         RootPersistence::convert(*calClusterRoot,*calClusterTds) ;
         calClusterColTds->push_back(calClusterTds) ;
+
+        m_common.m_rootCalClusterMap[calClusterRoot] = calClusterTds;
     }
     
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterCol, calClusterColTds);

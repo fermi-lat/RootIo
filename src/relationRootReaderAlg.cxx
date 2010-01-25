@@ -39,7 +39,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.38.42.1 2009/11/10 05:24:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.40 2009/12/02 19:18:39 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm
@@ -64,12 +64,13 @@ private:
 
     /// Reads top-level DigiEvent
     StatusCode readRelations();
-    
 
     /// Handles converting TkrDigi relations back to TDS
     StatusCode readTkrDigiRelations(Relation*);
     /// Handles converting CalDigi relations back to TDS
     StatusCode readCalDigiRelations(Relation*);
+    /// Handles converting CalXtalRecData to CalCluster relations back to TDS
+    StatusCode readCalXtalToClusterRelations(Relation*);
     /// Handles converting track relations back to TDS
     StatusCode readTkrTrackRelations(Relation*);
     /// Handles converting vertex relations back to TDS
@@ -104,16 +105,19 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 
 /// typedefs for tables
-    typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>    TkrDigiRelTab;
-    typedef Event::Relation<Event::TkrDigi,Event::McPositionHit>    TkrDigiRelType;
-    typedef Event::RelTable<Event::CalDigi,Event::McIntegratingHit> CalDigiRelTab;
-    typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit> CalDigiRelType;
+    typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>     TkrDigiRelTab;
+    typedef Event::Relation<Event::TkrDigi,Event::McPositionHit>     TkrDigiRelType;
+    typedef Event::RelTable<Event::CalXtalRecData,Event::CalCluster> CalClusterRelTab;
+    typedef Event::Relation<Event::CalXtalRecData,Event::CalCluster> CalClusterRelType;
+    typedef Event::RelTable<Event::CalDigi,Event::McIntegratingHit>  CalDigiRelTab;
+    typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit>  CalDigiRelType;
 
     /// Internal pointer to TDS TkrDigi table
     TkrDigiRelTab*                    m_tkrDigiRelTab;
-    /// Internal pointer to tDS CalDigi table
+    /// Internal pointer to TDS CalDigi table
     CalDigiRelTab*                    m_calDigiRelTab;
-
+    /// Internal pointer to the TDS CalCluster table
+    CalClusterRelTab*                 m_calClusterRelTab;
     /// Internal pointer to McParticle object list
     Event::McPartToTrajectoryTabList* m_mcPartToTrajList;
 
@@ -122,6 +126,12 @@ private:
 
     /// Internal pointer to McTrajectoryPoint to Pos hit list
     Event::McPointToIntHitTabList*    m_mcPointToIntHitList;
+
+    /// Define a map of function pointers to handle conversions
+    typedef StatusCode(relationRootReaderAlg::*ConvFuncPtr)(Relation*);
+    std::map<std::string, ConvFuncPtr> m_convFuncMap;
+    ConvFuncPtr                        m_currentConverter;
+    std::string                        m_currentRelType;
 };
 
 static const AlgFactory<relationRootReaderAlg>  Factory;
@@ -208,6 +218,16 @@ StatusCode relationRootReaderAlg::initialize()
          }
     }
 
+    // Set up the map between relation key types and the actual conversion routine
+    m_convFuncMap["TkrDigi"]           = relationRootReaderAlg::readTkrDigiRelations;
+    m_convFuncMap["CalDigi"]           = relationRootReaderAlg::readCalDigiRelations;
+    m_convFuncMap["CalXtalRecData"]    = relationRootReaderAlg::readCalXtalToClusterRelations;
+    m_convFuncMap["TkrVertex"]         = relationRootReaderAlg::readTkrVertexRelations;
+    m_convFuncMap["McParticle"]        = relationRootReaderAlg::readMcParticleRelations;
+    m_convFuncMap["McTrajectoryPoint"] = relationRootReaderAlg::readMcTrajectoryPointRelations;
+
+    m_currentConverter = 0;
+    m_currentRelType   = "";
 
     return sc;
     
@@ -254,11 +274,12 @@ StatusCode relationRootReaderAlg::execute()
 
 
     /// Register our relational tables in the TDS (and turn over ownership)
-    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab, m_tkrDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab, m_calDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject("/Event/MC/McPartToTrajectory",  m_mcPartToTrajList );
-    sc = eventSvc()->registerObject("/Event/MC/McPointToPosHit",     m_mcPointToPosHitList );
-    sc = eventSvc()->registerObject("/Event/MC/McPointToIntHit",     m_mcPointToIntHitList );
+    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab,        m_tkrDigiRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab,        m_calDigiRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterHitTab, m_calClusterRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject("/Event/MC/McPartToTrajectory",         m_mcPartToTrajList );
+    sc = eventSvc()->registerObject("/Event/MC/McPointToPosHit",            m_mcPointToPosHitList );
+    sc = eventSvc()->registerObject("/Event/MC/McPointToIntHit",            m_mcPointToIntHitList );
     
     return sc;
 }
@@ -274,6 +295,9 @@ StatusCode relationRootReaderAlg::createTDSTables()
 
     m_calDigiRelTab = new CalDigiRelTab();
     m_calDigiRelTab->init();
+
+    m_calClusterRelTab = new CalClusterRelTab();
+    m_calClusterRelTab->init();
 
     m_mcPartToTrajList    = new Event::RelationList<Event::McParticle,Event::McTrajectory>;
     m_mcPointToPosHitList = new Event::RelationList<Event::McTrajectoryPoint,Event::McPositionHit>;
@@ -300,15 +324,22 @@ StatusCode relationRootReaderAlg::readRelations() {
 
         const TObject* key = relation->getKey();
 
-        // Dynamic cast the key back to its original object and decide how to read the relation
-        if      (const TkrDigi*           digi    = dynamic_cast<const TkrDigi*>(key))           readTkrDigiRelations(relation);
-        else if (const CalDigi*           digi    = dynamic_cast<const CalDigi*>(key))           readCalDigiRelations(relation);
-        else if (const TkrVertex*         vert    = dynamic_cast<const TkrVertex*>(key))         readTkrVertexRelations(relation);
-        else if (const McParticle*        mcPart  = dynamic_cast<const McParticle*>(key))        readMcParticleRelations(relation);
-        else if (const McTrajectoryPoint* mcPoint = dynamic_cast<const McTrajectoryPoint*>(key)) readMcTrajectoryPointRelations(relation);
+        std::string className = key->ClassName();
+
+        if (className != m_currentRelType)
+        {
+            m_currentRelType = className;
+
+            std::map<std::string, ConvFuncPtr>::iterator converterIter = m_convFuncMap.find(className);
+
+            if (converterIter != m_convFuncMap.end()) m_currentConverter = (*converterIter).second;
+            else                                      m_currentConverter = 0;
+        }
+
+        if (m_currentConverter) sc = (this->*m_currentConverter)(relation);
         else
         {
-            log << MSG::WARNING << "Unrecognized Relation key" << endreq;
+            log << MSG::WARNING << "Unrecognized Relation key: " << className << endreq;
         }
     }
     
@@ -401,6 +432,49 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
     return sc;
 }
 
+StatusCode relationRootReaderAlg::readCalXtalToClusterRelations(Relation* relation) 
+{
+    // Purpose and Method:  Converts a root CalDigi/McIntegratingHit relation to TDS version
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    const CalXtalRecData*  xtalRoot = dynamic_cast<const CalXtalRecData*>(relation->getKey());
+    Event::CalXtalRecData* xtalTds  = 0;
+
+    // Look up TDS to root relation for digis
+    if (m_common.m_rootCalXtalRecDataMap.find(xtalRoot) != m_common.m_rootCalXtalRecDataMap.end()) 
+    {
+        xtalTds = const_cast<Event::CalXtalRecData*>(m_common.m_rootCalXtalRecDataMap[xtalRoot]);
+    } else {
+        log << MSG::WARNING << "Could not located CalXtalRecData TDS/ROOT pair" << endreq;
+        return sc;
+    }
+
+    // Get the list of related objects
+    const TRefArray& relArrRoot = relation->getValueCol();
+    /*int              numRel     =*/ relArrRoot.GetEntries();
+
+    // Loop over the list
+    for(int idx = 0; idx < relArrRoot.GetEntries(); idx++)
+    {
+        TObject* clusterRoot = relation->getValueCol().At(idx);
+
+        // Look up TDS to root relation for position hits
+        if (m_common.m_rootCalClusterMap.find(clusterRoot) != m_common.m_rootCalClusterMap.end()) {
+            Event::CalCluster* clusterTds = const_cast<Event::CalCluster*>(m_common.m_rootCalClusterMap[clusterRoot]);
+
+            // Make the event relation here
+            typedef Event::Relation<Event::CalXtalRecData,Event::CalCluster> relType;
+            relType* rel = new relType(xtalTds,clusterTds);
+            m_calClusterRelTab->addRelation(rel);
+        } else {
+            log << MSG::WARNING << "Could not located CalCluster<-->CalXtalRecData TDS/ROOT pair" << endreq;
+        }
+    }
+
+    return sc;
+}
 /*
 StatusCode relationRootReaderAlg::readTkrTrackRelations(Relation* relation) 
 {

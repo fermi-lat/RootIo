@@ -14,6 +14,10 @@
 #include "Event/MonteCarlo/McTrajectory.h"
 #include "Event/MonteCarlo/McRelTableDefs.h"
 
+#include "Event/Recon/CalRecon/CalCluster.h"
+#include "Event/Recon/CalRecon/CalXtalRecData.h"
+#include "Event/Recon/CalRecon/calClusterTab.h"
+
 #include "Event/RelTable/RelTable.h"
 
 #include "idents/CalXtalId.h"
@@ -35,6 +39,7 @@
 
 #include "digiRootData/DigiEvent.h"
 #include "mcRootData/McEvent.h"
+#include "reconRootData/ReconEvent.h"
 
 #include <map>
 
@@ -44,7 +49,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.22 2008/01/24 21:38:30 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.23 2008/03/13 19:56:55 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -69,6 +74,8 @@ private:
     StatusCode writeCalDigiRelations();
     /// Fills the Monte Carlo specific relational tables
     StatusCode writeMcRelations();
+    /// Fills the CalRecon specific relational tables
+    StatusCode writeCalReconRelations();
 
     /// Typedefs for map between root objects and TRefArrays
     typedef std::map<TObject*, TRefArray> relationMap;
@@ -188,6 +195,12 @@ StatusCode relationRootWriterAlg::execute()
         return sc;
     }
 
+    sc = writeCalReconRelations();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write CalReconRelations" << endreq;
+        return sc;
+    }
+
     sc = writeMcRelations();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write McRelations" << endreq;
@@ -284,6 +297,53 @@ StatusCode relationRootWriterAlg::writeCalDigiRelations() {
         }
 
         if (calDigiRoot && intHitRoot) calRelationMap[calDigiRoot].Add(intHitRoot);
+
+    }
+
+    fillRelTable(calRelationMap);
+
+    return sc;
+}
+
+StatusCode relationRootWriterAlg::writeCalReconRelations() {
+    // Purpose and Method:  Retrieve the relations concerning CalDigi from TDS
+    //    Write the relations to ROOT
+
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    Event::CalClusterHitTabList* xTal2ClusTabList = 
+        SmartDataPtr<Event::CalClusterHitTabList>(eventSvc(), EventModel::CalRecon::CalClusterHitTab);
+
+    if (!xTal2ClusTabList) return sc;
+
+    relationMap calRelationMap;
+
+    for (Event::CalClusterHitTabList::iterator calRelIter = xTal2ClusTabList->begin(); calRelIter != xTal2ClusTabList->end(); calRelIter++)
+    {
+        Event::CalXtalRecData* xtalRecDataTds = (*calRelIter)->getFirst();
+        Event::CalCluster*     calClusterTds  = (*calRelIter)->getSecond();
+
+        CalXtalRecData* calXtalRecDataRoot = 0;
+        CalCluster*     calClusterRoot     = 0;
+        if (m_common.m_calXtalRecDataMap.find(xtalRecDataTds) != m_common.m_calXtalRecDataMap.end()) 
+        {
+            TRef ref = m_common.m_calXtalRecDataMap[xtalRecDataTds];
+            calXtalRecDataRoot = (CalXtalRecData*)ref.GetObject();
+        // It can happen that a noise hit will not have an McIntegratingHit associated
+        } else {
+            //log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
+            continue;
+        }
+
+        if (m_common.m_calClusterMap.find(calClusterTds) != m_common.m_calClusterMap.end()) {
+            TRef ref = m_common.m_calClusterMap[calClusterTds];
+            calClusterRoot = (CalCluster*)ref.GetObject();
+        } else {
+            log << MSG::WARNING << "Could not located CalDigi TDS/ROOT pair" << endreq;
+        }
+
+        if (calClusterRoot && calXtalRecDataRoot) calRelationMap[calXtalRecDataRoot].Add(calClusterRoot);
 
     }
 
