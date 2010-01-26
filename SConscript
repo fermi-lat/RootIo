@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/SConscript,v 1.26 2009/12/15 15:12:37 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/SConscript,v 1.27 2010/01/25 18:12:24 usher Exp $
 # Authors: Heather Kelly <heather@milkyway.gsfc.nasa.gov>, David Chamont <chamont@poly.in2p3.fr>
-# Version: RootIo-24-07-00
+# Version: RootIo-24-07-01
 Import('baseEnv')
 Import('listFiles')
 Import('packages')
