@@ -219,12 +219,12 @@ StatusCode relationRootReaderAlg::initialize()
     }
 
     // Set up the map between relation key types and the actual conversion routine
-    m_convFuncMap["TkrDigi"]           = relationRootReaderAlg::readTkrDigiRelations;
-    m_convFuncMap["CalDigi"]           = relationRootReaderAlg::readCalDigiRelations;
-    m_convFuncMap["CalXtalRecData"]    = relationRootReaderAlg::readCalXtalToClusterRelations;
-    m_convFuncMap["TkrVertex"]         = relationRootReaderAlg::readTkrVertexRelations;
-    m_convFuncMap["McParticle"]        = relationRootReaderAlg::readMcParticleRelations;
-    m_convFuncMap["McTrajectoryPoint"] = relationRootReaderAlg::readMcTrajectoryPointRelations;
+    m_convFuncMap["TkrDigi"]           = &relationRootReaderAlg::readTkrDigiRelations;
+    m_convFuncMap["CalDigi"]           = &relationRootReaderAlg::readCalDigiRelations;
+    m_convFuncMap["CalXtalRecData"]    = &relationRootReaderAlg::readCalXtalToClusterRelations;
+    m_convFuncMap["TkrVertex"]         = &relationRootReaderAlg::readTkrVertexRelations;
+    m_convFuncMap["McParticle"]        = &relationRootReaderAlg::readMcParticleRelations;
+    m_convFuncMap["McTrajectoryPoint"] = &relationRootReaderAlg::readMcTrajectoryPointRelations;
 
     m_currentConverter = 0;
     m_currentRelType   = "";
