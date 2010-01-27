@@ -16,7 +16,7 @@
 
 #include "Event/Recon/CalRecon/CalCluster.h"
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
-#include "Event/Recon/CalRecon/calClusterTab.h"
+#include "Event/Recon/CalRecon/CalClusterTab.h"
 
 #include "Event/RelTable/RelTable.h"
 
@@ -49,7 +49,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.23 2008/03/13 19:56:55 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.24 2010/01/25 17:31:55 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
