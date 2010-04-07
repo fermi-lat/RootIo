@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Apr  7 06:25:40 PDT 2010
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev17r35p2
+	SConscript 
+Log Message:
+patches for Wired to fix how we clear ROOT data objects
+    *
+------------------------------------------------------------
 User: heather  Wed Apr  7 06:25:17 PDT 2010
 RootIo/src
 
