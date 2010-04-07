@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.61 2009/09/12 16:00:40 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.62 2009/12/02 19:18:39 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -497,6 +497,9 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
   // 2 : unknown type
   // 3 : unknown file
   
+  MsgStream log (msgSvc(), name() );
+  log << MSG::DEBUG << "setSingleFile type: " << type << " file: " 
+      << fileName << endreq;
   std::string myFileName = fileName ;
   facilities::Util::expandEnvVar(&myFileName) ;
   if (myFileName.empty())
@@ -507,16 +510,25 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
    
   RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
   if (rootInputDesc==0)
-   { return 2 ; }
+   { 
+     log << MSG::DEBUG 
+         << "setSingleFile rootInputDesc does not exist for type " 
+         << type << endreq;
+     return 2 ; 
+   }
   
   if (!RootPersistence::fileExists(myFileName))
-   { return 3 ; }
+   { 
+       log << MSG::DEBUG << "setSingleFile file doesn't exist for type " 
+           << type << endreq;
+       return 3 ; 
+   }
   
   std::vector<std::string> fileVec ;
   fileVec.push_back(myFileName) ;
   StringArrayProperty fileList ;
   fileList.setValue(fileVec) ;
-  rootInputDesc->setFileList(fileList) ;
+  rootInputDesc->setFileList(fileList,true) ;
 
   // fixAcdStreamer
   if (type=="RECON")
@@ -585,7 +597,8 @@ StatusCode RootIoSvc::prepareRootInput
     if (m_celFileNameRead.empty()) {
 
         // Create a new RootInputDesc object for this algorithm
-        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, 
+                                     m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 
@@ -707,6 +720,7 @@ TObject* RootIoSvc::getNextEvent(const std::string& type, long long inputIndex)
             int                runNum     = runEvtPair.first;
             int                evtNum     = runEvtPair.second;
             pData = rootInputDesc->getEvent(runNum,evtNum) ;
+            if (pData == 0) log << MSG::DEBUG << "getEvent failed" << endreq;
         }
     }
 
@@ -957,6 +971,7 @@ void RootIoSvc::setEvtMax(Long64_t max)
      // if a run/event id pair is available for loading.  If at least one of the TTrees has the event
      // available we will return true, otherwise return false.
 
+     MsgStream log( msgSvc(), name() );
      bool status = false;
      std::map<std::string,RootInputDesc *>::iterator typeItr ;
      for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
@@ -965,7 +980,9 @@ void RootIoSvc::setEvtMax(Long64_t max)
          status |= rootInputDesc->checkEventAvailability(ids.first, ids.second);
      }
 
-     if (!status) return false;
+     if (!status) {
+        return false;
+     }
      m_runEventPair = ids;
      m_useIndex = false;
 
