@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Apr  7 07:09:06 PDT 2010
+RootIo/RootIo
+
+Modified Files:
+	IRootIoSvc.h 
+Log Message:
+patch to handle Wired where we may switch files on the fly and not own the dataObjects in RootInputDesc
+    *
+------------------------------------------------------------
 User: heather  Wed Apr  7 07:09:05 PDT 2010
 RootIo
 
