@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Wed Apr  7 06:25:17 PDT 2010
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev17r35p2
+	RootInputDesc.cxx RootIoSvc.cxx digiRootReaderAlg.cxx 
+	mcRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	relationRootReaderAlg.cxx 
+Log Message:
+patches for Wired to fix how we clear ROOT data objects
+    *
+------------------------------------------------------------
 User: heather  Wed Apr  7 06:25:16 PDT 2010
 RootIo/doc
 
