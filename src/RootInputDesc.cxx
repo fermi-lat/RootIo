@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.20 2009/03/02 21:37:08 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.20.68.1 2009/11/10 05:24:23 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -206,6 +206,9 @@ Long64_t RootInputDesc::setFileList( const StringArrayProperty & fileList, bool 
     // Check to see if we are changing files (which means a TChain exists)
     if (m_chain)
     {
+        if (m_chainIndex) delete m_chainIndex;
+        m_chainIndex = 0; 
+
         m_chain->GetFile()->Close() ;
         delete m_chain ;
         m_chain = 0;
