@@ -4,6 +4,8 @@
  @verbatim
  EOH
 
+ RootIo-24-08-01 07-Apr-2010  HMK   Patch clearing of Root objects to handle
+                      Wired, where we may swtich input files on the fly
  RootIo-24-07-03 27-Jan-2010    TU  Fix case problem in include statement (redux)
  RootIo-24-07-02 24-Jan-2010    TU  Fix case problem in include statement
  RootIo-24-07-01 24-Jan-2010    TU  Fixing relationRootReaderAlg (I think)
@@ -17,6 +19,12 @@
             and OnboardFilterTds -no_auto_imports, in the hopes that 
             IExternal/obf will no longer propagate to every package that uses
             RootIo
+ RootIo-24-04-01-gr02 07-Apr-09 HMK Patch clearing of digi, mc, rec, relation
+            objects by doing it during the endEvent handle.  This avoids
+            the potential for a deleted object due to a call to setFile via
+            Wired, from removing an object the xxRootReaderAlgs thinks is
+            still active
+            on GlastReleasev17r35p2 branch for Pass 7
  RootIo-24-04-01-gr01 11-Nov-09 HMK Provide JO to set active branches when
             reading
 GlastReleasev17r25 branch

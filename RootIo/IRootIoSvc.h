@@ -49,7 +49,6 @@ static const InterfaceID IID_IRootIoSvc("RootIoSvc",4,1) ;
 *
 * \author Heather Kelly heather@lheapop.gsfc.nasa.gov
 * 
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.21.52.1 2009/11/10 05:24:22 heather Exp $
 */
 
 class  IRootIoSvc : virtual public IInterface
