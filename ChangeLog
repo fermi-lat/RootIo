@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Wed Apr  7 06:25:16 PDT 2010
+RootIo/doc
+
+Modified Files:
+      Tag: GlastReleasev17r35p2
+	release.notes 
+Log Message:
+patches for Wired to fix how we clear ROOT data objects
+    *
+------------------------------------------------------------
+User: heather  Wed Apr  7 06:25:16 PDT 2010
 RootIo/cmt
 
 Modified Files:
