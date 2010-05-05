@@ -50,7 +50,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.99.42.1.2.1 2010/04/07 13:25:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.101 2010/04/07 14:09:07 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -230,6 +230,15 @@ StatusCode digiRootReaderAlg::initialize()
 
     }
 
+
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
 
 
     return sc;
