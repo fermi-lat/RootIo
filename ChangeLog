@@ -1,14 +1,4 @@
 ------------------------------------------------------------
-User: usher  Wed May  5 12:00:06 PDT 2010
-RootIo/src
-
-Modified Files:
-	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
-	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
-Log Message:
-Include calls to register with incident service to make sure to get called at end event
-    *
-------------------------------------------------------------
 TAG
 Tag name: RootIo-24-08-01, operation: add
 Package: RootIo
