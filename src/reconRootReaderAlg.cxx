@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.94 2010/01/25 17:31:55 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.95 2010/04/07 14:09:07 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -233,7 +233,14 @@ StatusCode reconRootReaderAlg::initialize()
 
     }
 
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
 
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
 
     return sc;
     
@@ -678,17 +685,17 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
     trackHitTds->setChiSquareSmooth(trackHitRoot->getChiSquareSmooth());
 
     // Now set the track params
-    if (trackHitRoot->validMeasuredHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED) = 
+    if (trackHitRoot->validMeasuredHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED)   = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::MEASURED));
-    if (trackHitTds->validPredictedHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED) = 
+    if (trackHitTds->validPredictedHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED)  = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::PREDICTED));
-    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED) = 
+    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED)   = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::FILTERED));
-    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT)   = 
+    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::MONTECARLO) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT)); 
-    if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED) = 
+    if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED)   = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::SMOOTHED));
-    if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL) = 
+    if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL)  = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::QMATERIAL));
 
     return trackHitTds;

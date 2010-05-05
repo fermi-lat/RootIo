@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.74.42.1.2.1 2010/04/07 13:25:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.76 2010/04/07 14:09:07 heather Exp $
  */
 
 
@@ -193,6 +193,15 @@ StatusCode mcRootReaderAlg::initialize()
 
     }
  
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
     return sc;
     
 }
