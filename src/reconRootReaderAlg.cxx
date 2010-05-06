@@ -685,17 +685,17 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
     trackHitTds->setChiSquareSmooth(trackHitRoot->getChiSquareSmooth());
 
     // Now set the track params
-    if (trackHitRoot->validMeasuredHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED)   = 
+    if (trackHitRoot->validMeasuredHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::MEASURED));
-    if (trackHitTds->validPredictedHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED)  = 
+    if (trackHitTds->validPredictedHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::PREDICTED));
-    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED)   = 
+    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::FILTERED));
-    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::MONTECARLO) = 
+    if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT)   = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT)); 
-    if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED)   = 
+    if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::SMOOTHED));
-    if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL)  = 
+    if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL) = 
                convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::QMATERIAL));
 
     return trackHitTds;
