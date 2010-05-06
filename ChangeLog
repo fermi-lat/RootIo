@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed May  5 17:34:23 PDT 2010
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+Fix renegade update that comes later
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-08-02, operation: add
 Package: RootIo
