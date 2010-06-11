@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Thu Jun 10 17:39:59 PDT 2010
+GlastRelease-scons/RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+updates for SCons build
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-08-03, operation: add
 Package: RootIo
