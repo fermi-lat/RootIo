@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Jun 11 18:40:36 PDT 2010
+GlastRelease-scons/RootIo/src/test
+
+Modified Files:
+	g4Options.txt jobOptions.txt 
+Log Message:
+in jo files replace occurrences of PKGROOT/src with PKGJOBOPTIONSPATH
+    *
+------------------------------------------------------------
 User: jrb  Fri Jun 11 18:40:35 PDT 2010
 GlastRelease-scons/RootIo/src
 
