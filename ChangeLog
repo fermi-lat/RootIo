@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Jun 11 18:40:35 PDT 2010
+GlastRelease-scons/RootIo/src
+
+Modified Files:
+	readRootOptions.txt writeRootOptions.txt 
+Log Message:
+in jo files replace occurrences of PKGROOT/src with PKGJOBOPTIONSPATH
+    *
+------------------------------------------------------------
 User: jrb  Thu Jun 10 17:39:59 PDT 2010
 GlastRelease-scons/RootIo
 
