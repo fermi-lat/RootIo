@@ -24,7 +24,7 @@ ApplicationMgr.EvtMax  = 1000000;
 ApplicationMgr.Runable= "RootIoSvc";
 
 // If you want to use the GUI uncomment the following lines
-//#include "$GLEAMROOT/src/guiOptions.txt"
+//#include "$GLEAMJOBOPTIONSPATH/guiOptions.txt"
 
 //EventDisplay.Members = {
 //   "CalDisplay",

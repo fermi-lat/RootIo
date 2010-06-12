@@ -2,9 +2,9 @@
 //
 // Job options file for writing a ROOT file
 //
-#include "$ROOTIOROOT/src/writeMcRootOptions.txt"
-#include "$ROOTIOROOT/src/writeDigiRootOptions.txt"
-#include "$ROOTIOROOT/src/writeReconRootOptions.txt"
+#include "$ROOTIOJOBOPTIONSPATH/writeMcRootOptions.txt"
+#include "$ROOTIOJOBOPTIONSPATH/writeDigiRootOptions.txt"
+#include "$ROOTIOJOBOPTIONSPATH/writeReconRootOptions.txt"
 
 ApplicationMgr.DLLs +=    { "RootIo" };
 ApplicationMgr.ExtSvc += { "RootIoSvc" };
