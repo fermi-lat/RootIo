@@ -2,7 +2,7 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/g4Options.txt,v 1.10 2004/02/27 11:01:50 kuss Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/g4Options.txt,v 1.11 2008/07/21 15:17:33 glastrm Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GlastSvc", "G4Generator",
@@ -23,7 +23,7 @@ GlastDetSvc.xmlfile="$(XMLGEODBSXMLPATH)/flight/flightSegVols.xml";
 GlastDetSvc.topVolume="LAT";         // the whole schebang 
 GlastDetSvc.visitorMode="recon";
 
-#include "$FLUXSVCROOT/src/defaultOptions.txt"
+#include "$FLUXSVCJOBOPTIONSPATH/defaultOptions.txt"
 // Append (no replace) the list of source library documents
 FluxSvc.source_lib = {"$(G4GENERATORROOT)/src/test/test_sources.xml"};
 
