@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Mon Jun 14 16:33:45 PDT 2010
+GlastRelease-scons/RootIo/src/test
+
+Modified Files:
+	g4Options.txt 
+Log Message:
+fix jo file for SCons
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-08-04, operation: add
 Package: RootIo
