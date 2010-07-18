@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.63 2010/04/07 14:09:06 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.64 2010/07/18 00:22:53 lsrea Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -739,9 +739,8 @@ Long64_t RootIoSvc::getIndexByEventID(int run, int event)
             unsigned index = rootInputDesc->getIndexByEventID(run, event);
             return index;
         }
-
-        return (unsigned)-1;
     }
+    return (unsigned)-1;
 }
 
 //============================================================================
