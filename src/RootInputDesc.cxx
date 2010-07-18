@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.23 2010/04/07 14:09:06 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.24 2010/07/18 00:22:53 lsrea Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -460,7 +460,8 @@ unsigned int RootInputDesc::getIndexByEventID( int runNum, int evtNum )
 
         return ind;
     }
-}
+    return noIndex;
+ }
 
 
 void RootInputDesc::clearEvent()
