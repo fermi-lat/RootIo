@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Sat Jul 17 23:02:42 PDT 2010
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootIoSvc.cxx 
+Log Message:
+Fix some warnings
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-09-00, operation: add
 Package: RootIo
