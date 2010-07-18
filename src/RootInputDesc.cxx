@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.20.68.1.2.1 2010/04/07 13:25:17 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.23 2010/04/07 14:09:06 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -436,6 +436,32 @@ TObject * RootInputDesc::getEvent( int runNum, int evtNum )
     if ((readInd<0)||(readInd>=m_chain->GetEntries())) return false;
     return true;
 }
+
+unsigned int RootInputDesc::getIndexByEventID( int runNum, int evtNum ) 
+ {
+    // Save the current directory for the ntuple writer service
+    TDirectory * saveDir = gDirectory ;	
+
+    unsigned int noIndex = (unsigned)-1;
+
+    if (m_chain) 
+    {
+        if (!m_chainIndex) {
+            m_chainIndex = new TChainIndex(m_chain,"m_runId","m_eventId");
+            if (!m_chainIndex) {
+                std::cout << "RootInputDes::checkEventAvailability "
+                          << "Failed to create TChainIndex" << std::endl;
+                saveDir->cd();
+                return noIndex;
+            }
+        }
+        Long64_t ind  = m_chainIndex->GetEntryNumberWithIndex(runNum,evtNum) ;
+        saveDir->cd();
+
+        return ind;
+    }
+}
+
 
 void RootInputDesc::clearEvent()
 {

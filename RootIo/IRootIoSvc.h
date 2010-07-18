@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.21.52.1 2009/11/10 05:24:22 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.23 2010/04/07 14:09:06 heather Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -68,6 +68,9 @@ class  IRootIoSvc : virtual public IInterface
     
     virtual bool setRunEventPair( std::pair<int,int> ) = 0 ;
     virtual std::pair<int,int> runEventPair() = 0 ;
+
+    virtual Long64_t getIndexByEventID(int run, int event) = 0;
+
   
   
     //====================
