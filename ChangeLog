@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: heather  Tue Jul 20 22:21:16 PDT 2010
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev17r35p1
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+patches for Wired reading
+    *
+------------------------------------------------------------
+User: heather  Tue Jul 20 22:21:16 PDT 2010
 RootIo/doc
 
 Modified Files:
