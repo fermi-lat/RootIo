@@ -3,6 +3,8 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/MCEvent.h"
@@ -36,11 +38,11 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.74 2009/04/24 19:03:04 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.74.42.1.2.1 2010/04/07 13:25:17 heather Exp $
  */
 
 
-class mcRootReaderAlg : public Algorithm
+class mcRootReaderAlg : public Algorithm, virtual public IIncidentListener
 {	
 public:
     
@@ -52,7 +54,16 @@ public:
     /// Orchastrates reading from ROOT file and storing the data on the TDS 
     /// for each event
     StatusCode execute();
+
+    /// handle "incidents"
+    void handle(const Incident &inc) {
+        if( inc.type()=="BeginEvent")beginEvent();
+        else if(inc.type()=="EndEvent")endEvent();
+    }
     
+    void beginEvent() { }
+    void endEvent();
+
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
 
@@ -181,6 +192,16 @@ StatusCode mcRootReaderAlg::initialize()
         }
 
     }
+
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
  
     return sc;
     
@@ -195,9 +216,6 @@ StatusCode mcRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    if (m_mcEvt) m_mcEvt->Clear(m_clearOption.c_str());
-    m_mcEvt = 0;
-
     // Try reading the event this way... 
     // use name of TTree as key type
     m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent("mc"));
@@ -586,6 +604,11 @@ StatusCode mcRootReaderAlg::readMcTrajectories()
     }
 
     return sc;
+}
+
+void mcRootReaderAlg::endEvent() {
+    if (m_mcEvt) m_mcEvt->Clear(m_clearOption.c_str());
+    m_mcEvt = 0;
 }
 
 

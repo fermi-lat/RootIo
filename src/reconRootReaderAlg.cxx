@@ -3,6 +3,8 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
@@ -51,10 +53,10 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.92 2009/04/24 19:03:04 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.92.42.1.2.1 2010/04/07 13:25:17 heather Exp $
 */
 
-class reconRootReaderAlg : public Algorithm
+class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
 {   
 public:
     
@@ -65,6 +67,14 @@ public:
     
     /// Orchastrates reading from ROOT file and storing the data on the TDS for each event
     StatusCode execute();
+
+    void handle(const Incident &inc) {
+        if( inc.type()=="BeginEvent")beginEvent();
+        else if(inc.type()=="EndEvent")endEvent();
+    }
+
+    void beginEvent() { };
+    void endEvent();
     
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
@@ -223,6 +233,16 @@ StatusCode reconRootReaderAlg::initialize()
 
     }
 
+  // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
+
 
 
     return sc;
@@ -238,12 +258,6 @@ StatusCode reconRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    if (m_reconEvt)
-     {
-      m_reconEvt->Clear(m_clearOption.c_str()) ; 
-      m_reconEvt = 0 ;
-     }
-
     // Try reading the event this way... 
     // Use treeName as key type
     m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent("recon")) ;
@@ -955,6 +969,11 @@ void reconRootReaderAlg::close()
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
     
+}
+
+void reconRootReaderAlg::endEvent() {
+    if (m_reconEvt)  m_reconEvt->Clear(m_clearOption.c_str()) ; 
+    m_reconEvt = 0 ;
 }
 
 StatusCode reconRootReaderAlg::finalize()
