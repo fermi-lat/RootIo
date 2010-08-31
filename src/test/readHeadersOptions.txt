@@ -10,13 +10,12 @@ MessageSvc.OutputLevel = 2 ;
 ApplicationMgr.DLLs   = { "GlastSvc"};
 
 ApplicationMgr.ExtSvc = { 
-    "GlastEventSelector/EventSelector" , 
-    "EventCnvSvc", 
+    "DbEvtSelector/EventSelector" , 
     "GlastDetSvc" 
     };
 
+ApplicationMgr.HistogramPersistency="NONE";
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
-EventSelector.Input = "NONE";
 ApplicationMgr.EvtMax = 10 ;
 
 // Stuff for detModel

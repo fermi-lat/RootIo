@@ -14,12 +14,11 @@ ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
     "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
 
 ApplicationMgr.ExtSvc += { 
-    "GlastEventSelector/EventSelector" , 
-    "EventCnvSvc"
+    "DbEvtSelector/EventSelector" 
     };
 
+ApplicationMgr.HistogramPersistency="NONE";
 EventPersistencySvc.CnvServices = {"EventCnvSvc"} ;
-EventSelector.Input = "NONE";
 ApplicationMgr.EvtMax = 10 ;
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/src/test/mc-fake.root";
