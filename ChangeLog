@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Aug 30 20:08:50 PDT 2010
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	requirements 
+Log Message:
+move to Gaudi v21r71
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-04-01-gr03, operation: add
 Package: RootIo
