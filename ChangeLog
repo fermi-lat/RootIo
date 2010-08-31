@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Mon Aug 30 20:08:52 PDT 2010
+RootIo/src/test
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	checkTds.cxx createFakeTdsDataAlg.cxx g4Options.txt 
+	jobOptions.txt readHeadersOptions.txt readOptions.txt 
+	testReadAlg.cxx testRootIoSvcAlg.cxx writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+move to Gaudi v21r71
+    *
+------------------------------------------------------------
 User: heather  Mon Aug 30 20:08:51 PDT 2010
 RootIo/src
 
