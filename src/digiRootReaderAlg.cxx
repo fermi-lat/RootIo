@@ -50,7 +50,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.101 2010/04/07 14:09:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.102 2010/05/05 19:00:06 usher Exp $
  */
 
 class digiRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -146,8 +146,9 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<digiRootReaderAlg>  Factory;
-const IAlgFactory& digiRootReaderAlgFactory = Factory;
+//static const AlgFactory<digiRootReaderAlg>  Factory;
+//const IAlgFactory& digiRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(digiRootReaderAlg);
 
 
 digiRootReaderAlg::digiRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -886,7 +887,7 @@ StatusCode digiRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No longer in Gaudi v21r7
     return sc;
 }
 

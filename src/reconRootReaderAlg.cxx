@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.95 2010/04/07 14:09:07 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.97 2010/05/06 00:34:23 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -147,8 +147,9 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<reconRootReaderAlg>  Factory;
-const IAlgFactory& reconRootReaderAlgFactory = Factory;
+//static const AlgFactory<reconRootReaderAlg>  Factory;
+//const IAlgFactory& reconRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(reconRootReaderAlg);
 
 
 reconRootReaderAlg::reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -982,6 +983,6 @@ StatusCode reconRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No longer available in Gaudi v21r7
     return sc;
 }
