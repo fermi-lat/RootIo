@@ -1,4 +1,21 @@
 ------------------------------------------------------------
+User: heather  Mon Aug 30 20:08:51 PDT 2010
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	FhChronoStatTable.cxx FhDemoCaloSetAlg.cxx FhDemoGetAlg.cxx 
+	FhJobOptions.cxx FhSetAlg.cxx FhSetMeritAlg.cxx FhTool.cxx 
+	RootIoRandom.cxx RootIoSvc.cxx digiRootReaderAlg.cxx 
+	digiRootWriterAlg.cxx gcrSelectRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	ntupleRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx 
+Log Message:
+move to Gaudi v21r71
+    *
+------------------------------------------------------------
 User: heather  Mon Aug 30 20:08:50 PDT 2010
 RootIo/doc
 
