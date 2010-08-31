@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Mon Aug 30 20:08:50 PDT 2010
+RootIo/doc
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	release.notes 
+Log Message:
+move to Gaudi v21r71
+    *
+------------------------------------------------------------
+User: heather  Mon Aug 30 20:08:50 PDT 2010
 RootIo/cmt
 
 Modified Files:
