@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.65 2010/07/18 06:02:42 lsrea Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.65.2.1 2010/08/31 03:08:51 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -31,6 +31,7 @@
 #include "RootIo/IRootIoSvc.h"
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 #include "RootIo/FhTool.h"
+#include "GlastSvc/GlastRandomSvc/IRandomAccess.h"
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -197,6 +198,7 @@ class RootIoSvc :
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
+    IRandomAccess *m_randTool; // setup RandomNum Tool
     //IntegerProperty m_evtMax ;
     long long m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
@@ -375,9 +377,13 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
-/*
     StatusCode toolSvcSc = service("ToolSvc", m_gaudiToolSvc, true);
-
+    if (toolSvcSc.isSuccess())
+        if (m_gaudiToolSvc->retrieveTool("RootIoRandom", m_randTool).isFailure() ) {
+            MsgStream log(msgSvc(), name() );
+            log << MSG::WARNING << "Failed to create RootIoRandom" << endreq;
+   }
+/*
     if  ( toolSvcSc.isSuccess() ) {
         StatusCode headersSc = m_gaudiToolSvc->retrieveTool("FhTool", m_headersTool);
         if (headersSc.isFailure() ) {
