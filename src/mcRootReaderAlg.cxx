@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.76 2010/04/07 14:09:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.77.6.1 2010/08/31 03:08:51 heather Exp $
  */
 
 
@@ -109,9 +109,9 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 };
 
-static const AlgFactory<mcRootReaderAlg>  Factory;
-const IAlgFactory& mcRootReaderAlgFactory = Factory;
-
+//static const AlgFactory<mcRootReaderAlg>  Factory;
+//const IAlgFactory& mcRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(mcRootReaderAlg);
 
 mcRootReaderAlg::mcRootReaderAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) 
@@ -614,6 +614,6 @@ void mcRootReaderAlg::endEvent() {
 StatusCode mcRootReaderAlg::finalize()
 {
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();No longer available in Gaudi v21r7
     return sc;
 }

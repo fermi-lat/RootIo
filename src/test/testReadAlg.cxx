@@ -31,7 +31,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.18 2007/07/04 15:19:27 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/testReadAlg.cxx,v 1.19.16.1 2010/08/31 03:08:51 heather Exp $
  */
 
 class testReadAlg : public Algorithm
@@ -61,9 +61,9 @@ private:
     StatusCode readOnboardFilter();
 };
 
-static const AlgFactory<testReadAlg>  Factory;
-const IAlgFactory& testReadAlgFactory = Factory;
-
+//static const AlgFactory<testReadAlg>  Factory;
+//const IAlgFactory& testReadAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(testReadAlg);
 
 testReadAlg::testReadAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator)

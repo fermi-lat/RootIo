@@ -24,7 +24,7 @@
  * @brief Takes and display few headers attributes
  *
  * @author David Chamont
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.3 2004/11/25 15:06:39 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/FhDemoGetAlg.cxx,v 1.4.672.1 2010/08/31 03:08:50 heather Exp $
  */
 
 class FhDemoGetAlg : public Algorithm
@@ -47,8 +47,9 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<FhDemoGetAlg>  Factory;
-const IAlgFactory& FhDemoGetAlgFactory = Factory;
+//static const AlgFactory<FhDemoGetAlg>  Factory;
+//const IAlgFactory& FhDemoGetAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(FhDemoGetAlg);
 
 
 FhDemoGetAlg::FhDemoGetAlg(const std::string& name, ISvcLocator* pSvcLocator) : 

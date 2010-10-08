@@ -6,13 +6,15 @@
 ApplicationMgr.DLLs   = { "GlastSvc", "GaudiAlg" } ;
 
 ApplicationMgr.ExtSvc = { 
-    "EventSelector/EventSelector" , 
-    "EventCnvSvc", 
+    "DbEvtSelector/EventSelector" , 
+//    "EventCnvSvc", 
     "GlastDetSvc" 
     };
 
+ApplicationMgr.HistogramPersistency = "NONE";
+
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
-EventSelector.Input = "NONE";
+//EventSelector.Input = "NONE";
 
 // Stuff for detModel
 ApplicationMgr.ExtSvc += { "GlastDetSvc" } ;
