@@ -27,8 +27,9 @@
 #include <sstream>
 #endif
 
-static const AlgFactory<FhSetAlg> Factory ;
-const IAlgFactory& FhSetAlgFactory = Factory ;
+//static const AlgFactory<FhSetAlg> Factory ;
+//const IAlgFactory& FhSetAlgFactory = Factory ;
+DECLARE_ALGORITHM_FACTORY(FhSetAlg);
 
 StatusCode FhSetAlg::initialize() {
     MsgStream log(msgSvc(),name()) ;

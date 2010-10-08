@@ -27,7 +27,7 @@ void FhChronoStatTable::init( ISvcLocator * svcLocator ) {
     StatusCode theChronoSc, theMessageSc ;
     theMessageSc = svcLocator->getService("MessageSvc",aSvc,false) ;
     if (theMessageSc==StatusCode::SUCCESS) {
-        theMessageSc = aSvc->queryInterface(IID_IMessageSvc,
+        theMessageSc = aSvc->queryInterface(IMessageSvc::interfaceID(),
             (void**)&theMessageSvc) ;
     }
     theChronoSc = svcLocator->getService("ChronoStatSvc",theChronoSvc,false) ;

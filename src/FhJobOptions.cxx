@@ -31,7 +31,7 @@ void FhJobOptions::init( ISvcLocator * svcLocator ) {
     StatusCode joSc ;
     joSc = svcLocator->getService("JobOptionsSvc",joSvc,true) ;
     if (joSc.isSuccess()) {
-        joSc = joSvc->queryInterface(IID_IJobOptionsSvc,(void**)&joInt) ;
+        joSc = joSvc->queryInterface(IJobOptionsSvc::interfaceID(),(void**)&joInt) ;
     }
     if (joSc.isSuccess()) {
         std::vector< std::string > clients = joInt->getClients() ;
@@ -44,7 +44,7 @@ void FhJobOptions::init( ISvcLocator * svcLocator ) {
             for ( property = properties->begin() ; property != properties->end() ; ++property ) {
                 // I insert the client name, in the same format as the property
                 jobOptions<<"\""<<(*client)<<"\"." ;
-                (*property)->nameAndValueAsStream(jobOptions) ;
+                (*property)->fillStream(jobOptions) ;
                 jobOptions<<'\n' ;
             }
             jobOptions<<std::ends ;
