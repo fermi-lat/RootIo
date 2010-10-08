@@ -1,5 +1,18 @@
 ------------------------------------------------------------
 User: heather  Fri Oct  8 09:40:46 PDT 2010
+RootIo/src/test
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	checkTds.cxx createFakeTdsDataAlg.cxx g4Options.txt 
+	jobOptions.txt readHeadersOptions.txt readOptions.txt 
+	testReadAlg.cxx testRootIoSvcAlg.cxx writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+gaudi updates
+    *
+------------------------------------------------------------
+User: heather  Fri Oct  8 09:40:46 PDT 2010
 RootIo/src
 
 Modified Files:
