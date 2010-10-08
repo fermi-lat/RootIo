@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Oct  8 09:40:44 PDT 2010
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	SConscript 
+Log Message:
+gaudi updates
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-09-01-gr01, operation: add
 Package: RootIo
