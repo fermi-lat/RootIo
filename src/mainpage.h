@@ -41,6 +41,10 @@
 *  Defaults to true
 *  Determines if the TTreeIndex is automatically rebuilt from scratch whether
 *  or not one pre-exists in the input ROOT files.
+* @param RootIoSvc.AllowAutoFlush
+*  Defauts to false
+*  turns off/on ROOT new (v5.26.00) AutoFlush feature which also optimizes
+*  the branch buffer sizes on the fly
 * @param RootIoSvc.AbortOnRootError
 *  Defaults to true
 *  Determines action taken if ROOT errors are reported for an event.  If set
