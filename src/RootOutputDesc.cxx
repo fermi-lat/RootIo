@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.3 2008/01/24 21:38:30 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.4 2008/01/28 13:52:31 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -89,13 +89,18 @@ bool RootOutputDesc::fillTree(int autoSaveInterval)
    {
     rootUtil::AutoCd cd(getCurrentFile()) ;
     if (getCurrentFile()->TestBits(TFile::kWriteError))
-     { throw ; }
-    m_tree->Fill() ;
+     { std::cerr << "TestBits Failed" << std::endl; throw ; }
+    Int_t numBytes = m_tree->Fill() ;
+    if (numBytes < 0) {
+        std::cerr << "Filling TTree error for " << m_treeName << std::endl;
+        throw ; 
+    }
     ++m_eventCounter;
     if ( m_eventCounter % autoSaveInterval == 0 )
      {
-      if ( m_tree->AutoSave() == 0 )
-       { throw ; }
+      if ( m_tree->AutoSave("flushbaskets") == 0 )
+       { std::cerr << "AutoSave Failed" << std::endl;
+         throw ; }
      }
    }
   catch(...)

@@ -3,7 +3,7 @@
 * @brief definition of the class RootOutputDesc
 *        This class is used to set up and handle the actual root output files
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.3 2008/01/24 21:38:30 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.4 2008/01/28 13:52:31 chamont Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -47,6 +47,8 @@ class RootOutputDesc
     bool LoadTree( Long64_t ievent ) { return (m_tree->LoadTree(ievent)<0?false:true) ; }
 
     bool fillTree(int autoSaveInterval=1000); 
+
+    void turnOffAutoFlush() { m_tree->SetAutoFlush(0); }
 
   private :
 

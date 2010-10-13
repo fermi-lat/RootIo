@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.50 2008/10/13 20:29:04 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.50.14.1 2009/09/24 14:11:11 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -187,6 +187,7 @@ class RootIoSvc :
     IntegerProperty m_noFailure;
     bool m_rebuildIndex;
     bool m_abortOnRootError;
+    bool m_autoFlush;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -252,6 +253,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("TupleName", m_tupleName="MeritTuple");
     declareProperty("NoFailure", m_noFailure=0);
     declareProperty("RebuildIndex", m_rebuildIndex=true);
+    declareProperty("AllowAutoFlush", m_autoFlush=false);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -693,6 +695,8 @@ TTree* RootIoSvc::prepareRootOutput
     }
     // Create a new RootOutputDesc object for this algorithm
     RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
+
+    if (!m_autoFlush) outputDesc->turnOffAutoFlush();
 
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
