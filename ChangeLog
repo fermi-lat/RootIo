@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: usher  Wed Nov  3 15:13:42 PDT 2010
+RootIo/src
+
+Modified Files:
+	relationRootWriterAlg.cxx 
+Log Message:
+Fix linux compiler error, prepare to tag RootIo-24-10-01
+    *
+------------------------------------------------------------
+User: usher  Wed Nov  3 15:13:42 PDT 2010
 RootIo/cmt
 
 Modified Files:
