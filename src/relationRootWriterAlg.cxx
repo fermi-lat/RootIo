@@ -49,7 +49,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.25 2010/01/27 16:18:26 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.26 2010/11/03 19:57:46 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -78,7 +78,7 @@ private:
     StatusCode writeCalReconRelations();
 
     /// Standard method for filling a root relation
-    void addRootRelation(TRef& first, TRef& second, std::vector<std::string>& infos);
+    void addRootRelation(TRef& first, TRef& second, std::vector<std::string> infos);
 
     /// Calls TTree::Fill for each event and clears m_digiEvt
     void writeEvent();
@@ -473,7 +473,7 @@ StatusCode relationRootWriterAlg::writeMcRelations() {
     return sc;
 }
 
-void relationRootWriterAlg::addRootRelation(TRef& first, TRef& second, std::vector<std::string>& infos)
+void relationRootWriterAlg::addRootRelation(TRef& first, TRef& second, std::vector<std::string> infos)
 {
     // Our first job is to copy any string information in the "infos" vector
     TObjArray infosRoot;
