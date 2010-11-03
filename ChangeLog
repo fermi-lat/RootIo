@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: usher  Wed Nov  3 12:57:46 PDT 2010
+RootIo/src
+
+Modified Files:
+	relationRootReaderAlg.cxx relationRootWriterAlg.cxx 
+Log Message:
+Preparing to tag RootIo-24-10-00
+    *
+------------------------------------------------------------
+User: usher  Wed Nov  3 12:57:46 PDT 2010
 RootIo/cmt
 
 Modified Files:
