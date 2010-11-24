@@ -42,7 +42,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.43 2010/04/07 14:09:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.45 2010/11/03 19:57:46 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -117,19 +117,22 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 
 /// typedefs for tables
-    typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>     TkrDigiRelTab;
-    typedef Event::Relation<Event::TkrDigi,Event::McPositionHit>     TkrDigiRelType;
-    typedef Event::RelTable<Event::CalXtalRecData,Event::CalCluster> CalClusterRelTab;
-    typedef Event::Relation<Event::CalXtalRecData,Event::CalCluster> CalClusterRelType;
-    typedef Event::RelTable<Event::CalDigi,Event::McIntegratingHit>  CalDigiRelTab;
-    typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit>  CalDigiRelType;
+    typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>         TkrDigiToPosHitTab;
+    typedef Event::Relation<Event::TkrDigi,Event::McPositionHit>         TkrDigiToPosHitRel;
+    typedef Event::RelationList<Event::TkrDigi,Event::McPositionHit>     TkrDigiToPosHitTabList;
+    typedef Event::RelTable<Event::CalXtalRecData,Event::CalCluster>     CalClusterToXtalRecTab;
+    typedef Event::Relation<Event::CalXtalRecData,Event::CalCluster>     CalClusterToXtalRecRel;
+    typedef Event::RelationList<Event::CalXtalRecData,Event::CalCluster> CalClusterToXtalRecTabList;
+    typedef Event::RelTable<Event::CalDigi,Event::McIntegratingHit>      CalDigiToIntHitTab;
+    typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit>      CalDigiToIntHitRel;
+    typedef Event::RelationList<Event::CalDigi,Event::McIntegratingHit>  CalDigiToIntHitTabList;
 
     /// Internal pointer to TDS TkrDigi table
-    TkrDigiRelTab*                    m_tkrDigiRelTab;
+    TkrDigiToPosHitTabList*           m_tkrDigiToPosHitList;
     /// Internal pointer to TDS CalDigi table
-    CalDigiRelTab*                    m_calDigiRelTab;
+    CalDigiToIntHitTabList*           m_calDigiToIntHitList;
     /// Internal pointer to the TDS CalCluster table
-    CalClusterRelTab*                 m_calClusterRelTab;
+    CalClusterToXtalRecTabList*       m_calClusterToXtalRecList;
     /// Internal pointer to McParticle object list
     Event::McPartToTrajectoryTabList* m_mcPartToTrajList;
 
@@ -288,9 +291,9 @@ StatusCode relationRootReaderAlg::execute()
 
 
     /// Register our relational tables in the TDS (and turn over ownership)
-    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab,        m_tkrDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab,        m_calDigiRelTab->getAllRelations() );
-    sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterHitTab, m_calClusterRelTab->getAllRelations() );
+    sc = eventSvc()->registerObject(EventModel::Digi::TkrDigiHitTab,        m_tkrDigiToPosHitList );
+    sc = eventSvc()->registerObject(EventModel::Digi::CalDigiHitTab,        m_calDigiToIntHitList );
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterHitTab, m_calClusterToXtalRecList );
     sc = eventSvc()->registerObject("/Event/MC/McPartToTrajectory",         m_mcPartToTrajList );
     sc = eventSvc()->registerObject("/Event/MC/McPointToPosHit",            m_mcPointToPosHitList );
     sc = eventSvc()->registerObject("/Event/MC/McPointToIntHit",            m_mcPointToIntHitList );
@@ -304,18 +307,12 @@ StatusCode relationRootReaderAlg::createTDSTables()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    m_tkrDigiRelTab = new TkrDigiRelTab();
-    m_tkrDigiRelTab->init();
-
-    m_calDigiRelTab = new CalDigiRelTab();
-    m_calDigiRelTab->init();
-
-    m_calClusterRelTab = new CalClusterRelTab();
-    m_calClusterRelTab->init();
-
-    m_mcPartToTrajList    = new Event::RelationList<Event::McParticle,Event::McTrajectory>;
-    m_mcPointToPosHitList = new Event::RelationList<Event::McTrajectoryPoint,Event::McPositionHit>;
-    m_mcPointToIntHitList = new Event::RelationList<Event::McTrajectoryPoint,Event::McIntegratingHit>;
+    m_tkrDigiToPosHitList     = new TkrDigiToPosHitTabList;
+    m_calDigiToIntHitList     = new CalDigiToIntHitTabList;
+    m_calClusterToXtalRecList = new CalClusterToXtalRecTabList;
+    m_mcPartToTrajList        = new Event::RelationList<Event::McParticle,Event::McTrajectory>;
+    m_mcPointToPosHitList     = new Event::RelationList<Event::McTrajectoryPoint,Event::McPositionHit>;
+    m_mcPointToIntHitList     = new Event::RelationList<Event::McTrajectoryPoint,Event::McIntegratingHit>;
 
     return sc;
 }
@@ -393,7 +390,7 @@ StatusCode relationRootReaderAlg::readTkrDigiRelations(Relation* relation)
         // Make the event relation here
         typedef Event::Relation<Event::TkrDigi,Event::McPositionHit> relType;
         relType* rel = new relType(digiTds, mcHitTds);
-        m_tkrDigiRelTab->addRelation(rel);
+        m_tkrDigiToPosHitList->push_back(rel);
 
         // Transfer the "infos" string(s)
         for(int idx = 0; idx < relation->getInfos().GetEntries(); idx++)
@@ -440,7 +437,7 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
         // Make the event relation here
         typedef Event::Relation<Event::CalDigi,Event::McIntegratingHit> relType;
         relType* rel = new relType(digiTds, mcHitTds);
-        m_calDigiRelTab->addRelation(rel);
+        m_calDigiToIntHitList->push_back(rel);
 
         // Transfer the "infos" string(s)
         for(int idx = 0; idx < relation->getInfos().GetEntries(); idx++)
@@ -486,7 +483,7 @@ StatusCode relationRootReaderAlg::readCalXtalToClusterRelations(Relation* relati
         // Make the event relation here
         typedef Event::Relation<Event::CalXtalRecData,Event::CalCluster> relType;
         relType* rel = new relType(xtalTds,clusterTds);
-        m_calClusterRelTab->addRelation(rel);
+        m_calClusterToXtalRecList->push_back(rel);
 
         // Transfer the "infos" string(s)
         for(int idx = 0; idx < relation->getInfos().GetEntries(); idx++)
