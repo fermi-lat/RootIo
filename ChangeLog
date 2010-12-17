@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Thu Dec 16 23:55:19 PST 2010
+RootIo/src/test
+
+Modified Files:
+	jobOptions.txt readHeadersOptions.txt writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+Fixes for Scons testjob
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-04, operation: add
 Package: RootIo
