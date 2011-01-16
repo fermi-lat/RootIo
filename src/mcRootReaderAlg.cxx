@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.76 2010/04/07 14:09:07 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.77 2010/05/05 19:00:06 usher Exp $
  */
 
 
@@ -423,7 +423,7 @@ StatusCode mcRootReaderAlg::readMcPositionHits() {
     if (!posHits) return sc;
     
     // this test and alternate return needed to feed to G4Generator, which wants to register its own collection
-    if(  posHits->GetLast() ==-1)  return sc;
+///////    if(  posHits->GetLast() ==-1)  return sc;
 
     TIter hitIter(posHits);
     
@@ -479,7 +479,7 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
     if (!intHits) return sc;
 
     // this test and alternate return needed to feed to G4Generator, which wants to register its own collection
-    if(  intHits->GetLast() ==-1)  return sc;
+/////    if(  intHits->GetLast() ==-1)  return sc;
 
     TIter hitIter(intHits);
     
@@ -531,6 +531,27 @@ StatusCode mcRootReaderAlg::readMcIntegratingHits() {
             intHitRoot->getMcParticleEnergy(McIntegratingHit::POSITRON) };
         
         intHitTds->setEnergyItems(totalEnergyRoot, energyArr, moment1Tds, moment2Tds);
+
+        // Now set up to copy the XtalEnergyDep objects from the map
+        TMapIter xtalEnergyDepMapItr(&intHitRoot->getXtalEnergyDepMap());
+
+        while(TObject* keyObj = xtalEnergyDepMapItr.Next())
+        {
+            TObjString*      rootKey  = dynamic_cast<TObjString*>(keyObj);
+            TObject*         xtalObj  = intHitRoot->getXtalEnergyDepMap().GetValue(rootKey);
+            McXtalEnergyDep* rootXtal = dynamic_cast<McXtalEnergyDep*>(xtalObj);
+
+            std::string key(rootKey->GetName());
+            Event::McIntegratingHit::XtalEnergyDep xtal;
+
+            HepPoint3D moment1(rootXtal->getMoment1().X(), rootXtal->getMoment1().Y(), rootXtal->getMoment1().Z());
+            HepPoint3D moment2(rootXtal->getMoment2().X(), rootXtal->getMoment2().Y(), rootXtal->getMoment2().Z());
+
+            xtal.initialize(rootXtal->getTotalEnergy(), rootXtal->getDirectEnergy(), moment1, moment2);
+
+            intHitTds->getXtalEnergyDepMap()[key] = xtal;
+        }
+
         
         // Add the TDS McIntegratingHit to the TDS McIntegratingHit collection
         pTdsCol->push_back(intHitTds);

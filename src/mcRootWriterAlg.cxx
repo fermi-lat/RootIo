@@ -43,7 +43,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.54 2007/08/09 17:17:08 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.55 2008/01/24 21:38:30 chamont Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -483,6 +483,26 @@ StatusCode mcRootWriterAlg::writeMcIntegratingHits() {
                 TVector3 posRoot(posTds.x(), posTds.y(), posTds.z());
                 mcIntHit->addEnergyItem(e, mcPartRoot, posRoot);
             }
+        }
+
+        // Now copy the XtalEnergyDep objects from the map
+        for(Event::McIntegratingHit::XtalEnergyDepMap::const_iterator depItr  = (*hit)->getXtalEnergyDepMap().begin();
+                                                                      depItr != (*hit)->getXtalEnergyDepMap().end();
+                                                                      depItr++)
+        {
+            std::string evtKey = depItr->first;
+            TObjString* key = new TObjString(evtKey.c_str());
+            McXtalEnergyDep* xtalEDep = new McXtalEnergyDep();
+
+            TVector3 moment1(depItr->second.moment1());
+            TVector3 moment2(depItr->second.moment2());
+
+            xtalEDep->initialize(depItr->second.getTotalEnergy(),
+                                 depItr->second.getDirectEnergy(),
+                                 moment1,
+                                 moment2                          );
+
+            mcIntHit->getXtalEnergyDepMap().Add(key, xtalEDep);
         }
 
         // Add the ROOT McIntegratingHit to the ROOT collection of McIntegratingHits
