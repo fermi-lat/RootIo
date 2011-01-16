@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+User: usher  Sat Jan 15 19:41:21 PST 2011
+RootIo/src
+
+Modified Files:
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-05, operation: add
 Package: RootIo
