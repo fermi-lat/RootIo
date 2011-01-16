@@ -4,6 +4,7 @@
  @verbatim
  EOH
 
+ RootIo-24-10-06 15-Jan-2011 TU Include XtalEnergyDep in McIntegratingHits input/output
  RootIo-24-10-05 17-Dec-2010  lsrea Fixes for SCons testjob
  RootIo-24-10-04 06-Dec-2010  lsrea mods for TKR truncation data i/o
  RootIo-24-10-03 24-Nov-2010 TU  Fix memory leak in readback of relations
