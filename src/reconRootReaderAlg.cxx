@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.97 2010/05/06 00:34:23 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.98 2010/12/06 20:45:52 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -416,6 +416,18 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
       }
     }
 
+    //    // check to see if TKR CRtrack collection exists on the TDS already
+    //SmartDataPtr<Event::TkrTrackCol> crTrackColTds(eventSvc(), EventModel::TkrRecon::TkrCRTrackCol);
+    //if (trackColTds) {
+    //    log << MSG::INFO << "TkrCRTrackCol is already on TDS" << endreq;
+    //} else {
+    //    sc = storeTrackAndVertexCol(tkrRecRoot, vertexOnTdsFlag);
+    //    if (sc.isFailure()) {
+    //        log << MSG::ERROR << "failed to store FitTrackCol on the TDS" << endreq;
+    //        return sc;
+    //    }
+    //}
+
     return sc;
 }
 
@@ -480,7 +492,9 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
     return sc;
 }
 
-StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool vertexOnTdsFlag) {
+StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
+    TkrRecon *tkrRecRoot, bool vertexOnTdsFlag) 
+{
     // Purpose and Method:  Retrieve track and vertex collections from ROOT file and
     //  Store the transient versions on the TDS
     
@@ -491,8 +505,9 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
     std::map<int, Event::TkrTrack*> trackMap;
     trackMap.clear();
     
-    // Create TDS version of track collection
-    Event::TkrTrackCol *trackTdsCol = new Event::TkrTrackCol;
+    // Create TDS version of track collections
+    Event::TkrTrackCol *trackTdsCol   = new Event::TkrTrackCol;
+    Event::TkrTrackCol *crTrackTdsCol = new Event::TkrTrackCol;
     Event::TkrTrack    *trackTds    = 0;
     
     // Retrieve ROOT version of track collection
@@ -510,7 +525,11 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
         // Keep relation between Event and Root fit tracks
         m_common.m_rootTkrTrackMap[trackObj] = trackTds;
        
-        trackTdsCol->push_back(trackTds);
+        if((trackRoot->getStatusBits()&Event::TkrTrack::COSMICRAY)==0) {
+            trackTdsCol->push_back(trackTds);
+        }else              {
+            crTrackTdsCol->push_back(trackTds);
+        }
     }
     
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTrackCol, trackTdsCol);
@@ -521,8 +540,17 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool
         log << endreq;
         return StatusCode::FAILURE;
     }
+
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrCRTrackCol, crTrackTdsCol);
+    if (sc.isFailure()) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TkrCRTrackCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
     
-    // If the vertex collection is not already on the TDS, continue
+    // If the vertex collection is not already on the TDS, proceed
     if (vertexOnTdsFlag == true) return sc;
     
     // Create the TDS version of the vertex collection

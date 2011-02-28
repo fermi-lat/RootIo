@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.90 2010/01/27 02:54:07 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.91 2010/12/06 20:45:52 lsrea Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -316,6 +316,10 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     
     // Fill the vertices
     if (verticesTds && tracksTds) fillVertices(recon, verticesTds, tracksTds);
+
+    // now add the cosmic-ray tracks
+    SmartDataPtr<Event::TkrTrackCol> crTracksTds(eventSvc(), EventModel::TkrRecon::TkrCRTrackCol);
+    if (crTracksTds) fillFitTracks(recon, crTracksTds);
 
     // Future Diagnostics will plug in here
     //Event::TkrDiagnostics* diagnosticsTds = SmartDataPtr<Event::TkrDiagnostics>(eventSvc(), EventModel::TkrRecon::TkrDiagnostics);
