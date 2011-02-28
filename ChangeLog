@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Mon Feb 28 10:11:36 PST 2011
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Add code to write and read the cosmic-ray track collection
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-06, operation: add
 Package: RootIo
