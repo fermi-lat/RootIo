@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 18 20:24:13 PDT 2011
+RootIo
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	SConscript 
+Log Message:
+fix up JO files for SCons
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-07, operation: add
 Package: RootIo
