@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Mon Apr 18 20:24:15 PDT 2011
+RootIo/src/test
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	readHeadersOptions.txt writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+fix up JO files for SCons
+    *
+------------------------------------------------------------
 User: heather  Mon Apr 18 20:24:14 PDT 2011
 RootIo/src
 
