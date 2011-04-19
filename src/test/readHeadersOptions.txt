@@ -32,9 +32,9 @@ ApplicationMgr.DLLs +=    { "RootIo" };
 ApplicationMgr.TopAlg +=  {
     "mcRootReaderAlg", "digiRootReaderAlg", "reconRootReaderAlg",
     "FhDemoGetAlg" };
-mcRootReaderAlg.mcRootFileList = { "$(ROOTIOROOT)/src/test/mc-fake.root" } ;
-digiRootReaderAlg.digiRootFileList = { "$(ROOTIOROOT)/src/test/digi-fake.root" } ;
-reconRootReaderAlg.reconRootFileList = { "$(ROOTIOROOT)/src/test/recon-fake.root" } ;
+mcRootReaderAlg.mcRootFileList = { "$(ROOTIOJOBOPTIONSPATH)/test/mc-fake.root" } ;
+digiRootReaderAlg.digiRootFileList = { "$(ROOTIOJOBOPTIONSPATH)/test/digi-fake.root" } ;
+reconRootReaderAlg.reconRootFileList = { "$(ROOTIOJOBOPTIONSPATH)/test/recon-fake.root" } ;
 
 
 //==============================================================
