@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: heather  Mon Apr 18 20:24:14 PDT 2011
+RootIo/src
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	writeDigiRootOptions.txt writeMcRootOptions.txt 
+	writeReconRootOptions.txt 
+Log Message:
+fix up JO files for SCons
+    *
+------------------------------------------------------------
+User: heather  Mon Apr 18 20:24:14 PDT 2011
 RootIo/doc
 
 Modified Files:
