@@ -29,7 +29,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.7 2005/02/22 21:06:48 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.8 2005/04/18 17:32:22 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -150,9 +150,9 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
         int id = ipart;
         unsigned int statusBits = 0;
 
-        HepLorentzVector initialMom(ipart, ipart, ipart, ipart);
-        double rand = RandGauss::shoot();
-        HepLorentzVector finalMom(rand*ipart, rand, ipart*2., ipart);
+        CLHEP::HepLorentzVector initialMom(ipart, ipart, ipart, ipart);
+        double rand = CLHEP::RandGauss::shoot();
+        CLHEP::HepLorentzVector finalMom(rand*ipart, rand, ipart*2., ipart);
         HepPoint3D initPos(0.5, 0.25, 0.3);
         HepPoint3D finalPos(1.0, 5.5, 10.3);
 
@@ -179,8 +179,8 @@ StatusCode createFakeTdsDataAlg::storeMcData() {
     unsigned int iposHit;
     for (iposHit = 0; iposHit < m_numMcPosHits; iposHit++) {
         Event::McPositionHit *posHitTds = new Event::McPositionHit();
-        double edep = RandFlat::shoot();
-        HepPoint3D entry(RandGauss::shoot(), RandGauss::shoot()*iposHit, iposHit);
+        double edep = CLHEP::RandFlat::shoot();
+        HepPoint3D entry(CLHEP::RandGauss::shoot(), CLHEP::RandGauss::shoot()*iposHit, iposHit);
         HepPoint3D exit(iposHit*2., iposHit*3., iposHit*4.);
         idents::VolumeIdentifier volId;
         volId.append(1);
@@ -255,7 +255,7 @@ StatusCode createFakeTdsDataAlg::storeDigiData() {
         idents::AcdId id(0, 0, 3, 4);
         idents::VolumeIdentifier volId;
         volId.append(2);
-        double energy = RandFlat::shoot();
+        double energy = CLHEP::RandFlat::shoot();
         unsigned short pha[2] = {1, 2096};
         bool veto[2] = {true, true};
         bool low[2] = {true, true};
@@ -296,7 +296,7 @@ StatusCode createFakeTdsDataAlg::storeDigiData() {
     unsigned int itkrDigi;
     for (itkrDigi = 0; itkrDigi < m_numTkrDigi; itkrDigi++) {
         idents::TowerId towerTds(2, 3);
-        int totTds[2] = {RandFlat::shoot(), RandFlat::shoot()};
+        int totTds[2] = {CLHEP::RandFlat::shoot(), CLHEP::RandFlat::shoot()};
         Event::TkrDigi *tkrDigiTds = 
             new Event::TkrDigi(5, idents::GlastAxis::X, towerTds, totTds);
         tkrDigiTds->addC0Hit(itkrDigi);
