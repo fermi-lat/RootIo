@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.98 2010/12/06 20:45:52 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.99 2011/02/28 18:11:35 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -524,14 +524,29 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
         
         // Keep relation between Event and Root fit tracks
         m_common.m_rootTkrTrackMap[trackObj] = trackTds;
-       
-        if((trackRoot->getStatusBits()&Event::TkrTrack::COSMICRAY)==0) {
-            trackTdsCol->push_back(trackTds);
-        }else              {
-            crTrackTdsCol->push_back(trackTds);
-        }
+
+        trackTdsCol->push_back(trackTds);       
     }
+
+    // ADW: Retrieve ROOT version of cosmic-ray track collection
+    // Pretty ugly duplicate code.  Eventually move to map of collections.
+    const TObjArray *crTrackRootCol = tkrRecRoot->getCRTrackCol();
+    TIter crTrackIter(trackRootCol);
+    trackObj = 0;
     
+    while ((trackObj = crTrackIter.Next())!=0) 
+    {
+        // int trkIdx = -1;
+        TkrTrack* trackRoot = dynamic_cast<TkrTrack*>(trackObj);
+
+        trackTds = convertTkrTrack(trackRoot);
+        
+        // Keep relation between Event and Root fit tracks
+        m_common.m_rootTkrTrackMap[trackObj] = trackTds;
+
+        crTrackTdsCol->push_back(trackTds);
+    }
+   
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTrackCol, trackTdsCol);
     if (sc.isFailure()) {
         
