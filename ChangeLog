@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kadrlica  Wed Jun  1 03:20:50 PDT 2011
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Write/read to/from a separate cosmic-ray track collection
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-08, operation: add
 Package: RootIo
