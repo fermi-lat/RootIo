@@ -49,7 +49,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.26 2010/11/03 19:57:46 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.27 2010/11/03 22:13:42 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -218,7 +218,9 @@ StatusCode relationRootWriterAlg::writeTkrDigiRelations() {
     typedef ObjectList<relType> tabType;
 
     SmartDataPtr<tabType> tkrTable(eventSvc(), EventModel::Digi::TkrDigiHitTab);
-
+    // When processing data, no MC is available
+    if (!tkrTable) return sc;
+    
     tabType::const_iterator relation;
     for (relation = tkrTable->begin(); relation != tkrTable->end(); relation++) {
         Event::TkrDigi *tkrDigiTds = (*relation)->getFirst();
@@ -264,6 +266,9 @@ StatusCode relationRootWriterAlg::writeCalDigiRelations() {
     typedef ObjectList<relType> tabType;
 
     SmartDataPtr<tabType> calTable(eventSvc(), EventModel::Digi::CalDigiHitTab);
+    // When processing data, no MC is available
+    if (!calTable) return sc;
+
     tabType::const_iterator relation;
 
     for (relation = calTable->begin(); relation != calTable->end(); relation++) {
@@ -358,6 +363,9 @@ StatusCode relationRootWriterAlg::writeMcRelations() {
     SmartDataPtr<Event::McPartToTrajectoryTabList> 
         mcPartToTraj(eventSvc(), "/Event/MC/McPartToTrajectory");
 
+    // Look up McParticle <--> McTrajectory relational table
+    if (!mcPartToTraj) return sc;
+
     // Recover the McPositionHits to trajectory points relational tables
     SmartDataPtr<Event::McPointToPosHitTabList> 
         mcPointToPosHitList(eventSvc(), "/Event/MC/McPointToPosHit");
@@ -368,103 +376,98 @@ StatusCode relationRootWriterAlg::writeMcRelations() {
         mcPointToIntHitList(eventSvc(), "/Event/MC/McPointToIntHit");
     Event::McPointToIntHitTab mcIntHitTab(mcPointToIntHitList);
 
-
-    // Look up McParticle <--> McTrajectory relational table
-    if (mcPartToTraj != 0)
+    // Loop through this list at the top level
+    for(Event::McPartToTrajectoryTabList::const_iterator trajIter = mcPartToTraj->begin(); 
+        trajIter != mcPartToTraj->end(); trajIter++) 
     {
-        // Loop through this list at the top level
-        for(Event::McPartToTrajectoryTabList::const_iterator trajIter = mcPartToTraj->begin(); 
-            trajIter != mcPartToTraj->end(); trajIter++) 
+        Event::McPartToTrajectoryRel* partToTraj = *trajIter;
+
+        const Event::McParticle*   mcPartTds = partToTraj->getFirst();
+        const Event::McTrajectory* mcTrajTds = partToTraj->getSecond();
+
+        McParticle*   mcPartRoot = 0;
+        TRef          mcPartRef  = 0;
+        McTrajectory* mcTrajRoot = 0;
+        TRef          mcTrajRef  = 0;
+
+        if (m_common.m_mcPartMap.find(mcPartTds) != m_common.m_mcPartMap.end()) {
+            mcPartRef  = m_common.m_mcPartMap[mcPartTds];
+            mcPartRoot = (McParticle*)mcPartRef.GetObject();
+        } else {
+            log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
+        }
+
+        if (m_common.m_mcTrajectoryMap.find(mcTrajTds) != m_common.m_mcTrajectoryMap.end()) {
+            mcTrajRef  = m_common.m_mcTrajectoryMap[mcTrajTds];
+            mcTrajRoot = (McTrajectory*)mcTrajRef.GetObject();
+        } else {
+            log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
+        }
+
+        // Pointers must be found at this level to proceed
+        if (mcPartRoot && mcTrajRoot)
         {
-            Event::McPartToTrajectoryRel* partToTraj = *trajIter;
+            addRootRelation(mcPartRef, mcTrajRef, (*trajIter)->getInfos());
 
-            const Event::McParticle*   mcPartTds = partToTraj->getFirst();
-            const Event::McTrajectory* mcTrajTds = partToTraj->getSecond();
+            // Set up to loop through Trajectory points
+            std::vector<Event::McTrajectoryPoint*> points = mcTrajTds->getPoints();
+            std::vector<Event::McTrajectoryPoint*>::const_iterator pointIter;
 
-            McParticle*   mcPartRoot = 0;
-            TRef          mcPartRef  = 0;
-            McTrajectory* mcTrajRoot = 0;
-            TRef          mcTrajRef  = 0;
-
-            if (m_common.m_mcPartMap.find(mcPartTds) != m_common.m_mcPartMap.end()) {
-                mcPartRef  = m_common.m_mcPartMap[mcPartTds];
-                mcPartRoot = (McParticle*)mcPartRef.GetObject();
-            } else {
-                log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
-            }
-
-            if (m_common.m_mcTrajectoryMap.find(mcTrajTds) != m_common.m_mcTrajectoryMap.end()) {
-                mcTrajRef  = m_common.m_mcTrajectoryMap[mcTrajTds];
-                mcTrajRoot = (McTrajectory*)mcTrajRef.GetObject();
-            } else {
-                log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
-            }
-
-            // Pointers must be found at this level to proceed
-            if (mcPartRoot && mcTrajRoot)
+            for(pointIter = points.begin(); pointIter != points.end(); pointIter++) 
             {
-                addRootRelation(mcPartRef, mcTrajRef, (*trajIter)->getInfos());
+                // De-reference the McTrajectoryPoint pointer
+                Event::McTrajectoryPoint* mcPointTds  = *pointIter;
+                McTrajectoryPoint*        mcPointRoot = 0;
+                TRef                      mcPointRef  = 0;
 
-                // Set up to loop through Trajectory points
-                std::vector<Event::McTrajectoryPoint*> points = mcTrajTds->getPoints();
-                std::vector<Event::McTrajectoryPoint*>::const_iterator pointIter;
+                if (m_common.m_mcTrajectoryPointMap.find(mcPointTds) != m_common.m_mcTrajectoryPointMap.end()) {
+                    mcPointRef  = m_common.m_mcTrajectoryPointMap[mcPointTds];
+                    mcPointRoot = (McTrajectoryPoint*)mcPointRef.GetObject();
+                } else {
+                    log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
+                    continue;
+                }
 
-                for(pointIter = points.begin(); pointIter != points.end(); pointIter++) 
+                // First look for McTrajectoryPoint <--> McPositionHit
+                Event::McPointToPosHitVec posRelVec = mcPosHitTab.getRelByFirst(mcPointTds);
+
+                if (!posRelVec.empty())
                 {
-                    // De-reference the McTrajectoryPoint pointer
-                    Event::McTrajectoryPoint* mcPointTds  = *pointIter;
-                    McTrajectoryPoint*        mcPointRoot = 0;
-                    TRef                      mcPointRef  = 0;
+                    Event::McPointToPosHitRel* hitRel = *(posRelVec.begin());
 
-                    if (m_common.m_mcTrajectoryPointMap.find(mcPointTds) != m_common.m_mcTrajectoryPointMap.end()) {
-                        mcPointRef  = m_common.m_mcTrajectoryPointMap[mcPointTds];
-                        mcPointRoot = (McTrajectoryPoint*)mcPointRef.GetObject();
+                    Event::McPositionHit* mcPosHitTds  = hitRel->getSecond();
+                    McPositionHit*        mcPosHitRoot = 0;
+                    TRef                  mcPosHitRef  = 0;
+
+                    if (m_common.m_mcPosHitMap.find(mcPosHitTds) != m_common.m_mcPosHitMap.end()) {
+                        mcPosHitRef  = m_common.m_mcPosHitMap[mcPosHitTds];
+                        mcPosHitRoot = (McPositionHit*)mcPosHitRef.GetObject();
                     } else {
-                        log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
-                        continue;
+                        log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
                     }
 
-                    // First look for McTrajectoryPoint <--> McPositionHit
-                    Event::McPointToPosHitVec posRelVec = mcPosHitTab.getRelByFirst(mcPointTds);
+                    if (mcPosHitRoot) addRootRelation(mcPointRef, mcPosHitRef, hitRel->getInfos());
+                }
 
-                    if (!posRelVec.empty())
-                    {
-                        Event::McPointToPosHitRel* hitRel = *(posRelVec.begin());
+                // Now look for McTrajectoryPoint <--> McIntegratingHit
+                Event::McPointToIntHitVec intRelVec = mcIntHitTab.getRelByFirst(mcPointTds);
 
-                        Event::McPositionHit* mcPosHitTds  = hitRel->getSecond();
-                        McPositionHit*        mcPosHitRoot = 0;
-                        TRef                  mcPosHitRef  = 0;
+                if (!intRelVec.empty())
+                {
+                    Event::McPointToIntHitRel* hitRel = *(intRelVec.begin());
 
-                        if (m_common.m_mcPosHitMap.find(mcPosHitTds) != m_common.m_mcPosHitMap.end()) {
-                            mcPosHitRef  = m_common.m_mcPosHitMap[mcPosHitTds];
-                            mcPosHitRoot = (McPositionHit*)mcPosHitRef.GetObject();
-                        } else {
-                            log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
-                        }
+                    Event::McIntegratingHit* mcIntHitTds  = hitRel->getSecond();
+                    McIntegratingHit*        mcIntHitRoot = 0;
+                    TRef                     mcIntHitRef  = 0;
 
-                        if (mcPosHitRoot) addRootRelation(mcPointRef, mcPosHitRef, hitRel->getInfos());
+                    if (m_common.m_mcIntHitMap.find(mcIntHitTds) != m_common.m_mcIntHitMap.end()) {
+                        mcIntHitRef  = m_common.m_mcIntHitMap[mcIntHitTds];
+                        mcIntHitRoot = (McIntegratingHit*)mcIntHitRef.GetObject();
+                    } else {
+                        log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
                     }
 
-                    // Now look for McTrajectoryPoint <--> McIntegratingHit
-                    Event::McPointToIntHitVec intRelVec = mcIntHitTab.getRelByFirst(mcPointTds);
-
-                    if (!intRelVec.empty())
-                    {
-                        Event::McPointToIntHitRel* hitRel = *(intRelVec.begin());
-
-                        Event::McIntegratingHit* mcIntHitTds  = hitRel->getSecond();
-                        McIntegratingHit*        mcIntHitRoot = 0;
-                        TRef                     mcIntHitRef  = 0;
-
-                        if (m_common.m_mcIntHitMap.find(mcIntHitTds) != m_common.m_mcIntHitMap.end()) {
-                            mcIntHitRef  = m_common.m_mcIntHitMap[mcIntHitTds];
-                            mcIntHitRoot = (McIntegratingHit*)mcIntHitRef.GetObject();
-                        } else {
-                            log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
-                        }
-
-                        if (mcIntHitRoot) addRootRelation(mcPointRef, mcIntHitRef, hitRel->getInfos());
-                    }
+                    if (mcIntHitRoot) addRootRelation(mcPointRef, mcIntHitRef, hitRel->getInfos());
                 }
             }
         }
