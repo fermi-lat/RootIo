@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: bregeon  Fri Jun  3 10:33:14 PDT 2011
+RootIo/src
+
+Modified Files:
+	relationRootWriterAlg.cxx 
+Log Message:
+test for null pointers, so that relation tables may be written for real data that have no mc information
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-10-09, operation: add
 Package: RootIo
