@@ -3,6 +3,8 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
 
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
@@ -48,10 +50,10 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.99.42.1 2009/11/10 05:24:23 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.100 2009/12/02 19:18:39 heather Exp $
  */
 
-class digiRootReaderAlg : public Algorithm
+class digiRootReaderAlg : public Algorithm, virtual public IIncidentListener
 {	
 public:
     
@@ -65,6 +67,15 @@ public:
     
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
+
+    /// handle "incidents"
+    void handle(const Incident &inc) {
+        if( inc.type()=="BeginEvent")beginEvent();
+        else if(inc.type()=="EndEvent")endEvent();
+    }
+
+    void beginEvent() { };
+    void endEvent();
             
 private:
 
@@ -234,15 +245,13 @@ StatusCode digiRootReaderAlg::execute()
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
 
-    if (m_digiEvt) m_digiEvt->Clear(m_clearOption.c_str());
-    m_digiEvt = 0;
-
     // Try reading the event this way... 
     // using treename as the key
     m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent("digi"));
 
     if (!m_digiEvt) {
-        // Do not fail if there was no DIGI data to read - this may be an Event Display run - where the user 
+        // Do not fail if there was no DIGI data to read - 
+        // this may be an Event Display run - where the user 
         // did not provide an DIGI input file
         log << MSG::WARNING << "No Digi Data Available" << endreq;
         return StatusCode::SUCCESS;
@@ -856,6 +865,11 @@ void digiRootReaderAlg::close()
 
 
 
+}
+
+void digiRootReaderAlg::endEvent() {
+    if (m_digiEvt) m_digiEvt->Clear(m_clearOption.c_str());
+    m_digiEvt = 0;
 }
 
 StatusCode digiRootReaderAlg::finalize()
