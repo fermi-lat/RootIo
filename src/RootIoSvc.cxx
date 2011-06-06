@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.61 2009/09/12 16:00:40 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.60.50.1.2.1 2010/04/07 13:25:17 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -203,6 +203,7 @@ class RootIoSvc :
     IntegerProperty m_noFailure;
     bool m_rebuildIndex;
     bool m_abortOnRootError;
+    bool m_autoFlush;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -256,7 +257,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 : Service(name,svc), m_outputCel(0), m_rootTupleSvc(0), m_outputTuple(0)
 {
     
-    //declareProperty("EvtMax"     , m_evtMax=0);
+    declareProperty("EvtMax"     , m_evtMax=0);
 
     // disable for now
     //declareProperty("StartTime"   , m_startTime=0);
@@ -271,6 +272,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("TupleName", m_tupleName="MeritTuple");
     declareProperty("NoFailure", m_noFailure=0);
     declareProperty("RebuildIndex", m_rebuildIndex=false);
+    declareProperty("AllowAutoFlush", m_autoFlush=false);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -497,6 +499,9 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
   // 2 : unknown type
   // 3 : unknown file
   
+  MsgStream log (msgSvc(), name() );
+  log << MSG::DEBUG << "setSingleFile type: " << type << " file: " 
+      << fileName << endreq;
   std::string myFileName = fileName ;
   facilities::Util::expandEnvVar(&myFileName) ;
   if (myFileName.empty())
@@ -507,16 +512,25 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
    
   RootInputDesc * rootInputDesc = getRootInputDesc(type) ;
   if (rootInputDesc==0)
-   { return 2 ; }
+   { 
+     log << MSG::DEBUG 
+         << "setSingleFile rootInputDesc does not exist for type " 
+         << type << endreq;
+     return 2 ; 
+   }
   
   if (!RootPersistence::fileExists(myFileName))
-   { return 3 ; }
+   { 
+       log << MSG::DEBUG << "setSingleFile file doesn't exist for type " 
+           << type << endreq;
+       return 3 ; 
+   }
   
   std::vector<std::string> fileVec ;
   fileVec.push_back(myFileName) ;
   StringArrayProperty fileList ;
   fileList.setValue(fileVec) ;
-  rootInputDesc->setFileList(fileList) ;
+  rootInputDesc->setFileList(fileList,true) ;
 
   // fixAcdStreamer
   if (type=="RECON")
@@ -585,7 +599,8 @@ StatusCode RootIoSvc::prepareRootInput
     if (m_celFileNameRead.empty()) {
 
         // Create a new RootInputDesc object for this algorithm
-        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, 
+                                     m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 
@@ -707,6 +722,7 @@ TObject* RootIoSvc::getNextEvent(const std::string& type, long long inputIndex)
             int                runNum     = runEvtPair.first;
             int                evtNum     = runEvtPair.second;
             pData = rootInputDesc->getEvent(runNum,evtNum) ;
+            if (pData == 0) log << MSG::DEBUG << "getEvent failed" << endreq;
         }
     }
 
@@ -771,6 +787,8 @@ TTree* RootIoSvc::prepareRootOutput
     }
     // Create a new RootOutputDesc object for this algorithm
     RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
+    
+    if (!m_autoFlush) outputDesc->turnOffAutoFlush();
 
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
@@ -957,6 +975,7 @@ void RootIoSvc::setEvtMax(Long64_t max)
      // if a run/event id pair is available for loading.  If at least one of the TTrees has the event
      // available we will return true, otherwise return false.
 
+     MsgStream log( msgSvc(), name() );
      bool status = false;
      std::map<std::string,RootInputDesc *>::iterator typeItr ;
      for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
@@ -965,7 +984,9 @@ void RootIoSvc::setEvtMax(Long64_t max)
          status |= rootInputDesc->checkEventAvailability(ids.first, ids.second);
      }
 
-     if (!status) return false;
+     if (!status) {
+        return false;
+     }
      m_runEventPair = ids;
      m_useIndex = false;
 
@@ -1086,7 +1107,8 @@ StatusCode RootIoSvc::run()
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
+    if ( ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) || 
+         ( evtMax == 0) ) {
        evtMax = rootEvtMax - m_startIndex;
        setProperty(evtMax);
     } else setProperty(evtMax);
