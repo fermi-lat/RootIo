@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.99 2011/02/28 18:11:35 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.100 2011/06/01 10:20:50 kadrlica Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -531,7 +531,7 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
     // ADW: Retrieve ROOT version of cosmic-ray track collection
     // Pretty ugly duplicate code.  Eventually move to map of collections.
     const TObjArray *crTrackRootCol = tkrRecRoot->getCRTrackCol();
-    TIter crTrackIter(trackRootCol);
+    TIter crTrackIter(crTrackRootCol);
     trackObj = 0;
     
     while ((trackObj = crTrackIter.Next())!=0) 
