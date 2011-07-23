@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Fri Jul 22 22:09:24 PDT 2011
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+fixed a typo which caused the CR tracks not to be read in!
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-24-05-00-gr01, operation: add
 Package: RootIo
