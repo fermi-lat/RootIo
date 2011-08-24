@@ -50,6 +50,7 @@ void commonData::clear() {
     m_rootMcIntHitMap.clear();
     m_rootMcPosHitMap.clear();
     m_rootMcTrajectoryMap.clear();
+    m_rootMcTrajectoryPointMap.clear();
 
     m_rootTkrDigiMap.clear();
     m_rootCalDigiMap.clear();
