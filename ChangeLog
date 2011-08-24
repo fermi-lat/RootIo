@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed Aug 24 08:43:54 PDT 2011
+RootIo/src
+
+Modified Files:
+	commonData.cxx 
+Log Message:
+Include orphaned list in clear, not a critical update but we should sweep it up in some future release
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr03, operation: add
 Package: RootIo
