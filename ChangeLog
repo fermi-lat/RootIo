@@ -1,5 +1,84 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-19-03-07, operation: add
+Package: RootIo
+User: heather  Wed Sep  7 10:30:33 2011
+Files:
+  RootIo/.cvsignore  1.3
+  RootIo/ChangeLog  1.1711
+  RootIo/RootIoLib.py  1.2
+  RootIo/SConscript  1.50
+  RootIo/RootIo/FhSystemEnv.h  1.2
+  RootIo/RootIo/FhTool.h  1.3
+  RootIo/RootIo/FhCmtConfig.h  1.3
+  RootIo/RootIo/IRootIoSvc.h  1.24
+  RootIo/RootIo/FhChronoStatTable.h  1.1
+  RootIo/RootIo/FhJobOptions.h  1.1
+  RootIo/cmt/.cvsignore  1.2
+  RootIo/cmt/requirements  1.279
+  RootIo/doc/release.notes  1.264
+  RootIo/src/mcRootWriterAlg.cxx  1.56
+  RootIo/src/digiRootWriterAlg.cxx  1.82
+  RootIo/src/RootIoSvc.cxx  1.65
+  RootIo/src/RootIoRandom.cxx  1.1
+  RootIo/src/RootInputDesc.h  1.16
+  RootIo/src/FhDemoCaloSetAlg.h  1.1
+  RootIo/src/relationRootReaderAlg.cxx  1.46
+  RootIo/src/FhTool.cxx  1.4
+  RootIo/src/FhStringMap.cxx  1.1
+  RootIo/src/writeRootOptions.txt  1.5
+  RootIo/src/RootOutputDesc.h  1.4
+  RootIo/src/FhCmtConfig.cxx  1.6
+  RootIo/src/GleamMessageHandler.cxx  1.2
+  RootIo/src/reconRootReaderAlg.cxx  1.101
+  RootIo/src/commonData.cxx  1.8
+  RootIo/src/reconRootWriterAlg.cxx  1.93
+  RootIo/src/gcrSelectRootWriterAlg.cxx  1.9
+  RootIo/src/FhDemoCaloSetAlg.cxx  1.2
+  RootIo/src/readRootOptions.txt  1.7
+  RootIo/src/FhJobOptions.cxx  1.4
+  RootIo/src/FhChronoStatTable.cxx  1.2
+  RootIo/src/GleamMessageHandler.h  1.2
+  RootIo/src/writeReconRootOptions.txt  1.1
+  RootIo/src/FhSetMeritAlg.cxx  1.1
+  RootIo/src/commonData.h  1.10
+  RootIo/src/mcRootReaderAlg.cxx  1.78
+  RootIo/src/writeMcRootOptions.txt  1.1
+  RootIo/src/RootInputDesc.cxx  1.25
+  RootIo/src/mainpage.h  1.16
+  RootIo/src/FhSetAlg.cxx  1.4
+  RootIo/src/FhSystemEnv.cxx  1.3
+  RootIo/src/digiRootReaderAlg.cxx  1.102
+  RootIo/src/FhSetAlg.h  1.1
+  RootIo/src/relationRootWriterAlg.cxx  1.28
+  RootIo/src/writeDigiRootOptions.txt  1.1
+  RootIo/src/FhStringMap.h  1.1
+  RootIo/src/RootOutputDesc.cxx  1.5
+  RootIo/src/writeGcrSelectRootOptions.txt  1.1
+  RootIo/src/ntupleRootReaderAlg.cxx  1.2
+  RootIo/src/FhDemoGetAlg.cxx  1.4
+  RootIo/src/Dll/RootIo_load.cxx  1.18
+  RootIo/src/Dll/RootIo_dll.cxx  1.1.1.1
+  RootIo/src/test/writeHeadersOptions.txt  1.7
+  RootIo/src/test/writeHeaders.ref  1.3
+  RootIo/src/test/validate_headers  1.2
+  RootIo/src/test/testRootIoSvcAlg.cxx  1.8
+  RootIo/src/test/readOptions.txt  1.13
+  RootIo/src/test/checkTds.cxx  1.2
+  RootIo/src/test/test_RootIo.sh  1.2
+  RootIo/src/test/jobOptions.ref  1.4
+  RootIo/src/test/.cvsignore  1.5
+  RootIo/src/test/g4Options.txt  1.13
+  RootIo/src/test/testReadAlg.cxx  1.19
+  RootIo/src/test/jobOptions.txt  1.19
+  RootIo/src/test/readHeadersOptions.txt  1.7
+  RootIo/src/test/readHeaders.ref  1.3
+  RootIo/src/test/writeOptions.txt  1.11
+  RootIo/src/test/createFakeTdsDataAlg.cxx  1.9
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-19-03-07, operation: del
 Package: RootIo
 User: glastrm  Tue Sep  6 14:15:34 2011
