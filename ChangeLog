@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 22 10:00:46 PDT 2011
+RootIo/doc
+
+Modified Files:
+      Tag: GR-branch-17-35-01
+	release.notes 
+Log Message:
+merge in SConscript updates from HEAD
+    *
+------------------------------------------------------------
 User: heather  Thu Sep 22 10:00:45 PDT 2011
 RootIo/cmt
 
