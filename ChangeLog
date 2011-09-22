@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep 22 10:00:45 PDT 2011
+RootIo
+
+Modified Files:
+      Tag: GR-branch-17-35-01
+	SConscript 
+Log Message:
+merge in SConscript updates from HEAD
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr04, operation: add
 Package: RootIo
