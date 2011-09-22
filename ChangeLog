@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Thu Sep 22 10:00:45 PDT 2011
+RootIo/cmt
+
+Modified Files:
+      Tag: GR-branch-17-35-01
+	requirements 
+Log Message:
+merge in SConscript updates from HEAD
+    *
+------------------------------------------------------------
+User: heather  Thu Sep 22 10:00:45 PDT 2011
 RootIo
 
 Modified Files:
