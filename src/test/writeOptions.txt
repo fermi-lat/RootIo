@@ -17,19 +17,19 @@ ApplicationMgr.ExtSvc = {
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
 EventSelector.Input = "NONE";
 
-RootIoSvc.CelRootFileWrite = "$(ROOTIOROOT)/src/test/writetest.cel.root";
+RootIoSvc.CelRootFileWrite = "$(ROOTIOOJOBOPTIONSPATH)/test/writetest.cel.root";
 
-mcRootWriterAlg.mcRootFile = "$(ROOTIOROOT)/src/test/writetest.mc.root";
+mcRootWriterAlg.mcRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/writetest.mc.root";
 mcRootWriterAlg.splitMode = 1;
 mcRootWriterAlg.bufferSize = 64000;
 mcRootWriterAlg.compressionLevel = 1;
 
-digiRootWriterAlg.digiRootFile = "$(ROOTIOROOT)/src/test/writetest.digi.root";
+digiRootWriterAlg.digiRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/writetest.digi.root";
 digiRootWriterAlg.splitMode = 1;
 digiRootWriterAlg.bufferSize = 64000;
 digiRootWriterAlg.compressionLevel = 1;
 
-reconRootWriterAlg.reconRootFile = "$(ROOTIOROOT)/src/test/writetest.recon.root";
+reconRootWriterAlg.reconRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/writetest.recon.root";
 reconRootWriterAlg.splitMode = 1;
 reconRootWriterAlg.bufferSize = 64000;
 reconRootWriterAlg.compressionLevel = 1;
