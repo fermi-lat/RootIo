@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: heather  Fri Sep 23 06:58:54 PDT 2011
+RootIo/src/test
+
+Modified Files:
+      Tag: GR-branch-17-35-01
+	g4Options.txt jobOptions.txt readHeadersOptions.txt 
+	writeHeadersOptions.txt writeOptions.txt 
+Log Message:
+SCosn unit test patch
+    *
+------------------------------------------------------------
+User: heather  Fri Sep 23 06:58:54 PDT 2011
 RootIo/doc
 
 Modified Files:
