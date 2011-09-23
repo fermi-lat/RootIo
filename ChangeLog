@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Sep 23 06:58:53 PDT 2011
+RootIo
+
+Modified Files:
+      Tag: GR-branch-17-35-01
+	SConscript 
+Log Message:
+SCosn unit test patch
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr05, operation: add
 Package: RootIo
