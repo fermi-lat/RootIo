@@ -4,6 +4,8 @@
  @verbatim
  EOH
 
+ RootIo-25-00-00 27-Sep-2011  heather do not require an input MC file when 
+   running mcRootReaderAlg, for Wired, JIRA LWRD-36
  RootIo-24-10-11 22-Jul-2011  lsrea fixed a typo which caused the CR tracks *not* to be read in
  RootIo-24-10-10 03-Jun-2011 bregeon relationRootWriter now works even if no MC information are available
  RootIo-24-10-09 01-Jun-2011 kadrlica Write and read separate cosmic-ray track collections
