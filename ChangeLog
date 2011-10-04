@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Tue Oct  4 06:54:34 PDT 2011
+RootIo/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+put updates for LWRD-36 on HEAD for windows testing
+    *
+------------------------------------------------------------
+User: heather  Tue Oct  4 06:54:34 PDT 2011
 RootIo/cmt
 
 Modified Files:
