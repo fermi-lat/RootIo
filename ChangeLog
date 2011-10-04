@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct  4 06:54:35 PDT 2011
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx mcRootReaderAlg.cxx 
+Log Message:
+put updates for LWRD-36 on HEAD for windows testing
+    *
+------------------------------------------------------------
 User: heather  Tue Oct  4 06:54:34 PDT 2011
 RootIo/doc
 
