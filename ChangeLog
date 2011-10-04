@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct  4 06:54:34 PDT 2011
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+put updates for LWRD-36 on HEAD for windows testing
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr07, operation: add
 Package: RootIo
