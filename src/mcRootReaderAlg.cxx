@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.77 2010/05/05 19:00:06 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.78 2011/01/16 03:41:21 usher Exp $
  */
 
 
@@ -107,6 +107,7 @@ private:
     std::map<UInt_t, Event::McParticle*> m_particleMap;
 
     IRootIoSvc*   m_rootIoSvc;
+
 };
 
 static const AlgFactory<mcRootReaderAlg>  Factory;
@@ -122,7 +123,8 @@ mcRootReaderAlg::mcRootReaderAlg(const std::string& name,
     // Retain for backward compatibility, mcRootFileList is preferred
     declareProperty("mcRootFile",m_fileName="");
 
-    // mcRootFileList to fill TChain, this will be overriden if RootIoSvc is provided a meta ROOT file for reading
+    // mcRootFileList to fill TChain, this will be overriden if RootIoSvc is 
+    // provided a meta ROOT file for reading
     StringArrayProperty initList;
     std::vector<std::string> initVec;
     initList.setValue(initVec);
@@ -160,6 +162,19 @@ StatusCode mcRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }   
 
+    m_mcEvt = 0;
+    m_common.m_mcEvt = m_mcEvt;
+
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
+
     if ( (m_fileList.value().size() > 0) && ( !m_fileName.empty() )) {
         log << MSG::WARNING << "Both mcRootFile and mcRootFileList have "
             << "been specified, mcRootFile is deprecated, please use "
@@ -167,11 +182,13 @@ StatusCode mcRootReaderAlg::initialize()
          return StatusCode::FAILURE;
     } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
-    else if (m_fileList.value().size() == 0)
-        m_rootIoSvc->appendFileList(m_fileList, "mc.root");
+    else if (m_fileList.value().size() == 0) {
+//       m_rootIoSvc->appendFileList(m_fileList, "mc.root");
+         log << MSG::INFO << "No input MC file provided, setting up without one"
+            << endreq;
+         return sc;
+    }
 
-    m_mcEvt = 0;
-    m_common.m_mcEvt = m_mcEvt;
 
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
@@ -193,15 +210,6 @@ StatusCode mcRootReaderAlg::initialize()
 
     }
  
-    // use the incident service to register begin, end events
-    IIncidentSvc* incsvc = 0;
-    sc = service ("IncidentSvc", incsvc, true);
-
-    if( sc.isFailure() ) return sc;
-
-    incsvc->addListener(this, "BeginEvent", 100);
-    incsvc->addListener(this, "EndEvent", 0);
-
     return sc;
     
 }
@@ -212,8 +220,8 @@ StatusCode mcRootReaderAlg::execute()
     //	 the appropriate methods to read data from the ROOT file and store
     //	 data on the TDS.
     
-    MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
+    MsgStream log(msgSvc(), name());
     
     // Try reading the event this way... 
     // use name of TTree as key type
