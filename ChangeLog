@@ -1,4 +1,21 @@
 ------------------------------------------------------------
+User: heather  Mon Dec 12 12:55:41 PST 2011
+GlastRelease-scons/RootIo/src
+
+Modified Files:
+	FhChronoStatTable.cxx FhDemoCaloSetAlg.cxx FhDemoGetAlg.cxx 
+	FhJobOptions.cxx FhSetAlg.cxx FhSetMeritAlg.cxx FhTool.cxx 
+	RootIoRandom.cxx RootIoSvc.cxx digiRootReaderAlg.cxx 
+	digiRootWriterAlg.cxx gcrSelectRootWriterAlg.cxx 
+	mcRootReaderAlg.cxx mcRootWriterAlg.cxx 
+	ntupleRootReaderAlg.cxx reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx relationRootReaderAlg.cxx 
+	relationRootWriterAlg.cxx writeDigiRootOptions.txt 
+	writeMcRootOptions.txt writeReconRootOptions.txt 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
 User: heather  Mon Dec 12 12:55:40 PST 2011
 GlastRelease-scons/RootIo/doc
 
