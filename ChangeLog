@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Mon Dec 12 12:55:42 PST 2011
+GlastRelease-scons/RootIo/src/test
+
+Modified Files:
+	checkTds.cxx createFakeTdsDataAlg.cxx g4Options.txt 
+	jobOptions.txt readHeadersOptions.txt readOptions.txt 
+	testReadAlg.cxx testRootIoSvcAlg.cxx writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
 User: heather  Mon Dec 12 12:55:41 PST 2011
 GlastRelease-scons/RootIo/src
 
