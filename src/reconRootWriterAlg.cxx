@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.92 2011/02/28 18:11:36 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.93 2011/06/01 10:20:50 kadrlica Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -142,8 +142,9 @@ private:
 };
 
 
-static const AlgFactory<reconRootWriterAlg>  Factory;
-const IAlgFactory& reconRootWriterAlgFactory = Factory;
+//static const AlgFactory<reconRootWriterAlg>  Factory;
+//const IAlgFactory& reconRootWriterAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(reconRootWriterAlg);
 
 reconRootWriterAlg::reconRootWriterAlg(const std::string& name, 
                                        ISvcLocator* pSvcLocator) : 
@@ -857,7 +858,7 @@ StatusCode reconRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No longer available in Gaudi v21r7
 
     log << MSG::DEBUG;
     if( log.isActive()) log.stream() << "Finalized";

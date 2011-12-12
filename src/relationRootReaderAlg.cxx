@@ -42,7 +42,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.45 2010/11/03 19:57:46 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/relationRootReaderAlg.cxx,v 1.46 2010/11/24 16:33:29 usher Exp $
  */
 
 class relationRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -149,9 +149,9 @@ private:
     std::string                        m_currentRelType;
 };
 
-static const AlgFactory<relationRootReaderAlg>  Factory;
-const IAlgFactory& relationRootReaderAlgFactory = Factory;
-
+//static const AlgFactory<relationRootReaderAlg>  Factory;
+//const IAlgFactory& relationRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(relationRootReaderAlg);
 
 relationRootReaderAlg::relationRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
@@ -671,7 +671,7 @@ StatusCode relationRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }
 

@@ -29,7 +29,7 @@
  * Monte Carlo generator or running any of the standard algorithms.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.8 2005/04/18 17:32:22 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/createFakeTdsDataAlg.cxx,v 1.9 2011/05/20 15:54:58 heather Exp $
  */
 
 class createFakeTdsDataAlg : public Algorithm
@@ -60,8 +60,9 @@ private:
     
 };
 
-static const AlgFactory<createFakeTdsDataAlg>  Factory;
-const IAlgFactory& createFakeTdsDataAlgFactory = Factory;
+//static const AlgFactory<createFakeTdsDataAlg>  Factory;
+//const IAlgFactory& createFakeTdsDataAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(createFakeTdsDataAlg);
 
 
 createFakeTdsDataAlg::createFakeTdsDataAlg(const std::string& name, ISvcLocator* pSvcLocator) : 

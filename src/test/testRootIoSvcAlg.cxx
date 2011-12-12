@@ -9,7 +9,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.7 2007/07/04 15:19:27 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/test/testRootIoSvcAlg.cxx,v 1.8.246.1 2010/10/08 16:40:46 heather Exp $
  */
 
 class testRootIoSvcAlg : public Algorithm
@@ -29,9 +29,9 @@ private:
  
 };
 
-static const AlgFactory<testRootIoSvcAlg>  Factory;
-const IAlgFactory& testRootIoSvcAlgFactory = Factory;
-
+//static const AlgFactory<testRootIoSvcAlg>  Factory;
+//const IAlgFactory& testRootIoSvcAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(testRootIoSvcAlg);
 
 testRootIoSvcAlg::testRootIoSvcAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator)
