@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.65 2010/07/18 06:02:42 lsrea Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/RootIoSvc.cxx,v 1.66 2011/10/04 13:54:35 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -18,8 +18,8 @@
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IObjManager.h"
-#include "GaudiKernel/IToolFactory.h"
+//#include "GaudiKernel/IObjManager.h"
+//#include "GaudiKernel/IToolFactory.h"
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IAppMgrUI.h"
@@ -31,6 +31,7 @@
 #include "RootIo/IRootIoSvc.h"
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 #include "RootIo/FhTool.h"
+#include "GlastSvc/GlastRandomSvc/IRandomAccess.h"
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -197,6 +198,7 @@ class RootIoSvc :
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
+    IRandomAccess *m_randTool; // setup RandomNum Tool
     //IntegerProperty m_evtMax ;
     long long m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
@@ -250,8 +252,9 @@ class RootIoSvc :
 
 
 // declare the service factories for the RootIoSvc
-static SvcFactory<RootIoSvc> a_factory ;
-const ISvcFactory& RootIoSvcFactory = a_factory ;
+//static SvcFactory<RootIoSvc> a_factory ;
+//const ISvcFactory& RootIoSvcFactory = a_factory ;
+DECLARE_SERVICE_FACTORY(RootIoSvc);
 
 /// Standard Constructor
 RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
@@ -312,7 +315,7 @@ StatusCode RootIoSvc::initialize ()
     setProperties ();
     
     m_appMgrUI = 0 ;
-    status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
+    status = serviceLocator()->queryInterface(IAppMgrUI::interfaceID(), (void**)&m_appMgrUI);
     
     // use the incident service to register begin, end events
     IIncidentSvc* incsvc = 0;
@@ -374,9 +377,13 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
-/*
     StatusCode toolSvcSc = service("ToolSvc", m_gaudiToolSvc, true);
-
+    if (toolSvcSc.isSuccess())
+        if (m_gaudiToolSvc->retrieveTool("RootIoRandom", m_randTool).isFailure() ) {
+            MsgStream log(msgSvc(), name() );
+            log << MSG::WARNING << "Failed to create RootIoRandom" << endreq;
+   }
+/*
     if  ( toolSvcSc.isSuccess() ) {
         StatusCode headersSc = m_gaudiToolSvc->retrieveTool("FhTool", m_headersTool);
         if (headersSc.isFailure() ) {
@@ -929,11 +936,11 @@ StatusCode RootIoSvc::finalize ()
 
 /// Query interface
 StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterface)  {
-    if ( IID_IRootIoSvc.versionMatch(riid) )  {
+    if ( IRootIoSvc::interfaceID() == riid )  {
         *ppvInterface = (IRootIoSvc*)this;
-    }else if (IID_IRunable.versionMatch(riid) ) {
+    }else if (IRunable::interfaceID()==riid ) {
       *ppvInterface = (IRunable*)this;
-	} else if (IID_IIncidentListener.versionMatch(riid) ) {
+	} else if (IIncidentListener::interfaceID()==riid ) {
 		*ppvInterface = (IIncidentListener*)this;
 	} else  {
         return Service::queryInterface(riid, ppvInterface);
@@ -1139,7 +1146,7 @@ StatusCode RootIoSvc::run()
     // now find the top alg so we can monitor its error count
     IAlgManager* theAlgMgr =0 ;
     status = serviceLocator( )->getService( "ApplicationMgr",
-        IID_IAlgManager,
+        IAlgManager::interfaceID(),
         (IInterface*&)theAlgMgr );
     IAlgorithm* theIAlg;
     Algorithm*  theAlgorithm=0;

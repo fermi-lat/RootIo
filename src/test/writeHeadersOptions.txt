@@ -14,15 +14,14 @@ ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
     "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
 
 ApplicationMgr.ExtSvc += { 
-    "GlastEventSelector/EventSelector" , 
-    "EventCnvSvc"
+    "DbEvtSelector/EventSelector" 
     };
 
+ApplicationMgr.HistogramPersistency="NONE";
 EventPersistencySvc.CnvServices = {"EventCnvSvc"} ;
-EventSelector.Input = "NONE";
 ApplicationMgr.EvtMax = 10 ;
 
-mcRootWriterAlg.mcRootFile = "$(ROOTIOJOBOPTIONS)/test/mc-fake.root";
+mcRootWriterAlg.mcRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/mc-fake.root";
 mcRootWriterAlg.splitMode = 1;
 mcRootWriterAlg.bufferSize = 64000;
 mcRootWriterAlg.compressionLevel = 1;

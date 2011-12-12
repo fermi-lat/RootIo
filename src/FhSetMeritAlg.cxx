@@ -33,8 +33,9 @@ private:
 
 
 
-static const AlgFactory<FhSetMeritAlg> Factory ;
-const IAlgFactory& FhSetMeritAlgFactory = Factory ;
+//static const AlgFactory<FhSetMeritAlg> Factory ;
+//const IAlgFactory& FhSetMeritAlgFactory = Factory ;
+DECLARE_ALGORITHM_FACTORY(FhSetMeritAlg);
 
 StatusCode FhSetMeritAlg::initialize() {
     MsgStream log(msgSvc(),name()) ;
