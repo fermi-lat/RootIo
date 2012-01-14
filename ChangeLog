@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Sat Jan 14 14:28:17 PST 2012
+GlastRelease-scons/RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+don't need source in Dll directory
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr17, operation: add
 Package: RootIo
