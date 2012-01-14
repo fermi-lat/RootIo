@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/SConscript,v 1.50 2011/07/23 05:10:52 lsrea Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/SConscript,v 1.51 2011/12/12 20:55:39 heather Exp $
 # Authors: Heather Kelly <heather@milkyway.gsfc.nasa.gov>, David Chamont <chamont@poly.in2p3.fr>
 # Version: RootIo-25-01-00
 
@@ -11,7 +11,8 @@ libEnv = baseEnv.Clone()
 
 libEnv.Tool('addLinkDeps', package='RootIo', toBuild='component')
 
-RootIo =libEnv.SharedLibrary('RootIo',listFiles(['src/*.cxx','src/Dll/*.cxx']))
+RootIo =libEnv.ComponentLibrary('RootIo',
+				listFiles(['src/*.cxx']))
 
 progEnv.Tool('RootIoLib')
 
