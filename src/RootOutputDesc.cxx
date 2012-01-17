@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.4 2008/01/28 13:52:31 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/RootOutputDesc.cxx,v 1.5 2009/09/12 16:00:40 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -14,6 +14,7 @@
 #include "TROOT.h"
 #include <vector>
 #include <iostream>
+#include <cstdlib>
 
 
 RootOutputDesc::RootOutputDesc
