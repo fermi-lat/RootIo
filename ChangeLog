@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Tue Jan 17 08:52:06 PST 2012
+GlastRelease-scons/RootIo/src
+
+Modified Files:
+	RootOutputDesc.cxx 
+Log Message:
+fix C library includes for gcc4.4 compilation
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-25-01-01, operation: add
 Package: RootIo
