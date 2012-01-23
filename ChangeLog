@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Mon Jan 23 11:32:38 PST 2012
+RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+stag/GoGui_auto-tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-br01, operation: add
 Package: RootIo
