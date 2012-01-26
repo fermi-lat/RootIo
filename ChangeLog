@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Jan 25 21:31:19 PST 2012
+RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+gaudi v21r7 upgrade
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-25-01-02, operation: add
 Package: RootIo
