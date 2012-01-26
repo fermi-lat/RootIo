@@ -3,8 +3,9 @@
 #include <GaudiKernel/ToolFactory.h>
 #include <GaudiKernel/MsgStream.h>
 
-static ToolFactory<FhTool> s_factory ;
-const IToolFactory & FhToolFactory = s_factory ;
+//static ToolFactory<FhTool> s_factory ;
+//const IToolFactory & FhToolFactory = s_factory ;
+DECLARE_TOOL_FACTORY(FhTool);
 
 FhTool::FhTool( const std::string & type,
     const std::string & name, const IInterface * parent )

@@ -32,7 +32,7 @@
  * the data in the TDS in /Event 
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/ntupleRootReaderAlg.cxx,v 1.1 2008/10/29 14:31:01 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/ntupleRootReaderAlg.cxx,v 1.3 2011/12/12 20:55:41 heather Exp $
  */
 
 class ntupleRootReaderAlg : public Algorithm
@@ -79,8 +79,9 @@ private:
 
 };
 
-static const AlgFactory<ntupleRootReaderAlg>  Factory;
-const IAlgFactory& ntupleRootReaderAlgFactory = Factory;
+//static const AlgFactory<ntupleRootReaderAlg>  Factory;
+//const IAlgFactory& ntupleRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(ntupleRootReaderAlg);
 
 
 ntupleRootReaderAlg::ntupleRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -325,7 +326,7 @@ StatusCode ntupleRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No  longer in gaudi v21r7
     return sc;
 }
 

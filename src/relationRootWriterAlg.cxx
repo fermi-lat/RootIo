@@ -44,7 +44,7 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.22 2008/01/24 21:38:30 chamont Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.23 2008/03/13 19:56:55 usher Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
@@ -104,8 +104,9 @@ private:
 };
 
 
-static const AlgFactory<relationRootWriterAlg>  Factory;
-const IAlgFactory& relationRootWriterAlgFactory = Factory;
+//static const AlgFactory<relationRootWriterAlg>  Factory;
+//const IAlgFactory& relationRootWriterAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(relationRootWriterAlg);
 
 relationRootWriterAlg::relationRootWriterAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) : 
@@ -473,7 +474,7 @@ StatusCode relationRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }
 

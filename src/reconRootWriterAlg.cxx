@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.86 2008/04/14 10:07:00 cohen Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.87 2008/08/05 04:56:31 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -139,8 +139,9 @@ private:
 };
 
 
-static const AlgFactory<reconRootWriterAlg>  Factory;
-const IAlgFactory& reconRootWriterAlgFactory = Factory;
+//static const AlgFactory<reconRootWriterAlg>  Factory;
+//const IAlgFactory& reconRootWriterAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(reconRootWriterAlg);
 
 reconRootWriterAlg::reconRootWriterAlg(const std::string& name, 
                                        ISvcLocator* pSvcLocator) : 
@@ -823,7 +824,7 @@ StatusCode reconRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
 
     log << MSG::DEBUG;
     if( log.isActive()) log.stream() << "Finalized";

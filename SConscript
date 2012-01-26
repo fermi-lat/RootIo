@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/SConscript,v 1.25.2.2 2011/09/22 17:00:45 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/SConscript,v 1.54 2012/01/23 19:32:38 jrb Exp $
 # Authors: Heather Kelly <heather@milkyway.gsfc.nasa.gov>, David Chamont <chamont@poly.in2p3.fr>
-# Version: RootIo-24-05-00-gr03
+# Version: RootIo-24-05-00-gr04
 
 Import('baseEnv')
 Import('listFiles')
@@ -11,7 +11,8 @@ libEnv = baseEnv.Clone()
 
 libEnv.Tool('addLinkDeps', package='RootIo', toBuild='component')
 
-RootIo =libEnv.SharedLibrary('RootIo',listFiles(['src/*.cxx','src/Dll/*.cxx']))
+RootIo =libEnv.ComponentLibrary('RootIo',
+				listFiles(['src/*.cxx']))
 
 progEnv.Tool('RootIoLib')
 

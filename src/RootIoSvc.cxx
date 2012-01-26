@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.60.50.1.2.1 2010/04/07 13:25:17 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.67 2011/12/12 20:55:41 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -18,8 +18,8 @@
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IObjManager.h"
-#include "GaudiKernel/IToolFactory.h"
+//#include "GaudiKernel/IObjManager.h"
+//#include "GaudiKernel/IToolFactory.h"
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IAppMgrUI.h"
@@ -31,6 +31,7 @@
 #include "RootIo/IRootIoSvc.h"
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 #include "RootIo/FhTool.h"
+#include "GlastSvc/GlastRandomSvc/IRandomAccess.h"
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -51,7 +52,7 @@ class IAppMgrUI;
 * \class RootIoSvc
 *
 * \brief Service that implements the IRunable interface, to control the event loop.
-* \author Heather Kelly heather@lheapop.gsfc.nasa.gov
+* \author Heather Kelly heather@slac.stanford.edu
 */
 //==============================================================================
 
@@ -101,6 +102,8 @@ class RootIoSvc :
 
     virtual bool setRunEventPair(std::pair<int,int> ids) ;
     virtual std::pair<int,int> runEventPair() { return m_runEventPair ; }
+
+    virtual Long64_t getIndexByEventID(int run, int event);
 
     
     //====================
@@ -195,6 +198,7 @@ class RootIoSvc :
    
     /// Reference to application manager UI
     IAppMgrUI * m_appMgrUI ;
+    IRandomAccess *m_randTool; // setup RandomNum Tool
     //IntegerProperty m_evtMax ;
     long long m_evtMax ;
     IntegerProperty m_autoSaveInterval ;
@@ -203,7 +207,6 @@ class RootIoSvc :
     IntegerProperty m_noFailure;
     bool m_rebuildIndex;
     bool m_abortOnRootError;
-    bool m_autoFlush;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -249,15 +252,16 @@ class RootIoSvc :
 
 
 // declare the service factories for the RootIoSvc
-static SvcFactory<RootIoSvc> a_factory ;
-const ISvcFactory& RootIoSvcFactory = a_factory ;
+//static SvcFactory<RootIoSvc> a_factory ;
+//const ISvcFactory& RootIoSvcFactory = a_factory ;
+DECLARE_SERVICE_FACTORY(RootIoSvc);
 
 /// Standard Constructor
 RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 : Service(name,svc), m_outputCel(0), m_rootTupleSvc(0), m_outputTuple(0)
 {
     
-    declareProperty("EvtMax"     , m_evtMax=0);
+    //declareProperty("EvtMax"     , m_evtMax=0);
 
     // disable for now
     //declareProperty("StartTime"   , m_startTime=0);
@@ -272,7 +276,6 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("TupleName", m_tupleName="MeritTuple");
     declareProperty("NoFailure", m_noFailure=0);
     declareProperty("RebuildIndex", m_rebuildIndex=false);
-    declareProperty("AllowAutoFlush", m_autoFlush=false);
     
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
@@ -312,7 +315,7 @@ StatusCode RootIoSvc::initialize ()
     setProperties ();
     
     m_appMgrUI = 0 ;
-    status = serviceLocator()->queryInterface(IID_IAppMgrUI, (void**)&m_appMgrUI);
+    status = serviceLocator()->queryInterface(IAppMgrUI::interfaceID(), (void**)&m_appMgrUI);
     
     // use the incident service to register begin, end events
     IIncidentSvc* incsvc = 0;
@@ -374,9 +377,13 @@ StatusCode RootIoSvc::initialize ()
     }
 
 
-/*
     StatusCode toolSvcSc = service("ToolSvc", m_gaudiToolSvc, true);
-
+    if (toolSvcSc.isSuccess())
+        if (m_gaudiToolSvc->retrieveTool("RootIoRandom", m_randTool).isFailure() ) {
+            MsgStream log(msgSvc(), name() );
+            log << MSG::WARNING << "Failed to create RootIoRandom" << endreq;
+   }
+/*
     if  ( toolSvcSc.isSuccess() ) {
         StatusCode headersSc = m_gaudiToolSvc->retrieveTool("FhTool", m_headersTool);
         if (headersSc.isFailure() ) {
@@ -516,7 +523,18 @@ unsigned RootIoSvc::setSingleFile( const std::string & type, const char * fileNa
      log << MSG::DEBUG 
          << "setSingleFile rootInputDesc does not exist for type " 
          << type << endreq;
-     return 2 ; 
+
+      // For now we only allow MC files to be added on the fly (for WIRED)
+      if (type == "mc") {
+          StringArrayProperty fileList;
+          std::vector<std::string> initVec;
+          initVec.push_back(myFileName);
+          fileList.setValue(initVec);
+          prepareRootInput("mc", "Mc", "McEvent", 0, fileList);
+          rootInputDesc = getRootInputDesc(type);
+          if (rootInputDesc == 0) return 2;
+      } else
+         return 2 ; 
    }
   
   if (!RootPersistence::fileExists(myFileName))
@@ -729,6 +747,19 @@ TObject* RootIoSvc::getNextEvent(const std::string& type, long long inputIndex)
     return pData;
 }
 
+Long64_t RootIoSvc::getIndexByEventID(int run, int event)
+{
+    std::map<std::string,RootInputDesc *>::iterator typeItr ;
+    for ( typeItr = m_rootIoMap.begin() ; typeItr != m_rootIoMap.end() ; ++typeItr )
+    {
+        RootInputDesc * rootInputDesc = typeItr->second ;
+        if(rootInputDesc->checkEventAvailability(run, event)) {
+            unsigned index = rootInputDesc->getIndexByEventID(run, event);
+            return index;
+        }
+    }
+    return (unsigned)-1;
+}
 
 //============================================================================
 //
@@ -787,8 +818,6 @@ TTree* RootIoSvc::prepareRootOutput
     }
     // Create a new RootOutputDesc object for this algorithm
     RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
-    
-    if (!m_autoFlush) outputDesc->turnOffAutoFlush();
 
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
@@ -907,11 +936,11 @@ StatusCode RootIoSvc::finalize ()
 
 /// Query interface
 StatusCode RootIoSvc::queryInterface(const InterfaceID& riid, void** ppvInterface)  {
-    if ( IID_IRootIoSvc.versionMatch(riid) )  {
+    if ( IRootIoSvc::interfaceID() == riid )  {
         *ppvInterface = (IRootIoSvc*)this;
-    }else if (IID_IRunable.versionMatch(riid) ) {
+    }else if (IRunable::interfaceID()==riid ) {
       *ppvInterface = (IRunable*)this;
-	} else if (IID_IIncidentListener.versionMatch(riid) ) {
+	} else if (IIncidentListener::interfaceID()==riid ) {
 		*ppvInterface = (IIncidentListener*)this;
 	} else  {
         return Service::queryInterface(riid, ppvInterface);
@@ -1107,8 +1136,7 @@ StatusCode RootIoSvc::run()
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ( ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) || 
-         ( evtMax == 0) ) {
+    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
        evtMax = rootEvtMax - m_startIndex;
        setProperty(evtMax);
     } else setProperty(evtMax);
@@ -1118,7 +1146,7 @@ StatusCode RootIoSvc::run()
     // now find the top alg so we can monitor its error count
     IAlgManager* theAlgMgr =0 ;
     status = serviceLocator( )->getService( "ApplicationMgr",
-        IID_IAlgManager,
+        IAlgManager::interfaceID(),
         (IInterface*&)theAlgMgr );
     IAlgorithm* theIAlg;
     Algorithm*  theAlgorithm=0;

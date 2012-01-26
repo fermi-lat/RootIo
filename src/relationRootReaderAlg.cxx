@@ -42,7 +42,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.40 2009/12/02 19:18:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.40.4.1 2011/06/06 17:01:06 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -136,8 +136,9 @@ private:
     Event::McPointToIntHitTabList*    m_mcPointToIntHitList;
 };
 
-static const AlgFactory<relationRootReaderAlg>  Factory;
-const IAlgFactory& relationRootReaderAlgFactory = Factory;
+//static const AlgFactory<relationRootReaderAlg>  Factory;
+//const IAlgFactory& relationRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(relationRootReaderAlg);
 
 
 relationRootReaderAlg::relationRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -220,6 +221,15 @@ StatusCode relationRootReaderAlg::initialize()
          }
     }
 
+
+  // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
 
     return sc;
     
@@ -582,7 +592,7 @@ StatusCode relationRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }
 

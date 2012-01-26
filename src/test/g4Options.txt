@@ -2,7 +2,7 @@
 //
 // Job options file for G4Generator test
 // 
-// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.11 2008/07/21 15:17:33 glastrm Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/g4Options.txt,v 1.14 2011/12/12 20:55:42 heather Exp $
 
 //  -------------- basic Glast/Gaudi run enviornment -----------
 ApplicationMgr.DLLs   = { "GlastSvc", "G4Generator",
@@ -10,13 +10,14 @@ ApplicationMgr.DLLs   = { "GlastSvc", "G4Generator",
                           "CalRecon", "TkrRecon", "AcdRecon"};
 
 ApplicationMgr.ExtSvc = { 
-    "GlastEventSelector/EventSelector" , 
-    "EventCnvSvc", 
+    "DbEvtSelector/EventSelector" , 
     "GlastDetSvc" 
     };
 
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
-EventSelector.Input = "NONE";
+//EventSelector.Input = "NONE";
+
+ApplicationMgr.HistogramPersistency = "NONE";
 
 // Stuff for detModel
 GlastDetSvc.xmlfile="$(XMLGEODBSXMLPATH)/flight/flightSegVols.xml";
@@ -25,7 +26,7 @@ GlastDetSvc.visitorMode="recon";
 
 #include "$FLUXSVCJOBOPTIONSPATH/defaultOptions.txt"
 // Append (no replace) the list of source library documents
-FluxSvc.source_lib = {"$(G4GENERATORXMLPATH)/test/test_sources.xml"};
+FluxSvc.source_lib = {"$(G4GENERATORXMLPATH)/test_sources.xml"};
 
 //----------------- local algorithms to run -------------------
 ApplicationMgr.TopAlg = { "FluxAlg", "G4Generator", "AcdDigiAlg",

@@ -15,8 +15,9 @@
 
 #include <cstdio>
 
-static const AlgFactory<FhDemoCaloSetAlg> Factory ;
-const IAlgFactory& FhDemoCaloSetAlgFactory = Factory ;
+//static const AlgFactory<FhDemoCaloSetAlg> Factory ;
+//const IAlgFactory& FhDemoCaloSetAlgFactory = Factory ;
+DECLARE_ALGORITHM_FACTORY(FhDemoCaloSetAlg);
 
 StatusCode FhDemoCaloSetAlg::finalize() {
     
