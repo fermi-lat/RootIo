@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Wed Jan 25 21:31:21 PST 2012
+RootIo/src/test
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	checkTds.cxx createFakeTdsDataAlg.cxx g4Options.txt 
+	jobOptions.txt readHeadersOptions.txt readOptions.txt 
+	testReadAlg.cxx testRootIoSvcAlg.cxx writeHeadersOptions.txt 
+	writeOptions.txt 
+Log Message:
+gaudi v21r7 upgrade
+    *
+------------------------------------------------------------
 User: heather  Wed Jan 25 21:31:20 PST 2012
 RootIo/src
 
