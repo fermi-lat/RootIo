@@ -53,7 +53,7 @@
  * @brief Writes Digi TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.81 2008/06/24 02:32:32 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootWriterAlg.cxx,v 1.83 2011/12/12 20:55:41 heather Exp $
  */
 
 class digiRootWriterAlg : public Algorithm
@@ -149,8 +149,9 @@ private:
 };
 
 
-static const AlgFactory<digiRootWriterAlg>  Factory;
-const IAlgFactory& digiRootWriterAlgFactory = Factory;
+//static const AlgFactory<digiRootWriterAlg>  Factory;
+//const IAlgFactory& digiRootWriterAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(digiRootWriterAlg);
 
 digiRootWriterAlg::digiRootWriterAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) : 
@@ -759,7 +760,7 @@ StatusCode digiRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No longer in Gaudi v21r7
     return sc;
 }
 

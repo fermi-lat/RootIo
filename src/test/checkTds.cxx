@@ -12,7 +12,7 @@
  * @brief Takes data from the TDS to test reading from ROOT files
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/Attic/checkTds.cxx,v 1.1.2.1 2006/02/21 06:44:54 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/test/checkTds.cxx,v 1.3 2011/12/12 20:55:42 heather Exp $
  */
 
 class checkTds : public Algorithm
@@ -31,8 +31,9 @@ private:
  
 };
 
-static const AlgFactory<checkTds>  Factory;
-const IAlgFactory& checkTdsFactory = Factory;
+//static const AlgFactory<checkTds>  Factory;
+//const IAlgFactory& checkTdsFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(checkTds);
 
 
 checkTds::checkTds(const std::string& name, ISvcLocator* pSvcLocator) : 

@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.74.42.1.2.1 2010/04/07 13:25:17 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.75.8.1 2011/06/06 17:01:06 heather Exp $
  */
 
 
@@ -109,8 +109,9 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 };
 
-static const AlgFactory<mcRootReaderAlg>  Factory;
-const IAlgFactory& mcRootReaderAlgFactory = Factory;
+//static const AlgFactory<mcRootReaderAlg>  Factory;
+//const IAlgFactory& mcRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(mcRootReaderAlg);
 
 
 mcRootReaderAlg::mcRootReaderAlg(const std::string& name, 
@@ -160,6 +161,18 @@ StatusCode mcRootReaderAlg::initialize()
         return StatusCode::FAILURE;
     }   
 
+    m_mcEvt = 0;
+    m_common.m_mcEvt = m_mcEvt;
+
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
+
     if ( (m_fileList.value().size() > 0) && ( !m_fileName.empty() )) {
         log << MSG::WARNING << "Both mcRootFile and mcRootFileList have "
             << "been specified, mcRootFile is deprecated, please use "
@@ -167,11 +180,13 @@ StatusCode mcRootReaderAlg::initialize()
          return StatusCode::FAILURE;
     } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
-    else if (m_fileList.value().size() == 0)
-        m_rootIoSvc->appendFileList(m_fileList, "mc.root");
+    else if (m_fileList.value().size() == 0){
+       // m_rootIoSvc->appendFileList(m_fileList, "mc.root");
+       log << MSG::INFO << "No input MC file provided, setting up without one"
+           << endreq;
+       return sc;
+     }
 
-    m_mcEvt = 0;
-    m_common.m_mcEvt = m_mcEvt;
 
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
@@ -605,6 +620,6 @@ void mcRootReaderAlg::endEvent() {
 StatusCode mcRootReaderAlg::finalize()
 {
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }

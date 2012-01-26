@@ -1,8 +1,8 @@
 //##############################################################
 //
 // Job options file for RootIo test
-//
-ApplicationMgr.DLLs +=    { "RootIo", "GaudiAlg", "GlastSvc" };
+
+ApplicationMgr.DLLs +=    { "RootIo", "GaudiAlg", "GlastSvc", "ntupleWriterSvc" };
 
 ApplicationMgr.TopAlg = { "Sequencer/Top" } ;
 
@@ -10,14 +10,14 @@ Top.Members = { "createFakeTdsDataAlg", "FhSetAlg",
               "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg"};
 
 ApplicationMgr.ExtSvc = { 
-//    "EventSelector/EventSelector" , 
-    "EventCnvSvc"
+    "DbEvtSelector/EventSelector"  
+//    "EventCnvSvc"
     };
 
 EventPersistencySvc.CnvServices = {"EventCnvSvc"};
-EventSelector.Input = "NONE";
+//EventSelector.Input = "NONE";
 
-RootIoSvc.CelRootFileWrite = "$(ROOTIOOJOBOPTIONSPATH)/test/writetest.cel.root";
+RootIoSvc.CelRootFileWrite = "$(ROOTIOJOBOPTIONSPATH)/test/writetest.cel.root";
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/writetest.mc.root";
 mcRootWriterAlg.splitMode = 1;

@@ -14,12 +14,11 @@ ApplicationMgr.TopAlg +=  { "createFakeTdsDataAlg",
     "mcRootWriterAlg", "digiRootWriterAlg", "reconRootWriterAlg" };
 
 ApplicationMgr.ExtSvc += { 
-    "GlastEventSelector/EventSelector" , 
-    "EventCnvSvc"
+    "DbEvtSelector/EventSelector" 
     };
 
+ApplicationMgr.HistogramPersistency="NONE";
 EventPersistencySvc.CnvServices = {"EventCnvSvc"} ;
-EventSelector.Input = "NONE";
 ApplicationMgr.EvtMax = 10 ;
 
 mcRootWriterAlg.mcRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/mc-fake.root";
@@ -27,12 +26,12 @@ mcRootWriterAlg.splitMode = 1;
 mcRootWriterAlg.bufferSize = 64000;
 mcRootWriterAlg.compressionLevel = 1;
 
-digiRootWriterAlg.digiRootFile = "$(ROOTIOJOBOPTIONS)/test/digi-fake.root";
+digiRootWriterAlg.digiRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/digi-fake.root";
 digiRootWriterAlg.splitMode = 1;
 digiRootWriterAlg.bufferSize = 64000;
 digiRootWriterAlg.compressionLevel = 1;
 
-reconRootWriterAlg.reconRootFile = "$(ROOTIOJOBOPTIONS)/test/recon-fake.root";
+reconRootWriterAlg.reconRootFile = "$(ROOTIOJOBOPTIONSPATH)/test/recon-fake.root";
 reconRootWriterAlg.splitMode = 1;
 reconRootWriterAlg.bufferSize = 64000;
 reconRootWriterAlg.compressionLevel = 1;

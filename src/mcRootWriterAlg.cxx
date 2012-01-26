@@ -43,7 +43,7 @@
  * @brief Writes Monte Carlo TDS data to a persistent ROOT file.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.54 2007/08/09 17:17:08 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootWriterAlg.cxx,v 1.55 2008/01/24 21:38:30 chamont Exp $
  */
 
 class mcRootWriterAlg : public Algorithm
@@ -122,8 +122,9 @@ private:
 };
 
 
-static const AlgFactory<mcRootWriterAlg>  Factory;
-const IAlgFactory& mcRootWriterAlgFactory = Factory;
+//static const AlgFactory<mcRootWriterAlg>  Factory;
+//const IAlgFactory& mcRootWriterAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(mcRootWriterAlg);
 
 mcRootWriterAlg::mcRootWriterAlg(const std::string& name, 
                                  ISvcLocator* pSvcLocator) : 
@@ -637,6 +638,6 @@ StatusCode mcRootWriterAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }

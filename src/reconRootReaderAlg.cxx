@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.92.42.1.2.1 2010/04/07 13:25:17 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.93.4.1 2011/06/06 17:01:06 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -147,8 +147,9 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<reconRootReaderAlg>  Factory;
-const IAlgFactory& reconRootReaderAlgFactory = Factory;
+//static const AlgFactory<reconRootReaderAlg>  Factory;
+//const IAlgFactory& reconRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(reconRootReaderAlg);
 
 
 reconRootReaderAlg::reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -234,6 +235,14 @@ StatusCode reconRootReaderAlg::initialize()
     }
 
 
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
 
     return sc;
     
@@ -971,6 +980,6 @@ StatusCode reconRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized();
     return sc;
 }

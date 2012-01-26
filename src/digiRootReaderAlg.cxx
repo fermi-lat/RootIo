@@ -50,7 +50,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.100 2009/12/02 19:18:39 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.103 2011/12/12 20:55:41 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -146,8 +146,9 @@ private:
     IFhTool * m_headersTool ;
 };
 
-static const AlgFactory<digiRootReaderAlg>  Factory;
-const IAlgFactory& digiRootReaderAlgFactory = Factory;
+//static const AlgFactory<digiRootReaderAlg>  Factory;
+//const IAlgFactory& digiRootReaderAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(digiRootReaderAlg);
 
 
 digiRootReaderAlg::digiRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
@@ -230,6 +231,15 @@ StatusCode digiRootReaderAlg::initialize()
 
     }
 
+
+    // use the incident service to register begin, end events
+    IIncidentSvc* incsvc = 0;
+    sc = service ("IncidentSvc", incsvc, true);
+
+    if( sc.isFailure() ) return sc;
+
+    incsvc->addListener(this, "BeginEvent", 100);
+    incsvc->addListener(this, "EndEvent", 0);
 
 
     return sc;
@@ -877,7 +887,7 @@ StatusCode digiRootReaderAlg::finalize()
     close();
     
     StatusCode sc = StatusCode::SUCCESS;
-    setFinalized();
+    //setFinalized(); No longer in Gaudi v21r7
     return sc;
 }
 
