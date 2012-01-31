@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 31 13:33:59 PST 2012
+GlastRelease-scons/RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+patches
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr19, operation: add
 Package: RootIo
