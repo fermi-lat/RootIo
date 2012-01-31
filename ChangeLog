@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 31 13:34:04 PST 2012
+GlastRelease-scons/RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	RootInputDesc.cxx RootInputDesc.h 
+Log Message:
+patches
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 31 13:34:02 PST 2012
 GlastRelease-scons/RootIo/doc
 
