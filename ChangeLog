@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Mar 26 13:27:18 PDT 2012
+RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br05
+	SConscript 
+Log Message:
+add ROOT error check before run event loop
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gh01, operation: add
 Package: RootIo
