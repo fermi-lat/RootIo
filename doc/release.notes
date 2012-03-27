@@ -4,6 +4,8 @@
  @verbatim
  EOH
 
+ RootIo-24-05-00-rp02 27-Mar-2012 hmk Add additional logging messages when
+      ROOT file opening fails
  RootIo-24-05-00-rp01 26-Mar-2012 hmk add ROOT error check before run 
            event loop
  RootIo-24-05-00-gr03 23-Sep-2011 hmk unit test patch
