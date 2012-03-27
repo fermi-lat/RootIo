@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 27 09:09:35 PDT 2012
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br05
+	RootInputDesc.cxx 
+Log Message:
+add logging messages for root file open failures
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 27 09:09:34 PDT 2012
 RootIo/doc
 
