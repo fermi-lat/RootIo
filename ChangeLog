@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Mar 27 09:09:34 PDT 2012
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br05
+	release.notes 
+Log Message:
+add logging messages for root file open failures
+    *
+------------------------------------------------------------
 User: heather  Tue Mar 27 09:09:33 PDT 2012
 RootIo/cmt
 
