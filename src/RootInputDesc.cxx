@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.20.68.1.2.1 2010/04/07 13:25:17 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.22.8.1 2011/06/06 17:01:05 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -347,14 +347,24 @@ bool RootInputDesc::fileExists( const std::string & filename, const char* treeNa
             if (treeName != 0) 
             {
                 TTree *t = (TTree*)file->Get(treeName);
-                if (!t) return false;
-                if (t->GetEntries() <= 0) return false;
+                if (!t){
+                    std::cout << "No TTree named " << treeName 
+                              << " found in file: " << filename << std::endl;
+                    return false;
+                }
+                if (t->GetEntries() <= 0) {
+                    std::cout << "TTree: " << treeName << " in file: "
+                              <<  filename << " contains zero entries" << std::endl;
+                    return false;
+                }
             }
             file->Close() ;
             fileExists = true ;
-        }
+        } else 
+            std::cout << "file: " << filename << " cannot be opened, isZombie" << std::endl;
         delete file ;
-    }
+    } else 
+        std::cout << "opening file: " << filename << " failed" << std::endl;
     return fileExists ;
 }  
 
