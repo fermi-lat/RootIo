@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Tue Apr 17 10:20:58 PDT 2012
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	RootInputDesc.cxx RootIoSvc.cxx 
+Log Message:
+merge in reprocessing mods into L1proc branch
+    *
+------------------------------------------------------------
+User: heather  Tue Apr 17 10:20:58 PDT 2012
 RootIo/doc
 
 Modified Files:
