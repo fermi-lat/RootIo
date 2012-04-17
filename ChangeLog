@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Apr 17 10:20:57 PDT 2012
+RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+merge in reprocessing mods into L1proc branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr25, operation: add
 Package: RootIo
