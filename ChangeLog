@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Tue Apr 17 10:20:57 PDT 2012
+RootIo/cmt
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	requirements 
+Log Message:
+merge in reprocessing mods into L1proc branch
+    *
+------------------------------------------------------------
+User: heather  Tue Apr 17 10:20:57 PDT 2012
 RootIo
 
 Modified Files:
