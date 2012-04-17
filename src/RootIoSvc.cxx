@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.67 2011/12/12 20:55:41 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.62.8.1.18.1 2012/01/26 05:31:20 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -1177,9 +1177,26 @@ StatusCode RootIoSvc::run()
     log << endreq;
     
     if(noend) { 
-        log << MSG::WARNING << "No end condition specified: will not process any events!" << endreq; 
+        log << MSG::WARNING << "No valid end condition specified: will not "
+            << "process any events! MaxEvt = " << m_evtMax << endreq; 
     }
     }
+
+
+    // Check for ROOT errors once before event loop in case there are 
+    // errors to report
+    if ( (m_rootFileMessageHandler->getError()) || 
+         (m_rootFileMessageHandler->getSysError()) ||
+         (m_rootFileMessageHandler->getFatal()) ) {
+          m_rootFileMessageHandler->Print();
+        if (m_abortOnRootError) {
+            // Bailing out and returning error code
+            log << MSG::ERROR << "Terminating due to ROOT error" << endreq;
+            exit(-1);
+        }
+        m_rootFileMessageHandler->resetFlags();
+    }
+
     // Not yet using time as a control on the event loop for ROOT
     while( m_evtMax>0 && eventNumber < m_evtMax
         || m_endTime>0 && currentTime< m_endTime ) {

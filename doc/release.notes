@@ -4,8 +4,15 @@
  @verbatim
  EOH
 
+ RootIo-24-05-00-gr06 17-Apr-2012 hmk merging in reprocessing branch mods
  RootIo-24-05-00-gr05 31-Jan-2012 hmk Add in Leon's update for Wired 
  RootIo-24-05-00-gr04 25-Jan-2012 hmk Gaudi v21r7 upgrade
+==== Reprocessing branch GlastRelease-17-35-24-br05
+ RootIo-24-05-00-rp02 27-Mar-2012 hmk Add additional logging messages when
+      ROOT file opening fails
+ RootIo-24-05-00-rp01 26-Mar-2012 hmk add ROOT error check before run 
+           event loop
+==== End reprocessing branch
  RootIo-24-05-00-gr03 23-Sep-2011 hmk unit test patch
  RootIo-24-05-00-gr02 22-Sep-2011 hmk Merge in SConscript updates from HEAD
  RootIo-24-05-00-gr01 06-Jun-2011 hmk Merge in L1proc updates
