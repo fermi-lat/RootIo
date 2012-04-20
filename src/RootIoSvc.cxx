@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.62.8.1.18.1 2012/01/26 05:31:20 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.62.8.1.18.2 2012/04/17 17:20:58 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -1128,7 +1128,8 @@ StatusCode RootIoSvc::run()
         return status;
     }
 
-    // Pick up ApplicationMgr.EvtMax
+    // Pick up ApplicationMgr.EvtMax which may be -1 to indicate an infinite
+    // loop
     IntegerProperty evtMax("EvtMax",0);
     status = propMgr->getProperty( &evtMax );
     if (status.isFailure()) return status;
@@ -1136,12 +1137,18 @@ StatusCode RootIoSvc::run()
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
+       log << MSG::DEBUG << "rootEvtMax: " << m_rootEvtMax << " start " 
+           << m_startIndex << endreq;
+    if (( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) ||
+        ( evtMax == -1) ) {
+       log << MSG::DEBUG << "Setting evtMax" << endreq;
        evtMax = rootEvtMax - m_startIndex;
+       log << MSG::DEBUG << "evtMax: " << evtMax << endreq;
        setProperty(evtMax);
     } else setProperty(evtMax);
 
     m_evtMax = evtMax;
+    log << MSG::DEBUG << "m_evtMax: " << m_evtMax << endreq;
 
     // now find the top alg so we can monitor its error count
     IAlgManager* theAlgMgr =0 ;
