@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Apr 20 11:58:04 PDT 2012
+RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+handle EvtMax == -1 in RootIoSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-19-04-01-gr15, operation: add
 Package: RootIo
