@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Fri Apr 20 11:58:05 PDT 2012
+RootIo/doc
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	release.notes 
+Log Message:
+handle EvtMax == -1 in RootIoSvc
+    *
+------------------------------------------------------------
+User: heather  Fri Apr 20 11:58:05 PDT 2012
 RootIo/cmt
 
 Modified Files:
