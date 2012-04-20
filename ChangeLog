@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Fri Apr 20 11:58:06 PDT 2012
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	RootIoSvc.cxx 
+Log Message:
+handle EvtMax == -1 in RootIoSvc
+    *
+------------------------------------------------------------
 User: heather  Fri Apr 20 11:58:05 PDT 2012
 RootIo/doc
 
