@@ -52,7 +52,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.93 2011/06/01 10:20:50 kadrlica Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.94 2011/12/12 20:55:41 heather Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -440,6 +440,7 @@ void reconRootWriterAlg::fillFitTracks(TkrRecon* recon, Event::TkrTrackCol* trac
         trackRoot->setNumXHits(trackTds->getNumXHits());
         trackRoot->setNumYHits(trackTds->getNumYHits());
         trackRoot->setTkrCalRadLen(trackTds->getTkrCalRadlen());
+        trackRoot->setRangeEnergy(trackTds->getRangeEnergy());
 
         // Now loop over the hit planes and fill that information
         Event::TkrTrackHitVecConItr trkHitTdsItr = trackTds->begin();

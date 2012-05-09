@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootReaderAlg.cxx,v 1.101 2011/07/23 05:09:24 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.102 2011/12/12 20:55:41 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -660,6 +660,7 @@ Event::TkrTrack* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trackRoot)
     trackTds->setNumXHits(trackRoot->getNumXHits());
     trackTds->setNumYHits(trackRoot->getNumYHits());
     trackTds->setTkrCalRadLen(trackRoot->getTkrCalRadlen());
+    trackTds->setRangeEnergy(trackRoot->getRangeEnergy());
 
     // Now loop over the hit planes and fill that information
     TIterator* hitIter = trackRoot->Iterator();
