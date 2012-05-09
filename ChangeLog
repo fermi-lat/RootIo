@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Tue May  8 18:27:09 PDT 2012
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Add IO for the rangeEnergy variable of TkrTrack
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr31, operation: add
 Package: RootIo
