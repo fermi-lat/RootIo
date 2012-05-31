@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/RootIoSvc.cxx,v 1.66 2011/10/04 13:54:35 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.67 2011/12/12 20:55:41 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -207,6 +207,7 @@ class RootIoSvc :
     IntegerProperty m_noFailure;
     bool m_rebuildIndex;
     bool m_abortOnRootError;
+    bool m_autoFlush;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -282,6 +283,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("CelRootFileRead", m_celFileNameRead="");
 
     declareProperty("AbortOnRootError", m_abortOnRootError=true);
+    declareProperty("AllowAutoFlush", m_autoFlush=false);
 
     m_index = 0;
     m_rootEvtMax = 0;
@@ -819,6 +821,8 @@ TTree* RootIoSvc::prepareRootOutput
     // Create a new RootOutputDesc object for this algorithm
     RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
 
+    if (!m_autoFlush) outputDesc->turnOffAutoFlush();
+
     // Store the pointer to this in our map
     m_rootOutputMap[type] = outputDesc;
 
@@ -1136,7 +1140,7 @@ StatusCode RootIoSvc::run()
     // Determine if the min number of ROOT events is less than the
     // requested number of events in the jobOptions file
     IntegerProperty rootEvtMax("EvtMax", m_rootEvtMax);
-    if ( static_cast<int>(rootEvtMax-m_startIndex) < evtMax) {
+    if ( (static_cast<int>(rootEvtMax-m_startIndex) < evtMax) || (evtMax==0) ) {
        evtMax = rootEvtMax - m_startIndex;
        setProperty(evtMax);
     } else setProperty(evtMax);
@@ -1177,9 +1181,27 @@ StatusCode RootIoSvc::run()
     log << endreq;
     
     if(noend) { 
-        log << MSG::WARNING << "No end condition specified: will not process any events!" << endreq; 
+        log << MSG::WARNING << "No valid end condition specified: will not "
+            << "process any events! MaxEvt = " << m_evtMax << endreq; 
     }
     }
+
+
+     // Check for ROOT errors once before event loop in case there are 	 
+     // errors to report 	 
+     if ( (m_rootFileMessageHandler->getError()) || 	 
+          (m_rootFileMessageHandler->getSysError()) || 	 
+          (m_rootFileMessageHandler->getFatal()) ) { 	 
+         m_rootFileMessageHandler->Print(); 	 
+         if (m_abortOnRootError) { 	 
+             // Bailing out and returning error code 	 
+             log << MSG::ERROR << "Terminating due to ROOT error" << endreq; 	
+             exit(-1); 	 
+ 	  } 	       
+          m_rootFileMessageHandler->resetFlags();
+     }
+
+
     // Not yet using time as a control on the event loop for ROOT
     while( m_evtMax>0 && eventNumber < m_evtMax
         || m_endTime>0 && currentTime< m_endTime ) {

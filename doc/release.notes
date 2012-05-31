@@ -4,6 +4,8 @@
  @verbatim
  EOH
 
+ RootIo-25-03-00 31-May-2012  heather merge in RootIoSvc updates for repro
+   associated with catching errors before processing any events
  RootIo-25-02-00 08-May-2012  lsrea add rangeEnergy to TkrTrack I/O
  RootIo-25-01-02 23-Jan-2012    jrb Johann's patches for gcc41
  RootIo-25-01-01 14-Jan-2012    jrb minor new gaudi/SCons fix
