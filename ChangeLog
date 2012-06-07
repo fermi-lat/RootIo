@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  7 08:41:30 PDT 2012
+RootIo/RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	IRootIoSvc.h 
+Log Message:
+patch from P8 merge
+    *
+------------------------------------------------------------
 User: heather  Thu Jun  7 08:41:29 PDT 2012
 RootIo
 
