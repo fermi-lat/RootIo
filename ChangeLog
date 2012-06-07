@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Jun  7 08:41:29 PDT 2012
+RootIo
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+patch from P8 merge
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr33, operation: add
 Package: RootIo
