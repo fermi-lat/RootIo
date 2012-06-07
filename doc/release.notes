@@ -4,6 +4,7 @@
  @verbatim
  EOH
 
+ RootIo-24-05-00-gr08 07-Jun-2012 add getIndexByEventID to IRootIoSvc
  RootIo-24-05-00-gr07 20-Apr-2012 hmk Handle ApplicationMgr.EvtMax == -1
      to indicate infinite loop in RootIoSvc
  RootIo-24-05-00-gr06 17-Apr-2012 hmk merging in reprocessing branch mods
