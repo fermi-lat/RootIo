@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 23 12:36:39 PDT 2012
+RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+Implement read retries and TerminateOnReadError
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-bm01, operation: add
 Package: RootIo
