@@ -50,7 +50,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/digiRootReaderAlg.cxx,v 1.102.8.1 2010/10/08 16:40:45 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/digiRootReaderAlg.cxx,v 1.103 2011/12/12 20:55:41 heather Exp $
  */
 
 class digiRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -136,6 +136,7 @@ private:
     std::string m_clearOption;
     /// Branch Exclusion list 
     StringArrayProperty m_excludeBranchList;
+    bool m_terminateOnReadError;
 
     Long64_t m_numEvents;
   
@@ -209,6 +210,8 @@ StatusCode digiRootReaderAlg::initialize()
         m_rootIoSvc->appendFileList(m_fileList, "digi.root");
 
 
+    m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
+
 
     // Set up new school system...
     // Use the TTree name as the key type 
@@ -260,6 +263,10 @@ StatusCode digiRootReaderAlg::execute()
     m_digiEvt = dynamic_cast<DigiEvent*>(m_rootIoSvc->getNextEvent("digi"));
 
     if (!m_digiEvt) {
+        if (m_terminateOnReadError) {
+            log << MSG::ERROR << "Failed to read in Digi Data" << endreq;
+            return StatusCode::FAILURE;
+        }
         // Do not fail if there was no DIGI data to read - 
         // this may be an Event Display run - where the user 
         // did not provide an DIGI input file

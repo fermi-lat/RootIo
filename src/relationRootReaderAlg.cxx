@@ -42,7 +42,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/relationRootReaderAlg.cxx,v 1.46 2010/11/24 16:33:29 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.47 2011/12/12 20:55:41 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -115,6 +115,8 @@ private:
 
     commonData m_common;
     IRootIoSvc*   m_rootIoSvc;
+
+    bool m_terminateOnReadError;
 
 /// typedefs for tables
     typedef Event::RelTable<Event::TkrDigi,Event::McPositionHit>         TkrDigiToPosHitTab;
@@ -210,6 +212,7 @@ StatusCode relationRootReaderAlg::initialize()
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "relations.root");
 
+    m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
 
 
     // Set up new school system...
@@ -271,6 +274,10 @@ StatusCode relationRootReaderAlg::execute()
     m_relTab = dynamic_cast<RelTable*>(m_rootIoSvc->getNextEvent("rel"));
 
     if (!m_relTab) {
+        if (m_terminateOnReadError) {
+            log << MSG::ERROR << "Failed to read in Relation Data" << endreq;
+            return StatusCode::FAILURE;
+         }
          // Do not fail if there was no Relation data to read - this may be an Event Display run - where the user 
         // did not provide a relation input file
         log << MSG::WARNING << "No Relation Data Available" << endreq;

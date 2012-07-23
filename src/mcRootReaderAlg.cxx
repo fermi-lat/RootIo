@@ -38,7 +38,7 @@
  * the data in the TDS.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/mcRootReaderAlg.cxx,v 1.79 2011/10/04 13:54:35 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/mcRootReaderAlg.cxx,v 1.80 2011/12/12 20:55:41 heather Exp $
  */
 
 
@@ -99,6 +99,11 @@ private:
     std::string m_clearOption;
     // Branches to exclude from reading
     StringArrayProperty m_excludeBranchList;
+
+    /// Flag set via RootIoSvc from JobOptions, to allow batch processing
+   /// to force end of run when we have read errors that the event display
+   /// would prefer to ignore
+    bool m_terminateOnReadError;
 
     commonData m_common;
 
@@ -189,6 +194,8 @@ StatusCode mcRootReaderAlg::initialize()
          return sc;
     }
 
+    m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
+
 
     // Set up new school system...
     // Use the name of this TTree (default "Mc") as key type 
@@ -228,6 +235,10 @@ StatusCode mcRootReaderAlg::execute()
     m_mcEvt = dynamic_cast<McEvent*>(m_rootIoSvc->getNextEvent("mc"));
 
     if (!m_mcEvt) {
+        if (m_terminateOnReadError) {
+            log << MSG::ERROR << "Failed to read MC data" << endreq;
+            return StatusCode::FAILURE;
+        }
         // Do not fail if there was no MC data to read - this may be an Event Display run - where the user 
         // did not provide an MC input file
         log << MSG::INFO << "No MC Data Available" << endreq;

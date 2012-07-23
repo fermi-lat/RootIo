@@ -4,6 +4,9 @@
  @verbatim
  EOH
 
+ RootIo-25-04-00 23-Jul-2012  heather Implement read retries at Tom G's request
+    and provide TerminateOnReadError JO option for non-event display reading
+    so jobs can end when reads fail
  RootIo-25-03-00 31-May-2012  heather merge in RootIoSvc updates for repro
    associated with catching errors before processing any events
  RootIo-25-02-00 08-May-2012  lsrea add rangeEnergy to TkrTrack I/O

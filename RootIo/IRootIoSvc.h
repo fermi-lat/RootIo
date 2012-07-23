@@ -2,7 +2,7 @@
 * @file IRootIoSvc.h
 * @brief definition of the interface for IRootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.23 2010/04/07 14:09:06 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/RootIo/IRootIoSvc.h,v 1.24 2010/07/18 00:22:52 lsrea Exp $
 */
 
 #ifndef _H_IRootIoSvc
@@ -106,6 +106,8 @@ class  IRootIoSvc : virtual public IInterface
     /// used by reader algs to register their number of ROOT events per file
     virtual void setEvtMax( Long64_t max ) = 0 ;
     virtual void setRootEvtMax( Long64_t max ) = 0;
+
+    virtual bool terminateOnReadError() = 0;
 
 
     //====================
