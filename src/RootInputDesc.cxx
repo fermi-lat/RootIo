@@ -2,7 +2,7 @@
 * @file RootInputDesc.cxx
 * @brief definition of the class RootInputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.24 2010/07/18 00:22:53 lsrea Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootInputDesc.cxx,v 1.25 2010/07/18 06:02:42 lsrea Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -20,6 +20,7 @@
 RootInputDesc::RootInputDesc( const StringArrayProperty& fileList, 
                               const std::string&         tree, 
                               const std::string&         branch, 
+                              int                        readRetries,
                               TObject**                  branchPtr,
                               bool                       rebuildIndex, 
                               bool                       verbose )
@@ -31,7 +32,8 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
      m_verbose(verbose),
      m_rebuildIndex(rebuildIndex), 
      m_runEvtIndex(0),
-     m_chainIndex(0)
+     m_chainIndex(0),
+     m_readRetries(readRetries)
  {
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
@@ -47,6 +49,7 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
  RootInputDesc::RootInputDesc(TChain*            t,
                               const std::string& treeName,
                               const std::string& branchName, 
+                              int                readRetries,
                               TObject**          branchPtr,
                               bool               rebuildIndex, 
                               bool               verbose)
@@ -58,7 +61,8 @@ RootInputDesc::RootInputDesc( const StringArrayProperty& fileList,
        m_verbose(verbose), 
        m_rebuildIndex(rebuildIndex), 
        m_runEvtIndex(0),
-       m_chainIndex(0)
+       m_chainIndex(0),
+       m_readRetries(readRetries)
  {
     // Check ownership of data object
     if (branchPtr) m_myDataObject = false;
@@ -364,16 +368,35 @@ TObject * RootInputDesc::getEvent( Long64_t index )
  
     // Save the current directory for the ntuple writer service
     TDirectory *saveDir = gDirectory;	
+    int readRetries = m_readRetries;
 
     if (m_chain) 
     {
-        int ret = m_chain->GetEntry(index) ;
-        if (ret <= 0) 
-        {
-            std::cout << "RootInputDesc::getEvent bad read" << std::endl;
-            return 0;
-        }
-        dataPtr = *m_dataObject ;
+        do {
+            --readRetries;
+            int ret = m_chain->GetEntry(index) ;
+            if (ret > 0) {  // Successful Read
+                dataPtr = *m_dataObject;
+                break;
+            } else if  (ret <= 0) { // Failed Read
+                if (readRetries > 0) {  // Stolen from rdbModel
+                    std::cout << "RootInputDesc::getEvent Failed ROOT read, "
+                              << "retrying, with " 
+                              << readRetries << " remaining." << std::endl;
+                    unsigned maxRnd = 0xfff;
+                    unsigned wait = 10000;
+                    if (wait < maxRnd/2) wait += maxRnd/2;
+
+                    unsigned rnd = rand() & maxRnd;  // just use last 12 bits
+                    wait += (rnd - maxRnd/2);
+                    facilities::Util::gsleep(wait);
+
+                } else {
+                    std::cout << "RootInputDesc::getEvent bad read" << std::endl;
+                    return 0;
+                }
+            } 
+        } while(readRetries > 0);
     } 
 
     // Restore context we entered with

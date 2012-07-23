@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.67 2011/12/12 20:55:41 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.68 2012/05/31 16:58:50 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -142,6 +142,8 @@ class RootIoSvc :
     virtual void setEvtMax(Long64_t max) ;
     virtual void setRootEvtMax(Long64_t max) {setEvtMax(max);}
 
+    virtual bool terminateOnReadError() { return m_terminateOnReadError; }
+
 
     //====================
     // For writers
@@ -208,6 +210,8 @@ class RootIoSvc :
     bool m_rebuildIndex;
     bool m_abortOnRootError;
     bool m_autoFlush;
+    int m_readRetries;
+    bool m_terminateOnReadError;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -284,6 +288,10 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
 
     declareProperty("AbortOnRootError", m_abortOnRootError=true);
     declareProperty("AllowAutoFlush", m_autoFlush=false);
+
+    declareProperty("ReadRetries", m_readRetries=3);
+
+    declareProperty("TerminateOnReadError", m_terminateOnReadError = false);
 
     m_index = 0;
     m_rootEvtMax = 0;
@@ -619,7 +627,8 @@ StatusCode RootIoSvc::prepareRootInput
     if (m_celFileNameRead.empty()) {
 
         // Create a new RootInputDesc object for this algorithm
-        rootInputDesc = new RootInputDesc(fileList, tree, branch, branchPtr, 
+        rootInputDesc = new RootInputDesc(fileList, tree, branch, m_readRetries,
+                                     branchPtr, 
                                      m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register with RootIoSvc
         if (rootInputDesc->getNumEvents() <= 0) {
@@ -640,7 +649,8 @@ StatusCode RootIoSvc::prepareRootInput
                 << " could not be constructed from event collection" << endreq;
             if (!m_noFailure) return StatusCode::FAILURE;
         }
-        rootInputDesc = new RootInputDesc(chain, tree, branch, branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
+        rootInputDesc = new RootInputDesc(chain, tree, branch, m_readRetries,
+                          branchPtr, m_rebuildIndex, log.level()<=MSG::DEBUG);
         // Register number of events
         if (m_celManager.getNumEvents() <= 0) {
             log << MSG::WARNING << "Failed to setup ROOT input for " 

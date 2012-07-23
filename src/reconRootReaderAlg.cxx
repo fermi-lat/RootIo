@@ -53,7 +53,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.102 2011/12/12 20:55:41 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.103 2012/05/09 01:27:09 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -142,6 +142,8 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 
     bool FixAcdStreamerDone;
+   
+    bool m_terminateOnReadError;
 
     // ADDED FOR THE FILE HEADERS DEMO
     IFhTool * m_headersTool ;
@@ -212,6 +214,8 @@ StatusCode reconRootReaderAlg::initialize()
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "recon.root");
 
+     m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
+
 
     // Set up new school system...
     // Use treeName as key type
@@ -261,6 +265,10 @@ StatusCode reconRootReaderAlg::execute()
     m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent("recon")) ;
 
     if (!m_reconEvt) {
+        if (m_terminateOnReadError) {
+            log << MSG::ERROR << "Failed to read in Recon data" << endreq;
+            return StatusCode::FAILURE;
+        }
         // Do not fail if there was no RECON data to read - this may be an Event Display run - where the user 
         // did not provide an RECON input file
         log << MSG::WARNING << "No Recon data Available" << endreq;
