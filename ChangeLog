@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 23 12:36:41 PDT 2012
+RootIo/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Implement read retries and TerminateOnReadError
+    *
+------------------------------------------------------------
 User: heather  Mon Jul 23 12:36:40 PDT 2012
 RootIo/RootIo
 
