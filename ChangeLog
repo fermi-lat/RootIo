@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Mon Jul 23 12:36:43 PDT 2012
+RootIo/src
+
+Modified Files:
+	RootInputDesc.cxx RootInputDesc.h RootIoSvc.cxx 
+	digiRootReaderAlg.cxx mcRootReaderAlg.cxx 
+	reconRootReaderAlg.cxx relationRootReaderAlg.cxx 
+Log Message:
+Implement read retries and TerminateOnReadError
+    *
+------------------------------------------------------------
 User: heather  Mon Jul 23 12:36:42 PDT 2012
 RootIo/doc
 
