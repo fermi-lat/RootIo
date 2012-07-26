@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Jul 26 09:08:06 PDT 2012
+RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+testing reset of oldStyleTagger
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-04-01, operation: add
 Package: RootIo
