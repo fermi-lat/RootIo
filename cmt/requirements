@@ -4,7 +4,7 @@ version v25r5p0
 author Heather Kelly <heather@milkyway.gsfc.nasa.gov>
 author David Chamont <chamont@poly.in2p3.fr>
 
-# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.287 2012/07/26 16:08:07 heather Exp $
+# $Header: /nfs/slac/g/glast/ground/cvs/RootIo/cmt/requirements,v 1.288 2012/08/20 19:16:33 jrb Exp $
 
 branches src doc
 
@@ -43,7 +43,7 @@ use Trigger v*
 use AncillaryDataEvent v*
 use ntupleWriterSvc *
 use gr_app v*
-use RootmapPolicy * GlastPolicy
+#use RootmapPolicy * GlastPolicy
 
 macro_append includes ' $(ppcmd)"$(rootUtil_root)" '
 
@@ -55,7 +55,7 @@ macro_append RootIo_cppflags " $(RootPolicy_cppflags) $(root_packages_include) "
 macro source "*.cxx" WIN32 "*.cxx *.h"
 library RootIo  $(root_packages_import) -s=../RootIo $(source) -s=../src $(source)  
 
-apply_pattern generate_rootmap library=RootIo
+#apply_pattern generate_rootmap library=RootIo
 
 apply_pattern package_test
 apply_pattern package_Cshlibflags
