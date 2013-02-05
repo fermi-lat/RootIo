@@ -12,6 +12,7 @@
 #include "Event/Recon/AcdRecon/AcdRecon.h"
 #include "Event/Recon/TkrRecon/TkrCluster.h"
 #include "Event/Recon/TkrRecon/TkrTruncationInfo.h"  
+#include "Event/Recon/TkrRecon/TkrVecPoint.h"
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"   
@@ -53,7 +54,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.103 2012/05/09 01:27:09 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.104 2012/07/23 19:36:43 heather Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -92,6 +93,10 @@ private:
     StatusCode storeTkrClusterCol(TkrRecon *tkrRecRoot);
     
     StatusCode storeTrackAndVertexCol(TkrRecon *tkrRecRoot, bool vertexOnTdsFlag);
+
+    StatusCode storeTkrVecPointCol(TkrRecon* tkrRecRoot);
+
+    StatusCode storeTkrVecPointsLinkCol(TkrRecon* tkrRecRoot);
     
     /// convert a ROOT TkrFitHit to a TDS Event::TkrFitHit
     Event::TkrTrackParams convertTkrTrackParams(const TkrTrackParams& paramsRoot);
@@ -390,6 +395,34 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
+    
+    // check to see if TkrVecPoint collection already exists on TDS
+    // If not, store cluster collection on the TDS.
+    SmartDataPtr<Event::TkrVecPointCol> tkrVecPointColTds(eventSvc(), EventModel::TkrRecon::TkrVecPointCol);
+    if (tkrVecPointColTds) {
+        log << MSG::INFO << "TkrVecPoint Collection is already on the TDS" 
+            << endreq;
+    } else {
+        sc = storeTkrVecPointCol(tkrRecRoot);
+        if (sc.isFailure()) {
+            log << MSG::ERROR << "failed to store TkrVecPoint collection on TDS" << endreq;
+            return sc;
+        }
+    }
+    
+    // check to see if TkrVecPointsLink collection already exists on TDS
+    // If not, store cluster collection on the TDS.
+    SmartDataPtr<Event::TkrVecPointsLinkCol> tkrVecPointsLinkColTds(eventSvc(), EventModel::TkrRecon::TkrVecPointsLinkCol);
+    if (tkrVecPointsLinkColTds) {
+        log << MSG::INFO << "TkrVecPointsLink Collection is already on the TDS" 
+            << endreq;
+    } else {
+        sc = storeTkrVecPointsLinkCol(tkrRecRoot);
+        if (sc.isFailure()) {
+            log << MSG::ERROR << "failed to store TkrVecPointsLink collection on TDS" << endreq;
+            return sc;
+        }
+    }
       
     // check to see if TKR vertex collection exists on TDS already
     // Set a boolean flag if the vertex collection already exists
@@ -493,6 +526,84 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
         
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrClusterCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeTkrVecPointCol(TkrRecon *tkrRecRoot) 
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    Event::TkrVecPointCol* tkrVecPointTdsCol = new Event::TkrVecPointCol;
+    
+    const TObjArray * tkrVecPointRootCol = tkrRecRoot->getTkrVecPointCol();
+    TIter tkrVecPointIter(tkrVecPointRootCol);
+    TkrVecPoint* tkrVecPointRoot = 0;
+
+    while ((tkrVecPointRoot = (TkrVecPoint*)tkrVecPointIter.Next())!=0) 
+    {
+        const Event::TkrCluster* xCluster = m_common.m_rootTkrClusterMap[tkrVecPointRoot->getXCluster()];
+        const Event::TkrCluster* yCluster = m_common.m_rootTkrClusterMap[tkrVecPointRoot->getYCluster()];
+
+        Event::TkrVecPoint* tkrVecPointTds = new Event::TkrVecPoint();
+
+        tkrVecPointTds->initialize(tkrVecPointRoot->getLayer(),
+                                   tkrVecPointRoot->getStatusWord(),
+                                   xCluster,
+                                   yCluster);
+
+        tkrVecPointTdsCol->push_back(tkrVecPointTds);
+ 
+        m_common.m_rootTkrVecPointMap[tkrVecPointRoot] = tkrVecPointTds;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointCol, tkrVecPointTdsCol);
+    if (sc.isFailure()) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TkrVecPointCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeTkrVecPointsLinkCol(TkrRecon *tkrRecRoot) 
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    Event::TkrVecPointsLinkCol* tkrVecPointsLinkTdsCol = new Event::TkrVecPointsLinkCol;
+    
+    const TObjArray * tkrVecPointsLinkRootCol = tkrRecRoot->getTkrVecPointsLinkCol();
+    TIter tkrVecPointsLinkIter(tkrVecPointsLinkRootCol);
+    TkrVecPointsLink* tkrVecPointsLinkRoot = 0;
+
+    while ((tkrVecPointsLinkRoot = (TkrVecPointsLink*)tkrVecPointsLinkIter.Next())!=0) 
+    {
+        const Event::TkrVecPoint* topPoint = m_common.m_rootTkrVecPointMap[tkrVecPointsLinkRoot->getFirstVecPoint()];
+        const Event::TkrVecPoint* botPoint = m_common.m_rootTkrVecPointMap[tkrVecPointsLinkRoot->getSecondVecPoint()];
+
+        Event::TkrVecPointsLink* tkrVecPointsLinkTds = new Event::TkrVecPointsLink(topPoint, 
+                                                                                   botPoint, 
+                                                                                   tkrVecPointsLinkRoot->getMaxScatAngle());
+
+        tkrVecPointsLinkTdsCol->push_back(tkrVecPointsLinkTds);
+ 
+        m_common.m_rootTkrVecPointsLinkMap[tkrVecPointsLinkRoot] = tkrVecPointsLinkTds;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointsLinkCol, tkrVecPointsLinkTdsCol);
+    if (sc.isFailure()) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TkrVecPointCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
