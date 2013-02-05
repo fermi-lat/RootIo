@@ -11,6 +11,11 @@ std::map<const Event::CalDigi*, TRef>                     commonData::m_calDigiM
 std::map<const Event::TkrCluster*, TRef>                  commonData::m_tkrClusterMap;
 std::map<const Event::TkrTrack*, TRef>                    commonData::m_tkrTrackMap;
 std::map<const Event::TkrVertex*, TRef>                   commonData::m_tkrVertexMap;
+std::map<const Event::TkrVecPoint*, TRef>                 commonData::m_tkrVecPointMap;
+std::map<const Event::TkrVecPointsLink*, TRef>            commonData::m_tkrVecPointsLinkMap;
+std::map<const Event::TkrVecNode*, TRef>                  commonData::m_tkrVecNodeMap;
+std::map<const Event::TkrTree*, TRef>                     commonData::m_tkrTreeMap;
+std::map<const Event::TkrFilterParams*, TRef>             commonData::m_tkrFilterParamsMap;
 std::map<const Event::CalCluster*, TRef>                  commonData::m_calClusterMap;
 std::map<const Event::CalXtalRecData*, TRef>              commonData::m_calXtalRecDataMap;
 
@@ -24,6 +29,11 @@ std::map<const TObject*, const Event::CalDigi*>           commonData::m_rootCalD
 std::map<const TObject*, const Event::TkrCluster*>        commonData::m_rootTkrClusterMap;
 std::map<const TObject*, const Event::TkrTrack*>          commonData::m_rootTkrTrackMap;
 std::map<const TObject*, const Event::TkrVertex*>         commonData::m_rootTkrVertexMap;
+std::map<const TObject*, const Event::TkrVecPoint*>       commonData::m_rootTkrVecPointMap;
+std::map<const TObject*, const Event::TkrVecPointsLink*>  commonData::m_rootTkrVecPointsLinkMap;
+std::map<const TObject*, const Event::TkrVecNode*>        commonData::m_rootTkrVecNodeMap;
+std::map<const TObject*, const Event::TkrTree*>           commonData::m_rootTkrTreeMap;
+std::map<const TObject*, const Event::TkrFilterParams*>   commonData::m_rootTkrFilterParamsMap;
 std::map<const TObject*, const Event::CalCluster*>        commonData::m_rootCalClusterMap;
 std::map<const TObject*, const Event::CalXtalRecData*>    commonData::m_rootCalXtalRecDataMap;
 
@@ -43,6 +53,8 @@ void commonData::clear() {
     m_tkrClusterMap.clear();
     m_tkrTrackMap.clear();
     m_tkrVertexMap.clear();
+    m_tkrVecPointMap.clear();
+    m_tkrVecPointsLinkMap.clear();
     m_calClusterMap.clear();
     m_calXtalRecDataMap.clear();
 
@@ -58,6 +70,7 @@ void commonData::clear() {
     m_rootTkrClusterMap.clear();
     m_rootTkrTrackMap.clear();
     m_rootTkrVertexMap.clear();
+    m_rootTkrVecPointMap.clear();
     m_rootCalClusterMap.clear();
     m_rootCalXtalRecDataMap.clear();
 }

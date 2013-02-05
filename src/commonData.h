@@ -24,6 +24,7 @@
 
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
+#include "Event/Recon/TkrRecon/TkrTree.h"
 
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
@@ -45,7 +46,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.9 2008/03/13 19:56:55 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.10 2010/01/25 17:31:55 usher Exp $
 */
 
 class commonData 
@@ -72,6 +73,11 @@ public:
     static std::map<const Event::TkrCluster*,     TRef> m_tkrClusterMap;
     static std::map<const Event::TkrTrack*,       TRef> m_tkrTrackMap;
     static std::map<const Event::TkrVertex*,      TRef> m_tkrVertexMap;
+    static std::map<const Event::TkrVecPoint*,      TRef> m_tkrVecPointMap;
+    static std::map<const Event::TkrVecPointsLink*, TRef> m_tkrVecPointsLinkMap;
+    static std::map<const Event::TkrVecNode*,       TRef> m_tkrVecNodeMap;
+    static std::map<const Event::TkrTree*,          TRef> m_tkrTreeMap;
+    static std::map<const Event::TkrFilterParams*,  TRef> m_tkrFilterParamsMap;
 
     static std::map<const Event::CalCluster*,     TRef> m_calClusterMap;
     static std::map<const Event::CalXtalRecData*, TRef> m_calXtalRecDataMap;
@@ -91,6 +97,11 @@ public:
     static std::map<const TObject*, const Event::TkrCluster*>       m_rootTkrClusterMap;
     static std::map<const TObject*, const Event::TkrTrack*>         m_rootTkrTrackMap;
     static std::map<const TObject*, const Event::TkrVertex*>        m_rootTkrVertexMap;
+    static std::map<const TObject*, const Event::TkrVecPoint*>      m_rootTkrVecPointMap;
+    static std::map<const TObject*, const Event::TkrVecPointsLink*> m_rootTkrVecPointsLinkMap;
+    static std::map<const TObject*, const Event::TkrVecNode*>       m_rootTkrVecNodeMap;
+    static std::map<const TObject*, const Event::TkrTree*>          m_rootTkrTreeMap;
+    static std::map<const TObject*, const Event::TkrFilterParams*>  m_rootTkrFilterParamsMap;
 
     static std::map<const TObject*, const Event::CalCluster*>       m_rootCalClusterMap;
     static std::map<const TObject*, const Event::CalXtalRecData*>   m_rootCalXtalRecDataMap;
