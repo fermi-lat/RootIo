@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue Feb  5 14:13:54 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Adding in code to output TkrEventParams and TreeClusterRelation
+    *
+------------------------------------------------------------
 User: usher  Tue Feb  5 07:52:28 PST 2013
 RootIo/src
 
