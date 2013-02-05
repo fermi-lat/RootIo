@@ -12,6 +12,9 @@
 #include "Event/Recon/TkrRecon/TkrTrack.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/TkrRecon/TkrFilterParams.h"
+#include "Event/Recon/TkrRecon/TkrEventParams.h"
+
+#include "Event/Recon/TreeClusterRelation.h"
 
 #include "LdfEvent/EventSummaryData.h"
 
@@ -54,7 +57,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.95 2012/05/09 01:27:09 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.96 2013/02/05 15:52:28 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -87,6 +90,7 @@ private:
     void fillFitTracks( TkrRecon* recon, Event::TkrTrackCol* tracksTds);
     void fillTkrVecPoints(TkrRecon* recon, const Event::TkrVecPointCol* vecPointsTds);
     void fillTkrVecPointsLinks(TkrRecon* recon, const Event::TkrVecPointsLinkCol* vecPointsLinksTds);
+    void fillTkrEventParams(TkrRecon* recon, const Event::TkrEventParams* eventParamsTds);
     void fillTkrFilterParams(TkrRecon* recon, const Event::TkrFilterParamsCol* filterParamsTds);
     void fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* treeTds);
     void fillVertices( TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
@@ -100,6 +104,11 @@ private:
 
     TkrTrackHit*   convertTkrTrackHit(const Event::TkrTrackHit* trackHitTds);
     TkrTrackParams convertTkrTrackParams(const Event::TkrTrackParams& trackParamsTds);
+
+    /// This will be for writing the objects that relate subsystems
+    StatusCode writeTkrCalAcdRelations();
+    /// Use this to deal with the TreeClusterRelations if they exist
+    void fillTreeClusterRelations(const Event::TreeClusterRelationCol* treeClusterRelationCol);
     
     /// Retrieves the CAL reconstruction data from the TDS and fills the CalRecon
     /// ROOT object
@@ -259,6 +268,12 @@ StatusCode reconRootWriterAlg::execute()
         return sc;
     }
 
+    sc = writeTkrCalAcdRelations();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to write relation Recon Data" << endreq;
+        return sc;
+    }
+
     sc = writeAdfRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to write Adf Recon Data" << endreq;
@@ -338,6 +353,10 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     // now add the cosmic-ray tracks
     SmartDataPtr<Event::TkrTrackCol> crTracksTds(eventSvc(), EventModel::TkrRecon::TkrCRTrackCol);
     if (crTracksTds) fillFitTracks(recon, crTracksTds);
+
+    // If there are TkrEventParams be sure to add them
+    SmartDataPtr<Event::TkrEventParams> eventParamsTds(eventSvc(), EventModel::TkrRecon::TkrEventParams);
+    if (eventParamsTds) fillTkrEventParams(recon, eventParamsTds);
 
     // If there are TkrFilterParams be sure to add them
     SmartDataPtr<Event::TkrFilterParamsCol> filterParamsColTds(eventSvc(), EventModel::TkrRecon::TkrFilterParamsCol);
@@ -654,6 +673,45 @@ void reconRootWriterAlg::fillTkrFilterParams(TkrRecon* recon, const Event::TkrFi
      return;
 }
 
+void reconRootWriterAlg::fillTkrEventParams(TkrRecon* recon, const Event::TkrEventParams* eventParamsTds)
+{
+    // Purpose and Method:  This takes the TkrFilterParams collection from the TDS,
+    //                      creates root equivalents and stores them in the world of root
+
+    // This test should not fail...
+    if (eventParamsTds)
+    {
+        // Obtain a shiny new TkrEventParams root object from the universe
+        TkrEventParams* eventParamsRoot = new TkrEventParams;
+
+        // Convert the Point and Vector to TVector3 objects
+        TVector3 eventPosition(eventParamsTds->getEventPosition().x(),
+                               eventParamsTds->getEventPosition().y(),
+                               eventParamsTds->getEventPosition().z());
+        TVector3 eventAxis(eventParamsTds->getEventAxis().x(),
+                           eventParamsTds->getEventAxis().y(),
+                           eventParamsTds->getEventAxis().z());
+
+        // Initialize the root TkrVecPoint
+        eventParamsRoot->initializeInfo(eventPosition, 
+                                        eventAxis,
+                                        eventParamsTds->getStatusBits(),
+                                        eventParamsTds->getEventEnergy(),
+                                        eventParamsTds->getNumBiLayers(),
+                                        eventParamsTds->getNumIterations(),
+                                        eventParamsTds->getNumHitsTotal(),
+                                        eventParamsTds->getNumDropped(),
+                                        eventParamsTds->getChiSquare(),
+                                        eventParamsTds->getTransRms(), 
+                                        eventParamsTds->getLongRmsAve() );
+
+        // Ok, now add the TkrVecPoint to the right collection!
+        recon->addTkrEventParams(eventParamsRoot);
+    }
+
+    return;
+}
+
 TkrVecNode* reconRootWriterAlg::convertTkrVecNode(TkrRecon* recon, const Event::TkrVecNode* vecNodeTds)
 {
     TkrVecNode* vecNodeRoot = 0;
@@ -904,6 +962,76 @@ TkrTrackParams reconRootWriterAlg::convertTkrTrackParams(const Event::TkrTrackPa
                           trkParTds.getyPosySlp(),  trkParTds.getySlpySlp() );
 
     return params;
+}
+    
+StatusCode reconRootWriterAlg::writeTkrCalAcdRelations()
+{
+    // Purpose and Method:  Retrieve the subsystem relation type information from the TDS
+    //                      and then call the helper routines to convert to root versions
+    
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    // Retrieve the tree/cluster relation collection  
+    SmartDataPtr<Event::TreeClusterRelationCol> treeClusterColTds(eventSvc(), EventModel::Recon::TreeClusterRelationCol);   
+    if (treeClusterColTds) fillTreeClusterRelations(treeClusterColTds);   
+    
+     return StatusCode::SUCCESS;
+}
+
+void reconRootWriterAlg::fillTreeClusterRelations(const Event::TreeClusterRelationCol* treeClusterRelationCol)
+{
+    // The Tree Cluster Relation objects are kept track of in the TkrRecon object... probably for no good reason...
+    // So we need to recover it as a first step
+    TkrRecon* recon = m_reconEvt->getTkrRecon();
+    if (recon)
+    {
+        // We should probably not assume that its been initialized...
+        // If it has this call will have no affect
+        recon->initialize();
+
+        // Ok, loop through the input collection
+        for(Event::TreeClusterRelationCol::const_iterator relItr  = treeClusterRelationCol->begin();
+                                                          relItr != treeClusterRelationCol->end();
+                                                          relItr++)
+        {
+            Event::TreeClusterRelation* treeClusterTds = *relItr;
+
+            // Obtain a shiny new root version
+            TreeClusterRelation* treeClusterRoot = new TreeClusterRelation();
+
+            // We need to look up the root pointers to the Tree and Cluster in this relation
+            TkrTree*    treeRoot    = 0;
+            CalCluster* clusterRoot = 0;
+
+            if (treeClusterTds->getTree())
+            {
+                TRef treeRef = m_common.m_tkrTreeMap[treeClusterTds->getTree()];
+
+                treeRoot = (TkrTree*) treeRef.GetObject();
+            }
+
+            if (treeClusterTds->getCluster())
+            {
+                TRef clusterRef = m_common.m_calClusterMap[treeClusterTds->getCluster()];
+
+                clusterRoot = (CalCluster*) clusterRef.GetObject();
+            }
+
+            // Initialize the root object
+            treeClusterRoot->initializeInfo(treeRoot,
+                                            clusterRoot,
+                                            treeClusterRoot->getTreeClusDoca(),
+                                            treeClusterRoot->getTreeClusCosAngle(),
+                                            treeClusterRoot->getTreeClusDistAtZ(),
+                                            treeClusterRoot->getClusEnergy() );
+
+            // Ok, add to our collection
+            recon->addTreeClusterRelation(treeClusterRoot);
+        }
+    }
+
+    return;
 }
 
 
