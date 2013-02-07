@@ -51,13 +51,14 @@
 
 #include <vector>
 #include <map>
+#include <stack>
 
 /** @class reconRootReaderAlg
 * @brief Reads Reconstruction data from a persistent ROOT file and stores the
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootReaderAlg.cxx,v 1.104 2012/07/23 19:36:43 heather Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.106 2013/02/07 04:08:35 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -116,7 +117,9 @@ private:
     /// Stores TkrTrack objects into Event::TkrFitTrack
     Event::TkrTrack* convertTkrTrack(const TkrTrack* trackRoot);
     /// convert a ROOT TkrVecNode to a TDS Event::TkrVecNode
-    Event::TkrVecNode* convertTkrVecNode(Event::TkrVecNodeCol* vecNodeColTds, const TkrVecNode* node);
+    Event::TkrVecNode* convertTkrVecNode(const TkrVecNode* node);
+    /// This to rebuild the sibling map after reading back in the TkrVecNode Tree
+    int makeSiblingMap(Event::TkrVecNode* curNode, Event::TkrNodeSiblingMap* siblingMap);
     
     /// Reads CAL recon data from ROOT and puts data on TDS
     StatusCode readCalRecon();
@@ -649,6 +652,10 @@ StatusCode reconRootReaderAlg::storeTkrVecPointsLinkCol(TkrRecon *tkrRecRoot)
                                                                                    botPoint, 
                                                                                    tkrVecPointsLinkRoot->getMaxScatAngle());
 
+        // Fill in the rest of the parameters
+        tkrVecPointsLinkTds->updateStatusBits(tkrVecPointsLinkRoot->getStatusBits());
+        tkrVecPointsLinkTds->setMaxScatAngle(tkrVecPointsLinkRoot->getMaxScatAngle());
+
         tkrVecPointsLinkTdsCol->push_back(tkrVecPointsLinkTds);
  
         m_common.m_rootTkrVecPointsLinkMap[tkrVecPointsLinkRoot] = tkrVecPointsLinkTds;
@@ -684,7 +691,7 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
         // are cleared before the next event but is NOT the same container they were 
         // stored in during reconstruction. However, at that time we needed a container
         // which would automagically sort them, now we don't need that.
-        Event::TkrVecNodeCol* vecNodeColTds = new Event::TkrVecNodeCol();
+        Event::TkrVecNodeQueue* vecNodeQueue = new Event::TkrVecNodeQueue();
 
         // Loop through the Trees in the input root object
         for(int idx = 0; idx < tkrRecRoot->nTkrTrees(); idx++)
@@ -696,20 +703,25 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
             const TkrVecNode* headNodeRoot = treeRoot->getHeadNode();
 
             // The head node is the full Tree, go through and convert to TDS equivalent
-            Event::TkrVecNode* headNodeTds = convertTkrVecNode(vecNodeColTds, headNodeRoot);
+            Event::TkrVecNode* headNodeTds = convertTkrVecNode(headNodeRoot);
+
+            // Keep track of the head node in our Queue structure
+            vecNodeQueue->push(headNodeTds);
 
             // Now look up the pointers to the best and second best branches
             const Event::TkrVecNode* bestLeafTds = m_common.m_rootTkrVecNodeMap[treeRoot->getBestLeaf()];
             const Event::TkrVecNode* nextLeafTds = m_common.m_rootTkrVecNodeMap[treeRoot->getSecondLeaf()];
 
             // Do we really need this?
-            Event::TkrNodeSiblingMap* nodeSiblingMapTds = 0;
+            Event::TkrNodeSiblingMap* nodeSiblingMapTds = new Event::TkrNodeSiblingMap();
+
+            makeSiblingMap(headNodeTds, nodeSiblingMapTds);
 
             // Recover the tracks associated to this Tree
             const Event::TkrTrack* bestTrackTds = m_common.m_rootTkrTrackMap[treeRoot->getBestTrack()];
             const Event::TkrTrack* nextTrackTds = 0;
             
-            if (treeRoot->GetEntries() > 1) m_common.m_rootTkrTrackMap[treeRoot->At(2)];
+            if (treeRoot->GetEntries() > 1) nextTrackTds = m_common.m_rootTkrTrackMap[treeRoot->At(1)];
 
             // Recover the Tree axis params
             Event::TkrFilterParams* treeParamsTds = convertTkrFilterParams(treeRoot->getAxisParams());
@@ -725,6 +737,9 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
             // Set the two angles:
             treeTds->setBestBranchAngleToAxis(treeRoot->getBestBranchAngleToAxis());
             treeTds->setAxisSeededAngleToAxis(treeRoot->getAxisSeededAngleToAxis());
+
+            // Add the second track if it exists
+            if (nextTrackTds) treeTds->push_back(const_cast<Event::TkrTrack*>(nextTrackTds));
 
             // Finally! Store in the TDS object
             treeColTds->push_back(treeTds);
@@ -744,11 +759,11 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
         }
 
         // Store in the TkrVecNode collection TDS
-        sc = eventSvc()->registerObject("/Event/TkrRecon/TkrVecNodeCol", vecNodeColTds);
+        sc = eventSvc()->registerObject("/Event/TkrRecon/TkrVecNodeCol", vecNodeQueue);
         if (sc.isFailure()) 
         {
             log << MSG::DEBUG;
-            if( log.isActive()) log.stream() << "Failed to register TkrVecNodeCol";
+            if( log.isActive()) log.stream() << "Failed to register TkrVecQueue";
             log << endreq;
             return StatusCode::FAILURE;
         }
@@ -757,7 +772,7 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
     return sc;
 }
     
-Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(Event::TkrVecNodeCol* vecNodeColTds, const TkrVecNode* tkrVecNodeRoot)
+Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNode* tkrVecNodeRoot)
 {
     Event::TkrVecNode* tkrVecNodeTds = 0;
 
@@ -786,7 +801,6 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(Event::TkrVecNodeCol* v
                                       tkrVecNodeRoot->getBestRmsAngle() );
 
         // Store this in the TDS collection
-        vecNodeColTds->push_back(tkrVecNodeTds);
 
         // Keep track of root/TDS relationship
         m_common.m_rootTkrVecNodeMap[tkrVecNodeRoot] = tkrVecNodeTds;
@@ -798,7 +812,7 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(Event::TkrVecNodeCol* v
             TkrVecNode* daughterNodeRoot = (TkrVecNode*)tkrVecNodeRoot->At(idx);
 
             // Convert to TDS version
-            Event::TkrVecNode* daughterNodeTds = convertTkrVecNode(vecNodeColTds, daughterNodeRoot);
+            Event::TkrVecNode* daughterNodeTds = convertTkrVecNode(daughterNodeRoot);
 
             // Add daughter to our current node
             if (daughterNodeTds) tkrVecNodeTds->push_back(daughterNodeTds);
@@ -806,6 +820,78 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(Event::TkrVecNodeCol* v
     }
 
     return tkrVecNodeTds;
+}
+
+int reconRootReaderAlg::makeSiblingMap(Event::TkrVecNode*        curNode, 
+                                       Event::TkrNodeSiblingMap* siblingMap)
+{
+    //**************************************************************************************
+    // NOTE: This is a copy of the same method that exists in TkrTreeBuilder! 
+    //**************************************************************************************
+    //
+    // This method aims to set the "distance to the main branch" for each node in the tree
+    // while it also builds out the "sibling map" which provides a list of all nodes at a given layer.
+    // The "distance to the main branch" is the number of nodes from the nearest main branch.
+    // A main branch is defined as the "first" branch, meaning that if you start with the head
+    // node, then a "main" branch will be the first daughter in the list of nodes below the
+    // current node. 
+
+    // This is the non-recursive version
+
+    // Set up a stack to handle the nodes that we will encounter
+    // The idea is that we will visit each node first, the order
+    // will be along the main branch first, then various branches 
+    // off that as we proceed to process nodes in the stack.
+    std::stack<Event::TkrVecNode*> nodeStack;
+
+    // Seed it with the input node
+    nodeStack.push(curNode);
+
+    // Keep track of the number of links to the main branch
+    int toMainBranch = 0;
+
+    // Loop over stack until empty
+    while(!nodeStack.empty())
+    {
+        // Recover pointer to node at the top of the stack
+        Event::TkrVecNode* node = nodeStack.top();
+
+        // Pop the top of the stack since we're done with this element
+        nodeStack.pop();
+
+        // Add this nodes daughters to the stack, provided we are not a leaf... 
+        if (!node->empty())
+        {
+            // Add the daughters of this node to the stack
+            // Note: need to add in reverse order so main branch will be accessed first
+            for(Event::TkrVecNodeSet::reverse_iterator nodeItr = node->rbegin(); nodeItr != node->rend(); nodeItr++)
+            {
+                Event::TkrVecNode* nextNode = *nodeItr;
+
+                nodeStack.push(nextNode);
+            }
+        }
+
+        // If we are the head node then skip the rest
+        if (!node->getAssociatedLink()) continue;
+
+        // Find parent's distance from the main branch
+        int parentDistance = node->getParentNode()->getBiLyrs2MainBrch();
+
+        // Set the distance to the main branch
+        node->setBiLyrs2MainBrch(parentDistance + toMainBranch);
+
+        // While we are here, set the link to "associated" 
+        const_cast<Event::TkrVecPointsLink*>(node->getAssociatedLink())->setAssociated();
+    
+        // Store this node in our sibling map 
+        (*siblingMap)[node->getCurrentBiLayer()].push_back(node);
+
+        // Otherwise we are at a leaf so we need to set the offset to get nonzero distances from the main branch
+        if (node->empty()) toMainBranch = 1; // Note we set to one
+    }
+
+    return siblingMap->size();
 }
 
 StatusCode reconRootReaderAlg::storeTkrFilterParamsCol(TkrRecon* tkrRecRoot)

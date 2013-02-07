@@ -57,7 +57,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.97 2013/02/05 22:13:54 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.98 2013/02/07 04:08:35 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -815,6 +815,18 @@ void reconRootWriterAlg::fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* 
             secondLeafNodeRoot = (TkrVecNode*) secondLeafNodeRef.GetObject();
         }
 
+        // Don't forget to do the same for the tracks!
+        TRef trackRootRef = m_common.m_tkrTrackMap[treeTds->getBestTrack()];
+
+        TkrTrack* bestTrack   = (TkrTrack*) trackRootRef.GetObject();
+        TkrTrack* secondTrack = 0;
+
+        if (treeTds->size() > 1)
+        {
+            trackRootRef = m_common.m_tkrTrackMap[treeTds->back()];
+            secondTrack  = (TkrTrack*) trackRootRef.GetObject();
+        }
+
         // Get the "filter params" (Tree Axis information)
         TkrFilterParams* filterParamsRoot = convertTkrFilterParams(treeTds->getAxisParams());
 
@@ -825,6 +837,10 @@ void reconRootWriterAlg::fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* 
                                  filterParamsRoot,
                                  treeTds->getBestBranchAngleToAxis(),
                                  treeTds->getAxisSeededAngleToAxis() );
+
+        // Add the tracks
+        treeRoot->Add(bestTrack);
+        if (secondTrack) treeRoot->Add(secondTrack);
 
         // Keep relation between Event and Root TkrVecPoints
         TRef ref = treeRoot;
