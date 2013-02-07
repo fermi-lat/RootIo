@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Feb  7 13:11:13 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Bug fixes to make sure we are really writing and reading correctly
+    *
+------------------------------------------------------------
 User: usher  Wed Feb  6 20:08:35 PST 2013
 RootIo/src
 
