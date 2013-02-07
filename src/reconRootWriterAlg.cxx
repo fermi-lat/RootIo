@@ -57,11 +57,11 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.96 2013/02/05 15:52:28 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.97 2013/02/05 22:13:54 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
-{	
+{   
 public:
     
     reconRootWriterAlg(const std::string& name, ISvcLocator* pSvcLocator);
@@ -818,10 +818,6 @@ void reconRootWriterAlg::fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* 
         // Get the "filter params" (Tree Axis information)
         TkrFilterParams* filterParamsRoot = convertTkrFilterParams(treeTds->getAxisParams());
 
-        // We need to add this TkrFilterParams to the recon object so that it will be properly 
-        // managed at end of event time. 
-        recon->addTkrFilterParams(filterParamsRoot);
-
         // Initialize the root TkrVecPoint
         treeRoot->initializeInfo(headNodeRoot, 
                                  bestLeafNodeRoot, 
@@ -1152,11 +1148,11 @@ void reconRootWriterAlg::fillGcrXtal(CalRecon *calRec, Event::GcrXtalCol* gcrXta
     log << MSG::DEBUG << "reconRootWriterAlg::fillGcrXtal BEGIN, gcrXtalColTds->size()=" << gcrXtalColTds->size()<< endreq;   
     
     for (gcrXtalColIterTds = gcrXtalColTds->begin(); gcrXtalColIterTds != gcrXtalColTds->end(); gcrXtalColIterTds++) {
-	
-	//GcrXtal* gcrXtalRoot = new GcrXtal();
+    
+    //GcrXtal* gcrXtalRoot = new GcrXtal();
     GcrXtal* gcrXtalRoot = calRec->addGcrXtal();
     RootPersistence::convert(**gcrXtalColIterTds,*gcrXtalRoot) ; 
-	
+    
        // calRec->addGcrXtal(gcrXtalRoot) ;   
     }   
     
