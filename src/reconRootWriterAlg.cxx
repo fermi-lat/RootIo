@@ -57,7 +57,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.99 2013/02/07 21:11:13 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.100 2013/02/08 04:36:21 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -1060,6 +1060,19 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     CalRecon* calRec = m_reconEvt->getCalRecon();   
     if (!calRec) return StatusCode::FAILURE;   
     calRec->initialize();   
+
+    // The way CalClusters are handled have changed from the ancient Roman times to the 
+    // modern Tuscan dominated era. In the new school scheme, the CalClusterCol container serves
+    // as the object owner in the TDS, but access is meant to be through the CalClusterMap. 
+    // We need to be careful here about how to output in this era
+    // Start by retrieving the CalClusterCol
+    SmartDataPtr<Event::CalClusterCol> clusterColTds(eventSvc(), EventModel::CalRecon::CalClusterCol);
+
+    // Check that the collection exists, if not there is nothing to do here
+    if (clusterColTds)
+    {
+        // Start by filling the root CalClusterCol
+        fillCalCluster(calRec, clusterColTds);   
     
     // Recover the CalClusterMap which will contain references to all CalClusters
     SmartDataPtr<Event::CalClusterMap> clusterMapTds(eventSvc(),EventModel::CalRecon::CalClusterMap); 
@@ -1067,12 +1080,6 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     // In modern times the cal clusters are stored in the CalClusterMap
     if (clusterMapTds) fillCalCluster(calRec, clusterMapTds);
     // However, we might be dealing with the peak of the Roman Empire era here, so leave hooks for that
-    else
-    {
-    
-    // Retrieve the cal cluster collection   
-    SmartDataPtr<Event::CalClusterCol> clusterColTds(eventSvc(), EventModel::CalRecon::CalClusterCol);   
-    if (clusterColTds) fillCalCluster(calRec, clusterColTds);   
     }
     
     // Retrieve the cal xtal collection   
@@ -1136,18 +1143,24 @@ void reconRootWriterAlg::fillCalCluster(CalRecon* calRec, Event::CalClusterMap* 
             const Event::CalCluster* clusterTds = *clusterVecTdsItr;
 
             // Get a pointer to a root version
-            CalCluster * clusterRoot = new CalCluster ;
-
-            // Do the conversion 
-            RootPersistence::convert(*clusterTds,*clusterRoot) ;
+            if (m_common.m_calClusterMap.find(clusterTds) != m_common.m_calClusterMap.end()) 
+            {
+                TRef        clusterRootRef  = m_common.m_calClusterMap[clusterTds];
+                CalCluster* clusterRoot     = (CalCluster*)clusterRootRef.GetObject();
 
             // Store in this key's TObjArray
             clusterVecRoot->Add(clusterRoot);
 
             // Keep track of in our TDS/root map
-            TRef ref = clusterRoot;
-            m_common.m_calClusterMap[clusterTds] = ref;
+            }
+            else
+            {
+                int thiscanthappen = 0;
+            }
         }
+
+        // Signal that we are not the owner of these values (for cleanup)
+        clusterVecRoot->SetOwner(kFALSE);
 
         // Ok, now store this in our calRecon object
         calRec->getCalClusterMap()->Add(keyRoot, clusterVecRoot);
