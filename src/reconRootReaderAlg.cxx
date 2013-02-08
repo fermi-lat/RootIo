@@ -58,7 +58,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.106 2013/02/07 04:08:35 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.107 2013/02/07 21:11:13 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -126,6 +126,9 @@ private:
     
     /// read in CAL xtal recon data from ROOT and store on the TDS
     StatusCode storeCalXtalRecDataCol(CalRecon *calRecRoot);
+    
+    /// read CAL cluster data from ROOT and store on TDS in CalClusterMap
+    StatusCode storeCalClusterMap(CalRecon *calRecRoot);
     
     /// read CAL cluster data from ROOT and store on TDS
     StatusCode storeCalClusterCol(CalRecon *calRecRoot);
@@ -1317,6 +1320,15 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         log << MSG::INFO << "Failed to store CalEventEnergy on the TDS" << endreq;
         return sc;
     }
+
+    // New school: Cal Clusters are stored in the CalClusterMap
+    SmartDataPtr<Event::CalClusterMap> checkCalClusterMapTds(eventSvc(),EventModel::CalRecon::CalClusterMap);
+    if (checkCalClusterMapTds){
+        log << MSG::INFO << "CalClusterMap data is already on the TDS" << endreq;
+        return sc;
+    } else {
+        sc = storeCalClusterMap(calRecRoot);
+    }
     
     SmartDataPtr<Event::CalClusterCol> checkCalClusterColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
     if (checkCalClusterColTds){
@@ -1383,6 +1395,59 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
         log << endreq;
         return StatusCode::FAILURE;
     }
+    
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeCalClusterMap(CalRecon *calRecRoot) 
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // First recover the pointer to the TMap
+    const TMap* calClusterMapRoot = calRecRoot->getCalClusterMap();
+
+    // Get a shiny new TDS version of the CalClusterMap
+    Event::CalClusterMap *calClusterMapTds = new Event::CalClusterMap();
+
+    // Set up an iterator to go through the entries
+    TMapIter calClusterMapIter(calClusterMapRoot);
+
+    // As we iterate through the map, we'll be obtaining the "next" key
+    const TObject* nextKey = 0;
+
+    // Ok, now iterate through the input map
+    while((nextKey = calClusterMapIter.Next()) != 0)
+    {
+        // Recover the key string
+        const TObjString* keyRoot = (TObjString*)nextKey;
+
+        // Convert this to a std::string
+        std::string keyTds(keyRoot->GetName());
+
+        // Recover the TObjArray which will hold the Cal Clusters
+        TObjArray* clusterVecRoot = (TObjArray*)calClusterMapRoot->GetValue(nextKey);
+
+        // Make sure something is there
+        if (clusterVecRoot->GetEntries() > 0)
+        {
+            // Get an iterator over this array
+            TIter calClusterVecIter(clusterVecRoot);
+
+            CalCluster *calClusterRoot = 0;
+
+            while ((calClusterRoot = (CalCluster*)calClusterVecIter.Next())!=0) 
+            {        
+                Event::CalCluster * calClusterTds = new Event::CalCluster() ;
+                RootPersistence::convert(*calClusterRoot,*calClusterTds) ;
+                (*calClusterMapTds)[keyTds].push_back(calClusterTds) ;
+
+                m_common.m_rootCalClusterMap[calClusterRoot] = calClusterTds;
+            }
+        }
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterMap, calClusterMapTds);
     
     return sc;
 }

@@ -57,7 +57,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.98 2013/02/07 04:08:35 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.99 2013/02/07 21:11:13 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -116,6 +116,7 @@ private:
     
     /// These are the methods specific to filling the pieces of the CalRecon stuff
     void fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds);   
+    void fillCalCluster(CalRecon* calRec, Event::CalClusterMap* clusterMapTds);
     void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds); 
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
     void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
@@ -1060,9 +1061,19 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     if (!calRec) return StatusCode::FAILURE;   
     calRec->initialize();   
     
+    // Recover the CalClusterMap which will contain references to all CalClusters
+    SmartDataPtr<Event::CalClusterMap> clusterMapTds(eventSvc(),EventModel::CalRecon::CalClusterMap); 
+
+    // In modern times the cal clusters are stored in the CalClusterMap
+    if (clusterMapTds) fillCalCluster(calRec, clusterMapTds);
+    // However, we might be dealing with the peak of the Roman Empire era here, so leave hooks for that
+    else
+    {
+    
     // Retrieve the cal cluster collection   
     SmartDataPtr<Event::CalClusterCol> clusterColTds(eventSvc(), EventModel::CalRecon::CalClusterCol);   
     if (clusterColTds) fillCalCluster(calRec, clusterColTds);   
+    }
     
     // Retrieve the cal xtal collection   
     SmartDataPtr<Event::CalXtalRecCol> xtalColTds(eventSvc(), EventModel::CalRecon::CalXtalRecCol);   
@@ -1090,6 +1101,59 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
 
     
     return sc;
+}
+
+void reconRootWriterAlg::fillCalCluster(CalRecon* calRec, Event::CalClusterMap* clusterMapTds)
+{
+    // Purpose and Method: Given an input CalClusterMap, we convert each entry to the root equivalent and
+    // store on the PDS
+
+    // We start by iterating over the keys in the CalClusterMap
+    for(Event::CalClusterMap::iterator clusterMapTdsItr  = clusterMapTds->begin();
+                                       clusterMapTdsItr != clusterMapTds->end();
+                                       clusterMapTdsItr++)
+    {
+        // Recover the key to this entry
+        const std::string& keyTds = clusterMapTdsItr->first;
+
+        // Turn this into a TString...
+        TObjString* keyRoot = new TObjString(keyTds.c_str());
+
+        // Recover the collection
+        const Event::CalClusterVec& clusterVecTds = clusterMapTdsItr->second;
+
+        // Create the TObjArray to hold the clusters for this key
+        TObjArray* clusterVecRoot = new TObjArray();
+
+        clusterVecRoot->Clear();
+
+        // Now we loop over the cluster vector
+        for(Event::CalClusterVec::const_iterator clusterVecTdsItr  = clusterVecTds.begin();
+                                                 clusterVecTdsItr != clusterVecTds.end();
+                                                 clusterVecTdsItr++)
+        {
+            // Recover pointer to the actual Cal Cluster
+            const Event::CalCluster* clusterTds = *clusterVecTdsItr;
+
+            // Get a pointer to a root version
+            CalCluster * clusterRoot = new CalCluster ;
+
+            // Do the conversion 
+            RootPersistence::convert(*clusterTds,*clusterRoot) ;
+
+            // Store in this key's TObjArray
+            clusterVecRoot->Add(clusterRoot);
+
+            // Keep track of in our TDS/root map
+            TRef ref = clusterRoot;
+            m_common.m_calClusterMap[clusterTds] = ref;
+        }
+
+        // Ok, now store this in our calRecon object
+        calRec->getCalClusterMap()->Add(keyRoot, clusterVecRoot);
+    }
+
+    return;
 }
 
 void reconRootWriterAlg::fillCalCluster(CalRecon *calRec, Event::CalClusterCol* clusterColTds) {   
