@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: echarles  Fri Feb  8 15:22:29 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+Added AcdReconV2 to reconRootReaderAlg.cxx
+    *
+------------------------------------------------------------
 User: usher  Fri Feb  8 13:58:33 PST 2013
 RootIo/src
 
