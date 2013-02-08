@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+User: usher  Thu Feb  7 20:36:22 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-25-06-00, operation: add
 Package: RootIo
