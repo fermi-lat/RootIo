@@ -10,6 +10,7 @@
 #include "Event/TopLevel/EventModel.h"
 #include "idents/CalXtalId.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdReconV2.h"
 #include "Event/Recon/TkrRecon/TkrCluster.h"
 #include "Event/Recon/TkrRecon/TkrTruncationInfo.h"  
 #include "Event/Recon/TkrRecon/TkrTrack.h"
@@ -58,7 +59,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.108 2013/02/08 04:36:21 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.109 2013/02/08 21:58:33 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -1575,8 +1576,33 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
         return StatusCode::FAILURE;
     }
     
+    
+    const AcdReconV2 *acdRecRootV2 = m_reconEvt->getAcdReconV2();
+    if (!acdRecRootV2) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "No AcdReconV2 found in ROOT file";
+        log << endreq;
+        return StatusCode::SUCCESS;
+    }
+
+    Event::AcdReconV2 * acdRecTdsV2 = new Event::AcdReconV2();    
+    RootPersistence::convert(*acdRecRootV2,*acdRecTdsV2) ;
+
+    sc = eventSvc()->registerObject(EventModel::AcdReconV2::Event, acdRecTdsV2);
+    if (sc.isFailure()) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register AcdReconV2";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+
     return sc;    
 }
+
+
+
 
 StatusCode reconRootReaderAlg::readAdfRecon()
 {
