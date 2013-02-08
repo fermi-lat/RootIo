@@ -58,7 +58,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.107 2013/02/07 21:11:13 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.108 2013/02/08 04:36:21 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -1321,6 +1321,18 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         return sc;
     }
 
+    // Look up the CalClusterCol, which is the "owner" of the CalCluster objects in the TDS
+    SmartDataPtr<Event::CalClusterCol> checkCalClusterColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
+
+    // If they are already there then this must be some sort of error...
+    if (checkCalClusterColTds)
+    {
+        log << MSG::INFO << "CalClusterCol data is already on the TDS" << endreq;
+        return sc;
+    } else {
+        sc = storeCalClusterCol(calRecRoot);
+    }
+
     // New school: Cal Clusters are stored in the CalClusterMap
     SmartDataPtr<Event::CalClusterMap> checkCalClusterMapTds(eventSvc(),EventModel::CalRecon::CalClusterMap);
     if (checkCalClusterMapTds){
@@ -1330,13 +1342,6 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         sc = storeCalClusterMap(calRecRoot);
     }
     
-    SmartDataPtr<Event::CalClusterCol> checkCalClusterColTds(eventSvc(),EventModel::CalRecon::CalClusterCol);
-    if (checkCalClusterColTds){
-        log << MSG::INFO << "CalClusterCol data is already on the TDS" << endreq;
-        return sc;
-    } else {
-        sc = storeCalClusterCol(calRecRoot);
-    }
     
     SmartDataPtr<Event::CalMipTrackCol> checkCalMipTrackColTds(eventSvc(),EventModel::CalRecon::CalMipTrackCol);
     if (checkCalMipTrackColTds){
@@ -1432,17 +1437,25 @@ StatusCode reconRootReaderAlg::storeCalClusterMap(CalRecon *calRecRoot)
         if (clusterVecRoot->GetEntries() > 0)
         {
             // Get an iterator over this array
-            TIter calClusterVecIter(clusterVecRoot);
+            TObjArrayIter calClusterVecIter(clusterVecRoot);
 
-            CalCluster *calClusterRoot = 0;
+            CalCluster *clusterRoot = 0;
 
-            while ((calClusterRoot = (CalCluster*)calClusterVecIter.Next())!=0) 
+            while ((clusterRoot = (CalCluster*)calClusterVecIter.Next())!=0) 
             {        
-                Event::CalCluster * calClusterTds = new Event::CalCluster() ;
-                RootPersistence::convert(*calClusterRoot,*calClusterTds) ;
-                (*calClusterMapTds)[keyTds].push_back(calClusterTds) ;
-
-                m_common.m_rootCalClusterMap[calClusterRoot] = calClusterTds;
+                // Check to be sure there is an entry in the root to TDS map
+                if (m_common.m_rootCalClusterMap.find(clusterRoot) != m_common.m_rootCalClusterMap.end()) 
+                {
+                    // Recover the pointer to the cluster in question
+                    Event::CalCluster* clusterTds = const_cast<Event::CalCluster*>(m_common.m_rootCalClusterMap[clusterRoot]);
+                
+                    // Add this to the CalClusterMap
+                    (*calClusterMapTds)[keyTds].push_back(clusterTds) ;
+                }
+                else
+                {
+                    int whatshouldiputhere = 0;
+                }
             }
         }
     }

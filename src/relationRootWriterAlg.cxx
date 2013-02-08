@@ -49,11 +49,11 @@
  * the relation table exist when the table is written.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/relationRootWriterAlg.cxx,v 1.28 2011/06/03 17:33:14 bregeon Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootWriterAlg.cxx,v 1.29 2011/12/12 20:55:41 heather Exp $
  */
 
 class relationRootWriterAlg : public Algorithm
-{	
+{   
 public:
     
     relationRootWriterAlg(const std::string& name, ISvcLocator* pSvcLocator);
@@ -329,6 +329,7 @@ StatusCode relationRootWriterAlg::writeCalReconRelations() {
             calXtalRecDataRoot = (CalXtalRecData*)calXtalRecDataRef.GetObject();
         // It can happen that a noise hit will not have an McIntegratingHit associated
         } else {
+            log << MSG::DEBUG << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
             //log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
             continue;
         }
