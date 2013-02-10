@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Sat Feb  9 19:11:00 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Explicitly include CalClusterMap.h though not sure why, have built RootIo on windows and linux without this
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-25-07-00, operation: add
 Package: RootIo
