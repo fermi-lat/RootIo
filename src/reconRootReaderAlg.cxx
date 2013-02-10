@@ -18,7 +18,7 @@
 #include "Event/Recon/TkrRecon/TkrFilterParams.h"
 #include "Event/Recon/TkrRecon/TkrEventParams.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
-#include "Event/Recon/CalRecon/CalCluster.h"   
+#include "Event/Recon/CalRecon/CalClusterMap.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"  
 #include "Event/Recon/CalRecon/CalEventEnergy.h"  
 #include "Event/Recon/TreeClusterRelation.h"
@@ -59,7 +59,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.109 2013/02/08 21:58:33 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.110 2013/02/08 23:22:28 echarles Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener

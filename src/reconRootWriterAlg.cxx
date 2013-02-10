@@ -16,6 +16,8 @@
 
 #include "Event/Recon/TreeClusterRelation.h"
 
+#include "Event/Recon/CalRecon/CalClusterMap.h"
+
 #include "LdfEvent/EventSummaryData.h"
 
 #include "AncillaryDataEvent/Recon.h"
@@ -57,7 +59,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.100 2013/02/08 04:36:21 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.101 2013/02/08 21:58:33 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
