@@ -59,7 +59,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.101 2013/02/08 21:58:33 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.102 2013/02/10 03:10:59 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -960,6 +960,8 @@ TkrTrackHit* reconRootWriterAlg::convertTkrTrackHit(const Event::TkrTrackHit* tr
                     convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED));
     if (trackHitTds->validSmoothedHit())  trackHit->getTrackParams(TkrTrackHit::SMOOTHED) = 
                     convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED));
+    if (trackHitTds->validRevFit())       trackHit->getTrackParams(TkrTrackHit::REVFIT) = 
+                    convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT));
     if (trackHitTds->validMaterial())     trackHit->getTrackParams(TkrTrackHit::QMATERIAL) = 
                     convertTkrTrackParams(trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL));
     
