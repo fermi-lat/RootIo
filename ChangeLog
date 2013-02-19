@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Mon Feb 18 20:24:51 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Re-adding ability to read/write the "REVFIT" parameters for doing residuals calculations in special runs
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-lp40, operation: add
 Package: RootIo
