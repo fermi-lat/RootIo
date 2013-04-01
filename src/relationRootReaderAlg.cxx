@@ -42,7 +42,7 @@
  * the relational table exist when the relations are read in.
  *
  * @author Heather Kelly
- * $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/relationRootReaderAlg.cxx,v 1.47 2011/12/12 20:55:41 heather Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/relationRootReaderAlg.cxx,v 1.48 2012/07/23 19:36:43 heather Exp $
  */
 
 class relationRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -94,6 +94,9 @@ private:
 
     /// Closes the ROOT file
     void close();
+
+    // controls warning messages
+    void outputWarning(std::string type, int mode=0);
    
     /// Top-level Monte Carlo ROOT object
     RelTable *m_relTab;
@@ -155,6 +158,9 @@ private:
 //const IAlgFactory& relationRootReaderAlgFactory = Factory;
 DECLARE_ALGORITHM_FACTORY(relationRootReaderAlg);
 
+namespace {
+    std::map<string, int> warningMap;
+}
 relationRootReaderAlg::relationRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator) : 
 Algorithm(name, pSvcLocator), m_relTab(0), m_branchName("RelTable")
 {
@@ -363,7 +369,8 @@ StatusCode relationRootReaderAlg::readRelations() {
         else
         {
             const TObject* tmp = relation->getSecond();
-            log << MSG::WARNING << "Unrecognized Relation key: " << className << endreq;
+            outputWarning( className, 1);
+            //log << MSG::WARNING << "Unrecognized Relation key: " << className << endreq;
         }
     }
     
@@ -383,7 +390,8 @@ StatusCode relationRootReaderAlg::readTkrDigiRelations(Relation* relation)
     if (m_common.m_rootTkrDigiMap.find(digiRoot) != m_common.m_rootTkrDigiMap.end()) {
         digiTds = const_cast<Event::TkrDigi*>(m_common.m_rootTkrDigiMap[digiRoot]);
     } else {
-        log << MSG::WARNING << "Could not located TkrDigi TDS/ROOT pair" << endreq;
+        outputWarning("TkrDigi");
+        //log << MSG::WARNING << "Could not locate TkrDigi TDS/ROOT pair" << endreq;
         return sc;
     }
 
@@ -409,7 +417,8 @@ StatusCode relationRootReaderAlg::readTkrDigiRelations(Relation* relation)
     } 
     else 
     {
-        log << MSG::WARNING << "Could not located McPositionHit TDS/ROOT pair" << endreq;
+        outputWarning("McPositionHit");
+        //log << MSG::WARNING << "Could not locate McPositionHit TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -430,7 +439,8 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
     if (m_common.m_rootCalDigiMap.find(digiRoot) != m_common.m_rootCalDigiMap.end()) {
         digiTds = const_cast<Event::CalDigi*>(m_common.m_rootCalDigiMap[digiRoot]);
     } else {
-        log << MSG::WARNING << "Could not located CalDigi TDS/ROOT pair" << endreq;
+        outputWarning("CalDigi");
+        //log << MSG::WARNING << "Could not locate CalDigi TDS/ROOT pair" << endreq;
         return sc;
     }
 
@@ -456,7 +466,8 @@ StatusCode relationRootReaderAlg::readCalDigiRelations(Relation* relation)
     } 
     else 
     {
-        log << MSG::WARNING << "Could not located McIntegratingHit TDS/ROOT pair" << endreq;
+        outputWarning("McIntegratingHit");
+        //log << MSG::WARNING << "Could not locate McIntegratingHit TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -477,7 +488,8 @@ StatusCode relationRootReaderAlg::readCalXtalToClusterRelations(Relation* relati
     {
         xtalTds = const_cast<Event::CalXtalRecData*>(m_common.m_rootCalXtalRecDataMap[xtalRoot]);
     } else {
-        log << MSG::WARNING << "Could not located CalXtalRecData TDS/ROOT pair" << endreq;
+        outputWarning("CalXtalRecData");
+        //log << MSG::WARNING << "Could not located CalXtalRecData TDS/ROOT pair" << endreq;
         return sc;
     }
 
@@ -502,7 +514,8 @@ StatusCode relationRootReaderAlg::readCalXtalToClusterRelations(Relation* relati
     } 
     else 
     {
-        log << MSG::WARNING << "Could not located CalCluster<-->CalXtalRecData TDS/ROOT pair" << endreq;
+        outputWarning("CalCluster<-->CalXtalRecData");
+        //log << MSG::WARNING << "Could not located CalCluster<-->CalXtalRecData TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -526,14 +539,16 @@ StatusCode relationRootReaderAlg::readTkrTrackRelations(Relation* relation)
     if (m_common.m_rootTkrCandMap.find(tkrCandRoot) != m_common.m_rootTkrCandMap.end()) {
         tkrCandTds = const_cast<Event::TkrPatCand*>(m_common.m_rootTkrCandMap[tkrCandRoot]);
     } else {
-        log << MSG::WARNING << "Could not located TkrPatCand TDS/ROOT pair" << endreq;
+        outputWarning("TkrPatCand");
+        //log << MSG::WARNING << "Could not located TkrPatCand TDS/ROOT pair" << endreq;
     }
 
     // Look up TDS to root relation for candidate tracks
     if (m_common.m_rootTkrTrackMap.find(tkrTrackRoot) != m_common.m_rootTkrTrackMap.end()) {
         tkrTrackTds = const_cast<Event::TkrFitTrackBase*>(m_common.m_rootTkrTrackMap[tkrTrackRoot]);
     } else {
-        log << MSG::WARNING << "Could not located TkrFitTrackBase TDS/ROOT pair" << endreq;
+        outputWarning("TkrFitTrackBase");
+        //log << MSG::WARNING << "Could not located TkrFitTrackBase TDS/ROOT pair" << endreq;
     }
 
     // Make the event relation here
@@ -560,7 +575,8 @@ StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation)
     if (m_common.m_rootTkrVertexMap.find(vertexRoot) != m_common.m_rootTkrVertexMap.end()) {
         vertexTds = const_cast<Event::TkrVertex*>(m_common.m_rootTkrVertexMap[vertexRoot]);
     } else {
-        log << MSG::WARNING << "Could not located TkrVertex TDS/ROOT pair" << endreq;
+        outputWarning("TkrVertex");
+        //log << MSG::WARNING << "Could not located TkrVertex TDS/ROOT pair" << endreq;
     }
 
     // Look up TDS to root relation for candidate tracks
@@ -572,7 +588,8 @@ StatusCode relationRootReaderAlg::readTkrVertexRelations(Relation* relation)
         //Event::TkrFitTrackRel* rel = new Event::TkrFitTrackRel(tkrCandTds, tkrTrackTds);
         //m_trackRelTab->addRelation(rel);
     } else {
-        log << MSG::WARNING << "Could not located TkrTrack TDS/ROOT pair" << endreq;
+        outputWarning("TkrTrack");
+        //log << MSG::WARNING << "Could not located TkrTrack TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -592,7 +609,8 @@ StatusCode relationRootReaderAlg::readMcParticleRelations(Relation* relation)
     if (m_common.m_rootMcPartMap.find(mcPartRoot) != m_common.m_rootMcPartMap.end()) {
         mcPartTds = const_cast<Event::McParticle*>(m_common.m_rootMcPartMap[mcPartRoot]);
     } else {
-        log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
+        outputWarning("McParticle");
+        //log << MSG::WARNING << "Could not located McParticle TDS/ROOT pair" << endreq;
     }
 
     const McTrajectory* mcTrajRoot = dynamic_cast<const McTrajectory*>(relation->getSecond());
@@ -616,7 +634,8 @@ StatusCode relationRootReaderAlg::readMcParticleRelations(Relation* relation)
     } 
     else 
     {
-        log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
+        outputWarning("McTrajectory");
+        //log << MSG::WARNING << "Could not located McTrajectory TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -635,7 +654,8 @@ StatusCode relationRootReaderAlg::readMcTrajectoryPointRelations(Relation* relat
     if (m_common.m_rootMcTrajectoryPointMap.find(mcPointRoot) != m_common.m_rootMcTrajectoryPointMap.end()) {
         mcPointTds = const_cast<Event::McTrajectoryPoint*>(m_common.m_rootMcTrajectoryPointMap[mcPointRoot]);
     } else {
-        log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
+        outputWarning("McTrajectoryPoint");
+        //log << MSG::WARNING << "Could not located McTrajectoryPoint TDS/ROOT pair" << endreq;
     }
 
     const TObject* mcHitRoot = relation->getSecond();
@@ -655,7 +675,8 @@ StatusCode relationRootReaderAlg::readMcTrajectoryPointRelations(Relation* relat
     } 
     else 
     {
-        log << MSG::WARNING << "Could not located McPositionHit/McIntegrating TDS/ROOT pair" << endreq;
+        outputWarning("McPositionHit/McIntegrating");
+        //log << MSG::WARNING << "Could not located McPositionHit/McIntegrating TDS/ROOT pair" << endreq;
     }
 
     return sc;
@@ -681,4 +702,30 @@ StatusCode relationRootReaderAlg::finalize()
     //setFinalized();
     return sc;
 }
+
+void relationRootReaderAlg::outputWarning(std::string type, int mode)
+{
+    MsgStream log(msgSvc(), name());
+    int maxCount = 10;
+    string type1;
+    type1 = type;
+    if(mode==1) type1 = type+"1";
+    int warningCount = warningMap[type]++;
+    if(mode==0) {
+        if(warningCount < maxCount) log << MSG::WARNING 
+            << "Could not locate " << type << " TDS/ROOT pair" << endreq;
+        if(warningCount == maxCount) log << MSG::WARNING 
+            << "Warning messages about missing " << type << " TDS/ROOT pairs will be suppressed"
+            << endreq;
+    } else {
+        if(warningCount < maxCount) log << MSG::WARNING 
+            << "Unrecognized relation key: " << type << endreq;
+        if(warningCount == maxCount) log << MSG::WARNING 
+            << "Warning messages about unrecognized relation key " << type << " will be suppressed"
+            << endreq;
+    }
+
+    return;
+}
+
 
