@@ -59,7 +59,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.102 2013/02/10 03:10:59 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.103 2013/02/19 04:24:51 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -122,6 +122,7 @@ private:
     void fillCalXtalRec(CalRecon *calRec, Event::CalXtalRecCol* xtalColTds); 
     void fillCalMipTrack(CalRecon *calRec, Event::CalMipTrackCol* calMipTrackColTds); 
     void fillCalEventEnergy(CalRecon *calRec, Event::CalEventEnergyCol* calEventEnergyCol);
+    void fillCalEventEnergyMap(CalRecon* calRec, Event::CalEventEnergyMap* calEventEnergyMap);
     
     //CL: 08/22/06:
     void fillGcrXtal(CalRecon *calRec, Event::GcrXtalCol* gcrXtalColTds); 
@@ -1099,6 +1100,10 @@ StatusCode reconRootWriterAlg::writeCalRecon() {
     SmartDataPtr<Event::CalEventEnergyCol> calEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol) ;
     if (calEventEnergyColTds) fillCalEventEnergy(calRec, calEventEnergyColTds);
 
+    // Retrieve the CalEventEnergyMap
+    SmartDataPtr<Event::CalEventEnergyMap> calEventEnergyMapTds(eventSvc(), EventModel::CalRecon::CalEventEnergyMap) ;
+    if (calEventEnergyMapTds) fillCalEventEnergyMap(calRec, calEventEnergyMapTds);
+
     //C.L: 08/22/06: Retrieve GcrXtal collection 
     SmartDataPtr<Event::GcrXtalCol> gcrXtalColTds(eventSvc(), EventModel::CalRecon::GcrXtalCol);       
     if (gcrXtalColTds) 
@@ -1168,6 +1173,68 @@ void reconRootWriterAlg::fillCalCluster(CalRecon* calRec, Event::CalClusterMap* 
 
         // Ok, now store this in our calRecon object
         calRec->getCalClusterMap()->Add(keyRoot, clusterVecRoot);
+    }
+
+    return;
+}
+
+void reconRootWriterAlg::fillCalEventEnergyMap(CalRecon* calRec, Event::CalEventEnergyMap* energyMapTds)
+{
+    // Purpose and Method: Given an input CalEventEnergyMap, we convert each entry to the root equivalent and
+    // store on the PDS
+
+    // Set ownership of objects
+    // Key - we don't own
+    // Value - we own the container (but not its objects)
+    calRec->getCalEventEnergyMap()->SetOwnerKeyValue(kFALSE, kTRUE);
+
+    // We start by iterating over the keys in the CalEventEnergyMap
+    for(Event::CalEventEnergyMap::iterator energyMapTdsItr  = energyMapTds->begin();
+                                           energyMapTdsItr != energyMapTds->end();
+                                           energyMapTdsItr++)
+    {
+        // Recover the key to this entry
+        const Event::CalCluster* clusterTds = energyMapTdsItr->first;
+
+        // Get a pointer to a root version
+        if (m_common.m_calClusterMap.find(clusterTds) != m_common.m_calClusterMap.end()) 
+        {
+            TRef        clusterRootRef  = m_common.m_calClusterMap[clusterTds];
+            CalCluster* clusterRoot     = (CalCluster*)clusterRootRef.GetObject();
+
+            // Recover the collection
+            const Event::CalEventEnergyVec& energyVecTds = energyMapTdsItr->second;
+
+            // Create the TObjArray to hold the CalEventEnergy objects for this cluster
+            TObjArray* energyVecRoot = new TObjArray();
+
+            energyVecRoot->Clear();
+
+            // Now we loop over the cluster vector
+            for(Event::CalEventEnergyVec::const_iterator energyVecTdsItr  = energyVecTds.begin();
+                                                          energyVecTdsItr != energyVecTds.end();
+                                                          energyVecTdsItr++)
+            {
+                // Recover pointer to the actual Cal Cluster
+                const Event::CalEventEnergy* energyTds = *energyVecTdsItr;
+
+                // Get a pointer to a root version
+                if (m_common.m_calClusterMap.find(clusterTds) != m_common.m_calClusterMap.end()) 
+                {
+                    TRef            energyRootRef  = m_common.m_calEventEnergyMap[energyTds];
+                    CalEventEnergy* energyRoot     = (CalEventEnergy*)energyRootRef.GetObject();
+
+                // Store in this key's TObjArray
+                energyVecRoot->Add(energyRoot);
+                }
+            }
+
+            // Signal that we are not the owner of these values (for cleanup)
+            energyVecRoot->SetOwner(kFALSE);
+
+            // Ok, now store this in our calRecon object
+            calRec->getCalEventEnergyMap()->Add(clusterRoot, energyVecRoot);
+        }
     }
 
     return;
@@ -1322,11 +1389,15 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
     unsigned int numEnergy = calEventEnergyCol->size();
     unsigned int iEnergy;
     for (iEnergy = 0; iEnergy < numEnergy; iEnergy++)
-     {
-      Event::CalEventEnergy *eventEnergyTds = (*calEventEnergyCol)[iEnergy] ;
-      CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
-      RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
-      calRec->addCalEventEnergy(eventEnergyRoot) ;
+    {
+        Event::CalEventEnergy *eventEnergyTds = (*calEventEnergyCol)[iEnergy] ;
+        CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
+        RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
+        calRec->addCalEventEnergy(eventEnergyRoot) ;
+
+        // Keep the relationship between the TDS and root objects
+        TRef ref = eventEnergyRoot;
+        m_common.m_calEventEnergyMap[eventEnergyTds] = ref;
     }
     return ;
 }
