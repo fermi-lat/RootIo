@@ -59,7 +59,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.111 2013/02/10 03:10:59 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootReaderAlg.cxx,v 1.112 2013/02/19 04:24:51 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -140,6 +140,9 @@ private:
     /// read CAL eventEnergy  data from ROOT and store on TDS
     StatusCode storeCalEventEnergyCol(CalRecon *calRecRoot);
     
+    /// read CalEventEnergyMap data from ROOT and store on TDS
+    StatusCode storeCalEventEnergyMap(CalRecon *calRecRoot);
+
     /// Reads ACD recon data from ROOT and puts data on the TDS
     StatusCode readAcdRecon();
 
@@ -1345,6 +1348,16 @@ StatusCode reconRootReaderAlg::readCalRecon() {
         sc = storeCalClusterMap(calRecRoot);
     }
     
+    SmartDataPtr<Event::CalEventEnergyMap> checkCalEventEnergyMapTds(eventSvc(), EventModel::CalRecon::CalEventEnergyMap);
+    if (checkCalEventEnergyMapTds) {
+        log << MSG::INFO << "CalEventEnergyMap data is already on the TDS" << endreq;
+     } else {
+         sc = storeCalEventEnergyMap(calRecRoot);
+     }
+    if (sc.isFailure()) {
+        log << MSG::INFO << "Failed to store CalEventEnergyMap on the TDS" << endreq;
+        return sc;
+    }
     
     SmartDataPtr<Event::CalMipTrackCol> checkCalMipTrackColTds(eventSvc(),EventModel::CalRecon::CalMipTrackCol);
     if (checkCalMipTrackColTds){
@@ -1539,17 +1552,78 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
     TIter calEventEnergyIter(calEventEnergyColRoot) ;
     CalEventEnergy * calEventEnergyRoot = 0 ;
     while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
-//    if ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
         Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
         RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
         calEventEnergyColTds->push_back(calEventEnergyTds) ;
-//        sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergy, calEventEnergyTds);
+
+        m_common.m_rootCalEventEnergyMap[calEventEnergyRoot] = calEventEnergyTds;
     }
     
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
     
     return sc;
 
+}
+
+StatusCode reconRootReaderAlg::storeCalEventEnergyMap(CalRecon *calRecRoot) 
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // First recover the pointer to the TMap
+    const TMap* calEventEnergyMapRoot = calRecRoot->getCalEventEnergyMap();
+
+    // Get a shiny new TDS version of the CalClusterMap
+    Event::CalEventEnergyMap *calEventEnergyMapTds = new Event::CalEventEnergyMap();
+
+    // Set up an iterator to go through the entries
+    TMapIter calEventEnergyMapIter(calEventEnergyMapRoot);
+
+    // As we iterate through the map, we'll be obtaining the "next" key
+    const TObject* nextKey = 0;
+
+    // Ok, now iterate through the input map
+    while((nextKey = calEventEnergyMapIter.Next()) != 0)
+    {
+        // Recover the key cluster
+        const CalCluster* clusterRoot = (CalCluster*)nextKey;
+
+        // Recover the TDS version of the cluster
+        if (m_common.m_rootCalClusterMap.find(clusterRoot) != m_common.m_rootCalClusterMap.end())
+        {
+            Event::CalCluster* clusterTds = const_cast<Event::CalCluster*>(m_common.m_rootCalClusterMap[clusterRoot]);
+
+            // Recover the TObjArray which will hold the CalEventEnergy objects
+            TObjArray* eventEnergyVecRoot = (TObjArray*)calEventEnergyMapRoot->GetValue(nextKey);
+
+            // Make sure something is there
+            if (eventEnergyVecRoot->GetEntries() > 0)
+            {
+                // Get an iterator over this array
+                TObjArrayIter calEventEnergyVecIter(eventEnergyVecRoot);
+
+                CalEventEnergy* eventEnergyRoot = 0;
+
+                while ((eventEnergyRoot = (CalEventEnergy*)calEventEnergyVecIter.Next())!=0) 
+                {        
+                    // Check to be sure there is an entry in the root to TDS map
+                    if (m_common.m_rootCalEventEnergyMap.find(eventEnergyRoot) != m_common.m_rootCalEventEnergyMap.end()) 
+                    {
+                        // Recover the pointer to the cluster in question
+                        Event::CalEventEnergy* eventEnergyTds 
+                            = const_cast<Event::CalEventEnergy*>(m_common.m_rootCalEventEnergyMap[eventEnergyRoot]);
+                
+                        // Add this to the CalClusterMap
+                        (*calEventEnergyMapTds)[clusterTds].push_back(eventEnergyTds) ;
+                    }
+                }
+            }
+        }
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyMap, calEventEnergyMapTds);
+    
+    return sc;
 }
 
 
