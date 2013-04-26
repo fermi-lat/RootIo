@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+User: usher  Fri Apr 26 14:27:49 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-lp43, operation: add
 Package: RootIo
