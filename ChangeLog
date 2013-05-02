@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu May  2 04:39:41 PDT 2013
+RootIo/src
+
+Modified Files:
+      Tag: GlastRelease-20-08-12-br01
+	RootIoSvc.cxx RootOutputDesc.cxx RootOutputDesc.h 
+Log Message:
+add in LZMA option
+    *
+------------------------------------------------------------
 User: heather  Thu May  2 04:39:40 PDT 2013
 RootIo/doc
 
