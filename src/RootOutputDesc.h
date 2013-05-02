@@ -3,7 +3,7 @@
 * @brief definition of the class RootOutputDesc
 *        This class is used to set up and handle the actual root output files
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.4 2008/01/28 13:52:31 chamont Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.h,v 1.5 2012/05/31 16:58:50 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -13,6 +13,7 @@
 //#include "GaudiKernel/Property.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "Compression.h"
 #include <string>
 
 class RootOutputDesc
@@ -21,10 +22,11 @@ class RootOutputDesc
   
     RootOutputDesc  ( const std::string& outputFile, 
        const std::string & treeName, 
-	   int compressionLevel, const std::string& treeTitle, bool verbose=false ) ;
+	   int compressionLevel, const std::string& treeTitle, bool verbose=false,
+       int compressionAlg = ROOT::kZLIB ) ;
     ~RootOutputDesc() ; 
 
-    bool openFile();
+    bool openFile(int compressionAlg=ROOT::kZLIB);
 
     bool closeFile();
 
