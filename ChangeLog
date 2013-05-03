@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Fri May  3 12:42:38 PDT 2013
+RootIo/src
+
+Modified Files:
+	commonData.cxx commonData.h reconRootReaderAlg.cxx 
+	reconRootWriterAlg.cxx 
+Log Message:
+Add CalEventEnergyMap to commonData, include updates for option on do input/output of "compressed TkrTree" data
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-25-07-02-gr01, operation: add
 Package: RootIo
