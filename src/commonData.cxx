@@ -18,6 +18,7 @@ std::map<const Event::TkrTree*, TRef>                     commonData::m_tkrTreeM
 std::map<const Event::TkrFilterParams*, TRef>             commonData::m_tkrFilterParamsMap;
 std::map<const Event::CalCluster*, TRef>                  commonData::m_calClusterMap;
 std::map<const Event::CalXtalRecData*, TRef>              commonData::m_calXtalRecDataMap;
+std::map<const Event::CalEventEnergy*, TRef>              commonData::m_calEventEnergyMap;
 
 std::map<const TObject*, const Event::McParticle*>        commonData::m_rootMcPartMap;
 std::map<const TObject*, const Event::McIntegratingHit*>  commonData::m_rootMcIntHitMap;
@@ -36,6 +37,7 @@ std::map<const TObject*, const Event::TkrTree*>           commonData::m_rootTkrT
 std::map<const TObject*, const Event::TkrFilterParams*>   commonData::m_rootTkrFilterParamsMap;
 std::map<const TObject*, const Event::CalCluster*>        commonData::m_rootCalClusterMap;
 std::map<const TObject*, const Event::CalXtalRecData*>    commonData::m_rootCalXtalRecDataMap;
+std::map<const TObject*, const Event::CalEventEnergy*>    commonData::m_rootCalEventEnergyMap;
 
 McEvent* commonData::m_mcEvt;
 DigiEvent* commonData::m_digiEvt;
@@ -57,6 +59,7 @@ void commonData::clear() {
     m_tkrVecPointsLinkMap.clear();
     m_calClusterMap.clear();
     m_calXtalRecDataMap.clear();
+    m_calEventEnergyMap.clear();
 
     m_rootMcPartMap.clear(); 
     m_rootMcIntHitMap.clear();
@@ -73,4 +76,5 @@ void commonData::clear() {
     m_rootTkrVecPointMap.clear();
     m_rootCalClusterMap.clear();
     m_rootCalXtalRecDataMap.clear();
+    m_rootCalEventEnergyMap.clear();
 }

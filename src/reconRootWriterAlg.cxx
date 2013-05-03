@@ -95,10 +95,12 @@ private:
     void fillTkrEventParams(TkrRecon* recon, const Event::TkrEventParams* eventParamsTds);
     void fillTkrFilterParams(TkrRecon* recon, const Event::TkrFilterParamsCol* filterParamsTds);
     void fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* treeTds);
+    void fillTkrTreeCompressed(TkrRecon* recon, const Event::TkrTreeCol* treeTds);
     void fillVertices( TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
     
     // Special recursive method for filling TkrVecNodes (since they are THE Tree!)
-    TkrVecNode* convertTkrVecNode(TkrRecon* recon, const Event::TkrVecNode* vecNode);
+    TkrVecNode*           convertTkrVecNode(TkrRecon* recon, const Event::TkrVecNode* vecNode);
+    TkrVecNodeCompressed* convertTkrVecNodeCompressed(TkrRecon* recon, const Event::TkrVecNode* vecNode);
 
     // Note that the TkrFilterParams not only hold Hough Filter results (in the TkrFilterParamsCol)
     // but are also the container of the Tree axis parameters. Hence we need a separate conversion
@@ -165,8 +167,10 @@ private:
 
     // writeTruncationInfo flag, just to be safe
     bool m_writeTruncationInfo;
-    /// Should we write the full Tree Based collection to PDS?
+    /// Should we write the Tree Based collection to PDS?
     bool m_writeTreeBasedInfo;
+    /// If above is true, should we write out the full detail or summary?
+    bool m_writeFullTreeOutput;
 };
 
 
@@ -188,7 +192,8 @@ Algorithm(name, pSvcLocator)
 
     declareProperty("writeTruncationInfo", m_writeTruncationInfo=true);
 
-    declareProperty("writeTreeBasedInfo", m_writeTreeBasedInfo=true);
+    declareProperty("writeTreeBasedInfo",  m_writeTreeBasedInfo=true);
+    declareProperty("WriteFullTreeOutput", m_writeFullTreeOutput=true);
     
     // ADDED FOR THE FILE HEADERS DEMO
     m_headersTool = 0 ;
@@ -369,23 +374,35 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
     // If requested (and its there), write out the full Tree Based info tree
     if (m_writeTreeBasedInfo)
     {
-        // Recover the collection of TkrVecPoints
-        SmartDataPtr<Event::TkrVecPointCol> vecPointCol(eventSvc(), EventModel::TkrRecon::TkrVecPointCol);
+        // Write out the full output of all the Tree Based Tracking
+        if (m_writeFullTreeOutput)
+        {
+            // Recover the collection of TkrVecPoints
+            SmartDataPtr<Event::TkrVecPointCol> vecPointCol(eventSvc(), EventModel::TkrRecon::TkrVecPointCol);
 
-        // Fill away
-        if (vecPointCol) fillTkrVecPoints(recon, vecPointCol);
+            // Fill away
+            if (vecPointCol) fillTkrVecPoints(recon, vecPointCol);
 
-        // Recover the collection of TkrVecPointsLinks
-        SmartDataPtr<Event::TkrVecPointsLinkCol> vecPointsLinkCol(eventSvc(), EventModel::TkrRecon::TkrVecPointsLinkCol);
+            // Recover the collection of TkrVecPointsLinks
+            SmartDataPtr<Event::TkrVecPointsLinkCol> vecPointsLinkCol(eventSvc(), EventModel::TkrRecon::TkrVecPointsLinkCol);
 
-        // Fill away
-        if (vecPointsLinkCol) fillTkrVecPointsLinks(recon, vecPointsLinkCol);
+            // Fill away
+            if (vecPointsLinkCol) fillTkrVecPointsLinks(recon, vecPointsLinkCol);
 
-        // Next up is to fill the TkrVecNodes... note that these are filled while we also handle the TkrTrees
-        // so here we simply look up the TkrTrees and proceed that way
-        SmartDataPtr<Event::TkrTreeCol> treeColTds(eventSvc(), EventModel::TkrRecon::TkrTreeCol);
+            // Next up is to fill the TkrVecNodes... note that these are filled while we also handle the TkrTrees
+            // so here we simply look up the TkrTrees and proceed that way
+            SmartDataPtr<Event::TkrTreeCol> treeColTds(eventSvc(), EventModel::TkrRecon::TkrTreeCol);
 
-        if (treeColTds) fillTkrTrees(recon, treeColTds);
+            if (treeColTds) fillTkrTrees(recon, treeColTds);
+        }
+        // Otherwise we are trying to write the compressed version
+        else
+        {
+            // Find the tree collection...
+            SmartDataPtr<Event::TkrTreeCol> treeColTds(eventSvc(), EventModel::TkrRecon::TkrTreeCol);
+
+            if (treeColTds) fillTkrTreeCompressed(recon, treeColTds);
+        }
     }
 
     // Future Diagnostics will plug in here
@@ -782,6 +799,108 @@ TkrVecNode* reconRootWriterAlg::convertTkrVecNode(TkrRecon* recon, const Event::
     return vecNodeRoot;
 }
 
+TkrVecNodeCompressed* reconRootWriterAlg::convertTkrVecNodeCompressed(TkrRecon* recon, const Event::TkrVecNode* vecNodeTds)
+{
+    TkrVecNodeCompressed* vecNodeRoot = 0;
+
+    // If an input node then something to do! 
+    if (vecNodeTds)
+    {
+        // Create the root equivalent node to match the TDS version
+        vecNodeRoot = new TkrVecNodeCompressed();
+
+        // Find the reference to the parent node, if it exists!
+        TkrVecNodeCompressed* parentNodeRoot = 0;
+
+        if (vecNodeTds->getParentNode())
+        {
+            TRef parentNodeRef  = m_common.m_tkrVecNodeMap[vecNodeTds->getParentNode()];
+
+            parentNodeRoot = (TkrVecNodeCompressed*) parentNodeRef.GetObject();
+        }
+
+        // Things are a bit different for the associated link. In compressed mode we are going to
+        // store the pointers to the clusters associated to the 3D points that make the endpoints of the link.
+        // And various status words...
+        TkrCluster* topPointXClusterRoot = 0;
+        TkrCluster* topPointYClusterRoot = 0;
+        UInt_t      topPointStatus       = 0;
+        TkrCluster* botPointXClusterRoot = 0;
+        TkrCluster* botPointYClusterRoot = 0;
+        UInt_t      botPointStatus       = 0;
+        UInt_t      linkStatus           = 0;
+
+        if (vecNodeTds->getAssociatedLink())
+        {
+            const Event::TkrVecPointsLink* linkTds             = vecNodeTds->getAssociatedLink();
+            const Event::TkrVecPoint*      topPointTds         = linkTds->getFirstVecPoint();
+            const Event::TkrCluster*       topPointXClusterTds = topPointTds->getXCluster();
+            const Event::TkrCluster*       topPointYClusterTds = topPointTds->getYCluster();
+            const Event::TkrVecPoint*      botPointTds         = linkTds->getSecondVecPoint();
+            const Event::TkrCluster*       botPointXClusterTds = botPointTds->getXCluster();
+            const Event::TkrCluster*       botPointYClusterTds = botPointTds->getYCluster();
+
+            // recover the status words
+            topPointStatus = const_cast<Event::TkrVecPoint*>(topPointTds)->getStatusWord();
+            botPointStatus = const_cast<Event::TkrVecPoint*>(botPointTds)->getStatusWord();
+            linkStatus     = linkTds->getStatusBits();
+
+            // Now recover the pointers to the root versions of the clusters
+            TRef topXClusterRef = m_common.m_tkrClusterMap[topPointXClusterTds];
+            TRef topYClusterRef = m_common.m_tkrClusterMap[topPointYClusterTds];
+            TRef botXClusterRef = m_common.m_tkrClusterMap[botPointXClusterTds];
+            TRef botYClusterRef = m_common.m_tkrClusterMap[botPointYClusterTds];
+
+            topPointXClusterRoot = (TkrCluster*) topXClusterRef.GetObject();
+            topPointYClusterRoot = (TkrCluster*) topYClusterRef.GetObject();
+            botPointXClusterRoot = (TkrCluster*) botXClusterRef.GetObject();
+            botPointYClusterRoot = (TkrCluster*) botYClusterRef.GetObject();
+        }
+
+        // Now initialize the root TkrVecNode with the values in the TDS version
+        vecNodeRoot->initializeInfo(parentNodeRoot,
+                                    vecNodeTds->getStatusBits(),
+                                    vecNodeTds->getRmsAngleSum(),
+                                    vecNodeTds->getNumAnglesInSum(),
+                                    vecNodeTds->getNumLeaves(),
+                                    vecNodeTds->getNumBranches(),
+                                    vecNodeTds->getDepth(),
+                                    vecNodeTds->getBestNumBiLayers(),
+                                    vecNodeTds->getBestRmsAngle());
+
+        // Initialize the cluster/status word info
+        vecNodeRoot->initializeLinkInfo(topPointXClusterRoot,
+                                        topPointYClusterRoot,
+                                        topPointStatus,
+                                        botPointXClusterRoot,
+                                        botPointYClusterRoot,
+                                        botPointStatus,
+                                        linkStatus);
+
+        // Add this node to the map of known nodes
+        TRef ref = vecNodeRoot;
+        m_common.m_tkrVecNodeMap[vecNodeTds] = ref;
+
+        // And add to the recon object
+        recon->addTkrVecNodeCompressed(vecNodeRoot);
+
+        // Loop over daughter nodes to set them
+        for(Event::TkrVecNodeSet::const_iterator nodeItr = vecNodeTds->begin(); nodeItr != vecNodeTds->end(); nodeItr++)
+        {
+            // Recover the daughter node
+            Event::TkrVecNode* daughterNodeTds = *nodeItr;
+
+            // Use this to get a root daughter node
+            TkrVecNodeCompressed* daughterNodeRoot = convertTkrVecNodeCompressed(recon, daughterNodeTds);
+
+            // If we return with something then add to our daughter collection
+            if (daughterNodeRoot) vecNodeRoot->Add(daughterNodeRoot);
+        }
+    }
+
+    return vecNodeRoot;
+}
+
 void reconRootWriterAlg::fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* treeColTds)
 {
     // Purpose and Method:  This takes the TkrTree collection from the TDS,
@@ -852,6 +971,81 @@ void reconRootWriterAlg::fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* 
 
         // Ok, now add the TkrVecPoint to the right collection!
         recon->addTkrTree(treeRoot);
+    }
+
+    return;
+}
+
+void reconRootWriterAlg::fillTkrTreeCompressed(TkrRecon* recon, const Event::TkrTreeCol* treeColTds)
+{
+    // Purpose and Method:  This takes the TkrTree collection from the TDS,
+    //                      creates root equivalents and stores them in the world of root
+
+    // Iterate over the input TkrTree collection in the TDS
+    for(Event::TkrTreeCol::const_iterator treeItr  = treeColTds->begin(); 
+                                          treeItr != treeColTds->end(); 
+                                          treeItr++)
+    {
+        // Recover pointer to the TkrVecPoint object in TDS
+        Event::TkrTree* treeTds  = *treeItr;
+
+        // Create the root equivalent object
+        TkrTreeCompressed* treeRoot = new TkrTreeCompressed();
+
+        // Before anything else, convert all the TkrVecNodes comprising this Tree
+        TkrVecNodeCompressed* headNodeRoot = convertTkrVecNodeCompressed(recon, treeTds->getHeadNode());
+
+        // Once the above is done, then we can look up references to the best/second branch nodes
+        TkrVecNodeCompressed* bestLeafNodeRoot   = 0;
+        TkrVecNodeCompressed* secondLeafNodeRoot = 0;
+
+        if (treeTds->getBestLeaf())
+        {
+            TRef bestLeafNodeRef = m_common.m_tkrVecNodeMap[treeTds->getBestLeaf()];
+
+            bestLeafNodeRoot = (TkrVecNodeCompressed*) bestLeafNodeRef.GetObject();
+        }
+
+        if (treeTds->getSecondLeaf())
+        {
+            TRef secondLeafNodeRef = m_common.m_tkrVecNodeMap[treeTds->getSecondLeaf()];
+
+            secondLeafNodeRoot = (TkrVecNodeCompressed*) secondLeafNodeRef.GetObject();
+        }
+
+        // Don't forget to do the same for the tracks!
+        TRef trackRootRef = m_common.m_tkrTrackMap[treeTds->getBestTrack()];
+
+        TkrTrack* bestTrack   = (TkrTrack*) trackRootRef.GetObject();
+        TkrTrack* secondTrack = 0;
+
+        if (treeTds->size() > 1)
+        {
+            trackRootRef = m_common.m_tkrTrackMap[treeTds->back()];
+            secondTrack  = (TkrTrack*) trackRootRef.GetObject();
+        }
+
+        // Get the "filter params" (Tree Axis information)
+        TkrFilterParams* filterParamsRoot = convertTkrFilterParams(treeTds->getAxisParams());
+
+        // Initialize the root TkrVecPoint
+        treeRoot->initializeInfo(headNodeRoot, 
+                                 bestLeafNodeRoot, 
+                                 secondLeafNodeRoot, 
+                                 filterParamsRoot,
+                                 treeTds->getBestBranchAngleToAxis(),
+                                 treeTds->getAxisSeededAngleToAxis() );
+
+        // Add the tracks
+        treeRoot->Add(bestTrack);
+        if (secondTrack) treeRoot->Add(secondTrack);
+
+        // Keep relation between Event and Root TkrVecPoints
+        TRef ref = treeRoot;
+        m_common.m_tkrTreeMap[treeTds] = ref;
+
+        // Ok, now add the TkrVecPoint to the right collection!
+        recon->addTkrTreeCompressed(treeRoot);
     }
 
     return;
