@@ -28,6 +28,7 @@
 
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
+#include "Event/Recon/CalRecon/CalEventEnergy.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -46,7 +47,7 @@
 * Monte Carlo, Digitization, and Reconstruction data.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/commonData.h,v 1.10 2010/01/25 17:31:55 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/commonData.h,v 1.11 2013/02/05 15:52:28 usher Exp $
 */
 
 class commonData 
@@ -70,17 +71,18 @@ public:
     static std::map<const Event::CalDigi*, TRef> m_calDigiMap;
     
     /// Create a set of maps between Recon data in TDS and TRefs in ROOT
-    static std::map<const Event::TkrCluster*,     TRef> m_tkrClusterMap;
-    static std::map<const Event::TkrTrack*,       TRef> m_tkrTrackMap;
-    static std::map<const Event::TkrVertex*,      TRef> m_tkrVertexMap;
+    static std::map<const Event::TkrCluster*,       TRef> m_tkrClusterMap;
+    static std::map<const Event::TkrTrack*,         TRef> m_tkrTrackMap;
+    static std::map<const Event::TkrVertex*,        TRef> m_tkrVertexMap;
     static std::map<const Event::TkrVecPoint*,      TRef> m_tkrVecPointMap;
     static std::map<const Event::TkrVecPointsLink*, TRef> m_tkrVecPointsLinkMap;
     static std::map<const Event::TkrVecNode*,       TRef> m_tkrVecNodeMap;
     static std::map<const Event::TkrTree*,          TRef> m_tkrTreeMap;
     static std::map<const Event::TkrFilterParams*,  TRef> m_tkrFilterParamsMap;
 
-    static std::map<const Event::CalCluster*,     TRef> m_calClusterMap;
-    static std::map<const Event::CalXtalRecData*, TRef> m_calXtalRecDataMap;
+    static std::map<const Event::CalCluster*,       TRef> m_calClusterMap;
+    static std::map<const Event::CalXtalRecData*,   TRef> m_calXtalRecDataMap;
+    static std::map<const Event::CalEventEnergy*,   TRef> m_calEventEnergyMap;
 
     /// Create a set of maps between ROOT MC objects and the TDS MC data
     static std::map<const TObject*, const Event::McParticle*>        m_rootMcPartMap;
@@ -105,6 +107,7 @@ public:
 
     static std::map<const TObject*, const Event::CalCluster*>       m_rootCalClusterMap;
     static std::map<const TObject*, const Event::CalXtalRecData*>   m_rootCalXtalRecDataMap;
+    static std::map<const TObject*, const Event::CalEventEnergy*>   m_rootCalEventEnergyMap;
 
     /// Provide access to the ROOT event pointers
     static McEvent *m_mcEvt;
