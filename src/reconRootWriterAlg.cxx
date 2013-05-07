@@ -1604,14 +1604,14 @@ StatusCode reconRootWriterAlg::writeAcdRecon()
     if (acdRec)
     {
         SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
-        if (!acdRecTds) RootPersistence::convert(*acdRecTds,*acdRec);
+        if (acdRecTds) RootPersistence::convert(*acdRecTds,*acdRec);
     }
 
     AcdReconV2* acdRecV2 = m_reconEvt->getAcdReconV2();
     if (acdRecV2)
     {
         SmartDataPtr<Event::AcdReconV2> acdRecTdsV2(eventSvc(), EventModel::AcdReconV2::Event);
-        if (!acdRecTdsV2) RootPersistence::convert(*acdRecTdsV2,*acdRecV2) ;
+        if (acdRecTdsV2) RootPersistence::convert(*acdRecTdsV2,*acdRecV2) ;
     }
 
     return StatusCode::SUCCESS;
