@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue May  7 15:30:23 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Bug fix to insure ACD v2 output when no v1 in TDS
+    *
+------------------------------------------------------------
 User: usher  Fri May  3 12:42:38 PDT 2013
 RootIo/src
 
