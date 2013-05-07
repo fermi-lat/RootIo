@@ -1598,17 +1598,21 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
 
 StatusCode reconRootWriterAlg::writeAcdRecon() 
 {
-    AcdRecon* acdRec = m_reconEvt->getAcdRecon();   
-    if (!acdRec) return StatusCode::FAILURE;
-    SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
-    if (!acdRecTds) return StatusCode::SUCCESS;
-    RootPersistence::convert(*acdRecTds,*acdRec) ;
+    AcdRecon* acdRec = m_reconEvt->getAcdRecon();
+
+    // Standard ACD Recon
+    if (acdRec)
+    {
+        SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
+        if (!acdRecTds) RootPersistence::convert(*acdRecTds,*acdRec);
+    }
 
     AcdReconV2* acdRecV2 = m_reconEvt->getAcdReconV2();
-    if (!acdRecV2) return StatusCode::FAILURE;
-    SmartDataPtr<Event::AcdReconV2> acdRecTdsV2(eventSvc(), EventModel::AcdReconV2::Event);
-    if (!acdRecTdsV2) return StatusCode::SUCCESS;
-    RootPersistence::convert(*acdRecTdsV2,*acdRecV2) ;
+    if (acdRecV2)
+    {
+        SmartDataPtr<Event::AcdReconV2> acdRecTdsV2(eventSvc(), EventModel::AcdReconV2::Event);
+        if (!acdRecTdsV2) RootPersistence::convert(*acdRecTdsV2,*acdRecV2) ;
+    }
 
     return StatusCode::SUCCESS;
 }
