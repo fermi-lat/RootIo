@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed May  8 10:21:14 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Fixing the output of the CalEventEnergyMap and CalEventEnergy objects
+    *
+------------------------------------------------------------
 User: usher  Tue May  7 15:35:15 PDT 2013
 RootIo/src
 
