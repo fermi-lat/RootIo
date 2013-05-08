@@ -1747,7 +1747,7 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
+//    const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
 //    if (calEventEnergyColRoot->GetEntries()>1) {
 //        // this should not happen !!
 //        log<<MSG::ERROR ;
@@ -1757,18 +1757,18 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
 //    }
         
     
-    Event::CalEventEnergyCol * calEventEnergyColTds = new Event::CalEventEnergyCol();
-    TIter calEventEnergyIter(calEventEnergyColRoot) ;
-    CalEventEnergy * calEventEnergyRoot = 0 ;
-    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
-        Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
-        RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
-        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+//    Event::CalEventEnergyCol * calEventEnergyColTds = new Event::CalEventEnergyCol();
+//    TIter calEventEnergyIter(calEventEnergyColRoot) ;
+//    CalEventEnergy * calEventEnergyRoot = 0 ;
+//    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+//        Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
+//        RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
+//        calEventEnergyColTds->push_back(calEventEnergyTds) ;
 
-        m_common.m_rootCalEventEnergyMap[calEventEnergyRoot] = calEventEnergyTds;
-    }
+//        m_common.m_rootCalEventEnergyMap[calEventEnergyRoot] = calEventEnergyTds;
+//    }
     
-    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
+//    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
     
     return sc;
 
@@ -1811,20 +1811,15 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyMap(CalRecon *calRecRoot)
                 // Get an iterator over this array
                 TObjArrayIter calEventEnergyVecIter(eventEnergyVecRoot);
 
-                CalEventEnergy* eventEnergyRoot = 0;
+                CalEventEnergy* calEventEnergyRoot = 0;
 
-                while ((eventEnergyRoot = (CalEventEnergy*)calEventEnergyVecIter.Next())!=0) 
+                while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyVecIter.Next())!=0) 
                 {        
-                    // Check to be sure there is an entry in the root to TDS map
-                    if (m_common.m_rootCalEventEnergyMap.find(eventEnergyRoot) != m_common.m_rootCalEventEnergyMap.end()) 
-                    {
-                        // Recover the pointer to the cluster in question
-                        Event::CalEventEnergy* eventEnergyTds 
-                            = const_cast<Event::CalEventEnergy*>(m_common.m_rootCalEventEnergyMap[eventEnergyRoot]);
-                
-                        // Add this to the CalClusterMap
-                        (*calEventEnergyMapTds)[clusterTds].push_back(eventEnergyTds) ;
-                    }
+                    Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
+                    RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
+
+                    // Add this to the CalClusterMap
+                    (*calEventEnergyMapTds)[clusterTds].push_back(calEventEnergyTds) ;
                 }
             }
         }
