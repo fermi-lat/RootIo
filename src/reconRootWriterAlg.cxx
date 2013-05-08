@@ -1410,17 +1410,17 @@ void reconRootWriterAlg::fillCalEventEnergyMap(CalRecon* calRec, Event::CalEvent
                                                           energyVecTdsItr++)
             {
                 // Recover pointer to the actual Cal Cluster
-                const Event::CalEventEnergy* energyTds = *energyVecTdsItr;
+                const Event::CalEventEnergy* eventEnergyTds = *energyVecTdsItr;
 
-                // Get a pointer to a root version
-                if (m_common.m_calClusterMap.find(clusterTds) != m_common.m_calClusterMap.end()) 
-                {
-                    TRef            energyRootRef  = m_common.m_calEventEnergyMap[energyTds];
-                    CalEventEnergy* energyRoot     = (CalEventEnergy*)energyRootRef.GetObject();
+                CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
+                RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
+
+                // Keep the relationship between the TDS and root objects
+                TRef ref = eventEnergyRoot;
+                m_common.m_calEventEnergyMap[eventEnergyTds] = ref;
 
                 // Store in this key's TObjArray
-                energyVecRoot->Add(energyRoot);
-                }
+                energyVecRoot->Add(eventEnergyRoot);
             }
 
             // Signal that we are not the owner of these values (for cleanup)
@@ -1587,7 +1587,7 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
         Event::CalEventEnergy *eventEnergyTds = (*calEventEnergyCol)[iEnergy] ;
         CalEventEnergy * eventEnergyRoot = new CalEventEnergy;
         RootPersistence::convert(*eventEnergyTds,*eventEnergyRoot) ;
-        calRec->addCalEventEnergy(eventEnergyRoot) ;
+//        calRec->addCalEventEnergy(eventEnergyRoot) ;
 
         // Keep the relationship between the TDS and root objects
         TRef ref = eventEnergyRoot;
