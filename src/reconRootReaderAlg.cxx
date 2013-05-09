@@ -17,6 +17,7 @@
 #include "Event/Recon/TkrRecon/TkrTree.h"
 #include "Event/Recon/TkrRecon/TkrFilterParams.h"
 #include "Event/Recon/TkrRecon/TkrEventParams.h"
+#include "Event/Recon/TkrRecon/TkrVecPointInfo.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalClusterMap.h"   
 #include "Event/Recon/CalRecon/CalXtalRecData.h"  
@@ -103,6 +104,7 @@ private:
     StatusCode storeTkrTreeCol(TkrRecon* tkrRecRoot);
     StatusCode storeTkrFilterParamsCol(TkrRecon* tkrRecoRoot);
     StatusCode storeTkrEventParams(TkrRecon* tkrRecRoot);
+    StatusCode storeTkrVecPointInfo(TkrRecon* tkrRecRoot);
 
     /// convert a ROOT TkrFilterParams object to a TDS Event::TkrFilterParams object
     Event::TkrFilterParams* convertTkrFilterParams(const TkrFilterParams* filterParamsRoot);
@@ -532,7 +534,6 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
     }
     
     //check to see if TKR TruncationInfo exists on the TDS already
-
     SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(),EventModel::TkrRecon::TkrTruncationInfo);
     if(truncationInfoTds) {
         log << MSG::INFO << "TkrTruncationInfo is already on TDS" << endreq;
@@ -540,6 +541,18 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
       sc = storeTkrTruncationInfo(tkrRecRoot);
       if (sc.isFailure()) {
         log << MSG::ERROR << "failed to store TkrtruncationInfo on the TDS" << endreq;
+        return sc;
+      }
+    }
+    
+    //check to see if TkrVecPointInfo exists on the TDS already
+    SmartDataPtr<Event::TkrVecPointInfo> tkrVecPointInfoTds(eventSvc(),EventModel::TkrRecon::TkrVecPointInfo);
+    if(tkrVecPointInfoTds) {
+        log << MSG::INFO << "TkrVecPointInfo is already on TDS" << endreq;
+    } else {
+      sc = storeTkrVecPointInfo(tkrRecRoot);
+      if (sc.isFailure()) {
+        log << MSG::ERROR << "failed to store TkrVecPointInfo on the TDS" << endreq;
         return sc;
       }
     }
@@ -716,6 +729,33 @@ StatusCode reconRootReaderAlg::rebuildTkrVecPointCol(Event::TkrVecPointCol* vecP
                 }
             }
         }
+    }
+
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeTkrVecPointInfo(TkrRecon* tkrRecRoot)
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // Create a new TkrVecPointInfo object
+    Event::TkrVecPointInfo* vecPointInfoTds = new Event::TkrVecPointInfo();
+
+    // Fill what we can
+    vecPointInfoTds->setMaxNumSkippedLayers(tkrRecRoot->getTkrVecPointInfo().getMaxNumLinkCombinations());
+    vecPointInfoTds->setNumTkrVecPoints(tkrRecRoot->getTkrVecPointInfo().getNumTkrVecPoints());
+    vecPointInfoTds->setNumBiLayersWVecPoints(tkrRecRoot->getTkrVecPointInfo().getNumBiLayersWVecPoints());
+    vecPointInfoTds->setMaxNumLinkCombinations(tkrRecRoot->getTkrVecPointInfo().getMaxNumLinkCombinations());
+
+    // Store on the TDS
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointInfo, vecPointInfoTds);
+    if (sc.isFailure()) {
+        
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TkrVecPointInfo in TDS";
+        log << endreq;
+        return StatusCode::FAILURE;
     }
 
     return sc;

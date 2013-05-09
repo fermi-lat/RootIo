@@ -13,6 +13,7 @@
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/TkrRecon/TkrFilterParams.h"
 #include "Event/Recon/TkrRecon/TkrEventParams.h"
+#include "Event/Recon/TkrRecon/TkrVecPointInfo.h"
 
 #include "Event/Recon/TreeClusterRelation.h"
 
@@ -97,6 +98,7 @@ private:
     void fillTkrTrees(TkrRecon* recon, const Event::TkrTreeCol* treeTds);
     void fillTkrTreeCompressed(TkrRecon* recon, const Event::TkrTreeCol* treeTds);
     void fillVertices( TkrRecon* recon, Event::TkrVertexCol*   verticesTds, Event::TkrTrackCol* tracksTds);
+    void fillTkrVecPointInfo( TkrRecon* recon, Event::TkrVecPointInfo* vecPointInfoTds);
     
     // Special recursive method for filling TkrVecNodes (since they are THE Tree!)
     TkrVecNode*           convertTkrVecNode(TkrRecon* recon, const Event::TkrVecNode* vecNode);
@@ -403,6 +405,10 @@ StatusCode reconRootWriterAlg::writeTkrRecon() {
 
             if (treeColTds) fillTkrTreeCompressed(recon, treeColTds);
         }
+
+        // Filling the vec point info will always be the same
+        SmartDataPtr<Event::TkrVecPointInfo> vecPointInfoTds(eventSvc(), EventModel::TkrRecon::TkrVecPointInfo);
+        if (vecPointInfoTds) fillTkrVecPointInfo(recon, vecPointInfoTds);
     }
 
     // Future Diagnostics will plug in here
@@ -590,6 +596,18 @@ void reconRootWriterAlg::fillTkrVecPoints(TkrRecon* recon, const Event::TkrVecPo
     
     return;
 }
+
+void reconRootWriterAlg::fillTkrVecPointInfo( TkrRecon* recon, Event::TkrVecPointInfo* vecPointInfoTds)
+{
+    // This is pretty straightforward, we are simply copying a few values from one place to another...
+    recon->getTkrVecPointInfo().inializeInfo(vecPointInfoTds->getMaxNumSkippedLayers(),
+                                             vecPointInfoTds->getNumTkrVecPoints(),
+                                             vecPointInfoTds->getNumBiLayersWVecPoints(),
+                                             vecPointInfoTds->getMaxNumLinkCombinations());
+
+    return;
+}
+
 
 void reconRootWriterAlg::fillTkrVecPointsLinks(TkrRecon* recon, const Event::TkrVecPointsLinkCol* vecPointsLinkColTds)
 {
