@@ -148,6 +148,11 @@ private:
     StatusCode readAcdRecon();
 
     StatusCode readAdfRecon();
+
+    /// The final stage is to handle any relations cross subsystem
+    StatusCode readCalTkrAcdRelations();
+    /// In particular the tree to cluster relations
+    StatusCode storeTreeClusterRelations(TkrRecon* tkrRecRoot);
     
     /// Closes the ROOT file
     void close();
@@ -338,6 +343,11 @@ StatusCode reconRootReaderAlg::execute()
     sc = readAdfRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load Adf Recon" << endreq;
+        return sc;
+    }
+    sc = readCalTkrAcdRelations();
+    if (sc.isFailure()) {
+        log << MSG::ERROR << "Failed to load Acd, Cal, Tkr relations" << endreq;
         return sc;
     }
     
@@ -780,19 +790,23 @@ StatusCode reconRootReaderAlg::storeTkrTreeCol(TkrRecon* tkrRecRoot)
             // Recover pointer to root version of Tree
             TkrTree* treeRoot = tkrRecRoot->getTkrTree(idx);
 
-            if (treeRoot != 0) treeTds = convertTkrTree(treeRoot, vecNodeQueue);
+            if (treeRoot != 0) 
+            {
+                treeTds = convertTkrTree(treeRoot, vecNodeQueue);
+
+                m_common.m_rootTkrTreeMap[treeRoot] = treeTds;
+            }
             else
             {
                 TkrTreeCompressed* treeRoot = tkrRecRoot->getTkrTreeCompressed(idx);
 
                 treeTds = convertTkrTree(treeRoot, vecNodeQueue);
+
+                m_common.m_rootTkrTreeMap[treeRoot] = treeTds;
             }
 
             // Finally! Store in the TDS object
             treeColTds->push_back(treeTds);
-
-            // And, of course, keep track of pointers between root and TDS
-            m_common.m_rootTkrTreeMap[treeRoot] = treeTds;
         }
 
         // Store in the Tree collection TDS
@@ -1835,28 +1849,6 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
     
-    const AcdRecon *acdRecRoot = m_reconEvt->getAcdRecon();
-    if (!acdRecRoot) {
-        
-        log << MSG::DEBUG;
-        if( log.isActive()) log.stream() << "No AcdRecon found in ROOT file";
-        log << endreq;
-        return StatusCode::SUCCESS;
-    }
-
-    Event::AcdRecon * acdRecTds = new Event::AcdRecon();    
-    RootPersistence::convert(*acdRecRoot,*acdRecTds) ;
-
-    sc = eventSvc()->registerObject(EventModel::AcdRecon::Event, acdRecTds);
-    if (sc.isFailure()) {
-        
-        log << MSG::DEBUG;
-        if( log.isActive()) log.stream() << "Failed to register AcdRecon";
-        log << endreq;
-        return StatusCode::FAILURE;
-    }
-    
-    
     const AcdReconV2 *acdRecRootV2 = m_reconEvt->getAcdReconV2();
     if (!acdRecRootV2) {
         
@@ -1904,6 +1896,96 @@ StatusCode reconRootReaderAlg::readAdfRecon()
     }
     
     return sc;    
+}
+
+StatusCode reconRootReaderAlg::readCalTkrAcdRelations()
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+
+    // The Tree to Cluster relations are stored in the TkrRecon branch
+    TkrRecon *tkrRecRoot = m_reconEvt->getTkrRecon();
+    if(!tkrRecRoot) return sc;
+
+    sc = storeTreeClusterRelations(tkrRecRoot);
+
+    return sc;
+}
+
+StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
+{
+    MsgStream log(msgSvc(), name());
+    StatusCode sc = StatusCode::SUCCESS;
+    
+    Event::TreeClusterRelationCol* relationTdsCol          = new Event::TreeClusterRelationCol();
+    Event::TreeToRelationMap*      treeToRelationTdsMap    = new Event::TreeToRelationMap();
+    Event::ClusterToRelationMap*   clusterToRelationTdsMap = new Event::ClusterToRelationMap();
+    
+    const TObjArray * relationRootCol = tkrRecRoot->getTreeClusterRelationCol();
+    TIter relationIter(relationRootCol);
+    TreeClusterRelation* relationRoot = 0;
+     
+    while ((relationRoot = (TreeClusterRelation*)relationIter.Next())!=0) 
+    {
+        // Recover the pointers to the root versions of the related objects
+        Event::TkrTree*    tree    = const_cast<Event::TkrTree*>(m_common.m_rootTkrTreeMap[relationRoot->getTree()]);
+        Event::CalCluster* cluster = const_cast<Event::CalCluster*>(m_common.m_rootCalClusterMap[relationRoot->getCluster()]);
+
+        // Create a new TDS version
+        Event::TreeClusterRelation* relationTds = new Event::TreeClusterRelation(tree, 
+                                                                                 cluster, 
+                                                                                 relationRoot->getTreeClusDoca(),
+                                                                                 relationRoot->getTreeClusCosAngle(),
+                                                                                 relationRoot->getTreeClusDistAtZ(),
+                                                                                 relationRoot->getClusEnergy() );
+
+        relationTdsCol->push_back(relationTds);
+        (*treeToRelationTdsMap)[tree].push_back(relationTds);
+        (*clusterToRelationTdsMap)[cluster].push_back(relationTds);
+    }
+    
+    // First we need to follow through on some craziness to create our subdirectory...
+    DataObject* pnode =0;
+    
+    if( (eventSvc()->retrieveObject(EventModel::Recon::Event, pnode)).isFailure() ) 
+    {
+        sc = eventSvc()->registerObject(EventModel::Recon::Event, new DataObject);
+        if( sc.isFailure() ) 
+        {
+            log << MSG::ERROR << "Could not create Recon directory in storeTreeClusterRelations" 
+                << endreq;
+            return sc;
+        }
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::Recon::TreeClusterRelationCol, relationTdsCol);
+    if (sc.isFailure()) 
+    {
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TreeClusterRelationCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::Recon::TreeToRelationMap, treeToRelationTdsMap);
+    if (sc.isFailure()) 
+    {
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TreeClusterRelationCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    sc = eventSvc()->registerObject(EventModel::Recon::ClusterToRelationMap, clusterToRelationTdsMap);
+    if (sc.isFailure()) 
+    {
+        log << MSG::DEBUG;
+        if( log.isActive()) log.stream() << "Failed to register TreeClusterRelationCol";
+        log << endreq;
+        return StatusCode::FAILURE;
+    }
+
+    return sc;
 }
 
 

@@ -314,7 +314,7 @@ StatusCode reconRootWriterAlg::writeReconEvent() {
     if( log.isActive())evtTds->fillStream(log.stream());
     log << endreq;
     
-    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdRecon, new AcdReconV2);
+    m_reconEvt->initialize(evtId, runId, new TkrRecon, new CalRecon, new AcdReconV2);
 
     // For simulated data - this may not exist on the TDS and that is ok
     // no need to fail for that
@@ -1233,10 +1233,10 @@ void reconRootWriterAlg::fillTreeClusterRelations(const Event::TreeClusterRelati
             // Initialize the root object
             treeClusterRoot->initializeInfo(treeRoot,
                                             clusterRoot,
-                                            treeClusterRoot->getTreeClusDoca(),
-                                            treeClusterRoot->getTreeClusCosAngle(),
-                                            treeClusterRoot->getTreeClusDistAtZ(),
-                                            treeClusterRoot->getClusEnergy() );
+                                            treeClusterTds->getTreeClusDoca(),
+                                            treeClusterTds->getTreeClusCosAngle(),
+                                            treeClusterTds->getTreeClusDistAtZ(),
+                                            treeClusterTds->getClusEnergy() );
 
             // Ok, add to our collection
             recon->addTreeClusterRelation(treeClusterRoot);
@@ -1598,15 +1598,6 @@ void reconRootWriterAlg::fillCalEventEnergy(CalRecon *calRec, Event::CalEventEne
 
 StatusCode reconRootWriterAlg::writeAcdRecon() 
 {
-    AcdRecon* acdRec = m_reconEvt->getAcdRecon();
-
-    // Standard ACD Recon
-    if (acdRec)
-    {
-        SmartDataPtr<Event::AcdRecon> acdRecTds(eventSvc(), EventModel::AcdRecon::Event);  
-        if (acdRecTds) RootPersistence::convert(*acdRecTds,*acdRec);
-    }
-
     AcdReconV2* acdRecV2 = m_reconEvt->getAcdReconV2();
     if (acdRecV2)
     {
