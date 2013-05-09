@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu May  9 11:16:44 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+Input/Output of the TkrVecPointInfo object
+    *
+------------------------------------------------------------
 User: usher  Wed May  8 18:26:53 PDT 2013
 RootIo/src
 
