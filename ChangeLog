@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri May 17 06:47:43 PDT 2013
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx RootOutputDesc.cxx RootOutputDesc.h 
+Log Message:
+add in LZMA compression
+    *
+------------------------------------------------------------
+User: heather  Fri May 17 06:47:43 PDT 2013
 RootIo/doc
 
 Modified Files:
