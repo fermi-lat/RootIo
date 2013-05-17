@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: heather  Fri May 17 06:47:42 PDT 2013
-RootIo
-
-Modified Files:
-	SConscript 
-Log Message:
-add in LZMA compression
-    *
-------------------------------------------------------------
 TAG
 Tag name: RootIo-26-00-00, operation: add
 Package: RootIo
