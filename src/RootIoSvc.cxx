@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.68 2012/05/31 16:58:50 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.69.2.1 2013/05/02 11:39:41 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -127,7 +127,7 @@ class RootIoSvc :
        const std::string&         branch,
        int                        status );
 
-
+ 
     virtual StatusCode closeInput(const std::string& type);
        
     virtual TObject * getNextEvent( const std::string & type, long long inputIndex) ;
@@ -212,6 +212,8 @@ class RootIoSvc :
     bool m_autoFlush;
     int m_readRetries;
     bool m_terminateOnReadError;
+    std::string m_compressAlg;
+    int m_compressionAlgFlag;
 
     // starting and ending times for orbital simulation
     DoubleProperty m_startTime ;
@@ -282,6 +284,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("NoFailure", m_noFailure=0);
     declareProperty("RebuildIndex", m_rebuildIndex=false);
     
+    declareProperty("CompressAlg", m_compressAlg="ZLIB");
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
     declareProperty("CelRootFileRead", m_celFileNameRead="");
@@ -292,6 +295,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("ReadRetries", m_readRetries=3);
 
     declareProperty("TerminateOnReadError", m_terminateOnReadError = false);
+
 
     m_index = 0;
     m_rootEvtMax = 0;
@@ -319,7 +323,7 @@ RootIoSvc::~RootIoSvc()
 
 StatusCode RootIoSvc::initialize () 
 {   
-    StatusCode  status =  Service::initialize ();
+    StatusCode  status =  Service::initialize();
     
     // bind all of the properties for this service
     setProperties ();
@@ -356,6 +360,10 @@ StatusCode RootIoSvc::initialize ()
         TTree::SetMaxTreeSize(maxTreeSize);
     }
 
+    MsgStream log2( msgSvc(), name() );
+    m_compressionAlgFlag = (m_compressAlg.compare("LZMA")) ? ROOT::kZLIB : ROOT::kLZMA;
+    log2 << MSG::INFO << "Setting compression alg " << m_compressAlg << " "
+        << m_compressionAlgFlag << endreq;
 
     // DC : I guess the original author
     // was meaning to test m_index, or the
@@ -829,7 +837,8 @@ TTree* RootIoSvc::prepareRootOutput
         return 0;
     }
     // Create a new RootOutputDesc object for this algorithm
-    RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName, compressionLevel, treeTitle, log.level()<=MSG::DEBUG);
+    RootOutputDesc* outputDesc = new RootOutputDesc(fileName, treeName,
+compressionLevel, treeTitle, log.level()<=MSG::DEBUG, m_compressionAlgFlag);
 
     if (!m_autoFlush) outputDesc->turnOffAutoFlush();
 

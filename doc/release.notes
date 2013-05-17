@@ -4,8 +4,14 @@
  @verbatim
  EOH
 
+ RootIo-26-01-00 17-May-2013 heather Merge in LZMA compression handling
  RootIo-26-00-00 15-May-2013 TU Updates to "new" reconRootData output, compressed TkrTree output, etc. 
  RootIo-25-07-03 03-Apr-2013  lsrea Fix relationRootReaderAlg to cut down on warning messages
+== Branch GlastRelease-20-08-12-br01 for compression testing
+ RootIo-25-07-02-gr01 02-May-2013 HMK Provide ZLIB versus LZMA compression
+    via RootIoSvc.CompressAlg parameter which can be set "ZLIB" default
+    or "LZMA"
+==
  RootIo-25-07-02 20-Feb-2013 TU Somehow, the output of REVFIT parameters was lost, restoring now
  RootIo-25-07-01 09-Feb-2013 TU Explicitly add CalClusterMap.h to appease the god of the release manager
  RootIo-25-07-00 09-Feb-2013 TU Pick up Eric C's fix to read back AcdReconV2, Also now input/output of CalClusterMap

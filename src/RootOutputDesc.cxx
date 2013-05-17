@@ -2,7 +2,7 @@
 * @file RootOutputDesc.cxx
 * @brief definition of the class RootOutputDesc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.6 2012/01/17 16:52:06 cohen Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootOutputDesc.cxx,v 1.7.8.1 2013/05/02 11:39:41 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 #ifndef RootOutputDesc_cxx
@@ -20,11 +20,13 @@
 RootOutputDesc::RootOutputDesc
 ( const std::string& outputFile, 
    const std::string & tree, 
-   int compressionLevel, const std::string& treeTitle, bool verbose )
- : m_fileName(outputFile), m_treeName(tree), m_compressionLevel(compressionLevel), m_tree(0), 
+   int compressionLevel, const std::string& treeTitle, bool verbose, 
+   int compressionAlg )
+ : m_fileName(outputFile), m_treeName(tree), 
+   m_compressionLevel(compressionLevel), m_tree(0), 
    m_treeTitle(treeTitle), m_verbose(verbose), m_eventCounter(0), m_updated(false)
  {
-	 openFile();
+	 openFile(compressionAlg);
  }
     
 RootOutputDesc::~RootOutputDesc() 
@@ -35,7 +37,7 @@ RootOutputDesc::~RootOutputDesc()
   m_tree = 0;
  }
 
-bool RootOutputDesc::openFile() {
+bool RootOutputDesc::openFile(int compressionAlg) {
 
 	bool stat = true;
     // Save the current directory for the ntuple writer service 
@@ -56,6 +58,7 @@ bool RootOutputDesc::openFile() {
         return stat;
     }
     f->cd();
+    f->SetCompressionAlgorithm(compressionAlg);
     f->SetCompressionLevel(m_compressionLevel);
     
     // tree of events
