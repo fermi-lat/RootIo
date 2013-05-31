@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: usher  Fri May 31 14:30:18 PDT 2013
-RootIo/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-Preparing to tag RootIo-26-01-01
-    *
-------------------------------------------------------------
-User: usher  Fri May 31 14:30:18 PDT 2013
-RootIo
-
-Modified Files:
-	SConscript 
-Log Message:
-Preparing to tag RootIo-26-01-01
-    *
-------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-lp45, operation: add
 Package: RootIo
