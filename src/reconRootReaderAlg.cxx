@@ -701,11 +701,17 @@ StatusCode reconRootReaderAlg::rebuildTkrVecPointCol(Event::TkrVecPointCol* vecP
         {
             Event::TkrCluster* outsideCluster = *outsideItr;
 
+            // if this cluster was merged into a super cluster then skip it here
+            if (outsideCluster->isSet(Event::TkrCluster::maskMERGED);
+
             for(Event::TkrClusterCol::iterator insideItr  = outsideItr + 1;
                                                insideItr != clusterColTds->end();
                                                insideItr++)
             {
                 Event::TkrCluster* insideCluster = *insideItr;
+
+                // Similarly, if this cluster was merged into a super cluster then skip it here
+                if (insideCluster->isSet(Event::TkrCluster::maskMERGED);
 
                 // Clusters must be same bilayer and same tower to make TkrVecPoint
                 if (outsideCluster->getLayer() == insideCluster->getLayer() &&
