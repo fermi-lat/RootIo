@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Sat Jun  1 12:27:09 PDT 2013
+RootIo
+
+Modified Files:
+	SConscript 
+Log Message:
+Preparing to tag RootIo-26-01-02
+    *
+------------------------------------------------------------
 TAG
 Tag name: RootIo-26-01-01, operation: add
 Package: RootIo
