@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: usher  Sat Jun  1 12:27:10 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+Preparing to tag RootIo-26-01-02
+    *
+------------------------------------------------------------
+User: usher  Sat Jun  1 12:27:10 PDT 2013
 RootIo/doc
 
 Modified Files:
