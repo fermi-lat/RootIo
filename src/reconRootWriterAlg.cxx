@@ -1336,6 +1336,11 @@ void reconRootWriterAlg::fillCalCluster(CalRecon* calRec, Event::CalClusterMap* 
     // Purpose and Method: Given an input CalClusterMap, we convert each entry to the root equivalent and
     // store on the PDS
 
+    // Set ownership of objects
+    // Key - we create so we own
+    // Value - we own the container (but not its objects)
+    calRec->getCalClusterMap()->SetOwnerKeyValue(kTRUE, kTRUE);
+
     // We start by iterating over the keys in the CalClusterMap
     for(Event::CalClusterMap::iterator clusterMapTdsItr  = clusterMapTds->begin();
                                        clusterMapTdsItr != clusterMapTds->end();
