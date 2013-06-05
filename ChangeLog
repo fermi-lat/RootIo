@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed Jun  5 13:44:00 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+Fix possible memory leak with ownership of the key value for CalClusterMap
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-08-15, operation: add
 Package: RootIo
