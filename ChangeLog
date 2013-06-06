@@ -1,4 +1,83 @@
 ------------------------------------------------------------
+TAG
+Tag name: RootIo-26-01-03, operation: add
+Package: RootIo
+User: heather  Wed Jun  5 23:03:25 2013
+Files:
+  RootIo/.cvsignore  1.3
+  RootIo/ChangeLog  1.2015
+  RootIo/RootIoLib.py  1.3
+  RootIo/SConscript  1.70
+  RootIo/RootIo/FhSystemEnv.h  1.2
+  RootIo/RootIo/FhTool.h  1.3
+  RootIo/RootIo/FhCmtConfig.h  1.3
+  RootIo/RootIo/IRootIoSvc.h  1.25
+  RootIo/RootIo/FhChronoStatTable.h  1.1
+  RootIo/RootIo/FhJobOptions.h  1.1
+  RootIo/cmt/.cvsignore  1.2
+  RootIo/cmt/requirements  1.300
+  RootIo/doc/release.notes  1.283
+  RootIo/src/mcRootWriterAlg.cxx  1.57
+  RootIo/src/digiRootWriterAlg.cxx  1.83
+  RootIo/src/RootIoSvc.cxx  1.70
+  RootIo/src/RootIoRandom.cxx  1.2
+  RootIo/src/RootInputDesc.h  1.17
+  RootIo/src/FhDemoCaloSetAlg.h  1.1
+  RootIo/src/relationRootReaderAlg.cxx  1.49
+  RootIo/src/FhTool.cxx  1.5
+  RootIo/src/FhStringMap.cxx  1.1
+  RootIo/src/writeRootOptions.txt  1.5
+  RootIo/src/RootOutputDesc.h  1.6
+  RootIo/src/FhCmtConfig.cxx  1.6
+  RootIo/src/GleamMessageHandler.cxx  1.2
+  RootIo/src/reconRootReaderAlg.cxx  1.119
+  RootIo/src/commonData.cxx  1.11
+  RootIo/src/reconRootWriterAlg.cxx  1.111
+  RootIo/src/gcrSelectRootWriterAlg.cxx  1.10
+  RootIo/src/FhDemoCaloSetAlg.cxx  1.3
+  RootIo/src/readRootOptions.txt  1.7
+  RootIo/src/FhJobOptions.cxx  1.5
+  RootIo/src/FhChronoStatTable.cxx  1.3
+  RootIo/src/GleamMessageHandler.h  1.2
+  RootIo/src/writeReconRootOptions.txt  1.2
+  RootIo/src/FhSetMeritAlg.cxx  1.2
+  RootIo/src/commonData.h  1.12
+  RootIo/src/mcRootReaderAlg.cxx  1.81
+  RootIo/src/writeMcRootOptions.txt  1.2
+  RootIo/src/RootInputDesc.cxx  1.26
+  RootIo/src/mainpage.h  1.16
+  RootIo/src/FhSetAlg.cxx  1.5
+  RootIo/src/FhSystemEnv.cxx  1.3
+  RootIo/src/digiRootReaderAlg.cxx  1.104
+  RootIo/src/FhSetAlg.h  1.1
+  RootIo/src/relationRootWriterAlg.cxx  1.30
+  RootIo/src/writeDigiRootOptions.txt  1.2
+  RootIo/src/FhStringMap.h  1.1
+  RootIo/src/RootOutputDesc.cxx  1.8
+  RootIo/src/writeGcrSelectRootOptions.txt  1.1
+  RootIo/src/ntupleRootReaderAlg.cxx  1.3
+  RootIo/src/FhDemoGetAlg.cxx  1.5
+  RootIo/src/Dll/RootIo_load.cxx  1.18
+  RootIo/src/Dll/RootIo_dll.cxx  1.1.1.1
+  RootIo/src/test/writeHeadersOptions.txt  1.8
+  RootIo/src/test/writeHeaders.ref  1.3
+  RootIo/src/test/validate_headers  1.2
+  RootIo/src/test/testRootIoSvcAlg.cxx  1.9
+  RootIo/src/test/readOptions.txt  1.14
+  RootIo/src/test/checkTds.cxx  1.3
+  RootIo/src/test/test_RootIo.sh  1.2
+  RootIo/src/test/jobOptions.ref  1.4
+  RootIo/src/test/.cvsignore  1.5
+  RootIo/src/test/g4Options.txt  1.14
+  RootIo/src/test/testReadAlg.cxx  1.20
+  RootIo/src/test/jobOptions.txt  1.20
+  RootIo/src/test/readHeadersOptions.txt  1.8
+  RootIo/src/test/readHeaders.ref  1.3
+  RootIo/src/test/writeOptions.txt  1.12
+  RootIo/src/test/createFakeTdsDataAlg.cxx  1.10
+
+    *
+------------------------------------------------------------
 User: usher  Wed Jun  5 16:07:40 PDT 2013
 RootIo/doc
 
