@@ -60,18 +60,18 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootReaderAlg.cxx,v 1.112 2013/02/19 04:24:51 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.119 2013/06/01 19:27:10 usher Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
 {   
 public:
-    
+
     reconRootReaderAlg(const std::string& name, ISvcLocator* pSvcLocator);
-    
+
     /// Handles setup by opening ROOT file in read mode and creating a new TTree
     StatusCode initialize();
-    
+
     /// Orchastrates reading from ROOT file and storing the data on the TDS for each event
     StatusCode execute();
 
@@ -82,18 +82,18 @@ public:
 
     void beginEvent() { };
     void endEvent();
-    
+
     /// Closes the ROOT file and cleans up
     StatusCode finalize();
-    
+
 private:
-    
+
     /// Reads top-level DigiEvent
     StatusCode readReconEvent();
-    
+
     /// Reads TKR recon data from ROOT and puts data on TDS
     StatusCode readTkrRecon();
-    
+
     StatusCode storeTkrTruncationInfo(TkrRecon *tkrRecRoot);
     StatusCode storeTkrClusterCol(TkrRecon *tkrRecRoot);
 
@@ -124,25 +124,25 @@ private:
     Event::TkrVecNode* convertTkrVecNode(const TkrVecNodeCompressed* node);
     /// This to rebuild the sibling map after reading back in the TkrVecNode Tree
     int makeSiblingMap(Event::TkrVecNode* curNode, Event::TkrNodeSiblingMap* siblingMap);
-    
+
     /// Reads CAL recon data from ROOT and puts data on TDS
     StatusCode readCalRecon();
-    
+
     /// read in CAL xtal recon data from ROOT and store on the TDS
     StatusCode storeCalXtalRecDataCol(CalRecon *calRecRoot);
-    
+
     /// read CAL cluster data from ROOT and store on TDS in CalClusterMap
     StatusCode storeCalClusterMap(CalRecon *calRecRoot);
-    
+
     /// read CAL cluster data from ROOT and store on TDS
     StatusCode storeCalClusterCol(CalRecon *calRecRoot);
-    
+
     /// read CAL cluster data from ROOT and store on TDS
     StatusCode storeCalMipTrackCol(CalRecon *calRecRoot);
 
     /// read CAL eventEnergy  data from ROOT and store on TDS
     StatusCode storeCalEventEnergyCol(CalRecon *calRecRoot);
-    
+
     /// read CalEventEnergyMap data from ROOT and store on TDS
     StatusCode storeCalEventEnergyMap(CalRecon *calRecRoot);
 
@@ -155,10 +155,10 @@ private:
     StatusCode readCalTkrAcdRelations();
     /// In particular the tree to cluster relations
     StatusCode storeTreeClusterRelations(TkrRecon* tkrRecRoot);
-    
+
     /// Closes the ROOT file
     void close();
-    
+
     /// Top-level Monte Carlo ROOT object
     ReconEvent *m_reconEvt;
     /// name of the input ROOT file
@@ -178,7 +178,7 @@ private:
     IRootIoSvc*   m_rootIoSvc;
 
     bool FixAcdStreamerDone;
-   
+
     bool m_terminateOnReadError;
 
     // ADDED FOR THE FILE HEADERS DEMO
@@ -216,7 +216,7 @@ Algorithm(name, pSvcLocator), m_reconEvt(0)
     declareProperty("reconBranchName", m_branchName="ReconEvent");
     declareProperty("clearOption", m_clearOption="");
     declareProperty("ExcludeBranches", m_excludeBranchList=initList);
-    
+
     m_tkrVecPointLookUpMap.clear();
 }
 
@@ -224,20 +224,20 @@ StatusCode reconRootReaderAlg::initialize()
 {
     // Purpose and Method:  Called once before the run begins.  This method
     //    opens a new ROOT file and prepares for reading.
-    
+
     StatusCode sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
-    
+
     // ADDED FOR THE FILE HEADERS DEMO
     StatusCode headersSc = toolSvc()->retrieveTool("FhTool",m_headersTool) ;
     if (headersSc.isFailure()) {
         log<<MSG::WARNING << "Failed to retreive headers tool" << endreq;
     }
-    
+
     // Use the Job options service to set the Algorithm's parameters
     // This will retrieve parameters set in the job options file
     setProperties();
-    
+
     m_rootIoSvc = 0 ;
     if ( service("RootIoSvc", m_rootIoSvc, true).isFailure() ){
         log << MSG::INFO << "Couldn't find the RootIoSvc!" << endreq;
@@ -251,13 +251,13 @@ StatusCode reconRootReaderAlg::initialize()
         log << MSG::WARNING << "Both reconRootFile and reconRootFileList have "
             << "been specified, reconRootFile is deprecated, please use "
             << "reconRootFileList" << endreq;
-         return StatusCode::FAILURE;
+        return StatusCode::FAILURE;
     } else if ( (m_fileList.value().size() == 0) && ( !m_fileName.empty() ) )
         m_rootIoSvc->appendFileList(m_fileList, m_fileName);
     else if (m_fileList.value().size() == 0)
         m_rootIoSvc->appendFileList(m_fileList, "recon.root");
 
-     m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
+    m_terminateOnReadError = m_rootIoSvc->terminateOnReadError();
 
 
     // Set up new school system...
@@ -267,16 +267,16 @@ StatusCode reconRootReaderAlg::initialize()
     if (m_excludeBranchList.value().size() > 0) {
         std::vector<std::string>::const_iterator excludeListItr;
         for (excludeListItr = m_excludeBranchList.value().begin();
-             excludeListItr != m_excludeBranchList.value().end();
-             excludeListItr++ ) {
-             std::string branchName = *excludeListItr;
-             bool foundFlag  = m_rootIoSvc->setBranchStatus("recon",branchName,0);
-             if (!foundFlag)
-                 log << MSG::WARNING << "Did  not find any matching branch"
-                     << " names for " << branchName << endreq;
-             else
-                 log << MSG::INFO << "Set BranchStatus to 0 (off) for "
-                     << "branch " << branchName << endreq;
+            excludeListItr != m_excludeBranchList.value().end();
+            excludeListItr++ ) {
+                std::string branchName = *excludeListItr;
+                bool foundFlag  = m_rootIoSvc->setBranchStatus("recon",branchName,0);
+                if (!foundFlag)
+                    log << MSG::WARNING << "Did  not find any matching branch"
+                    << " names for " << branchName << endreq;
+                else
+                    log << MSG::INFO << "Set BranchStatus to 0 (off) for "
+                    << "branch " << branchName << endreq;
         }
 
     }
@@ -291,7 +291,7 @@ StatusCode reconRootReaderAlg::initialize()
     incsvc->addListener(this, "EndEvent", 0);
 
     return sc;
-    
+
 }
 
 StatusCode reconRootReaderAlg::execute()
@@ -299,10 +299,10 @@ StatusCode reconRootReaderAlg::execute()
     // Purpose and Method:  Called once per event.  This method calls
     //   the appropriate methods to read data from the ROOT file and store
     //   data on the TDS.
-    
+
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     // Try reading the event this way... 
     // Use treeName as key type
     m_reconEvt = dynamic_cast<ReconEvent*>(m_rootIoSvc->getNextEvent("recon")) ;
@@ -323,19 +323,19 @@ StatusCode reconRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to read top level ReconEvent" << endreq;
         return sc;
     }
-    
+
     sc = readTkrRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load Tkr Recon" << endreq;
         return sc;
     }
-    
+
     sc = readCalRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load Cal Recon" << endreq;
         return sc;
     }
-    
+
     sc = readAcdRecon();
     if (sc.isFailure()) {
         log << MSG::ERROR << "Failed to load Acd Recon" << endreq;
@@ -352,33 +352,33 @@ StatusCode reconRootReaderAlg::execute()
         log << MSG::ERROR << "Failed to load Acd, Cal, Tkr relations" << endreq;
         return sc;
     }
-    
-//    evtId = readInd+1;
-//    saveDir->cd();
-    
+
+    //    evtId = readInd+1;
+    //    saveDir->cd();
+
     return sc;
 }
 
 
 StatusCode reconRootReaderAlg::readReconEvent() {
-    
+
     MsgStream log(msgSvc(), name());
-    
+
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     // Retrieve the Event data for this event
     SmartDataPtr<Event::EventHeader> evt(eventSvc(), EventModel::EventHeader);
     if (!evt) {
         log << MSG::ERROR << "Failed to retrieve Event" << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     unsigned int eventIdTds = evt->event();
     unsigned int runIdTds = evt->run();
-    
+
     unsigned int eventIdRoot = m_reconEvt->getEventId();
     unsigned int runIdRoot = m_reconEvt->getRunId();
-    
+
     // Check to see if the event and run ids have already been set.
     if (eventIdTds != eventIdRoot) evt->setEvent(eventIdRoot);
     if (runIdTds != runIdRoot) evt->setRun(runIdRoot);
@@ -387,19 +387,19 @@ StatusCode reconRootReaderAlg::readReconEvent() {
         << ", " << eventIdRoot << ")" << endreq;
 
     evt->setGleamEventFlags(m_reconEvt->getGleamEventFlags());
-    
+
     // Only update the eventflags on the TDS if the /Event/EventSummary
     // does not yet exist (digiRootReader may fill this for us)
     SmartDataPtr<LdfEvent::EventSummaryData> summaryTds(eventSvc(), "/Event/EventSummary");
     if (!summaryTds) {
-      LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
-      evtSumTds->initEventFlags(m_reconEvt->getEventFlags());
-      sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
-      if( sc.isFailure() ) {
-        log << MSG::ERROR << "could not register /Event/EventSummary " << endreq
-;
-        return sc;
-      }
+        LdfEvent::EventSummaryData *evtSumTds = new LdfEvent::EventSummaryData();
+        evtSumTds->initEventFlags(m_reconEvt->getEventFlags());
+        sc = eventSvc()->registerObject("/Event/EventSummary", evtSumTds);
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "could not register /Event/EventSummary " << endreq
+                ;
+            return sc;
+        }
     }
 
     return sc;
@@ -414,7 +414,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
 
     TkrRecon *tkrRecRoot = m_reconEvt->getTkrRecon();
     if(!tkrRecRoot) return sc;
-    
+
     // Make sure the TkrRecon branch exists on the TDS
     DataObject* pnode =0;
     sc = eventSvc()->retrieveObject(EventModel::TkrRecon::Event, pnode);
@@ -427,7 +427,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TKR cluster collection already exists on TDS
     // If not, store cluster collection on the TDS.
     SmartDataPtr<Event::TkrClusterCol> clusterColTds(eventSvc(), EventModel::TkrRecon::TkrClusterCol);
@@ -441,7 +441,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TkrVecPoint collection already exists on TDS
     // If not, store cluster collection on the TDS.
     SmartDataPtr<Event::TkrVecPointCol> tkrVecPointColTds(eventSvc(), EventModel::TkrRecon::TkrVecPointCol);
@@ -455,7 +455,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TkrVecPointsLink collection already exists on TDS
     // If not, store cluster collection on the TDS.
     SmartDataPtr<Event::TkrVecPointsLinkCol> tkrVecPointsLinkColTds(eventSvc(), EventModel::TkrRecon::TkrVecPointsLinkCol);
@@ -469,7 +469,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TkrEventParams object already exists on TDS
     // If not, store a new one on the TDS.
     SmartDataPtr<Event::TkrEventParams> tkrEventParamsTds(eventSvc(), EventModel::TkrRecon::TkrEventParams);
@@ -483,7 +483,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TkrFilterParams collection already exists on TDS
     // If not, store filter params collection on the TDS.
     SmartDataPtr<Event::TkrFilterParamsCol> tkrFilterParamsColTds(eventSvc(), EventModel::TkrRecon::TkrFilterParamsCol);
@@ -497,7 +497,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-      
+
     // check to see if TKR vertex collection exists on TDS already
     // Set a boolean flag if the vertex collection already exists
     bool vertexOnTdsFlag = false;
@@ -506,7 +506,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
         log << MSG::INFO << "Tkr VertexCol is already on TDS" << endreq;
         vertexOnTdsFlag = true;
     }
-    
+
     // check to see if TKR track collection exists on the TDS already
     SmartDataPtr<Event::TkrTrackCol> trackColTds(eventSvc(), EventModel::TkrRecon::TkrTrackCol);
     if (trackColTds) {
@@ -518,7 +518,7 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     // check to see if TkrTree collection already exists on TDS
     // If not, store tree collection on the TDS.
     SmartDataPtr<Event::TkrTreeCol> tkrTreeColTds(eventSvc(), EventModel::TkrRecon::TkrTreeCol);
@@ -532,29 +532,29 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
             return sc;
         }
     }
-    
+
     //check to see if TKR TruncationInfo exists on the TDS already
     SmartDataPtr<Event::TkrTruncationInfo> truncationInfoTds(eventSvc(),EventModel::TkrRecon::TkrTruncationInfo);
     if(truncationInfoTds) {
         log << MSG::INFO << "TkrTruncationInfo is already on TDS" << endreq;
     } else {
-      sc = storeTkrTruncationInfo(tkrRecRoot);
-      if (sc.isFailure()) {
-        log << MSG::ERROR << "failed to store TkrtruncationInfo on the TDS" << endreq;
-        return sc;
-      }
+        sc = storeTkrTruncationInfo(tkrRecRoot);
+        if (sc.isFailure()) {
+            log << MSG::ERROR << "failed to store TkrtruncationInfo on the TDS" << endreq;
+            return sc;
+        }
     }
-    
+
     //check to see if TkrVecPointInfo exists on the TDS already
     SmartDataPtr<Event::TkrVecPointInfo> tkrVecPointInfoTds(eventSvc(),EventModel::TkrRecon::TkrVecPointInfo);
     if(tkrVecPointInfoTds) {
         log << MSG::INFO << "TkrVecPointInfo is already on TDS" << endreq;
     } else {
-      sc = storeTkrVecPointInfo(tkrRecRoot);
-      if (sc.isFailure()) {
-        log << MSG::ERROR << "failed to store TkrVecPointInfo on the TDS" << endreq;
-        return sc;
-      }
+        sc = storeTkrVecPointInfo(tkrRecRoot);
+        if (sc.isFailure()) {
+            log << MSG::ERROR << "failed to store TkrVecPointInfo on the TDS" << endreq;
+            return sc;
+        }
     }
 
     //    // check to see if TKR CRtrack collection exists on the TDS already
@@ -575,9 +575,9 @@ StatusCode reconRootReaderAlg::readTkrRecon() {
 StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     Event::TkrClusterCol *clusterTdsCol = new Event::TkrClusterCol;
-    
+
     const TObjArray * clusterRootCol = tkrRecRoot->getClusterCol();
     TIter clusterIter(clusterRootCol);
     TkrCluster *clusterRoot = 0;
@@ -589,19 +589,21 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
         log << MSG::ERROR << "failed to register TkrIdClusterMap on the TDS" << endreq;
         return sc;
     }
-     
+
     while ((clusterRoot = (TkrCluster*)clusterIter.Next())!=0) 
     {
         commonRootData::TkrId tkrIdRoot = clusterRoot->getTkrId();
 
         idents::TkrId tkrId(tkrIdRoot.getTowerX(),
-                            tkrIdRoot.getTowerY(),
-                            tkrIdRoot.getTray(),
-                            tkrIdRoot.getBotTop() == commonRootData::TkrId::eTKRSiTop,
-                            tkrIdRoot.getView() );
-        
+            tkrIdRoot.getTowerY(),
+            tkrIdRoot.getTray(),
+            tkrIdRoot.getBotTop() == commonRootData::TkrId::eTKRSiTop,
+            tkrIdRoot.getView() );
+
         TVector3 posRoot = clusterRoot->getPosition();
         Point posTds(posRoot.X(), posRoot.Y(), posRoot.Z());
+
+        UInt_t status = clusterRoot->getStatusWord(); // need this later
 
         Event::TkrCluster* clusterTds 
             = new Event::TkrCluster(tkrId, 
@@ -610,26 +612,26 @@ StatusCode reconRootReaderAlg::storeTkrClusterCol(TkrRecon *tkrRecRoot) {
             posTds,
             (int)clusterRoot->getRawToT(),
             clusterRoot->getMips(),
-            clusterRoot->getStatusWord(),
-            clusterRoot->getNBad()
-    );
+            status,
+            clusterRoot->getNBad());
 
         clusterTdsCol->push_back(clusterTds);
-        (*clusMap)[tkrId].push_back(clusterTds);
- 
+        // 
+        if((status&Event::TkrCluster::maskMERGERESULT)==0)(*clusMap)[tkrId].push_back(clusterTds);
+
         m_common.m_rootTkrClusterMap[clusterRoot] = clusterTds;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrClusterCol, clusterTdsCol);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrClusterCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
-    
+
+
     return sc;
 }
 
@@ -657,12 +659,12 @@ StatusCode reconRootReaderAlg::storeTkrVecPointCol(TkrRecon *tkrRecRoot)
             Event::TkrVecPoint* tkrVecPointTds = new Event::TkrVecPoint();
 
             tkrVecPointTds->initialize(tkrVecPointRoot->getLayer(),
-                                       tkrVecPointRoot->getStatusWord(),
-                                       xCluster,
-                                       yCluster);
+                tkrVecPointRoot->getStatusWord(),
+                xCluster,
+                yCluster);
 
             tkrVecPointTdsCol->push_back(tkrVecPointTds);
-  
+
             m_common.m_rootTkrVecPointMap[tkrVecPointRoot] = tkrVecPointTds;
         }
     }
@@ -676,13 +678,13 @@ StatusCode reconRootReaderAlg::storeTkrVecPointCol(TkrRecon *tkrRecRoot)
     // Regardless of what happened, store the object on the TDS
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointCol, tkrVecPointTdsCol);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrVecPointCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     return sc;
 }
 
@@ -696,8 +698,8 @@ StatusCode reconRootReaderAlg::rebuildTkrVecPointCol(Event::TkrVecPointCol* vecP
     {
         // To reconstitute we are going to double loop through cluster list and not care, for now, about order
         for(Event::TkrClusterCol::iterator outsideItr  = clusterColTds->begin();
-                                           outsideItr != clusterColTds->end();
-                                           outsideItr++)
+            outsideItr != clusterColTds->end();
+            outsideItr++)
         {
             Event::TkrCluster* outsideCluster = *outsideItr;
 
@@ -705,8 +707,8 @@ StatusCode reconRootReaderAlg::rebuildTkrVecPointCol(Event::TkrVecPointCol* vecP
             if (outsideCluster->isSet(Event::TkrCluster::maskMERGED)) continue;
 
             for(Event::TkrClusterCol::iterator insideItr  = outsideItr + 1;
-                                               insideItr != clusterColTds->end();
-                                               insideItr++)
+                insideItr != clusterColTds->end();
+                insideItr++)
             {
                 Event::TkrCluster* insideCluster = *insideItr;
 
@@ -757,7 +759,7 @@ StatusCode reconRootReaderAlg::storeTkrVecPointInfo(TkrRecon* tkrRecRoot)
     // Store on the TDS
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointInfo, vecPointInfoTds);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrVecPointInfo in TDS";
         log << endreq;
@@ -771,9 +773,9 @@ StatusCode reconRootReaderAlg::storeTkrVecPointsLinkCol(TkrRecon *tkrRecRoot)
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     Event::TkrVecPointsLinkCol* tkrVecPointsLinkTdsCol = new Event::TkrVecPointsLinkCol;
-    
+
     const TObjArray * tkrVecPointsLinkRootCol = tkrRecRoot->getTkrVecPointsLinkCol();
     TIter tkrVecPointsLinkIter(tkrVecPointsLinkRootCol);
     TkrVecPointsLink* tkrVecPointsLinkRoot = 0;
@@ -784,27 +786,27 @@ StatusCode reconRootReaderAlg::storeTkrVecPointsLinkCol(TkrRecon *tkrRecRoot)
         const Event::TkrVecPoint* botPoint = m_common.m_rootTkrVecPointMap[tkrVecPointsLinkRoot->getSecondVecPoint()];
 
         Event::TkrVecPointsLink* tkrVecPointsLinkTds = new Event::TkrVecPointsLink(topPoint, 
-                                                                                   botPoint, 
-                                                                                   tkrVecPointsLinkRoot->getMaxScatAngle());
+            botPoint, 
+            tkrVecPointsLinkRoot->getMaxScatAngle());
 
         // Fill in the rest of the parameters
         tkrVecPointsLinkTds->updateStatusBits(tkrVecPointsLinkRoot->getStatusBits());
         tkrVecPointsLinkTds->setMaxScatAngle(tkrVecPointsLinkRoot->getMaxScatAngle());
 
         tkrVecPointsLinkTdsCol->push_back(tkrVecPointsLinkTds);
- 
+
         m_common.m_rootTkrVecPointsLinkMap[tkrVecPointsLinkRoot] = tkrVecPointsLinkTds;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointsLinkCol, tkrVecPointsLinkTdsCol);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrVecPointCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     return sc;
 }
 
@@ -902,7 +904,7 @@ Event::TkrTree* reconRootReaderAlg::convertTkrTree(const TkrTree* treeRoot, Even
     // Recover the tracks associated to this Tree
     const Event::TkrTrack* bestTrackTds = m_common.m_rootTkrTrackMap[treeRoot->getBestTrack()];
     const Event::TkrTrack* nextTrackTds = 0;
-    
+
     if (treeRoot->GetEntries() > 1) nextTrackTds = m_common.m_rootTkrTrackMap[treeRoot->At(1)];
 
     // Recover the Tree axis params
@@ -910,11 +912,11 @@ Event::TkrTree* reconRootReaderAlg::convertTkrTree(const TkrTree* treeRoot, Even
 
     // Create a shiny new TkrTree to fill with information and store in the TDS
     Event::TkrTree* treeTds = new Event::TkrTree(headNodeTds, 
-                                                 const_cast<Event::TkrVecNode*>(bestLeafTds),
-                                                 const_cast<Event::TkrVecNode*>(nextLeafTds),
-                                                 nodeSiblingMapTds, 
-                                                 treeParamsTds, 
-                                                 const_cast<Event::TkrTrack*>(bestTrackTds) );
+        const_cast<Event::TkrVecNode*>(bestLeafTds),
+        const_cast<Event::TkrVecNode*>(nextLeafTds),
+        nodeSiblingMapTds, 
+        treeParamsTds, 
+        const_cast<Event::TkrTrack*>(bestTrackTds) );
 
     // Set the two angles:
     treeTds->setBestBranchAngleToAxis(treeRoot->getBestBranchAngleToAxis());
@@ -949,7 +951,7 @@ Event::TkrTree* reconRootReaderAlg::convertTkrTree(const TkrTreeCompressed* tree
     // Recover the tracks associated to this Tree
     const Event::TkrTrack* bestTrackTds = m_common.m_rootTkrTrackMap[treeRoot->getBestTrack()];
     const Event::TkrTrack* nextTrackTds = 0;
-    
+
     if (treeRoot->GetEntries() > 1) nextTrackTds = m_common.m_rootTkrTrackMap[treeRoot->At(1)];
 
     // Recover the Tree axis params
@@ -957,11 +959,11 @@ Event::TkrTree* reconRootReaderAlg::convertTkrTree(const TkrTreeCompressed* tree
 
     // Create a shiny new TkrTree to fill with information and store in the TDS
     Event::TkrTree* treeTds = new Event::TkrTree(headNodeTds, 
-                                                 const_cast<Event::TkrVecNode*>(bestLeafTds),
-                                                 const_cast<Event::TkrVecNode*>(nextLeafTds),
-                                                 nodeSiblingMapTds, 
-                                                 treeParamsTds, 
-                                                 const_cast<Event::TkrTrack*>(bestTrackTds) );
+        const_cast<Event::TkrVecNode*>(bestLeafTds),
+        const_cast<Event::TkrVecNode*>(nextLeafTds),
+        nodeSiblingMapTds, 
+        treeParamsTds, 
+        const_cast<Event::TkrTrack*>(bestTrackTds) );
 
     // Set the two angles:
     treeTds->setBestBranchAngleToAxis(treeRoot->getBestBranchAngleToAxis());
@@ -972,7 +974,7 @@ Event::TkrTree* reconRootReaderAlg::convertTkrTree(const TkrTreeCompressed* tree
 
     return treeTds;
 }
-    
+
 Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNode* tkrVecNodeRoot)
 {
     Event::TkrVecNode* tkrVecNodeTds = 0;
@@ -985,21 +987,21 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNode* tkrVe
         // We'll need pointers to the associated link and parent node
         const Event::TkrVecPointsLink* associatedLinkTds = 0;
         const Event::TkrVecNode*       parentNodeTds     = 0;
-        
+
         if (tkrVecNodeRoot->getAssociatedLink()) associatedLinkTds = m_common.m_rootTkrVecPointsLinkMap[tkrVecNodeRoot->getAssociatedLink()];
         if (tkrVecNodeRoot->getParentNode())     parentNodeTds     = m_common.m_rootTkrVecNodeMap[tkrVecNodeRoot->getParentNode()];
 
         // Initialize the new TDS TkrVecNode object
         tkrVecNodeTds->initializeInfo(const_cast<Event::TkrVecPointsLink*>(associatedLinkTds),
-                                      const_cast<Event::TkrVecNode*>(parentNodeTds),
-                                      tkrVecNodeRoot->getStatusBits(),
-                                      tkrVecNodeRoot->getRmsAngleSum(),
-                                      tkrVecNodeRoot->getNumAnglesInSum(),
-                                      tkrVecNodeRoot->getNumLeaves(),
-                                      tkrVecNodeRoot->getNumBranches(),
-                                      tkrVecNodeRoot->getDepth(),
-                                      tkrVecNodeRoot->getBestNumBiLayers(),
-                                      tkrVecNodeRoot->getBestRmsAngle() );
+            const_cast<Event::TkrVecNode*>(parentNodeTds),
+            tkrVecNodeRoot->getStatusBits(),
+            tkrVecNodeRoot->getRmsAngleSum(),
+            tkrVecNodeRoot->getNumAnglesInSum(),
+            tkrVecNodeRoot->getNumLeaves(),
+            tkrVecNodeRoot->getNumBranches(),
+            tkrVecNodeRoot->getDepth(),
+            tkrVecNodeRoot->getBestNumBiLayers(),
+            tkrVecNodeRoot->getBestRmsAngle() );
 
         // Store this in the TDS collection
 
@@ -1022,7 +1024,7 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNode* tkrVe
 
     return tkrVecNodeTds;
 }
-    
+
 Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNodeCompressed* tkrVecNodeRoot)
 {
     Event::TkrVecNode* tkrVecNodeTds = 0;
@@ -1068,15 +1070,15 @@ Event::TkrVecNode* reconRootReaderAlg::convertTkrVecNode(const TkrVecNodeCompres
 
         // Initialize the new TDS TkrVecNode object
         tkrVecNodeTds->initializeInfo(const_cast<Event::TkrVecPointsLink*>(associatedLinkTds),
-                                      const_cast<Event::TkrVecNode*>(parentNodeTds),
-                                      tkrVecNodeRoot->getStatusBits(),
-                                      tkrVecNodeRoot->getRmsAngleSum(),
-                                      tkrVecNodeRoot->getNumAnglesInSum(),
-                                      tkrVecNodeRoot->getNumLeaves(),
-                                      tkrVecNodeRoot->getNumBranches(),
-                                      tkrVecNodeRoot->getDepth(),
-                                      tkrVecNodeRoot->getBestNumBiLayers(),
-                                      tkrVecNodeRoot->getBestRmsAngle() );
+            const_cast<Event::TkrVecNode*>(parentNodeTds),
+            tkrVecNodeRoot->getStatusBits(),
+            tkrVecNodeRoot->getRmsAngleSum(),
+            tkrVecNodeRoot->getNumAnglesInSum(),
+            tkrVecNodeRoot->getNumLeaves(),
+            tkrVecNodeRoot->getNumBranches(),
+            tkrVecNodeRoot->getDepth(),
+            tkrVecNodeRoot->getBestNumBiLayers(),
+            tkrVecNodeRoot->getBestRmsAngle() );
 
         // Keep track of root/TDS relationship
         m_common.m_rootTkrVecNodeMap[tkrVecNodeRoot] = tkrVecNodeTds;
@@ -1159,7 +1161,7 @@ int reconRootReaderAlg::makeSiblingMap(Event::TkrVecNode*        curNode,
 
         // While we are here, set the link to "associated" 
         const_cast<Event::TkrVecPointsLink*>(node->getAssociatedLink())->setAssociated();
-    
+
         // Store this node in our sibling map 
         (*siblingMap)[node->getCurrentBiLayer()].push_back(node);
 
@@ -1216,16 +1218,16 @@ Event::TkrFilterParams* reconRootReaderAlg::convertTkrFilterParams(const TkrFilt
 {
     // Must convert the position and direction from rootspeak to Gaudispeak
     Point  eventPos(filterParamsRoot->getEventPosition().x(),
-                    filterParamsRoot->getEventPosition().y(),
-                    filterParamsRoot->getEventPosition().z() );
+        filterParamsRoot->getEventPosition().y(),
+        filterParamsRoot->getEventPosition().z() );
     Vector eventAxis(filterParamsRoot->getEventAxis().x(),
-                     filterParamsRoot->getEventAxis().y(),
-                     filterParamsRoot->getEventAxis().z() );
+        filterParamsRoot->getEventAxis().y(),
+        filterParamsRoot->getEventAxis().z() );
 
     // Should now be able to populate the object
     Event::TkrFilterParams* filterParamsTds = new Event::TkrFilterParams(filterParamsRoot->getEventEnergy(), 
-                                                                      eventPos,
-                                                                      eventAxis);
+        eventPos,
+        eventAxis);
     filterParamsTds->setStatusBit(filterParamsRoot->getStatusBits());
     filterParamsTds->setNumBiLayers(filterParamsRoot->getNumBiLayers());
     filterParamsTds->setNumIterations(filterParamsRoot->getNumIterations());
@@ -1256,16 +1258,16 @@ StatusCode reconRootReaderAlg::storeTkrEventParams(TkrRecon* tkrRecRoot)
 
         // Must convert the position and direction from rootspeak to Gaudispeak
         Point  eventPos(eventParamsRoot->getEventPosition().x(),
-                        eventParamsRoot->getEventPosition().y(),
-                        eventParamsRoot->getEventPosition().z() );
+            eventParamsRoot->getEventPosition().y(),
+            eventParamsRoot->getEventPosition().z() );
         Vector eventAxis(eventParamsRoot->getEventAxis().x(),
-                         eventParamsRoot->getEventAxis().y(),
-                         eventParamsRoot->getEventAxis().z() );
+            eventParamsRoot->getEventAxis().y(),
+            eventParamsRoot->getEventAxis().z() );
 
         // Should now be able to populate the object
         Event::TkrEventParams* eventParamsTds = new Event::TkrEventParams(eventParamsRoot->getEventEnergy(), 
-                                                                          eventPos,
-                                                                          eventAxis);
+            eventPos,
+            eventAxis);
         eventParamsTds->setStatusBit(eventParamsRoot->getStatusBits());
         eventParamsTds->setNumBiLayers(eventParamsRoot->getNumBiLayers());
         eventParamsTds->setNumIterations(eventParamsRoot->getNumIterations());
@@ -1296,28 +1298,28 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
     //  Store the transient versions on the TDS
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     // Keep track of TkrFitTracks and the ROOT id so we can fill TkrVertex
     std::map<int, Event::TkrTrack*> trackMap;
     trackMap.clear();
-    
+
     // Create TDS version of track collections
     Event::TkrTrackCol *trackTdsCol   = new Event::TkrTrackCol;
     Event::TkrTrackCol *crTrackTdsCol = new Event::TkrTrackCol;
     Event::TkrTrack    *trackTds    = 0;
-    
+
     // Retrieve ROOT version of track collection
     const TObjArray *trackRootCol = tkrRecRoot->getTrackCol();
     TIter trackIter(trackRootCol);
     TObject *trackObj = 0;
-    
+
     while ((trackObj = trackIter.Next())!=0) 
     {
         // int trkIdx = -1;
         TkrTrack* trackRoot = dynamic_cast<TkrTrack*>(trackObj);
 
         trackTds = convertTkrTrack(trackRoot);
-        
+
         // Keep relation between Event and Root fit tracks
         m_common.m_rootTkrTrackMap[trackObj] = trackTds;
 
@@ -1329,23 +1331,23 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
     const TObjArray *crTrackRootCol = tkrRecRoot->getCRTrackCol();
     TIter crTrackIter(crTrackRootCol);
     trackObj = 0;
-    
+
     while ((trackObj = crTrackIter.Next())!=0) 
     {
         // int trkIdx = -1;
         TkrTrack* trackRoot = dynamic_cast<TkrTrack*>(trackObj);
 
         trackTds = convertTkrTrack(trackRoot);
-        
+
         // Keep relation between Event and Root fit tracks
         m_common.m_rootTkrTrackMap[trackObj] = trackTds;
 
         crTrackTdsCol->push_back(trackTds);
     }
-   
+
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTrackCol, trackTdsCol);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrTrackCol";
         log << endreq;
@@ -1354,43 +1356,43 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
 
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrCRTrackCol, crTrackTdsCol);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register TkrCRTrackCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     // If the vertex collection is not already on the TDS, proceed
     if (vertexOnTdsFlag == true) return sc;
-    
+
     // Create the TDS version of the vertex collection
     Event::TkrVertexCol *vertexColTds = new Event::TkrVertexCol;
-    
+
     // Retrieve ROOT version of vertex collection
     const TObjArray *vertexColRoot = tkrRecRoot->getVertexCol();
     TIter vertexIter(vertexColRoot);
     TkrVertex *vertexRoot = 0;
-    
+
     while ((vertexRoot = (TkrVertex*)vertexIter.Next())!=0) 
     {
         commonRootData::TkrId hitId  =  vertexRoot->getTkrId();
         idents::TkrId         hitTdsId( hitId.getTowerX(),hitId.getTowerY(),hitId.getTray(),
-                                        hitId.getBotTop(), hitId.getView());
+            hitId.getBotTop(), hitId.getView());
         Point                 position( vertexRoot->getPosition().x(),
-                                        vertexRoot->getPosition().y(),
-                                        vertexRoot->getPosition().z() );
-        
+            vertexRoot->getPosition().y(),
+            vertexRoot->getPosition().z() );
+
         Event::TkrVertex *vertexTds = new Event::TkrVertex(hitTdsId, 
-                                                           vertexRoot->getEnergy(),
-                                                           vertexRoot->getQuality(), 
-                                                           vertexRoot->getChiSquare(), 
-                                                           vertexRoot->getAddedRadLen(),
-                                                           vertexRoot->getDOCA(), 
-                                                           vertexRoot->getTkr1ArcLen(), 
-                                                           vertexRoot->getTkr2ArcLen(), 
-                                                           position.z(), 
-                                                           convertTkrTrackParams(vertexRoot->getVertexParams()));
+            vertexRoot->getEnergy(),
+            vertexRoot->getQuality(), 
+            vertexRoot->getChiSquare(), 
+            vertexRoot->getAddedRadLen(),
+            vertexRoot->getDOCA(), 
+            vertexRoot->getTkr1ArcLen(), 
+            vertexRoot->getTkr2ArcLen(), 
+            position.z(), 
+            convertTkrTrackParams(vertexRoot->getVertexParams()));
 
         vertexTds->setStatusBit(vertexRoot->getStatusBits());
 
@@ -1404,19 +1406,19 @@ StatusCode reconRootReaderAlg::storeTrackAndVertexCol(
             const Event::TkrTrack* trackTds = m_common.m_rootTkrTrackMap[vertexRoot->getTrack(iTrack)];
             vertexTds->addTrack(trackTds);
         }
-        
+
         vertexColTds->push_back(vertexTds);
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVertexCol, vertexColTds);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register Tkr VertexCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     return sc;
 }
 
@@ -1427,11 +1429,11 @@ Event::TkrTrack* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trackRoot)
 
     // Convert these to TVector3's 
     Point  position( trackRoot->getInitialPosition().x(),
-                     trackRoot->getInitialPosition().y(),
-                     trackRoot->getInitialPosition().z());
+        trackRoot->getInitialPosition().y(),
+        trackRoot->getInitialPosition().z());
     Vector direction(trackRoot->getInitialDirection().x(),
-                     trackRoot->getInitialDirection().y(),
-                     trackRoot->getInitialDirection().z());
+        trackRoot->getInitialDirection().y(),
+        trackRoot->getInitialDirection().z());
 
     // Begin with filling the track member variables
     trackTds->setStatusBit(trackRoot->getStatusBits());
@@ -1460,7 +1462,7 @@ Event::TkrTrack* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trackRoot)
     // Now loop over the hit planes and fill that information
     TIterator* hitIter = trackRoot->Iterator();
     TObject*   hitObj  = 0;
-    
+
     while ((hitObj = hitIter->Next())!=0)
     {
         TkrTrackHit*        trackHitRoot = dynamic_cast<TkrTrackHit*>(hitObj);
@@ -1475,12 +1477,12 @@ Event::TkrTrack* reconRootReaderAlg::convertTkrTrack(const TkrTrack* trackRoot)
 Event::TkrTrackParams reconRootReaderAlg::convertTkrTrackParams(const TkrTrackParams& paramsRoot)
 {
     Event::TkrTrackParams params(paramsRoot.getxPosition(), paramsRoot.getxSlope(), 
-                                 paramsRoot.getyPosition(), paramsRoot.getySlope(),
-                                 paramsRoot.getxPosxPos(),  paramsRoot.getxPosxSlp(), 
-                                 paramsRoot.getxPosyPos(),  paramsRoot.getxPosySlp(),
-                                 paramsRoot.getxSlpxSlp(),  paramsRoot.getxSlpyPos(), 
-                                 paramsRoot.getxSlpySlp(),  paramsRoot.getyPosyPos(), 
-                                 paramsRoot.getyPosySlp(),  paramsRoot.getySlpySlp() );
+        paramsRoot.getyPosition(), paramsRoot.getySlope(),
+        paramsRoot.getxPosxPos(),  paramsRoot.getxPosxSlp(), 
+        paramsRoot.getxPosyPos(),  paramsRoot.getxPosySlp(),
+        paramsRoot.getxSlpxSlp(),  paramsRoot.getxSlpyPos(), 
+        paramsRoot.getxSlpySlp(),  paramsRoot.getyPosyPos(), 
+        paramsRoot.getyPosySlp(),  paramsRoot.getySlpySlp() );
 
     return params;
 }
@@ -1513,7 +1515,7 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
         idents::TkrId hitTdsId = idents::TkrId();
         trackHitTds->setTkrID(hitTdsId);
     }
-    
+
     // Fill in the "easy" stuff first 
     trackHitTds->setStatusBit(trackHitRoot->getStatusBits());
     trackHitTds->setZPlane(trackHitRoot->getZPlane());
@@ -1525,41 +1527,41 @@ Event::TkrTrackHit* reconRootReaderAlg::convertTkrTrackHit(const TkrTrackHit* tr
 
     // Now set the track params
     if (trackHitRoot->validMeasuredHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::MEASURED) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::MEASURED));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::MEASURED));
     if (trackHitTds->validPredictedHit()) trackHitTds->getTrackParams(Event::TkrTrackHit::PREDICTED) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::PREDICTED));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::PREDICTED));
     if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::FILTERED) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::FILTERED));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::FILTERED));
     if (trackHitTds->validFilteredHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT)   = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT)); 
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT)); 
     if (trackHitTds->validSmoothedHit())  trackHitTds->getTrackParams(Event::TkrTrackHit::SMOOTHED) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::SMOOTHED));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::SMOOTHED));
     if (trackHitTds->validRevFit())       trackHitTds->getTrackParams(Event::TkrTrackHit::REVFIT) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::REVFIT));
     if (trackHitTds->validMaterial())     trackHitTds->getTrackParams(Event::TkrTrackHit::QMATERIAL) = 
-               convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::QMATERIAL));
+        convertTkrTrackParams(trackHitRoot->getTrackParams(TkrTrackHit::QMATERIAL));
 
     return trackHitTds;
 }
 
 StatusCode reconRootReaderAlg::storeTkrTruncationInfo(TkrRecon *tkrRecRoot) {
-  StatusCode sc = StatusCode::SUCCESS;
-  const TObjArray *truncationDataColRoot = tkrRecRoot->getTruncationDataCol();
-  Event::TkrTruncationInfo* truncationInfoTds = new Event::TkrTruncationInfo();
-  RootPersistence::convert(*truncationDataColRoot,*truncationInfoTds) ;
-  sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTruncationInfo, truncationInfoTds);    
-  return sc;    
+    StatusCode sc = StatusCode::SUCCESS;
+    const TObjArray *truncationDataColRoot = tkrRecRoot->getTruncationDataCol();
+    Event::TkrTruncationInfo* truncationInfoTds = new Event::TkrTruncationInfo();
+    RootPersistence::convert(*truncationDataColRoot,*truncationInfoTds) ;
+    sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrTruncationInfo, truncationInfoTds);    
+    return sc;    
 }
 
 StatusCode reconRootReaderAlg::readCalRecon() {
     // Purpose and Method:: Read in CAL recon data from ROOT and store on the TDS
-    
+
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     CalRecon *calRecRoot = m_reconEvt->getCalRecon();
     if (!calRecRoot) return StatusCode::SUCCESS;
-    
+
     // Make sure the CalRecon branch exists on the TDS
     DataObject* pnode =0;
     sc = eventSvc()->retrieveObject(EventModel::CalRecon::Event, pnode);
@@ -1572,25 +1574,25 @@ StatusCode reconRootReaderAlg::readCalRecon() {
             return sc;
         }
     }
-    
+
     SmartDataPtr<Event::CalXtalRecCol> xtalRecColTds(eventSvc(),EventModel::CalRecon::CalXtalRecCol);
     if (xtalRecColTds){
         log << MSG::INFO << "XtalRecCol data is already on the TDS" << endreq;
     } else {
         sc = storeCalXtalRecDataCol(calRecRoot);
     }
-    
+
     if (sc.isFailure()) {
         log << MSG::INFO << "Failed to store CalXtalRecCol on the TDS" << endreq;
         return sc;
     }
-    
+
     SmartDataPtr<Event::CalEventEnergyCol> checkCalEventEnergyColTds(eventSvc(), EventModel::CalRecon::CalEventEnergyCol);
     if (checkCalEventEnergyColTds) {
         log << MSG::INFO << "CalEventEnergy data is already on the TDS" << endreq;
-     } else {
-         sc = storeCalEventEnergyCol(calRecRoot);
-     }
+    } else {
+        sc = storeCalEventEnergyCol(calRecRoot);
+    }
     if (sc.isFailure()) {
         log << MSG::INFO << "Failed to store CalEventEnergy on the TDS" << endreq;
         return sc;
@@ -1616,18 +1618,18 @@ StatusCode reconRootReaderAlg::readCalRecon() {
     } else {
         sc = storeCalClusterMap(calRecRoot);
     }
-    
+
     SmartDataPtr<Event::CalEventEnergyMap> checkCalEventEnergyMapTds(eventSvc(), EventModel::CalRecon::CalEventEnergyMap);
     if (checkCalEventEnergyMapTds) {
         log << MSG::INFO << "CalEventEnergyMap data is already on the TDS" << endreq;
-     } else {
-         sc = storeCalEventEnergyMap(calRecRoot);
-     }
+    } else {
+        sc = storeCalEventEnergyMap(calRecRoot);
+    }
     if (sc.isFailure()) {
         log << MSG::INFO << "Failed to store CalEventEnergyMap on the TDS" << endreq;
         return sc;
     }
-    
+
     SmartDataPtr<Event::CalMipTrackCol> checkCalMipTrackColTds(eventSvc(),EventModel::CalRecon::CalMipTrackCol);
     if (checkCalMipTrackColTds){
         log << MSG::INFO << "CalMipTrackCol data is already on the TDS" << endreq;
@@ -1635,7 +1637,7 @@ StatusCode reconRootReaderAlg::readCalRecon() {
     } else {
         sc = storeCalMipTrackCol(calRecRoot);
     }
-    
+
 
     return sc;
 }
@@ -1645,7 +1647,7 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     // Purpose and Method:  Retrieve CAL xtal recon data from ROOT and store on the TDS
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     // Create new TDS xtalRec collection
     Event::CalXtalRecCol *calXtalRecColTds = new Event::CalXtalRecCol();
     // Retrieve ROOT CAL xtal Rec collection
@@ -1653,39 +1655,39 @@ StatusCode reconRootReaderAlg::storeCalXtalRecDataCol(CalRecon *calRecRoot) {
     TIter calXtalIter(calXtalRecColRoot);
     const CalXtalRecData *calXtalRecRoot = 0;
     while ((calXtalRecRoot = (CalXtalRecData*)calXtalIter.Next())!=0) {
-        
+
         if (calXtalRecRoot->getMode() == CalXtalId::ALLRANGE) {
             unsigned int range ;
             for ( range = idents::CalXtalId::LEX8 ;
-                  range < idents::CalXtalId::HEX1 ;
-                  ++range ) {    
-                if (!calXtalRecRoot->getRangeRecData(range)) {
-                    log << MSG::DEBUG;
-                    if( log.isActive()) log.stream() << "Readout for Range " << range << " does not exist";
-                    log << endreq;
-                }
+                range < idents::CalXtalId::HEX1 ;
+                ++range ) {    
+                    if (!calXtalRecRoot->getRangeRecData(range)) {
+                        log << MSG::DEBUG;
+                        if( log.isActive()) log.stream() << "Readout for Range " << range << " does not exist";
+                        log << endreq;
+                    }
             }
         }
-        
+
         Event::CalXtalRecData * calXtalRecDataTds
-          = new Event::CalXtalRecData ;
+            = new Event::CalXtalRecData ;
         RootPersistence::convert(*calXtalRecRoot,*calXtalRecDataTds) ;
-        
+
         calXtalRecColTds->push_back(calXtalRecDataTds);
 
         m_common.m_rootCalXtalRecDataMap[calXtalRecRoot] = calXtalRecDataTds;
     }
-    
+
     //register output data collection as a TDS object
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalXtalRecCol, calXtalRecColTds);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register CalXtalRecCol";
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     return sc;
 }
 
@@ -1733,7 +1735,7 @@ StatusCode reconRootReaderAlg::storeCalClusterMap(CalRecon *calRecRoot)
                 {
                     // Recover the pointer to the cluster in question
                     Event::CalCluster* clusterTds = const_cast<Event::CalCluster*>(m_common.m_rootCalClusterMap[clusterRoot]);
-                
+
                     // Add this to the CalClusterMap
                     (*calClusterMapTds)[keyTds].push_back(clusterTds) ;
                 }
@@ -1744,22 +1746,22 @@ StatusCode reconRootReaderAlg::storeCalClusterMap(CalRecon *calRecRoot)
             }
         }
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterMap, calClusterMapTds);
-    
+
     return sc;
 }
 
 StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     const TObjArray *calClusterColRoot = calRecRoot->getCalClusterCol();
     TIter calClusterIter(calClusterColRoot);
     CalCluster *calClusterRoot = 0;
-    
+
     Event::CalClusterCol *calClusterColTds = new Event::CalClusterCol();
-    
+
     while ((calClusterRoot = (CalCluster*)calClusterIter.Next())!=0) {        
         Event::CalCluster * calClusterTds = new Event::CalCluster() ;
         RootPersistence::convert(*calClusterRoot,*calClusterTds) ;
@@ -1767,9 +1769,9 @@ StatusCode reconRootReaderAlg::storeCalClusterCol(CalRecon *calRecRoot) {
 
         m_common.m_rootCalClusterMap[calClusterRoot] = calClusterTds;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterCol, calClusterColTds);
-    
+
     return sc;
 }
 
@@ -1777,22 +1779,22 @@ StatusCode reconRootReaderAlg::storeCalMipTrackCol(CalRecon *calRecRoot)
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     const TObjArray *calMipTrackColRoot = calRecRoot->getCalMipTrackCol();
     TIter calMipTrackIter(calMipTrackColRoot);
     CalMipTrack *calMipTrackRoot = 0;
-    
+
     Event::CalMipTrackCol *calMipTrackColTds = new Event::CalMipTrackCol();
-    
+
     while ((calMipTrackRoot = (CalMipTrack*)calMipTrackIter.Next())!=0) 
     {        
         Event::CalMipTrack* calMipTrackTds = new Event::CalMipTrack() ;
         RootPersistence::convert(*calMipTrackRoot,*calMipTrackTds) ;
         calMipTrackColTds->push_back(calMipTrackTds) ;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalMipTrackCol, calMipTrackColTds);
-    
+
     return sc;
 }
 
@@ -1806,30 +1808,30 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyCol(CalRecon *calRecRoot) {
 
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
-//    const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
-//    if (calEventEnergyColRoot->GetEntries()>1) {
-//        // this should not happen !!
-//        log<<MSG::ERROR ;
-//        if (log.isActive()) log.stream()<<"Several CalEventEnergy in ROOT file" ;
-//        log<<endreq ;
-//        return StatusCode::FAILURE;
-//    }
-        
-    
-//    Event::CalEventEnergyCol * calEventEnergyColTds = new Event::CalEventEnergyCol();
-//    TIter calEventEnergyIter(calEventEnergyColRoot) ;
-//    CalEventEnergy * calEventEnergyRoot = 0 ;
-//    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
-//        Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
-//        RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
-//        calEventEnergyColTds->push_back(calEventEnergyTds) ;
 
-//        m_common.m_rootCalEventEnergyMap[calEventEnergyRoot] = calEventEnergyTds;
-//    }
-    
-//    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
-    
+    //    const TObjArray * calEventEnergyColRoot = calRecRoot->getCalEventEnergyCol();
+    //    if (calEventEnergyColRoot->GetEntries()>1) {
+    //        // this should not happen !!
+    //        log<<MSG::ERROR ;
+    //        if (log.isActive()) log.stream()<<"Several CalEventEnergy in ROOT file" ;
+    //        log<<endreq ;
+    //        return StatusCode::FAILURE;
+    //    }
+
+
+    //    Event::CalEventEnergyCol * calEventEnergyColTds = new Event::CalEventEnergyCol();
+    //    TIter calEventEnergyIter(calEventEnergyColRoot) ;
+    //    CalEventEnergy * calEventEnergyRoot = 0 ;
+    //    while ((calEventEnergyRoot = (CalEventEnergy*)calEventEnergyIter.Next())!=0) {        
+    //        Event::CalEventEnergy * calEventEnergyTds = new Event::CalEventEnergy() ;
+    //        RootPersistence::convert(*calEventEnergyRoot,*calEventEnergyTds) ;
+    //        calEventEnergyColTds->push_back(calEventEnergyTds) ;
+
+    //        m_common.m_rootCalEventEnergyMap[calEventEnergyRoot] = calEventEnergyTds;
+    //    }
+
+    //    sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyCol, calEventEnergyColTds);
+
     return sc;
 
 }
@@ -1884,9 +1886,9 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyMap(CalRecon *calRecRoot)
             }
         }
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::CalRecon::CalEventEnergyMap, calEventEnergyMapTds);
-    
+
     return sc;
 }
 
@@ -1894,10 +1896,10 @@ StatusCode reconRootReaderAlg::storeCalEventEnergyMap(CalRecon *calRecRoot)
 StatusCode reconRootReaderAlg::readAcdRecon() {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     const AcdReconV2 *acdRecRootV2 = m_reconEvt->getAcdReconV2();
     if (!acdRecRootV2) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "No AcdReconV2 found in ROOT file";
         log << endreq;
@@ -1909,7 +1911,7 @@ StatusCode reconRootReaderAlg::readAcdRecon() {
 
     sc = eventSvc()->registerObject(EventModel::AcdReconV2::Event, acdRecTdsV2);
     if (sc.isFailure()) {
-        
+
         log << MSG::DEBUG;
         if( log.isActive()) log.stream() << "Failed to register AcdReconV2";
         log << endreq;
@@ -1936,11 +1938,11 @@ StatusCode reconRootReaderAlg::readAdfRecon()
     sc = eventSvc()->registerObject("/Event/AncillaryEvent/Recon", adfRecTds);
 
     if (sc.isFailure()) {
-        
+
         log << MSG::ERROR << "Failed to register AdfRecon" << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     return sc;    
 }
 
@@ -1962,15 +1964,15 @@ StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
 {
     MsgStream log(msgSvc(), name());
     StatusCode sc = StatusCode::SUCCESS;
-    
+
     Event::TreeClusterRelationCol* relationTdsCol          = new Event::TreeClusterRelationCol();
     Event::TreeToRelationMap*      treeToRelationTdsMap    = new Event::TreeToRelationMap();
     Event::ClusterToRelationMap*   clusterToRelationTdsMap = new Event::ClusterToRelationMap();
-    
+
     const TObjArray * relationRootCol = tkrRecRoot->getTreeClusterRelationCol();
     TIter relationIter(relationRootCol);
     TreeClusterRelation* relationRoot = 0;
-     
+
     while ((relationRoot = (TreeClusterRelation*)relationIter.Next())!=0) 
     {
         // Recover the pointers to the root versions of the related objects
@@ -1979,20 +1981,20 @@ StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
 
         // Create a new TDS version
         Event::TreeClusterRelation* relationTds = new Event::TreeClusterRelation(tree, 
-                                                                                 cluster, 
-                                                                                 relationRoot->getTreeClusDoca(),
-                                                                                 relationRoot->getTreeClusCosAngle(),
-                                                                                 relationRoot->getTreeClusDistAtZ(),
-                                                                                 relationRoot->getClusEnergy() );
+            cluster, 
+            relationRoot->getTreeClusDoca(),
+            relationRoot->getTreeClusCosAngle(),
+            relationRoot->getTreeClusDistAtZ(),
+            relationRoot->getClusEnergy() );
 
         relationTdsCol->push_back(relationTds);
         (*treeToRelationTdsMap)[tree].push_back(relationTds);
         (*clusterToRelationTdsMap)[cluster].push_back(relationTds);
     }
-    
+
     // First we need to follow through on some craziness to create our subdirectory...
     DataObject* pnode =0;
-    
+
     if( (eventSvc()->retrieveObject(EventModel::Recon::Event, pnode)).isFailure() ) 
     {
         sc = eventSvc()->registerObject(EventModel::Recon::Event, new DataObject);
@@ -2003,7 +2005,7 @@ StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
             return sc;
         }
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::Recon::TreeClusterRelationCol, relationTdsCol);
     if (sc.isFailure()) 
     {
@@ -2012,7 +2014,7 @@ StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::Recon::TreeToRelationMap, treeToRelationTdsMap);
     if (sc.isFailure()) 
     {
@@ -2021,7 +2023,7 @@ StatusCode reconRootReaderAlg::storeTreeClusterRelations(TkrRecon* tkrRecRoot)
         log << endreq;
         return StatusCode::FAILURE;
     }
-    
+
     sc = eventSvc()->registerObject(EventModel::Recon::ClusterToRelationMap, clusterToRelationTdsMap);
     if (sc.isFailure()) 
     {
@@ -2042,7 +2044,7 @@ void reconRootReaderAlg::close()
     //    since ROOT will periodically write to the ROOT file when the bufSize
     //    is filled.  Writing would create 2 copies of the same tree to be
     //    stored in the ROOT file, if we did not specify kOverwrite.
-    
+
 }
 
 void reconRootReaderAlg::endEvent() {
@@ -2053,7 +2055,7 @@ void reconRootReaderAlg::endEvent() {
 StatusCode reconRootReaderAlg::finalize()
 {
     close();
-    
+
     StatusCode sc = StatusCode::SUCCESS;
     //setFinalized(); No longer available in Gaudi v21r7
     return sc;
