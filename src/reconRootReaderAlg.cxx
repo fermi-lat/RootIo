@@ -60,7 +60,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.119 2013/06/01 19:27:10 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.120 2013/06/07 01:30:57 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -755,6 +755,9 @@ StatusCode reconRootReaderAlg::storeTkrVecPointInfo(TkrRecon* tkrRecRoot)
     vecPointInfoTds->setNumTkrVecPoints(tkrRecRoot->getTkrVecPointInfo().getNumTkrVecPoints());
     vecPointInfoTds->setNumBiLayersWVecPoints(tkrRecRoot->getTkrVecPointInfo().getNumBiLayersWVecPoints());
     vecPointInfoTds->setMaxNumLinkCombinations(tkrRecRoot->getTkrVecPointInfo().getMaxNumLinkCombinations());
+
+    log << MSG::DEBUG << "Vec vars " << vecPointInfoTds->getMaxNumSkippedLayers() << " " 
+        << vecPointInfoTds->getNumTkrVecPoints() << endreq;
 
     // Store on the TDS
     sc = eventSvc()->registerObject(EventModel::TkrRecon::TkrVecPointInfo, vecPointInfoTds);
