@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Tue Jun 18 22:10:20 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx reconRootWriterAlg.cxx 
+Log Message:
+reconRootWriterAlg: access TkrVecPointInfo by pointer, so that the object can be modified; a bit more debug printout
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-08-17, operation: add
 Package: RootIo
