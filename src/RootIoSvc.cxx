@@ -3,7 +3,7 @@
 * @file RootIoSvc.cxx
 * @brief definition of the class RootIoSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/RootIoSvc.cxx,v 1.69.2.1 2013/05/02 11:39:41 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/RootIoSvc.cxx,v 1.70 2013/05/17 13:47:43 heather Exp $
 *  Original author: Heather Kelly heather@lheapop.gsfc.nasa.gov
 */
 
@@ -284,7 +284,7 @@ RootIoSvc::RootIoSvc(const std::string& name,ISvcLocator* svc)
     declareProperty("NoFailure", m_noFailure=0);
     declareProperty("RebuildIndex", m_rebuildIndex=false);
     
-    declareProperty("CompressAlg", m_compressAlg="ZLIB");
+    declareProperty("CompressAlg", m_compressAlg="LZMA");   // Was ZLIB (TU 7/1/13)
     // 
     declareProperty("CelRootFileWrite", m_celFileNameWrite="");
     declareProperty("CelRootFileRead", m_celFileNameRead="");
