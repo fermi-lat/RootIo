@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Mon Jul  1 08:52:02 PDT 2013
+RootIo/src
+
+Modified Files:
+	RootIoSvc.cxx reconRootWriterAlg.cxx 
+Log Message:
+Setting default values for compression to LZMA and for compressed tree output.
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-08-18, operation: add
 Package: RootIo
