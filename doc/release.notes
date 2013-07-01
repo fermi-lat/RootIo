@@ -4,6 +4,7 @@
  @verbatim
  EOH
 
+ RootIo-26-01-06  1-Jul-2013 TU Setting defaults to LZMA and NOT full tree output
  RootIo-26-01-05 18-Jun-2013  lsrea use pointer access in reconRootWriterAlg
  RootIo-26-01-04 06-Jun-2013  lsrea check MERGERESULT when creating cluster map on read
  RootIo-26-01-03  5-Jun-2013 TU Fix small memory leak in Cal Maps
