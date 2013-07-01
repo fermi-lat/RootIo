@@ -60,7 +60,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.111 2013/06/05 20:44:00 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.112 2013/06/19 05:10:20 lsrea Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -195,7 +195,7 @@ Algorithm(name, pSvcLocator)
     declareProperty("writeTruncationInfo", m_writeTruncationInfo=true);
 
     declareProperty("writeTreeBasedInfo",  m_writeTreeBasedInfo=true);
-    declareProperty("WriteFullTreeOutput", m_writeFullTreeOutput=true);
+    declareProperty("WriteFullTreeOutput", m_writeFullTreeOutput=false);
     
     // ADDED FOR THE FILE HEADERS DEMO
     m_headersTool = 0 ;
