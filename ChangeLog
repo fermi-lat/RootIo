@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Aug 22 00:23:13 PDT 2013
+RootIo/src
+
+Modified Files:
+	reconRootReaderAlg.cxx 
+Log Message:
+Don't put an empty CalClusterMap into TDS on readback
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-09-02, operation: add
 Package: RootIo
