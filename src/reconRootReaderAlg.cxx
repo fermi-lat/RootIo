@@ -60,7 +60,7 @@
 * the data in the TDS.
 *
 * @author Heather Kelly
-* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootReaderAlg.cxx,v 1.120 2013/06/07 01:30:57 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootReaderAlg.cxx,v 1.121 2013/06/19 05:10:19 lsrea Exp $
 */
 
 class reconRootReaderAlg : public Algorithm, virtual public IIncidentListener
@@ -1750,7 +1750,8 @@ StatusCode reconRootReaderAlg::storeCalClusterMap(CalRecon *calRecRoot)
         }
     }
 
-    sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterMap, calClusterMapTds);
+    if (!calClusterMapTds->empty()) sc = eventSvc()->registerObject(EventModel::CalRecon::CalClusterMap, calClusterMapTds);
+    else                            delete calClusterMapTds;
 
     return sc;
 }
