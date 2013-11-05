@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: bregeon  Tue Nov  5 09:26:37 PST 2013
+RootIo/src
+
+Modified Files:
+	reconRootWriterAlg.cxx 
+Log Message:
+compression level to 9 - LPATE-167
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-lp61, operation: add
 Package: RootIo
