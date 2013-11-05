@@ -60,7 +60,7 @@
 * @brief Writes Recon TDS data to a persistent ROOT file.
 *
 * @author Heather Kelly and Tracy Usher
-* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/RootIo/src/reconRootWriterAlg.cxx,v 1.112 2013/06/19 05:10:20 lsrea Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/RootIo/src/reconRootWriterAlg.cxx,v 1.113 2013/07/01 15:52:02 usher Exp $
 */
 
 class reconRootWriterAlg : public Algorithm
@@ -189,7 +189,7 @@ Algorithm(name, pSvcLocator)
     declareProperty("splitMode", m_splitMode=1);
     declareProperty("bufferSize", m_bufSize=64000);
     // ROOT default compression
-    declareProperty("compressionLevel", m_compressionLevel=1);
+    declareProperty("compressionLevel", m_compressionLevel=9);
     declareProperty("treeName", m_treeName="Recon");
 
     declareProperty("writeTruncationInfo", m_writeTruncationInfo=true);
